@@ -16,6 +16,15 @@ describe("Ayumad.me", () => {
     renderAt("/");
 
     expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("figure", {
+        name: "A real-time ASCII XY oscilloscope tracing musical frequency ratios.",
+      }),
+    ).toBeInTheDocument();
+    const renderedSignal = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
+    const signalText = renderedSignal?.textContent ?? "";
+    expect(signalText.length).toBeGreaterThan(1_000);
+    expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
