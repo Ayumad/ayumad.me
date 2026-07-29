@@ -280,10 +280,10 @@ Controls:
 - Eight visible geometric shape buttons replace a hidden preset menu. Every
   selection restores a curated, straight-on silhouette and resets its rotation
   clock, scale, and motion defaults. Frequency and multiplier remain unchanged.
-- `Hz`: selects chromatic equal-tempered notes from D1 (36.71 Hz) through A3
-  (220 Hz). The range input operates in semitone steps, automatically snaps
-  every pointer/keyboard change to an exact note frequency, and displays both
-  note name and Hz value.
+- `Hz`: selects 37 chromatic equal-tempered notes spanning three complete
+  octaves from A0 (27.50 Hz) through A3 (220 Hz). The range input operates in
+  semitone steps, automatically snaps every pointer/keyboard change to an exact
+  note frequency, and displays both note name and Hz value.
 - `Scale`: 70–100%. The higher floor keeps the shape visually present.
 - `Motion`: 0–100%. It controls the speed of a bright trace head traveling
   around the fixed outline; it never changes the shape coordinates.
@@ -904,8 +904,8 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 
 Build the homepage around a large code-rendered ASCII XY oscilloscope
 instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
-visible shape buttons; include a D1–A3 frequency slider quantized to chromatic
-equal-tempered notes with note-name/Hz readout, scale, motion, and
+visible shape buttons; include an A0–A3 frequency slider spanning three full
+chromatic octaves with note-name/Hz readout, scale, motion, and
 1×/2×/4×/8× multiplier controls; pause/run; curated random combinations; and
 optional stereo Web Audio muted by default. Lock ratio, phase, form, and base
 rotation inside each authored preset rather than exposing them. Each shape

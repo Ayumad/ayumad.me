@@ -33,6 +33,14 @@ describe("Ayumad.me", () => {
     );
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("33");
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
+      "min",
+      "21",
+    );
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
+      "max",
+      "57",
+    );
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
       "aria-valuetext",
       "A1, 55 hertz",
     );
@@ -66,6 +74,25 @@ describe("Ayumad.me", () => {
       "href",
       "#/contact",
     );
+  });
+
+  it("spans three complete chromatic octaves from A0 through A3", () => {
+    renderAt("/");
+    const frequency = screen.getByRole("slider", { name: "Frequency" });
+
+    fireEvent.change(frequency, { target: { value: "21" } });
+    expect(frequency).toHaveAttribute(
+      "aria-valuetext",
+      "A0, 27.50 hertz",
+    );
+    expect(screen.getByText("A0 27.50")).toBeInTheDocument();
+
+    fireEvent.change(frequency, { target: { value: "57" } });
+    expect(frequency).toHaveAttribute(
+      "aria-valuetext",
+      "A3, 220 hertz",
+    );
+    expect(screen.getByText("A3 220")).toBeInTheDocument();
   });
 
   it("updates the oscilloscope from its accessible controls", () => {
