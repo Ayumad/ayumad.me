@@ -57,6 +57,12 @@ interface AudioGraph {
   gain: GainNode;
 }
 
+interface MusicalNote {
+  midi: number;
+  name: string;
+  frequency: number;
+}
+
 const presets: Preset[] = [
   {
     id: "line",
@@ -166,6 +172,32 @@ const bayer4 = [
 const toneRamp = " .,:;+*#@";
 const crtRamp = "  .:-=+*#@";
 const ditherRamp = "  ░▒▓█";
+const noteNames = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
+const musicalNotes: MusicalNote[] = Array.from(
+  { length: 32 },
+  (_, index) => {
+    const midi = 26 + index;
+    const frequency = 440 * 2 ** ((midi - 69) / 12);
+    return {
+      midi,
+      name: `${noteNames[midi % 12]}${Math.floor(midi / 12) - 1}`,
+      frequency: Number(frequency.toFixed(2)),
+    };
+  },
+);
 const outputGain = 0.018;
 const fourierHarmonics = 48;
 const audioSamples = 512;
@@ -180,6 +212,19 @@ function clamp(value: number, minimum: number, maximum: number) {
 
 function radians(degrees: number) {
   return (degrees / 180) * Math.PI;
+}
+
+function nearestMusicalNote(frequency: number) {
+  return musicalNotes.reduce((nearest, note) =>
+    Math.abs(note.frequency - frequency) <
+    Math.abs(nearest.frequency - frequency)
+      ? note
+      : nearest,
+  );
+}
+
+function formatFrequency(frequency: number) {
+  return Number.isInteger(frequency) ? frequency.toString() : frequency.toFixed(2);
 }
 
 function structuralGlyph(angle: number, crossing: boolean) {
@@ -484,6 +529,7 @@ export default function AsciiOscilloscope() {
   const renderMode = useRenderMode();
   const preset = presets.find((item) => item.id === presetId) ?? defaultPreset;
   const copies = 2 ** octave;
+  const musicalNote = nearestMusicalNote(frequency);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -939,7 +985,10 @@ export default function AsciiOscilloscope() {
 
       <div className="scope-header" aria-hidden="true">
         <span>XY / VECTOR</span>
-        <span>{preset.label} / {frequency} HZ / {copies}X</span>
+        <span>
+          {preset.label} / {musicalNote.name} {formatFrequency(frequency)} HZ /{" "}
+          {copies}X
+        </span>
       </div>
 
       <div
@@ -977,14 +1026,22 @@ export default function AsciiOscilloscope() {
           <span>Hz</span>
           <input
             aria-label="Frequency"
+            aria-valuetext={`${musicalNote.name}, ${formatFrequency(frequency)} hertz`}
             type="range"
-            min="35"
-            max="220"
+            min={musicalNotes[0].midi}
+            max={musicalNotes[musicalNotes.length - 1].midi}
             step="1"
-            value={frequency}
-            onChange={(event) => setFrequency(Number(event.target.value))}
+            value={musicalNote.midi}
+            onChange={(event) => {
+              const note = musicalNotes.find(
+                (candidate) => candidate.midi === Number(event.target.value),
+              );
+              if (note) setFrequency(note.frequency);
+            }}
           />
-          <output>{frequency}</output>
+          <output>
+            {musicalNote.name} {formatFrequency(frequency)}
+          </output>
         </label>
 
         <div
