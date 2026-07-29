@@ -69,7 +69,7 @@ Ayumad.me homepage:
 - A0 through A3 note selection;
 - scale, motion, multiplier, and unit controls;
 - pause, randomize, 2D/3D, and optional audio controls;
-- ASCII, Dither, Glitch, Particles, and CRT modes;
+- ASCII, Dither, Glitch, Particles, and CRT+ modes;
 - responsive character-grid rasterization;
 - stereo Web Audio output, muted by default;
 - visibility pausing and reduced-motion behavior;
@@ -1152,9 +1152,9 @@ Before adding the new trace, multiply the previous intensity by:
 | --- | ---: |
 | ASCII | 0.72 |
 | Dither | 0.64 |
-| Glitch | 0.72 |
+| Glitch | 0.66 |
 | Particles | 0.54 |
-| CRT | 0.84 |
+| CRT+ | 0.84 |
 
 Clear persistence when:
 
@@ -1189,6 +1189,7 @@ Density ramps:
 const toneRamp = " .,:;+*#@";
 const crtRamp = "  .:-=+*#@";
 const ditherRamp = "  ░▒▓█";
+const glitchRamp = "  .:;+=x#";
 ```
 
 Ordered threshold matrix:
@@ -1257,9 +1258,11 @@ changes both trace brightness and authored yaw/pitch rotation.
 
 ## 12. Rendering modes
 
-The mode selector changes the character conversion and restrained
-post-processing. It must not recolor the entire interface, hide controls, or
-turn five modes into five unrelated themes.
+Every mode shares one restrained CRT chassis across the entire interface: fine
+scanlines, an edge vignette, a slow phosphor sweep, mild contrast/saturation,
+and subtle cyan glyph bloom. The mode selector changes the character conversion
+and adds a mode-specific surface treatment on top of that common display. It
+must not hide controls or turn five modes into five unrelated color themes.
 
 Expose the active mode on the document root:
 
@@ -1276,7 +1279,8 @@ Purpose: clearest vector structure.
 - low intensity uses ` .,:;+*#@`;
 - standard persistence is `0.72`;
 - background uses a 104px technical grid;
-- cyan glow remains restrained.
+- the shared CRT chassis supplies scanlines, vignette, sweep, and restrained
+  cyan glow.
 
 ### Dither
 
@@ -1300,41 +1304,56 @@ const glyph =
 - reduce persistence to `0.64`;
 - add a subtle four-pixel halftone field to the surrounding interface;
 - use harder contrast;
-- remove broad text bloom.
+- keep the shared scanlines and vignette while reducing broad text bloom.
 
 ### Glitch
 
-Purpose: deterministic signal displacement, not random unreadability.
+Purpose: a distinct deterministic signal-failure system, not random
+unreadability.
 
 ```ts
+const tick = Math.floor(frameNumber / 2);
+const burst = frameNumber % 79 >= 69;
 const glitchBand =
-  (row * 13 + frameNumber) % 47 < 3;
+  (row * 17 + tick) % 47 < (burst ? 7 : 3) ||
+  (burst && (row + tick) % 13 < 2);
+
+const offset = glitchBand
+  ? (row + tick) % 2 === 0
+    ? burst ? 6 : 3
+    : burst ? -6 : -3
+  : 0;
 
 const sourceColumn = clamp(
-  column +
-    (glitchBand
-      ? (row + frameNumber) % 2 === 0
-        ? 2
-        : -2
-      : 0),
+  column + offset,
   0,
   columns - 1,
 );
 ```
 
-For a bright cell, replace a rare sample:
+Use deterministic dropouts and corruption:
 
 ```ts
+const dropout =
+  intensity > 0.18 &&
+  (row * 29 + column * 43 + frameNumber) %
+    (burst ? 41 : 97) === 0;
+
 const corrupt =
   intensity > 0.22 &&
-  (row * 31 + column * 17 + frameNumber) % 61 === 0;
+  (row * 31 + column * 17 + frameNumber) %
+    (burst ? 23 : 53) === 0;
 
-const symbols = ["<", ">", "#", "/", "\\"];
+const symbols = ["<", ">", "#", "/", "\\", "░", "▓", "_"];
 ```
 
-- standard persistence is `0.72`;
-- use a restrained cyan/violet channel split around the stage only;
-- show intermittent scan bands;
+- sharpen persistence to `0.66`;
+- use the dedicated `  .:;+=x#` low-intensity ramp;
+- split ambient and rendered glyphs into cyan/violet channels;
+- use wider intermittent signal tears and thin deterministic dropout lines;
+- fracture surface borders with hard cyan/violet inset offsets;
+- add sparse vertical data columns to the background;
+- increase the whole-route contrast and saturation while Glitch is active;
 - never apply continuous transforms to control labels or body text;
 - deterministic arithmetic replaces unconstrained randomness.
 
@@ -1359,17 +1378,19 @@ const glyph =
 - persistence is `0.54`;
 - lighten surface fill around the stage;
 - reduce background grid prominence;
+- retain the shared scanlines, vignette, and phosphor sweep;
 - do not add an unrelated canvas particle system over the trace.
 
-### CRT
+### CRT+
 
-Purpose: longer-lived phosphor display.
+Purpose: an overdriven version of the shared phosphor display.
 
 - use the `  .:-=+*#@` ramp;
 - persistence is `0.84`;
-- apply fine scanlines;
-- add a restrained vignette;
-- add modest bloom and contrast/saturation lift;
+- strengthen the shared fine scanlines and vignette;
+- add a subtle six-pixel cyan/violet aperture mask;
+- increase bloom, contrast, saturation, and brightness modestly;
+- run the phosphor sweep faster and brighter;
 - preserve sharp controls outside the display;
 - describe this honestly as a CSS post-process, not a physically accurate
   WebGL CRT shader.
@@ -1381,8 +1402,8 @@ Purpose: longer-lived phosphor display.
 - filled active buttons use near-black foreground on cyan;
 - unfilled active icons use cyan on the dark surface;
 - text contrast must not depend on glow;
-- reduced-motion disables animated glitch bands and particle gating but keeps a
-  static mode-specific frame.
+- reduced-motion disables animated glitch bands, particle gating, and the
+  phosphor sweep but keeps a static mode-specific frame.
 
 ## 13. Curated random system
 
@@ -1957,7 +1978,7 @@ Release 1 is done when:
 - Units supports 48, 72, 96, and 120;
 - 100% scale does not clip any authored shape;
 - Random produces only curated readable results;
-- all five render modes change the trace itself;
+- all five render modes change the trace itself while sharing the CRT chassis;
 - optional stereo audio matches the 2D parametric path and starts muted;
 - Pause and reduced-motion behavior are correct;
 - every control works with mouse, touch, and keyboard;
@@ -2005,7 +2026,7 @@ Implement Release 1 completely. Use React 19, Vite, strict TypeScript, custom
 CSS, the Web Audio API, Vitest/React Testing Library, and Playwright where
 useful. Preserve every authored 2D formula, every 3D scene, the A0–A3 note
 range, the curated Random bank, all four unit resolutions, all multiplier
-layouts, and the ASCII, Dither, Glitch, Particles, and CRT conversion paths.
+layouts, and the ASCII, Dither, Glitch, Particles, and CRT+ conversion paths.
 
 Do not substitute canned animation, images, a generic canvas effect, a 3D
 library primitive showcase, Tailwind, a backend, or rounded SaaS styling. Do
@@ -2022,4 +2043,3 @@ repository README.
 Make reasonable implementation decisions without asking for routine
 clarification. Continue until the project is validated and ready to deploy.
 ```
-

@@ -335,19 +335,34 @@ function applyRenderMode(
   if (renderMode === "glitch") {
     return source.map((row, y) => {
       const shifted = Array.from({ length: columns }, () => " ");
-      const isBand = (y * 13 + frame) % 41 < 2;
-      const offset = isBand ? ((y + frame) % 2 === 0 ? 2 : -2) : 0;
+      const tick = Math.floor(frame / 2);
+      const burst = frame % 79 >= 69;
+      const isBand =
+        (y * 17 + tick) % 47 < (burst ? 6 : 3) ||
+        (burst && (y + tick) % 13 < 2);
+      const offset = isBand
+        ? (y + tick) % 2 === 0
+          ? burst ? 5 : 3
+          : burst ? -5 : -3
+        : 0;
 
       row.forEach((character, x) => {
         const target = x + offset;
         if (target < 0 || target >= columns) return;
+        const dropout =
+          character !== " " &&
+          (x * 23 + y * 37 + frame) % (burst ? 43 : 89) === 0;
         const corrupt =
           character !== " " &&
           !labelCharacter.test(character) &&
-          (x * 17 + y * 31 + frame) % 29 === 0;
-        shifted[target] = corrupt
-          ? ["<", ">", "#", "/", "\\"][(x + y + frame) % 5]
-          : character;
+          (x * 17 + y * 31 + frame) % (burst ? 17 : 31) === 0;
+        shifted[target] = dropout
+          ? " "
+          : corrupt
+            ? ["<", ">", "#", "/", "\\", "░", "▓", "_"][
+                (x + y + frame) % 8
+              ]
+            : character;
       });
       return shifted;
     });
