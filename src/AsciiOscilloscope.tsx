@@ -90,7 +90,7 @@ const presets: Preset[] = [
     xRatio: 2,
     yRatio: 1,
     phaseDegrees: 0,
-    form: 0.04,
+    form: 0,
     rotationDegrees: 0,
     scale: 0.98,
     motion: 0.15,
@@ -102,7 +102,7 @@ const presets: Preset[] = [
     xRatio: 3,
     yRatio: 2,
     phaseDegrees: 90,
-    form: 0.12,
+    form: 0,
     rotationDegrees: 0,
     scale: 0.98,
     motion: 0.22,
@@ -114,7 +114,7 @@ const presets: Preset[] = [
     xRatio: 5,
     yRatio: 1,
     phaseDegrees: 0,
-    form: 0.78,
+    form: 1,
     rotationDegrees: -90,
     scale: 0.96,
     motion: 0.18,
@@ -126,7 +126,7 @@ const presets: Preset[] = [
     xRatio: 5,
     yRatio: 1,
     phaseDegrees: 0,
-    form: 0.82,
+    form: 0.86,
     rotationDegrees: 0,
     scale: 0.96,
     motion: 0.12,
@@ -138,7 +138,7 @@ const presets: Preset[] = [
     xRatio: 6,
     yRatio: 1,
     phaseDegrees: 0,
-    form: 0.9,
+    form: 1,
     rotationDegrees: 0,
     scale: 0.96,
     motion: 0.1,
@@ -150,7 +150,7 @@ const presets: Preset[] = [
     xRatio: 5,
     yRatio: 3,
     phaseDegrees: 0,
-    form: 0.58,
+    form: 0.93,
     rotationDegrees: 0,
     scale: 0.96,
     motion: 0.2,
@@ -321,11 +321,7 @@ function copyLayout(index: number, count: number) {
   return { center: { x: 0, y: 0 }, scale: 1 };
 }
 
-function signalPoint(
-  theta: number,
-  settings: SignalSettings,
-  time: number,
-): Point {
+function signalPoint(theta: number, settings: SignalSettings): Point {
   const normalizedTheta =
     ((theta / (Math.PI * 2)) % 1 + 1) % 1;
   const copyPosition = normalizedTheta * settings.copies;
@@ -336,7 +332,7 @@ function signalPoint(
   const localTheta =
     (copyPosition - Math.floor(copyPosition)) * Math.PI * 2;
   const livePhase = settings.phase;
-  const liveRotation = settings.rotation + time * settings.motion * 0.08;
+  const liveRotation = settings.rotation;
   let point: Point;
 
   if (settings.generator === "rose") {
@@ -396,17 +392,13 @@ function signalPoint(
   };
 }
 
-function createStereoWaves(
-  context: AudioContext,
-  settings: SignalSettings,
-  time: number,
-) {
+function createStereoWaves(context: AudioContext, settings: SignalSettings) {
   const xSamples = new Float32Array(audioSamples);
   const ySamples = new Float32Array(audioSamples);
 
   for (let sample = 0; sample < audioSamples; sample += 1) {
     const theta = (sample / audioSamples) * Math.PI * 2;
-    const point = signalPoint(theta, settings, time);
+    const point = signalPoint(theta, settings);
     xSamples[sample] = point.x;
     ySamples[sample] = point.y;
   }
@@ -449,11 +441,7 @@ function createStereoWaves(
   };
 }
 
-function updateAudioGraph(
-  graph: AudioGraph,
-  settings: SignalSettings,
-  time: number,
-) {
+function updateAudioGraph(graph: AudioGraph, settings: SignalSettings) {
   const { context, xOscillator, yOscillator } = graph;
   const now = context.currentTime;
 
@@ -468,7 +456,7 @@ function updateAudioGraph(
     yOscillator.frequency.setValueAtTime(settings.frequency, now);
   }
 
-  const { xWave, yWave } = createStereoWaves(context, settings, time);
+  const { xWave, yWave } = createStereoWaves(context, settings);
   xOscillator.setPeriodicWave(xWave);
   yOscillator.setPeriodicWave(yWave);
 }
@@ -502,7 +490,6 @@ export default function AsciiOscilloscope() {
   const suspendTimerRef = useRef<number | null>(null);
   const elapsedRef = useRef(0);
   const runningRef = useRef(true);
-  const audioEnabledRef = useRef(false);
   const [presetId, setPresetId] = useState<PresetId>(initialSettings.preset);
   const [frequency, setFrequency] = useState(initialSettings.frequency);
   const [scale, setScale] = useState(initialSettings.scale);
@@ -529,8 +516,8 @@ export default function AsciiOscilloscope() {
     let animationFrame = 0;
     let previousFrame = 0;
     let previousClock = performance.now();
-    let lastAudioUpdate = 0;
     let visible = !document.hidden;
+    let horizontalCorrection = 1;
 
     const configureGrid = () => {
       const width = container.clientWidth || 680;
@@ -538,6 +525,12 @@ export default function AsciiOscilloscope() {
       columns = width < 430 ? 48 : width < 610 ? 60 : 72;
       const fontSize = Math.min(14.5, (width / columns) * 1.58);
       rows = Math.round(clamp(height / (fontSize * 0.94), 24, 34));
+      const physicalGridWidth = (columns - 1) * fontSize * 0.6;
+      const physicalGridHeight = (rows - 1) * fontSize * 0.91;
+      horizontalCorrection = Math.min(
+        1,
+        physicalGridHeight / physicalGridWidth,
+      );
       intensity = new Float32Array(columns * rows);
       direction = new Float32Array(columns * rows);
       output.style.setProperty("--scope-columns", columns.toString());
@@ -545,7 +538,9 @@ export default function AsciiOscilloscope() {
     };
 
     const plot = (x: number, y: number, angle: number, strength: number) => {
-      const column = Math.round((x * 0.495 + 0.5) * (columns - 1));
+      const column = Math.round(
+        (x * horizontalCorrection * 0.495 + 0.5) * (columns - 1),
+      );
       const row = Math.round((0.5 - y * 0.495) * (rows - 1));
       if (column < 1 || column >= columns - 1 || row < 1 || row >= rows - 1) return;
 
@@ -586,11 +581,13 @@ export default function AsciiOscilloscope() {
         intensity[index] *= persistence;
       }
 
-      let previousPoint = signalPoint(0, current, time);
+      let previousPoint = signalPoint(0, current);
+      const motionHead =
+        (time * current.motion * Math.PI * 0.85) % (Math.PI * 2);
 
       for (let sample = 1; sample <= samples; sample += 1) {
         const theta = (sample / samples) * Math.PI * 2;
-        const point = signalPoint(theta, current, time);
+        const point = signalPoint(theta, current);
         const deltaX = point.x - previousPoint.x;
         const deltaY = point.y - previousPoint.y;
         const flyback = current.copies > 1 && Math.hypot(deltaX, deltaY) > 0.55;
@@ -599,11 +596,25 @@ export default function AsciiOscilloscope() {
           continue;
         }
         const scaledDistance = Math.hypot(
-          deltaX * columns * 0.495,
+          deltaX * columns * horizontalCorrection * 0.495,
           deltaY * rows * 0.495,
         );
         const steps = Math.max(1, Math.ceil(scaledDistance));
-        const angle = Math.atan2(-deltaY * rows, deltaX * columns);
+        const angle = Math.atan2(
+          -deltaY * rows,
+          deltaX * columns * horizontalCorrection,
+        );
+        const angularDistance = Math.abs(
+          Math.atan2(
+            Math.sin(theta - motionHead),
+            Math.cos(theta - motionHead),
+          ),
+        );
+        const highlight =
+          current.motion > 0
+            ? Math.exp(-(angularDistance * angularDistance) / 0.08)
+            : 0;
+        const strength = current.motion > 0 ? 0.5 + highlight * 0.34 : 0.6;
 
         for (let step = 1; step <= steps; step += 1) {
           const amount = step / steps;
@@ -611,7 +622,7 @@ export default function AsciiOscilloscope() {
             mix(previousPoint.x, point.x, amount),
             mix(previousPoint.y, point.y, amount),
             angle,
-            0.6,
+            strength,
           );
         }
 
@@ -701,20 +712,6 @@ export default function AsciiOscilloscope() {
         render();
       }
 
-      if (
-        audioEnabledRef.current &&
-        runningRef.current &&
-        time - lastAudioUpdate >= 250 &&
-        audioGraphRef.current
-      ) {
-        lastAudioUpdate = time;
-        updateAudioGraph(
-          audioGraphRef.current,
-          settingsRef.current,
-          elapsedRef.current / 1000,
-        );
-      }
-
       if (visible) animationFrame = window.requestAnimationFrame(draw);
     };
 
@@ -772,11 +769,7 @@ export default function AsciiOscilloscope() {
     settingsRef.current = nextSettings;
     renderNowRef.current?.(true);
     if (audioGraphRef.current) {
-      updateAudioGraph(
-        audioGraphRef.current,
-        nextSettings,
-        elapsedRef.current / 1000,
-      );
+      updateAudioGraph(audioGraphRef.current, nextSettings);
     }
   }, [
     presetId,
@@ -791,10 +784,6 @@ export default function AsciiOscilloscope() {
     runningRef.current = running;
     renderNowRef.current?.();
   }, [running]);
-
-  useEffect(() => {
-    audioEnabledRef.current = audioEnabled;
-  }, [audioEnabled]);
 
   useEffect(
     () => () => {
@@ -835,7 +824,7 @@ export default function AsciiOscilloscope() {
     gain.connect(context.destination);
 
     const graph = { context, xOscillator, yOscillator, gain };
-    updateAudioGraph(graph, settingsRef.current, elapsedRef.current / 1000);
+    updateAudioGraph(graph, settingsRef.current);
     xOscillator.start();
     yOscillator.start();
     audioGraphRef.current = graph;
@@ -859,7 +848,6 @@ export default function AsciiOscilloscope() {
       graph.gain.gain.cancelScheduledValues(now);
       graph.gain.gain.setValueAtTime(graph.gain.gain.value, now);
       graph.gain.gain.linearRampToValueAtTime(0, now + 0.06);
-      audioEnabledRef.current = false;
       setAudioEnabled(false);
       suspendTimerRef.current = window.setTimeout(() => {
         void graph.context.suspend();
@@ -870,12 +858,11 @@ export default function AsciiOscilloscope() {
 
     try {
       await graph.context.resume();
-      updateAudioGraph(graph, settingsRef.current, elapsedRef.current / 1000);
+      updateAudioGraph(graph, settingsRef.current);
       const now = graph.context.currentTime;
       graph.gain.gain.cancelScheduledValues(now);
       graph.gain.gain.setValueAtTime(0.0001, now);
       graph.gain.gain.exponentialRampToValueAtTime(outputGain, now + 0.08);
-      audioEnabledRef.current = true;
       setAudioEnabled(true);
     } catch {
       setAudioAvailable(false);

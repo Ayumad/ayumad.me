@@ -266,14 +266,14 @@ Available shape buttons:
 
 | Shape | Generator | Locked straight-on geometry |
 | --- | --- | --- |
-| Line | Lissajous | 1:1, 0° phase |
-| Circle | Lissajous | 1:1, 90° phase |
-| Eight | Lissajous | 2:1 |
-| Knot | Lissajous | 3:2, 90° phase, light harmonic |
-| Rose | Polar rose | five petals |
-| Star | Interpolated radial polygon | five points |
-| Polygon | Circle-to-polygon morph | six sides |
-| Orbit | Hypotrochoid-style orbit | 5:3 |
+| Line | Lissajous | exact 1:1 diagonal |
+| Circle | Lissajous | unit circle, 1:1 at 90° |
+| Eight | Lissajous | exact 2:1 figure eight |
+| Knot | Lissajous | exact 3:2 knot at 90° |
+| Rose | Polar rose | pure five-petal rose |
+| Star | Radial polygon | regular five-point star |
+| Polygon | Polygon interpolation | exact regular hexagon |
+| Orbit | Hypotrochoid | 5:3 hypocycloid |
 
 Controls:
 
@@ -285,7 +285,8 @@ Controls:
   every pointer/keyboard change to an exact note frequency, and displays both
   note name and Hz value.
 - `Scale`: 70–100%. The higher floor keeps the shape visually present.
-- `Motion`: 0–100%.
+- `Motion`: 0–100%. It controls the speed of a bright trace head traveling
+  around the fixed outline; it never changes the shape coordinates.
 - `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
@@ -314,9 +315,12 @@ Renderer:
   so the drawing reaches the scope edges instead of sitting in the center.
 - Large jumps between multiplied copies are treated as blanked flyback paths on
   the ASCII display, keeping the visible shapes separate.
-- Motion rotates the locked planar silhouette without altering its phase or
-  form, so animation cannot dissolve a line, circle, or other recognizable
-  shape into noise.
+- Physical character cells are taller than they are wide. The plot applies a
+  measured horizontal correction from the active grid’s cell dimensions so a
+  mathematical circle appears circular rather than as a wide ellipse.
+- Motion moves a brightness highlight around the locked outline without
+  changing phase, form, rotation, or scale, so animation cannot bend or smear a
+  standard shape.
 - Rendering is capped near 20 FPS.
 - The global renderer mode changes the trace conversion itself:
   `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
@@ -336,7 +340,8 @@ Audio:
 - The fundamental frequency follows the `Hz` control.
 - Copy multiplication is part of the sampled path, so its octave-rich audio and
   on-screen multiplicity come from the same data rather than separate effects.
-- Motion updates the audio geometry at a restrained interval.
+- Audio geometry stays identical to the authored visual geometry and updates
+  only when a real shape, scale, frequency, or multiplier value changes.
 - Master gain is intentionally low (`0.018`) and fades in/out to avoid abrupt
   output.
 - Muting suspends the audio context after the fade.
@@ -801,6 +806,8 @@ Current automated coverage checks:
 - all oscilloscope controls have correct default state;
 - curated shape resets, frequency, scale, motion, multiplier, pause, and safe
   random interactions;
+- circle output stays physically proportional after monospace cell-aspect
+  correction;
 - every route and primary heading;
 - all six generated route scenes;
 - project details and system inventory;
@@ -899,8 +906,11 @@ equal-tempered notes with note-name/Hz readout, scale, motion, and
 1×/2×/4×/8× multiplier controls; pause/run; curated random combinations; and
 optional stereo Web Audio muted by default. Lock ratio, phase, form, and base
 rotation inside each authored preset rather than exposing them. Each shape
-button must reset to a recognizable straight-on silhouette. Motion may rotate
-that planar silhouette but must not morph its phase or form. Random may select
+button must reset to a recognizable straight-on silhouette. Compensate for the
+physical width/height ratio of monospace character cells so circles, regular
+polygons, stars, and Lissajous figures render with standard proportions.
+Motion must move a brightness highlight around the fixed outline without
+changing any geometry. Random may select
 only a shape, safe 84–98% scale, restrained motion value, and multiplier; it
 must never generate arbitrary geometry. Multiplying copies must traverse the
 geometry multiple times per base cycle so the visible multiplication also
