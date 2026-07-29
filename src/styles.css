@@ -9,8 +9,8 @@
   --line: #394137;
   --fine: #20261f;
   --acid: #c7ff36;
-  --coral: #ff6047;
   --cyan: #48efd0;
+  --secondary: var(--cyan);
   --violet: #9a78ff;
   --ink: #090b08;
   --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
@@ -30,8 +30,8 @@
   --line: #7b8477;
   --fine: #c7ccbf;
   --acid: #4e7000;
-  --coral: #b82d1b;
   --cyan: #006e5c;
+  --secondary: var(--cyan);
   --violet: #5635a3;
   --ink: #f5faeb;
 }
@@ -288,7 +288,7 @@ main {
 
 .label span {
   margin-right: 14px;
-  color: var(--coral);
+  color: var(--secondary);
 }
 
 .button {
@@ -378,7 +378,7 @@ main {
   inset: 0;
   background:
     radial-gradient(circle at center, transparent 0 44%, color-mix(in srgb, var(--bg) 68%, transparent) 100%),
-    linear-gradient(90deg, transparent 72%, color-mix(in srgb, var(--coral) 9%, transparent));
+    linear-gradient(90deg, transparent 72%, color-mix(in srgb, var(--secondary) 9%, transparent));
   content: "";
   pointer-events: none;
 }
@@ -417,7 +417,7 @@ main {
 }
 
 .scope-footer span:last-child {
-  color: var(--coral);
+  color: var(--secondary);
 }
 
 .scope-stage {
@@ -581,7 +581,7 @@ main {
 
 .hero-index li span {
   margin-right: 10px;
-  color: var(--coral);
+  color: var(--secondary);
   font-size: 0.52rem;
 }
 
@@ -646,7 +646,7 @@ main {
 }
 
 .index-row > span {
-  color: var(--coral);
+  color: var(--secondary);
   font: 700 0.58rem/1 var(--mono);
 }
 
@@ -778,12 +778,12 @@ main {
 }
 
 .art-projects {
-  --art: var(--coral);
+  --art: var(--secondary);
   background:
     repeating-linear-gradient(
       135deg,
       transparent 0 9px,
-      color-mix(in srgb, var(--coral) 12%, transparent) 9px 10px
+      color-mix(in srgb, var(--secondary) 12%, transparent) 9px 10px
     ),
     var(--surface);
 }
@@ -823,9 +823,9 @@ main {
 }
 
 .art-contact {
-  --art: var(--coral);
+  --art: var(--secondary);
   background:
-    radial-gradient(circle, color-mix(in srgb, var(--coral) 44%, transparent) 0 0.8px, transparent 1px)
+    radial-gradient(circle, color-mix(in srgb, var(--secondary) 44%, transparent) 0 0.8px, transparent 1px)
       0 0 / 5px 5px,
     var(--surface);
 }
@@ -848,8 +848,8 @@ main {
   background: color-mix(in srgb, var(--bg) 94%, transparent);
 }
 
-.tone-coral {
-  --tone: var(--coral);
+.tone-violet {
+  --tone: var(--violet);
 }
 
 .tone-cyan {
@@ -876,7 +876,7 @@ main {
 .row-number {
   padding: 24px 18px;
   border-right: 1px solid var(--line);
-  color: var(--tone, var(--coral));
+  color: var(--tone, var(--secondary));
   font: 800 0.62rem/1 var(--mono);
 }
 
@@ -989,7 +989,7 @@ main {
 }
 
 .project-index span {
-  color: var(--coral);
+  color: var(--secondary);
   font: 800 0.62rem/1 var(--mono);
 }
 
@@ -1270,7 +1270,7 @@ main {
 }
 
 .now-row > span {
-  color: var(--coral);
+  color: var(--secondary);
   font: 800 0.62rem/1 var(--mono);
 }
 
