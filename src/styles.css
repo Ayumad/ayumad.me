@@ -756,7 +756,7 @@ main {
 .scope-shapes {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   border-right: 0;
 }
 
@@ -826,7 +826,7 @@ main {
   min-width: 0;
   min-height: 55px;
   grid-column: 1 / -1;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   border-right: 0;
 }
 
@@ -852,6 +852,18 @@ main {
   width: 18px;
   height: 18px;
   color: currentColor;
+}
+
+.scope-icon-3d {
+  display: block;
+  color: currentColor;
+  font: 900 0.62rem/1 var(--mono);
+  letter-spacing: 0.05em;
+}
+
+.scope-dimension[aria-pressed="true"] {
+  background: var(--cyan);
+  color: var(--ink);
 }
 
 .scope-icon-pause::before {
@@ -2354,7 +2366,7 @@ main {
   }
 
   .scope-stage {
-    bottom: 296px;
+    bottom: 338px;
     inset-inline: 8px;
   }
 
