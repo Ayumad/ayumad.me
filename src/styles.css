@@ -421,8 +421,10 @@ main {
 .scope-stage {
   position: absolute;
   z-index: 2;
-  inset: 48px 15px 45px;
+  inset: 48px 15px 116px;
   overflow: hidden;
+  cursor: crosshair;
+  touch-action: none;
 }
 
 .oscilloscope-grid {
@@ -478,6 +480,96 @@ main {
   left: calc(50% + 7px);
   color: var(--muted);
   font: 600 0.45rem/1 var(--mono);
+}
+
+.scope-drag {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  color: var(--muted);
+  font: 700 0.46rem/1 var(--mono);
+  letter-spacing: 0.08em;
+}
+
+.scope-controls {
+  position: absolute;
+  z-index: 7;
+  right: 15px;
+  bottom: 41px;
+  left: 15px;
+  display: grid;
+  grid-template-columns: minmax(132px, 0.85fr) repeat(2, minmax(120px, 1fr)) auto;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--cyan) 14%, transparent);
+}
+
+.scope-control {
+  display: grid;
+  min-width: 0;
+  min-height: 55px;
+  padding: 8px 10px;
+  grid-template-columns: auto minmax(42px, 1fr) auto;
+  align-items: center;
+  border-right: 1px solid var(--fine);
+  gap: 8px;
+}
+
+.scope-control > span {
+  color: var(--muted);
+  font: 700 0.48rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scope-control select {
+  width: 100%;
+  min-height: 30px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--cyan);
+  cursor: pointer;
+  font: 700 0.54rem/1 var(--mono);
+  text-transform: uppercase;
+}
+
+.scope-control input[type="range"] {
+  width: 100%;
+  min-width: 42px;
+  margin: 0;
+  accent-color: var(--cyan);
+  cursor: ew-resize;
+}
+
+.scope-control output {
+  min-width: 31px;
+  color: var(--soft);
+  font: 700 0.5rem/1 var(--mono);
+  text-align: right;
+}
+
+.scope-audio {
+  min-width: 78px;
+  padding: 0 11px;
+  border: 0;
+  background: var(--surface-2);
+  color: var(--soft);
+  cursor: pointer;
+  font: 800 0.52rem/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.scope-audio[aria-pressed="true"] {
+  background: var(--cyan);
+  color: var(--ink);
+}
+
+.scope-audio:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 .hero-copy {
@@ -1597,11 +1689,27 @@ main {
   }
 
   .hero {
-    grid-template-rows: minmax(460px, 1fr) auto;
+    grid-template-rows: minmax(500px, 1fr) auto;
   }
 
   .hero-art {
     grid-column: 1 / 7;
+  }
+
+  .scope-stage {
+    bottom: 146px;
+  }
+
+  .scope-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .scope-control:nth-child(2) {
+    border-right: 0;
+  }
+
+  .scope-control:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--fine);
   }
 
   .hero-copy {
@@ -1713,7 +1821,7 @@ main {
   .hero {
     min-height: auto;
     padding-block: 34px 24px;
-    grid-template-rows: 390px auto auto;
+    grid-template-rows: 450px auto auto;
   }
 
   .hero-art {
@@ -1843,7 +1951,7 @@ main {
   }
 
   .hero-art {
-    min-height: 310px;
+    min-height: 420px;
   }
 
   .oscilloscope-grid {
@@ -1859,6 +1967,16 @@ main {
 
   .scope-stage {
     inset-inline: 8px;
+  }
+
+  .scope-controls {
+    right: 8px;
+    left: 8px;
+  }
+
+  .scope-control {
+    min-height: 52px;
+    padding-inline: 8px;
   }
 
   .hero-copy {
