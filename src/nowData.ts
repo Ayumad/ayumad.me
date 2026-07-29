@@ -6,33 +6,33 @@ export const nowEntries: NowEntry[] = [
   {
     label: "Building",
     marker: "01",
-    title: "A homelab that feels like my own cloud",
+    title: "Homelab",
     description:
-      "Turning a ThinkStation P520 into a quiet, understandable home for local AI, media, storage, and services I can actually own.",
+      "Turning a ThinkStation P520 into a home for local AI, media, storage, and services.",
     detail: "Proxmox · ZFS · GPU passthrough · Debian",
   },
   {
     label: "Learning",
     marker: "02",
-    title: "How useful local AI becomes personal",
+    title: "Local AI",
     description:
-      "Exploring retrieval, memory, and agent workflows that make models work with the notes and systems I already use.",
+      "Exploring retrieval, memory, and agent workflows using my own notes and systems.",
     detail: "RAG · local LLMs · Obsidian · Computer Engineering",
   },
   {
     label: "Tuning",
     marker: "03",
-    title: "The last ten percent of an audio chain",
+    title: "Audio Chain",
     description:
-      "Comparing DACs, amplifiers, EQ curves, and room behavior until the small details stop feeling abstract.",
+      "Comparing DACs, amplifiers, EQ curves, and room behavior.",
     detail: "EQ · DAC/amps · measurement · listening",
   },
   {
     label: "Designing",
     marker: "04",
-    title: "This patch of the internet",
+    title: "Ayumad.me",
     description:
-      "Shaping Ayumad.me into a public map of projects, systems, notes, and experiments—not a résumé wearing a nicer shirt.",
-    detail: "TypeScript · motion · dither · words",
+      "Building this site as a visual index of projects, systems, notes, and experiments.",
+    detail: "TypeScript · motion · dither · ASCII",
   },
 ];

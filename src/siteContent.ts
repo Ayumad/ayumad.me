@@ -50,7 +50,7 @@ export interface SocialLink {
 
 export const navItems: NavItem[] = [
   { label: "Home", path: "/", index: "00" },
-  { label: "Showcase", path: "/showcase", index: "01" },
+  { label: "Work", path: "/showcase", index: "01" },
   { label: "Projects", path: "/projects", index: "02" },
   { label: "Systems", path: "/systems", index: "03" },
   { label: "Now", path: "/now", index: "04" },
@@ -61,27 +61,27 @@ export const navItems: NavItem[] = [
 export const showcaseTopics: ShowcaseTopic[] = [
   {
     title: "AI + Notes",
-    eyebrow: "Thinking with systems",
+    eyebrow: "Knowledge",
     summary:
-      "Local models, retrieval, and note workflows that make a knowledge base feel less like storage and more like a collaborator.",
+      "Local models, retrieval, and note workflows for working with a personal knowledge base.",
     items: ["RAG assistants", "Obsidian workflows", "Local LLMs", "Memory systems"],
     ascii: "  notes ──> chunks\n               │\n  prompt ──> retrieve ──> answer",
     tone: "lime",
   },
   {
     title: "Homelab",
-    eyebrow: "A cloud with a power button",
+    eyebrow: "Infrastructure",
     summary:
-      "Self-hosted infrastructure designed to stay legible: one workstation, carefully divided into storage, compute, and services.",
+      "One workstation divided into storage, compute, and self-hosted services.",
     items: ["Proxmox VE", "ZFS storage", "GPU passthrough", "Self-hosted services"],
     ascii: "  [ P520 ]\n    ├── storage / 4TB\n    ├── compute / RTX 3060\n    └── services / local",
     tone: "coral",
   },
   {
     title: "Audio",
-    eyebrow: "Signal, feeling, measurement",
+    eyebrow: "Sound",
     summary:
-      "The point where engineering meets taste—from DAC and amp chains to EQ, music tools, and visual representations of sound.",
+      "DAC and amplifier chains, EQ, music tools, and visual representations of sound.",
     items: ["DAC / amp chains", "EQ tuning", "Music technology", "Audio visualization"],
     ascii: "  source ~~~> DAC ~~~> amp\n                         │\n                    headphones ))",
     tone: "cyan",
@@ -134,33 +134,33 @@ export const projects: Project[] = [
 export const systemLayers: SystemLayer[] = [
   {
     index: "L1",
-    title: "AI Layer",
+    title: "AI",
     description:
-      "Tools for retrieval, reasoning, and memory that remain understandable enough to adapt.",
+      "Tools for retrieval, reasoning, and memory.",
     items: ["RAG", "Local LLMs", "Prompt workflows", "Hermes agent"],
     signal: "context → retrieve → reason",
   },
   {
     index: "L2",
-    title: "Hardware Layer",
+    title: "Hardware",
     description:
-      "The physical base: machines, storage, and compute arranged for utility and ownership.",
+      "Machines, storage, and compute for local services.",
     items: ["P520 homelab", "GPU planning", "Servers", "ZFS storage"],
     signal: "power → compute → services",
   },
   {
     index: "L3",
-    title: "Audio Layer",
+    title: "Audio",
     description:
-      "A chain where objective signal behavior and subjective listening meet.",
+      "Playback, production, measurement, and listening.",
     items: ["DAC / amp chains", "EQ", "Music production", "Measurement"],
     signal: "source → shape → listen",
   },
   {
     index: "L4",
-    title: "Knowledge Layer",
+    title: "Knowledge",
     description:
-      "Notes and memory systems that help ideas stay connected rather than merely archived.",
+      "Notes and memory systems for connected ideas.",
     items: ["Obsidian vault", "Daily briefs", "Mnemosyne memory", "Public notes"],
     signal: "capture → connect → recall",
   },
@@ -191,13 +191,13 @@ export const socialLinks: SocialLink[] = [
 
 export const pageMeta: Record<string, { title: string; description: string }> = {
   "/": {
-    title: "Ayumad.me — Systems, signals, and useful detours",
+    title: "Ayumad.me — Ayush Madhukar",
     description:
-      "Ayush Madhukar's field log of projects, systems, signals, and experiments in progress.",
+      "Projects and notes by Ayush Madhukar across AI, audio, hardware, and self-hosted systems.",
   },
   "/showcase": {
-    title: "Showcase — Ayumad.me",
-    description: "Deep interests across AI and notes, homelab infrastructure, and audio.",
+    title: "Work — Ayumad.me",
+    description: "Work across AI and notes, homelab infrastructure, and audio.",
   },
   "/projects": {
     title: "Projects — Ayumad.me",

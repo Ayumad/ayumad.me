@@ -15,10 +15,10 @@ describe("Ayumad.me", () => {
   it("renders the home page and all primary navigation destinations", () => {
     renderAt("/");
 
-    expect(screen.getByRole("heading", { name: /Systems, signals/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
-    expect(within(navigation).getByRole("link", { name: /Showcase/i })).toHaveAttribute(
+    expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
       "href",
       "#/showcase",
     );
@@ -37,11 +37,11 @@ describe("Ayumad.me", () => {
   });
 
   it.each([
-    ["/showcase", "Three threads, one practice."],
-    ["/systems", "The stack behind the stack."],
-    ["/now", "A snapshot, not a promise."],
-    ["/about", "Technology is the hobby."],
-    ["/contact", "Send a signal."],
+    ["/showcase", "Work"],
+    ["/systems", "Systems"],
+    ["/now", "Now"],
+    ["/about", "About"],
+    ["/contact", "Contact"],
   ])("renders %s with its primary heading", (path, heading) => {
     renderAt(path);
     expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
@@ -50,8 +50,8 @@ describe("Ayumad.me", () => {
   it("renders a useful not-found route", () => {
     renderAt("/missing-signal");
 
-    expect(screen.getByRole("heading", { name: /wandered off the map/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Return home" })).toHaveAttribute("href", "#/");
+    expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#/");
   });
 
   it("persists theme changes", () => {

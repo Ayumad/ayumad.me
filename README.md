@@ -1,11 +1,11 @@
 # Ayumad.me
 
-Ayush Madhukar's field log—a personal map of AI, audio, hardware, notes,
-servers, Linux, systems, signals, and useful detours.
+Projects and notes by Ayush Madhukar across AI, audio, hardware, notes,
+servers, Linux, and self-hosted systems.
 
-The site is intentionally more notebook than résumé. Its visual system combines
-ASCII compositions, tiled Linux desktop geometry, node-graph diagrams, CRT
-texture, sharp terminal typography, and a restrained field of drifting glyphs.
+The site is intentionally more notebook than résumé. Its visual system uses
+hand-built character fields, density ramps, ordered dither, hard grid lines,
+oversized monospace type, and restrained motion.
 
 No AI-generated imagery ships with the site. The visible artwork is composed
 from type, CSS, canvas glyphs, and hand-built ASCII; the social card uses the
