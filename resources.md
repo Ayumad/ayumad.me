@@ -809,6 +809,8 @@ Current automated coverage checks:
   random interactions;
 - circle output stays physically proportional after monospace cell-aspect
   correction;
+- every shape remains inside the drawable plot at maximum scale across all four
+  multiplier settings;
 - every route and primary heading;
 - all six generated route scenes;
 - project details and system inventory;

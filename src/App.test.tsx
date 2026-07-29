@@ -197,6 +197,37 @@ describe("Ayumad.me", () => {
     expect(physicalRatio).toBeLessThan(1.15);
   });
 
+  it("keeps every shape inside the plot at maximum scale and multiplier", () => {
+    renderAt("/");
+    const scale = screen.getByRole("slider", { name: "Scale" });
+    const multiplier = screen.getByRole("slider", { name: "Multiplier" });
+    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
+    const shapes = [
+      "Line",
+      "Circle",
+      "Eight",
+      "Knot",
+      "Rose",
+      "Star",
+      "Polygon",
+      "Orbit",
+    ];
+
+    for (const shape of shapes) {
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: new RegExp(`${shape} shape`, "i"),
+        }),
+      );
+      fireEvent.change(scale, { target: { value: "1" } });
+
+      for (const octave of ["0", "1", "2", "3"]) {
+        fireEvent.change(multiplier, { target: { value: octave } });
+        expect(grid).toHaveAttribute("data-clipped-samples", "0");
+      }
+    }
+  });
+
   it("renders project stories on the projects route", () => {
     renderAt("/projects");
 

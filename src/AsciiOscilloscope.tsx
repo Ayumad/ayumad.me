@@ -544,6 +544,8 @@ export default function AsciiOscilloscope() {
     let previousClock = performance.now();
     let visible = !document.hidden;
     let horizontalCorrection = 1;
+    let plotHalfHeight = 0.45;
+    let clippedSamples = 0;
 
     const configureGrid = () => {
       const width = container.clientWidth || 680;
@@ -557,6 +559,7 @@ export default function AsciiOscilloscope() {
         1,
         physicalGridHeight / physicalGridWidth,
       );
+      plotHalfHeight = 0.5 - 1 / (rows - 1);
       intensity = new Float32Array(columns * rows);
       direction = new Float32Array(columns * rows);
       output.style.setProperty("--scope-columns", columns.toString());
@@ -565,10 +568,13 @@ export default function AsciiOscilloscope() {
 
     const plot = (x: number, y: number, angle: number, strength: number) => {
       const column = Math.round(
-        (x * horizontalCorrection * 0.495 + 0.5) * (columns - 1),
+        (x * horizontalCorrection * plotHalfHeight + 0.5) * (columns - 1),
       );
-      const row = Math.round((0.5 - y * 0.495) * (rows - 1));
-      if (column < 1 || column >= columns - 1 || row < 1 || row >= rows - 1) return;
+      const row = Math.round((0.5 - y * plotHalfHeight) * (rows - 1));
+      if (column < 1 || column >= columns - 1 || row < 1 || row >= rows - 1) {
+        clippedSamples += 1;
+        return;
+      }
 
       const center = row * columns + column;
       intensity[center] = Math.min(1.6, intensity[center] + strength);
@@ -590,6 +596,7 @@ export default function AsciiOscilloscope() {
 
     const render = (clear = false) => {
       if (clear) intensity.fill(0);
+      clippedSamples = 0;
       const current = settingsRef.current;
       const time = reducedMotion ? 0 : elapsedRef.current / 1000;
       const renderFrame = Math.floor(elapsedRef.current / 80);
@@ -622,8 +629,8 @@ export default function AsciiOscilloscope() {
           continue;
         }
         const scaledDistance = Math.hypot(
-          deltaX * columns * horizontalCorrection * 0.495,
-          deltaY * rows * 0.495,
+          deltaX * columns * horizontalCorrection * plotHalfHeight,
+          deltaY * rows * plotHalfHeight,
         );
         const steps = Math.max(1, Math.ceil(scaledDistance));
         const angle = Math.atan2(
@@ -726,6 +733,7 @@ export default function AsciiOscilloscope() {
       }
 
       output.textContent = lines.join("\n");
+      output.dataset.clippedSamples = clippedSamples.toString();
     };
 
     const draw = (time: number) => {
