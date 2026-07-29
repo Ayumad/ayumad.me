@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
+import AsciiOscilloscope from "./AsciiOscilloscope";
 import ParticleField from "./ParticleField";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
@@ -27,21 +28,6 @@ type Theme = "light" | "dark";
 interface ErrorBoundaryState {
   hasError: boolean;
 }
-
-const homeField = String.raw`
-         ░▒▓██████▓▒░              ██▓▒░        ░▒▓██
-       ░▓██▒░    ░▒██▓░            ████▓▒░    ░▒▓████
-     ░▓██▒░        ░▒██▓░          ██▒██▓▒░  ░▒▓██▒██
-    ▒██▓░            ░▓██▒         ██▒░██▓▒░▒▓██░▒██
-   ▓██▒                ▒██▓        ██▒ ░▒██▓██▒░ ▒██
-  ██████████████████████████       ██▒   ░▒██▒░   ▒██
-  ██▒                    ▒██       ██▒     ░░     ▒██
-  ██▒                    ▒██       ██▒            ▒██
-  ██▒                    ▒██       ██▒            ▒██
-  ██▒                    ▒██       ██▒            ▒██
-  ██▒                    ▒██       ██▒            ▒██
-  ▓▒░                    ░▒▓       ▓▒░            ░▒▓
-`;
 
 const sectionArt = {
   work: String.raw`
@@ -337,10 +323,7 @@ function HomePage() {
   return (
     <>
       <section className="hero section-shell">
-        <div className="hero-art">
-          <pre aria-hidden="true">{homeField}</pre>
-          <p aria-hidden="true">{" .,:;irsXA253hMHGS#9B&@"}</p>
-        </div>
+        <AsciiOscilloscope />
 
         <div className="hero-copy">
           <p className="label">Computer Engineering</p>
