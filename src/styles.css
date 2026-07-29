@@ -335,7 +335,7 @@ main {
   min-height: calc(100vh - var(--header));
   padding-block: 5vw 38px;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: minmax(520px, 1fr) auto;
+  grid-template-rows: minmax(680px, 1fr) auto;
   align-items: stretch;
 }
 
@@ -375,7 +375,7 @@ main {
   z-index: 3;
   inset: 0;
   background:
-    radial-gradient(circle at center, transparent 0 44%, color-mix(in srgb, var(--bg) 68%, transparent) 100%),
+    radial-gradient(circle at center, transparent 0 62%, color-mix(in srgb, var(--bg) 68%, transparent) 100%),
     linear-gradient(90deg, transparent 72%, color-mix(in srgb, var(--secondary) 9%, transparent));
   content: "";
   pointer-events: none;
@@ -421,7 +421,7 @@ main {
 .scope-stage {
   position: absolute;
   z-index: 2;
-  inset: 48px 15px 116px;
+  inset: 48px 15px 218px;
   overflow: hidden;
   cursor: crosshair;
   touch-action: none;
@@ -434,7 +434,7 @@ main {
   width: max-content;
   margin: 0;
   color: var(--cyan);
-  font: 800 clamp(0.48rem, 0.73vw, 0.7rem)/0.91 var(--mono);
+  font: 800 var(--scope-font-size, 0.7rem)/0.91 var(--mono);
   letter-spacing: 0;
   text-shadow:
     0 0 5px color-mix(in srgb, var(--cyan) 72%, transparent),
@@ -498,7 +498,7 @@ main {
   bottom: 41px;
   left: 15px;
   display: grid;
-  grid-template-columns: minmax(132px, 0.85fr) repeat(2, minmax(120px, 1fr)) auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--cyan) 14%, transparent);
@@ -513,6 +513,18 @@ main {
   align-items: center;
   border-right: 1px solid var(--fine);
   gap: 8px;
+}
+
+.scope-controls > * {
+  border-bottom: 1px solid var(--fine);
+}
+
+.scope-controls > :nth-child(3n) {
+  border-right: 0;
+}
+
+.scope-controls > :nth-last-child(-n + 3) {
+  border-bottom: 0;
 }
 
 .scope-control > span {
@@ -544,22 +556,69 @@ main {
 }
 
 .scope-control output {
-  min-width: 31px;
+  min-width: 35px;
   color: var(--soft);
   font: 700 0.5rem/1 var(--mono);
   text-align: right;
 }
 
-.scope-audio {
-  min-width: 78px;
-  padding: 0 11px;
+.scope-ratio {
+  grid-template-columns: auto 34px auto 34px;
+}
+
+.scope-ratio input[type="number"] {
+  width: 34px;
+  min-height: 30px;
+  padding: 0 3px;
   border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--cyan);
+  font: 700 0.58rem/1 var(--mono);
+  text-align: center;
+}
+
+.scope-ratio > span:nth-of-type(2) {
+  color: var(--soft);
+  font-size: 0.64rem;
+  text-align: center;
+}
+
+.scope-actions {
+  display: grid;
+  min-width: 0;
+  min-height: 55px;
+  grid-template-columns: repeat(3, 1fr);
+  border-right: 1px solid var(--fine);
+}
+
+.scope-actions button {
+  min-width: 0;
+  padding: 0 6px;
+  border: 0;
+  border-right: 1px solid var(--fine);
   background: var(--surface-2);
   color: var(--soft);
   cursor: pointer;
-  font: 800 0.52rem/1 var(--mono);
-  letter-spacing: 0.06em;
+  font: 800 0.48rem/1 var(--mono);
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.scope-actions button:last-child {
+  border-right: 0;
+}
+
+.scope-actions button:hover {
+  color: var(--cyan);
+}
+
+.scope-actions button[aria-pressed="true"] {
+  color: var(--cyan);
+}
+
+.scope-audio {
+  min-width: 0;
 }
 
 .scope-audio[aria-pressed="true"] {
@@ -1690,27 +1749,11 @@ main {
   }
 
   .hero {
-    grid-template-rows: minmax(500px, 1fr) auto;
+    grid-template-rows: minmax(700px, 1fr) auto;
   }
 
   .hero-art {
     grid-column: 1 / 7;
-  }
-
-  .scope-stage {
-    bottom: 146px;
-  }
-
-  .scope-controls {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .scope-control:nth-child(2) {
-    border-right: 0;
-  }
-
-  .scope-control:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--fine);
   }
 
   .hero-copy {
@@ -1822,20 +1865,21 @@ main {
   .hero {
     min-height: auto;
     padding-block: 34px 24px;
-    grid-template-rows: 450px auto auto;
+    grid-template-rows: 640px auto auto;
   }
 
   .hero-art {
-    grid-column: 1 / 7;
+    grid-column: 1 / -1;
     grid-row: 1;
   }
 
   .hero-copy {
-    grid-column: 7 / -1;
-    grid-row: 1;
+    grid-column: 1 / -1;
+    grid-row: 2;
     align-self: stretch;
     padding: 38px;
-    border-left: 0;
+    border-top: 0;
+    border-left: 1px solid var(--line);
   }
 
   .hero h1 {
@@ -1952,11 +1996,11 @@ main {
   }
 
   .hero-art {
-    min-height: 420px;
+    min-height: 700px;
   }
 
   .oscilloscope-grid {
-    font-size: clamp(0.42rem, 1.82vw, 0.54rem);
+    font-size: var(--scope-font-size, 0.62rem);
   }
 
   .scope-header,
@@ -1967,12 +2011,30 @@ main {
   }
 
   .scope-stage {
+    bottom: 315px;
     inset-inline: 8px;
   }
 
   .scope-controls {
     right: 8px;
     left: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scope-controls > :nth-child(3n) {
+    border-right: 1px solid var(--fine);
+  }
+
+  .scope-controls > :nth-child(2n) {
+    border-right: 0;
+  }
+
+  .scope-controls > :nth-last-child(-n + 3) {
+    border-bottom: 1px solid var(--fine);
+  }
+
+  .scope-controls > :nth-last-child(-n + 1) {
+    border-bottom: 0;
   }
 
   .scope-control {

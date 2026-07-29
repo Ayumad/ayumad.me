@@ -25,9 +25,14 @@ describe("Ayumad.me", () => {
     const signalText = renderedSignal?.textContent ?? "";
     expect(signalText.length).toBeGreaterThan(1_000);
     expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
-    expect(screen.getByRole("combobox", { name: "Ratio" })).toHaveValue("0");
+    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("knot");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("55");
+    expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(3);
+    expect(screen.getByRole("spinbutton", { name: "Y ratio" })).toHaveValue(2);
     expect(screen.getByRole("slider", { name: "Phase" })).toHaveValue("90");
-    expect(screen.getByRole("slider", { name: "Shape" })).toHaveValue("0.12");
+    expect(screen.getByRole("slider", { name: "Form" })).toHaveValue("0.12");
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
     expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -47,19 +52,37 @@ describe("Ayumad.me", () => {
   it("updates the oscilloscope from its accessible controls", () => {
     renderAt("/");
 
-    fireEvent.change(screen.getByRole("combobox", { name: "Ratio" }), {
-      target: { value: "2" },
+    fireEvent.change(screen.getByRole("combobox", { name: "Preset" }), {
+      target: { value: "star" },
+    });
+    fireEvent.change(screen.getByRole("slider", { name: "Frequency" }), {
+      target: { value: "110" },
+    });
+    fireEvent.change(screen.getByRole("spinbutton", { name: "X ratio" }), {
+      target: { value: "7" },
     });
     fireEvent.change(screen.getByRole("slider", { name: "Phase" }), {
       target: { value: "180" },
     });
-    fireEvent.change(screen.getByRole("slider", { name: "Shape" }), {
-      target: { value: "0.25" },
+    fireEvent.change(screen.getByRole("slider", { name: "Form" }), {
+      target: { value: "0.3" },
     });
 
-    expect(screen.getByRole("combobox", { name: "Ratio" })).toHaveValue("2");
+    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("star");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("110");
+    expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(7);
     expect(screen.getByText("180°")).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.getByText("30%")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Pause animation" }));
+    expect(screen.getByRole("button", { name: "Run animation" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset" }));
+    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("knot");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("55");
   });
 
   it("renders project stories on the projects route", () => {
