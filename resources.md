@@ -280,7 +280,10 @@ Controls:
 - Eight visible geometric shape buttons replace a hidden preset menu. Selecting
   one loads sensible starting geometry while leaving frequency and copy count
   available for performance.
-- `Hz`: changes the fundamental output frequency from 35–220 Hz.
+- `Hz`: selects chromatic equal-tempered notes from D1 (36.71 Hz) through A3
+  (220 Hz). The range input operates in semitone steps, automatically snaps
+  every pointer/keyboard change to an exact note frequency, and displays both
+  note name and Hz value.
 - `Ratio`: independently changes X and Y integer ratios from 1–9.
 - `Phase`: 0–360°.
 - `Form`: morph amount/harmonic depth.
@@ -889,7 +892,8 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 
 Build the homepage around a large code-rendered ASCII XY oscilloscope
 instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
-visible shape buttons; include fundamental frequency, editable X:Y ratios,
+visible shape buttons; include a D1–A3 frequency slider quantized to chromatic
+equal-tempered notes with note-name/Hz readout, editable X:Y ratios,
 phase, form, rotation, scale, motion, and 1×/2×/4×/8× copy controls; direct
 pointer manipulation; pause/run; true geometry randomization; and optional
 stereo Web Audio muted by default. Multiplying copies must traverse the
