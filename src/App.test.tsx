@@ -374,9 +374,9 @@ describe("Ayumad.me", () => {
   it("renders project stories on the projects route", () => {
     renderAt("/projects");
 
+    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Hermes Remote" })).toBeInTheDocument();
     expect(screen.getAllByText("Completed")).toHaveLength(3);
   });
 
