@@ -828,7 +828,7 @@ main {
 }
 
 .scope-control output {
-  min-width: 35px;
+  min-width: 58px;
   color: var(--soft);
   font: 700 0.5rem/1 var(--mono);
   text-align: right;
