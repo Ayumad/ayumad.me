@@ -3,16 +3,22 @@ import { useReducedMotion } from "motion/react";
 import { useRenderMode } from "./renderMode";
 
 type PresetId =
-  | "line"
+  | "wave"
   | "circle"
+  | "triangle"
   | "square"
-  | "eight"
+  | "star"
+  | "hex"
+  | "spiral"
   | "knot"
-  | "rose"
+  | "orbit";
+type GeneratorId =
+  | "wave"
+  | "lissajous"
+  | "spiral"
   | "star"
   | "polygon"
   | "orbit";
-type GeneratorId = "lissajous" | "rose" | "star" | "polygon" | "orbit";
 type DimensionMode = "2d" | "3d";
 
 interface SignalSettings {
@@ -48,6 +54,7 @@ interface RandomVariant {
   scale: number;
   motion: number;
   octave: 0 | 1 | 2;
+  units: 72 | 96 | 120;
 }
 
 interface Point {
@@ -67,6 +74,13 @@ interface Curve3D {
   points: Point3D[];
 }
 
+interface SpatialView {
+  yaw: number;
+  pitch: number;
+  yawRate: number;
+  pitchRate: number;
+}
+
 interface AudioGraph {
   context: AudioContext;
   xOscillator: OscillatorNode;
@@ -82,16 +96,16 @@ interface MusicalNote {
 
 const presets: Preset[] = [
   {
-    id: "line",
-    label: "LINE",
-    generator: "lissajous",
-    xRatio: 1,
+    id: "wave",
+    label: "WAVE",
+    generator: "wave",
+    xRatio: 2,
     yRatio: 1,
     phaseDegrees: 0,
     form: 0,
     rotationDegrees: 0,
     scale: 0.96,
-    motion: 0.04,
+    motion: 0.16,
   },
   {
     id: "circle",
@@ -103,7 +117,19 @@ const presets: Preset[] = [
     form: 0,
     rotationDegrees: 0,
     scale: 0.98,
-    motion: 0.08,
+    motion: 0.14,
+  },
+  {
+    id: "triangle",
+    label: "TRIANGLE",
+    generator: "polygon",
+    xRatio: 3,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 1,
+    rotationDegrees: 0,
+    scale: 0.98,
+    motion: 0.12,
   },
   {
     id: "square",
@@ -115,43 +141,7 @@ const presets: Preset[] = [
     form: 1,
     rotationDegrees: 45,
     scale: 0.98,
-    motion: 0.1,
-  },
-  {
-    id: "eight",
-    label: "EIGHT",
-    generator: "lissajous",
-    xRatio: 2,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 0,
-    rotationDegrees: 0,
-    scale: 0.98,
-    motion: 0.15,
-  },
-  {
-    id: "knot",
-    label: "KNOT",
-    generator: "lissajous",
-    xRatio: 3,
-    yRatio: 2,
-    phaseDegrees: 90,
-    form: 0,
-    rotationDegrees: 0,
-    scale: 0.98,
-    motion: 0.22,
-  },
-  {
-    id: "rose",
-    label: "ROSE",
-    generator: "rose",
-    xRatio: 5,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 1,
-    rotationDegrees: -90,
-    scale: 0.96,
-    motion: 0.18,
+    motion: 0.12,
   },
   {
     id: "star",
@@ -163,11 +153,11 @@ const presets: Preset[] = [
     form: 0.86,
     rotationDegrees: 0,
     scale: 0.96,
-    motion: 0.12,
+    motion: 0.16,
   },
   {
-    id: "polygon",
-    label: "POLYGON",
+    id: "hex",
+    label: "HEX",
     generator: "polygon",
     xRatio: 6,
     yRatio: 1,
@@ -175,7 +165,31 @@ const presets: Preset[] = [
     form: 1,
     rotationDegrees: 0,
     scale: 0.96,
-    motion: 0.1,
+    motion: 0.12,
+  },
+  {
+    id: "spiral",
+    label: "SPIRAL",
+    generator: "spiral",
+    xRatio: 3,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0,
+    rotationDegrees: 0,
+    scale: 0.96,
+    motion: 0.18,
+  },
+  {
+    id: "knot",
+    label: "KNOT",
+    generator: "lissajous",
+    xRatio: 3,
+    yRatio: 2,
+    phaseDegrees: 90,
+    form: 0,
+    rotationDegrees: 0,
+    scale: 0.94,
+    motion: 0.2,
   },
   {
     id: "orbit",
@@ -186,34 +200,34 @@ const presets: Preset[] = [
     phaseDegrees: 0,
     form: 0.93,
     rotationDegrees: 0,
-    scale: 0.96,
-    motion: 0.2,
+    scale: 0.94,
+    motion: 0.18,
   },
 ];
 
 const randomVariants: RandomVariant[] = [
-  { preset: "line", scale: 0.96, motion: 0.08, octave: 0 },
-  { preset: "line", scale: 0.88, motion: 0.14, octave: 2 },
-  { preset: "circle", scale: 0.98, motion: 0.08, octave: 0 },
-  { preset: "circle", scale: 0.9, motion: 0.16, octave: 2 },
-  { preset: "eight", scale: 0.98, motion: 0.14, octave: 0 },
-  { preset: "eight", scale: 0.88, motion: 0.18, octave: 1 },
-  { preset: "knot", scale: 0.96, motion: 0.12, octave: 0 },
-  { preset: "knot", scale: 0.84, motion: 0.16, octave: 1 },
-  { preset: "rose", scale: 0.94, motion: 0.16, octave: 0 },
-  { preset: "rose", scale: 0.84, motion: 0.18, octave: 1 },
-  { preset: "star", scale: 0.96, motion: 0.14, octave: 0 },
-  { preset: "star", scale: 0.84, motion: 0.18, octave: 1 },
-  { preset: "polygon", scale: 0.96, motion: 0.12, octave: 0 },
-  { preset: "polygon", scale: 0.86, motion: 0.16, octave: 2 },
-  { preset: "orbit", scale: 0.94, motion: 0.14, octave: 0 },
-  { preset: "orbit", scale: 0.84, motion: 0.16, octave: 1 },
-  { preset: "square", scale: 0.96, motion: 0.1, octave: 0 },
-  { preset: "square", scale: 0.86, motion: 0.16, octave: 2 },
+  { preset: "wave", scale: 0.96, motion: 0.14, octave: 0, units: 72 },
+  { preset: "wave", scale: 0.88, motion: 0.18, octave: 2, units: 120 },
+  { preset: "circle", scale: 0.96, motion: 0.14, octave: 0, units: 96 },
+  { preset: "circle", scale: 0.86, motion: 0.18, octave: 1, units: 120 },
+  { preset: "triangle", scale: 0.98, motion: 0.12, octave: 0, units: 72 },
+  { preset: "triangle", scale: 0.86, motion: 0.18, octave: 2, units: 120 },
+  { preset: "square", scale: 0.98, motion: 0.12, octave: 0, units: 72 },
+  { preset: "square", scale: 0.86, motion: 0.18, octave: 2, units: 120 },
+  { preset: "star", scale: 0.96, motion: 0.14, octave: 0, units: 96 },
+  { preset: "star", scale: 0.84, motion: 0.18, octave: 1, units: 96 },
+  { preset: "hex", scale: 0.96, motion: 0.12, octave: 0, units: 72 },
+  { preset: "hex", scale: 0.86, motion: 0.16, octave: 2, units: 120 },
+  { preset: "spiral", scale: 0.96, motion: 0.16, octave: 0, units: 96 },
+  { preset: "spiral", scale: 0.84, motion: 0.2, octave: 1, units: 120 },
+  { preset: "knot", scale: 0.94, motion: 0.18, octave: 0, units: 96 },
+  { preset: "knot", scale: 0.82, motion: 0.2, octave: 1, units: 120 },
+  { preset: "orbit", scale: 0.94, motion: 0.18, octave: 0, units: 96 },
+  { preset: "orbit", scale: 0.82, motion: 0.2, octave: 1, units: 120 },
 ];
 
 const defaultPreset =
-  presets.find((preset) => preset.id === "knot") ?? presets[0];
+  presets.find((preset) => preset.id === "star") ?? presets[0];
 const bayer4 = [
   0, 8, 2, 10,
   12, 4, 14, 6,
@@ -407,27 +421,27 @@ function waveScene(): Curve3D[] {
     const phase = amount * Math.PI * 4;
     return {
       x: mix(-0.78, 0.78, amount),
-      y: Math.sin(phase + strand * 0.32) * 0.28,
-      z: strand * 0.16 + Math.cos(phase * 0.5) * 0.1,
+      y: Math.sin(phase + strand * 0.16) * 0.25,
+      z: strand * 0.105,
     };
   };
 
   return [
-    ...[-1, 0, 1].map((strand) =>
-      sampledCurve3D(72, (amount) => wavePoint(amount, strand), false),
+    ...[-3, -2, -1, 0, 1, 2, 3].map((strand) =>
+      sampledCurve3D(84, (amount) => wavePoint(amount, strand), false),
     ),
-    ...Array.from({ length: 13 }, (_, index) => {
-      const amount = index / 12;
+    ...Array.from({ length: 17 }, (_, index) => {
+      const amount = index / 16;
       return {
-        points: [wavePoint(amount, -1), wavePoint(amount, 1)],
+        points: [wavePoint(amount, -3), wavePoint(amount, 3)],
       };
     }),
   ];
 }
 
 function torusScene(): Curve3D[] {
-  const majorRadius = 0.55;
-  const minorRadius = 0.2;
+  const majorRadius = 0.48;
+  const minorRadius = 0.25;
   const torusPoint = (u: number, v: number): Point3D => ({
     x: (majorRadius + minorRadius * Math.cos(v)) * Math.cos(u),
     y: minorRadius * Math.sin(v),
@@ -435,14 +449,14 @@ function torusScene(): Curve3D[] {
   });
 
   return [
-    ...Array.from({ length: 7 }, (_, index) => {
-      const v = (index / 7) * Math.PI * 2;
+    ...Array.from({ length: 6 }, (_, index) => {
+      const v = (index / 6) * Math.PI * 2;
       return sampledCurve3D(64, (amount) =>
         torusPoint(amount * Math.PI * 2, v),
       );
     }),
-    ...Array.from({ length: 10 }, (_, index) => {
-      const u = (index / 10) * Math.PI * 2;
+    ...Array.from({ length: 12 }, (_, index) => {
+      const u = (index / 12) * Math.PI * 2;
       return sampledCurve3D(28, (amount) =>
         torusPoint(u, amount * Math.PI * 2),
       );
@@ -450,26 +464,20 @@ function torusScene(): Curve3D[] {
   ];
 }
 
-function eightScene(): Curve3D[] {
-  const eightPoint = (amount: number, strand: number): Point3D => {
-    const theta = amount * Math.PI * 2;
+function pyramidScene(): Curve3D[] {
+  const base = Array.from({ length: 3 }, (_, index) => {
+    const angle = -Math.PI / 2 + (index * Math.PI * 2) / 3;
     return {
-      x: Math.sin(theta) * 0.66,
-      y: Math.sin(theta * 2) * 0.44,
-      z: Math.cos(theta) * 0.18 + strand * 0.055,
+      x: Math.cos(angle) * 0.62,
+      y: -0.42,
+      z: Math.sin(angle) * 0.62,
     };
-  };
+  });
+  const apex = { x: 0, y: 0.68, z: 0 };
 
   return [
-    ...[-1, 0, 1].map((strand) =>
-      sampledCurve3D(84, (amount) => eightPoint(amount, strand)),
-    ),
-    ...Array.from({ length: 12 }, (_, index) => {
-      const amount = index / 12;
-      return {
-        points: [eightPoint(amount, -1), eightPoint(amount, 1)],
-      };
-    }),
+    { points: [...base, base[0]] },
+    ...base.map((point) => ({ points: [point, apex] })),
   ];
 }
 
@@ -488,25 +496,25 @@ function knotScene(): Curve3D[] {
   );
 }
 
-function roseScene(): Curve3D[] {
-  const rosePoint = (amount: number, layer: number): Point3D => {
-    const theta = amount * Math.PI * 2;
-    const radius = Math.cos(theta * 5) * 0.66;
+function helixScene(): Curve3D[] {
+  const helixPoint = (amount: number, rail: number): Point3D => {
+    const theta = amount * Math.PI * 6;
+    const radius = 0.46 + rail * 0.035;
     return {
-      x: radius * Math.cos(theta),
-      y: radius * Math.sin(theta),
-      z: layer * 0.065 + Math.sin(theta * 5) * 0.11,
+      x: Math.cos(theta) * radius,
+      y: mix(-0.7, 0.7, amount),
+      z: Math.sin(theta) * radius,
     };
   };
 
   return [
-    ...[-2, -1, 0, 1, 2].map((layer) =>
-      sampledCurve3D(100, (amount) => rosePoint(amount, layer)),
+    ...[-1, 0, 1].map((rail) =>
+      sampledCurve3D(120, (amount) => helixPoint(amount, rail), false),
     ),
-    ...Array.from({ length: 15 }, (_, index) => {
-      const amount = index / 15;
+    ...Array.from({ length: 19 }, (_, index) => {
+      const amount = index / 18;
       return {
-        points: [rosePoint(amount, -2), rosePoint(amount, 2)],
+        points: [helixPoint(amount, -1), helixPoint(amount, 1)],
       };
     }),
   ];
@@ -560,27 +568,39 @@ function projectPoint3D(
 }
 
 const spatialScenes: Record<PresetId, Curve3D[]> = {
-  line: waveScene(),
+  wave: waveScene(),
   circle: torusScene(),
+  triangle: pyramidScene(),
   square: prismScene(4, 0.68, 0.48),
-  eight: eightScene(),
-  knot: knotScene(),
-  rose: roseScene(),
   star: prismScene(5, 0.7, 0.25, 0.31),
-  polygon: prismScene(6, 0.7, 0.3),
+  hex: prismScene(6, 0.7, 0.3),
+  spiral: helixScene(),
+  knot: knotScene(),
   orbit: orbitScene(),
 };
 
 const spatialGeometryNames: Record<PresetId, string> = {
-  line: "wave",
+  wave: "wave-surface",
   circle: "torus",
+  triangle: "pyramid",
   square: "cube",
-  eight: "lemniscate",
-  knot: "torus-knot",
-  rose: "rose-cage",
   star: "star-prism",
-  polygon: "hexagonal-prism",
+  hex: "hexagonal-prism",
+  spiral: "helix",
+  knot: "torus-knot",
   orbit: "orbital-cage",
+};
+
+const spatialViews: Record<PresetId, SpatialView> = {
+  wave: { yaw: 0.68, pitch: -0.48, yawRate: 0.75, pitchRate: 0.22 },
+  circle: { yaw: 0.35, pitch: -0.68, yawRate: 0.55, pitchRate: 0.72 },
+  triangle: { yaw: 0.72, pitch: -0.46, yawRate: 0.82, pitchRate: 0.34 },
+  square: { yaw: 0.7, pitch: -0.5, yawRate: 0.78, pitchRate: 0.31 },
+  star: { yaw: 0.58, pitch: -0.54, yawRate: 0.72, pitchRate: 0.28 },
+  hex: { yaw: 0.68, pitch: -0.48, yawRate: 0.76, pitchRate: 0.3 },
+  spiral: { yaw: 0.46, pitch: -0.26, yawRate: 0.88, pitchRate: 0.24 },
+  knot: { yaw: 0.52, pitch: -0.34, yawRate: 0.84, pitchRate: 0.27 },
+  orbit: { yaw: 0.44, pitch: -0.28, yawRate: 0.7, pitchRate: 0.4 },
 };
 
 function copyLayout(index: number, count: number) {
@@ -628,14 +648,22 @@ function signalPoint(theta: number, settings: SignalSettings): Point {
   const liveRotation = settings.rotation;
   let point: Point;
 
-  if (settings.generator === "rose") {
-    const radius =
-      (1 - settings.form) * 0.84 +
-      settings.form * Math.cos(Math.max(2, settings.xRatio) * localTheta + livePhase);
-    const angle = Math.max(1, settings.yRatio) * localTheta;
+  if (settings.generator === "wave") {
+    const progress = localTheta / (Math.PI * 2);
     point = {
-      x: radius * Math.cos(angle),
-      y: radius * Math.sin(angle),
+      x: progress * 2 - 1,
+      y:
+        Math.sin(progress * Math.PI * 2 * settings.xRatio + livePhase) *
+        0.46,
+    };
+  } else if (settings.generator === "spiral") {
+    const progress = localTheta / (Math.PI * 2);
+    const radius = 0.08 + progress * 0.84;
+    const angle =
+      progress * Math.PI * 2 * settings.xRatio - Math.PI / 2 + livePhase;
+    point = {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
     };
   } else if (settings.generator === "star") {
     point = starPoint(
@@ -891,8 +919,9 @@ export default function AsciiOscilloscope() {
 
       if (current.dimension === "3d") {
         const spin = time * current.motion * 2.4;
-        const yaw = 0.72 + spin;
-        const pitch = -0.48 + Math.sin(spin * 0.58) * 0.12;
+        const view = spatialViews[current.preset];
+        const yaw = view.yaw + spin * view.yawRate;
+        const pitch = view.pitch + spin * view.pitchRate;
         const scene = spatialScenes[current.preset];
         const totalSegments = scene.reduce(
           (total, curve) => total + Math.max(0, curve.points.length - 1),
@@ -1297,6 +1326,7 @@ export default function AsciiOscilloscope() {
     setScale(variant.scale);
     setMotion(variant.motion);
     setOctave(variant.octave);
+    setRenderUnits(variant.units);
     setRunning(true);
   };
 

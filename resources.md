@@ -266,28 +266,34 @@ Available shape buttons:
 
 | Shape | Generator | Locked straight-on geometry |
 | --- | --- | --- |
-| Line | Lissajous | exact 1:1 diagonal |
+| Wave | Open sinusoid | two-cycle horizontal waveform |
 | Circle | Lissajous | unit circle, 1:1 at 90° |
+| Triangle | Polygon interpolation | exact equilateral triangle |
 | Square | Polygon interpolation | exact regular square |
-| Eight | Lissajous | exact 2:1 figure eight |
-| Knot | Lissajous | exact 3:2 knot at 90° |
-| Rose | Polar rose | pure five-petal rose |
 | Star | Radial polygon | regular five-point star |
-| Polygon | Polygon interpolation | exact regular hexagon |
+| Hex | Polygon interpolation | exact regular hexagon |
+| Spiral | Open polar curve | three-turn Archimedean spiral |
+| Knot | Lissajous | exact 3:2 knot at 90° |
 | Orbit | Hypotrochoid | 5:3 hypocycloid |
+
+This lineup prioritizes a strong outer silhouette, readable internal
+intersections, and a direct spatial counterpart. Eight and Rose were removed
+because multiplication and low-resolution ASCII made them collapse into noise.
+Line became Wave so its 2D and 3D forms describe the same object; generic
+Polygon became the more accurate one-word label Hex.
 
 The `3D` control switches the same renderer to authored spatial wireframes:
 
 | Shape | 3D construction |
 | --- | --- |
-| Line | oscillating ribbon wave |
-| Circle | latitude/longitude torus |
+| Wave | seven-rail oscillating surface |
+| Circle | wide-section tumbling torus |
+| Triangle | wireframe pyramid |
 | Square | wireframe cube |
-| Eight | layered spatial lemniscate |
-| Knot | three-strand 2:3 torus knot |
-| Rose | connected five-petal rose cage |
 | Star | extruded five-point star prism |
-| Polygon | extruded hexagonal prism |
+| Hex | extruded hexagonal prism |
+| Spiral | three-rail vertical helix |
+| Knot | three-strand 2:3 torus knot |
 | Orbit | intersecting orbital cage and spiral |
 
 Controls:
@@ -305,8 +311,10 @@ Controls:
 - `Scale`: 70–100%. The higher floor keeps the shape visually present.
 - `Motion`: 0–100%. In 2D it controls a high-contrast trace head with a visible
   fading tail around the fixed outline. In 3D it drives object rotation, a
-  smaller tilt oscillation, and the same moving trace light. Zero is static,
-  Pause freezes the current frame, and reduced-motion mode uses a fixed view.
+  second shape-specific rotation axis, and the same moving trace light. Every
+  spatial preset has its own initial camera and axis rates, so symmetric objects
+  such as the torus visibly tumble. Zero is static, Pause freezes the current
+  frame, and reduced-motion mode uses a fixed authored view.
 - `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
@@ -317,9 +325,11 @@ Controls:
   when resolution changes.
 - `Pause` / `Run`: stops or resumes geometric motion.
 - `Random`: chooses one of 18 hand-authored complete variants instead of
-  combining parameters independently. It never selects 8×; Eight, Knot, Rose,
-  Star, and Orbit are limited to 1× or 2×, while Line, Circle, Square, and
-  Polygon can receive 4×. It preserves the current note and 2D/3D mode.
+  combining parameters independently. It never selects 8×; Circle, Star,
+  Spiral, Knot, and Orbit are limited to 1× or 2×, while Wave, Triangle,
+  Square, and Hex can receive 4×. Each complete variant also selects 72, 96, or
+  120 Units according to its trace density; every 4× result uses 120. It
+  preserves the current note and 2D/3D mode.
 - `Audio off` / `Audio on`: explicit stereo output switch.
 - Pause/run, Random, and Audio are shown as custom monochrome CSS icons rather
   than text. Each icon-only button retains a descriptive accessible name and
@@ -355,8 +365,8 @@ Renderer:
   changing phase, form, rotation, or scale, so animation cannot bend or smear a
   standard shape.
 - 3D scenes rotate projected X/Y/Z wireframes with perspective and depth-based
-  intensity. Each shape has its own construction rather than sharing a generic
-  extrusion.
+  intensity. Each shape has its own construction, initial camera, yaw rate, and
+  pitch rate rather than sharing a generic extrusion or single-axis spin.
 - Rendering is capped near 20 FPS.
 - The global renderer mode changes the trace conversion itself:
   `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
@@ -941,8 +951,8 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 “cozy tech corner.”
 
 Build the homepage around a large code-rendered ASCII XY oscilloscope
-instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
-visible shape buttons, adding Square as the direct 2D counterpart to Cube;
+instrument. Present Wave, Circle, Triangle, Square, Star, Hex, Spiral, Knot, and
+Orbit as visible shape buttons. Use Star as the initial showcase preset;
 include an A0–A3 frequency slider spanning three full
 chromatic octaves with note-name/Hz readout, scale, motion, and
 1×/2×/4×/8× multiplier controls; add a 48/72/96/120 horizontal Units selector
@@ -955,16 +965,19 @@ physical width/height ratio of monospace character cells so circles, regular
 polygons, stars, and Lissajous figures render with standard proportions.
 Motion must move a brightness highlight around the fixed outline without
 changing any geometry. Make the head and fading tail visibly distinct at low
-motion values. Add a 3D toggle that maps Line to a wave ribbon, Circle to a
-torus, Square to a cube, Eight to a spatial lemniscate, Knot to a torus knot,
-Rose to a rose cage, Star and Polygon to extruded prisms, and Orbit to an
+motion values. Add a 3D toggle that maps Wave to a seven-rail surface, Circle
+to a tumbling torus, Triangle to a pyramid, Square to a cube, Star and Hex to
+extruded prisms, Spiral to a helix, Knot to a torus knot, and Orbit to an
 orbital cage. Generate and perspective-project real X/Y/Z wireframes in code.
-Motion must rotate 3D geometry with depth lighting; zero must be static, Pause
-must freeze it, and reduced-motion mode must use a fixed view.
+Give every spatial preset an authored camera plus separate yaw and pitch rates,
+so even rotationally symmetric objects show movement. Zero must be static,
+Pause must freeze it, and reduced-motion mode must use a fixed view.
 Random must select from a hand-authored bank of complete
 variants rather than combining parameters independently. It must never select
-8×; limit Eight, Knot, Rose, Star, and Orbit to 1× or 2×, and permit 4× only for
-Line, Circle, Square, and Polygon. Multiplying copies must traverse the
+8×; limit Circle, Star, Spiral, Knot, and Orbit to 1× or 2×, and permit 4× only
+for Wave, Triangle, Square, and Hex. Include render resolution in each authored
+variant: use at least 96 Units for complex shapes and 120 for every 4× result.
+Multiplying copies must traverse the
 geometry multiple times per base cycle so the visible multiplication also
 creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
