@@ -310,6 +310,11 @@ Controls:
 - `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
+- `Units`: selects 48, 72, 96, or 120 horizontal character cells. Rows and font
+  size are recalculated from the live panel aspect ratio. Higher values expose
+  more detail in multiplied and 3D geometry; lower values create a coarser,
+  larger-glyph terminal rendering. Shape, note, motion, and audio stay intact
+  when resolution changes.
 - `Pause` / `Run`: stops or resumes geometric motion.
 - `Random`: chooses one of 18 hand-authored complete variants instead of
   combining parameters independently. It never selects 8×; Eight, Knot, Rose,
@@ -331,7 +336,9 @@ Renderer:
 - Orientation selects `─`, `│`, `/`, or `\`; crossings use `+`.
 - Lower-intensity persistence uses the density ramp and a 4×4 Bayer threshold.
 - The trace decays between frames for phosphor persistence.
-- Grid dimensions and font size derive from the available render area.
+- The selected 48/72/96/120 horizontal unit count is exact. Row count and font
+  size derive from the available render area, keeping character cells
+  proportional without changing the chosen horizontal resolution.
 - Plot coordinates derive their safe half-axis from the active row count,
   reserving one complete raster cell for the trace and glow. Shapes reach the
   scope edges without dropping extrema at 100% scale.
@@ -706,8 +713,8 @@ Breakpoints:
 - `900px`: mobile navigation activates; the homepage instrument becomes
   full-width above the introduction; project/system layouts simplify.
 - `650px`: narrow phone layout with 10px shell gutters, stacked page headings,
-  two-column oscilloscope controls, single-column content, and touch-sized
-  buttons.
+  two-column oscilloscope controls, a full-width Units row, a taller instrument
+  stage, single-column content, and touch-sized buttons.
 
 Requirements:
 
@@ -832,6 +839,8 @@ Current automated coverage checks:
 - curated shape resets, frequency, scale, motion, multiplier, pause, and safe
   random interactions;
 - all nine shapes map to their intended 3D construction and toggle back to 2D;
+- 48–120 unit switching changes the real grid dimensions and increases detail
+  for crowded multiplied geometry;
 - circle output stays physically proportional after monospace cell-aspect
   correction;
 - every 2D and 3D shape remains inside the drawable plot at maximum scale
@@ -932,9 +941,11 @@ instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
 visible shape buttons, adding Square as the direct 2D counterpart to Cube;
 include an A0–A3 frequency slider spanning three full
 chromatic octaves with note-name/Hz readout, scale, motion, and
-1×/2×/4×/8× multiplier controls; pause/run; curated random combinations; and
-optional stereo Web Audio muted by default. Lock ratio, phase, form, and base
-rotation inside each authored preset rather than exposing them. Each shape
+1×/2×/4×/8× multiplier controls; add a 48/72/96/120 horizontal Units selector
+that recalculates rows and font size from the panel aspect ratio; pause/run;
+curated random combinations; and optional stereo Web Audio muted by default.
+Lock ratio, phase, form, and base rotation inside each authored preset rather
+than exposing them. Each shape
 button must reset to a recognizable straight-on silhouette. Compensate for the
 physical width/height ratio of monospace character cells so circles, regular
 polygons, stars, and Lissajous figures render with standard proportions.

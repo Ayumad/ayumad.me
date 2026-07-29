@@ -48,11 +48,19 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
     expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
+    expect(screen.getByRole("slider", { name: "Render units" })).toHaveValue(
+      "72",
+    );
+    expect(screen.getByRole("slider", { name: "Render units" })).toHaveAttribute(
+      "aria-valuetext",
+      "72 horizontal character units",
+    );
     expect(
       screen.getByRole("button", { name: "Show 3D geometry" }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(renderedSignal).toHaveAttribute("data-dimension", "2d");
     expect(renderedSignal).toHaveAttribute("data-geometry", "knot");
+    expect(renderedSignal).toHaveAttribute("data-units", "72");
     expect(screen.queryByRole("spinbutton", { name: "X ratio" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Phase" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Form" })).not.toBeInTheDocument();
@@ -236,6 +244,39 @@ describe("Ayumad.me", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Show 2D geometry" }));
     expect(grid).toHaveAttribute("data-dimension", "2d");
+  });
+
+  it("increases grid detail for crowded multiplied geometry", () => {
+    renderAt("/");
+    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
+    const units = screen.getByRole("slider", { name: "Render units" });
+
+    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Show 3D geometry" }));
+    fireEvent.change(screen.getByRole("slider", { name: "Multiplier" }), {
+      target: { value: "3" },
+    });
+    fireEvent.change(units, { target: { value: "48" } });
+
+    const lowRows = Number(grid?.dataset.rows);
+    const lowDetail =
+      grid?.textContent?.replaceAll(/\s/g, "").length ?? 0;
+    expect(grid).toHaveAttribute("data-units", "48");
+    expect(grid?.textContent?.split("\n")[0]).toHaveLength(48);
+
+    fireEvent.change(units, { target: { value: "120" } });
+
+    const highRows = Number(grid?.dataset.rows);
+    const highDetail =
+      grid?.textContent?.replaceAll(/\s/g, "").length ?? 0;
+    expect(units).toHaveAttribute(
+      "aria-valuetext",
+      "120 horizontal character units",
+    );
+    expect(grid).toHaveAttribute("data-units", "120");
+    expect(grid?.textContent?.split("\n")[0]).toHaveLength(120);
+    expect(highRows).toBeGreaterThan(lowRows);
+    expect(highDetail).toBeGreaterThan(lowDetail);
   });
 
   it("corrects character-cell aspect ratio for standard shapes", () => {
