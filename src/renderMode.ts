@@ -5,7 +5,7 @@ export const renderModes = [
   { value: "dither", label: "Dither" },
   { value: "glitch", label: "Glitch" },
   { value: "particles", label: "Particles" },
-  { value: "crt", label: "CRT" },
+  { value: "crt", label: "CRT+" },
 ] as const;
 
 export type RenderMode = (typeof renderModes)[number]["value"];
