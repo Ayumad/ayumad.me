@@ -8,6 +8,7 @@ import {
 } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import AsciiOscilloscope from "./AsciiOscilloscope";
+import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
@@ -28,56 +29,6 @@ type Theme = "light" | "dark";
 interface ErrorBoundaryState {
   hasError: boolean;
 }
-
-const sectionArt = {
-  work: String.raw`
-    NOTES ──────> HERMES <────── CLIENTS
-                     │
-                     │
-    P520 ───────> SERVICES
-                     │
-                     │
-    SOURCE ─────> AUDIO ───────> ROOM`,
-  projects: String.raw`
-    2023 ── OWLBOT          ●
-         └─ DELULUBOT       ●
-
-    2024 ── AUDIO VIS       ●
-
-    NOW  ── HOMELAB         ◐
-         └─ HERMES REMOTE   ◐`,
-  systems: String.raw`
-    [ P520 ] ───── LAN ───── [ MAC MINI ]
-       │                         │
-    PROXMOX                   HERMES
-       │                         │
-    STORAGE                   TAILSCALE
-       └──────────┬──────────────┘
-              CLIENTS`,
-  now: String.raw`
-    JUL 2026
-
-    01  HERMES      ◐
-    02  LINUX       ◐
-    03  AUDIO       ◐
-    04  AYUMAD.ME   ◐
-
-    UPDATED BY HAND`,
-  about: String.raw`
-    FOOTHILL              SJSU
-    COMPUTER SCIENCE ───► COMPUTER ENGINEERING
-              \             /
-               \           /
-                BAY AREA, CA`,
-  contact: String.raw`
-    ┌──────────────────────────┐
-    │ hello@ayumad.me          │
-    ├──────────────────────────┤
-    │ \                      / │
-    │   \                  /   │
-    │     \______________/     │
-    └──────────────────────────┘`,
-} as const;
 
 const contactField = String.raw`
 @@%%##**++==--::..        ..::--==++**##%%@@
@@ -277,13 +228,13 @@ function SectionHeading({
   label,
   title,
   description,
-  art,
+  scene,
 }: {
   index: string;
   label: string;
   title: string;
   description: string;
-  art: string;
+  scene: AsciiSceneName;
 }) {
   return (
     <header className="page-heading">
@@ -295,7 +246,10 @@ function SectionHeading({
         <h1>{title}</h1>
         <p className="page-intro">{description}</p>
       </div>
-      <pre className={`heading-field art-${label.toLowerCase()}`} aria-hidden="true">{art}</pre>
+      <AsciiScene
+        className={`heading-field art-${scene}`}
+        scene={scene}
+      />
     </header>
   );
 }
@@ -394,7 +348,7 @@ function ShowcasePage() {
         label="Work"
         title="Work"
         description="The three areas I keep coming back to."
-        art={sectionArt.work}
+        scene="work"
       />
 
       <div className="showcase-list">
@@ -443,7 +397,7 @@ function ProjectsPage() {
         label="Projects"
         title="Projects"
         description="Selected software, hardware, and research projects."
-        art={sectionArt.projects}
+        scene="projects"
       />
 
       <div className="project-list">
@@ -510,7 +464,7 @@ function SystemsPage() {
         label="Systems"
         title="Systems"
         description="The machines, software, and audio systems I actually use."
-        art={sectionArt.systems}
+        scene="systems"
       />
 
       <div className="systems-list">
@@ -553,7 +507,7 @@ function NowPage() {
         label="Now"
         title="Now"
         description="What I am working on and learning."
-        art={sectionArt.now}
+        scene="now"
       />
 
       <div className="now-meta">
@@ -598,7 +552,7 @@ function AboutPage() {
         label="About"
         title="About"
         description={aboutContent.intro}
-        art={sectionArt.about}
+        scene="about"
       />
 
       <div className="about-layout">
@@ -657,7 +611,7 @@ function ContactPage() {
         label="Contact"
         title="Contact"
         description="Email and GitHub are the best ways to reach me."
-        art={sectionArt.contact}
+        scene="contact"
       />
 
       <pre className="contact-field" aria-hidden="true">{contactField}</pre>
