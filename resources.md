@@ -52,7 +52,7 @@ Current locations:
 
 Write directly and specifically. Prefer an ordinary word over a stylized label.
 Most interface labels should be one or two words: `Work`, `Projects`, `Systems`,
-`Now`, `About`, `Contact`, `Preset`, `Phase`, `Scale`, `Motion`, `Reset`.
+`Now`, `About`, `Contact`, `Shape`, `Phase`, `Scale`, `Motion`, `Random`.
 
 The prose should sound curious, practical, and hands-on. Ayush is interested in
 what hardware and software can do after the defaults get out of the way. He
@@ -237,20 +237,24 @@ Current focus:
 
 This is a working browser instrument, not a video or canned text animation.
 
-Available presets:
+Available shape buttons:
 
-| Preset | Generator | Starting geometry |
+| Shape | Generator | Starting geometry |
 | --- | --- | --- |
+| Line | Lissajous | 1:1, 0° phase |
 | Circle | Lissajous | 1:1, 90° phase |
 | Eight | Lissajous | 2:1 |
 | Knot | Lissajous | 3:2, 90° phase, light harmonic |
 | Rose | Polar rose | five petals |
 | Star | Interpolated radial polygon | five points |
+| Polygon | Circle-to-polygon morph | six sides |
 | Orbit | Hypotrochoid-style orbit | 5:3 |
 
 Controls:
 
-- `Preset`: selects the geometry family and sensible defaults.
+- Eight visible geometric shape buttons replace a hidden preset menu. Selecting
+  one loads sensible starting geometry while leaving frequency and copy count
+  available for performance.
 - `Hz`: changes the fundamental output frequency from 35–220 Hz.
 - `Ratio`: independently changes X and Y integer ratios from 1–9.
 - `Phase`: 0–360°.
@@ -258,8 +262,13 @@ Controls:
 - `Rotate`: −180–180°.
 - `Scale`: 55–100%.
 - `Motion`: 0–100%.
+- `Copies`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
+  2× emphasizes one octave above the base frequency, 4× emphasizes two
+  octaves, and 8× emphasizes three.
 - `Pause` / `Run`: stops or resumes geometric motion.
-- `Reset`: returns to Knot at 55 Hz.
+- `Random`: chooses a geometry family and randomizes ratio, phase, form,
+  rotation, scale, motion, and copy count while preserving the current base
+  frequency.
 - `Audio off` / `Audio on`: explicit stereo output switch.
 
 Direct manipulation:
@@ -278,6 +287,8 @@ Renderer:
 - Grid dimensions and font size derive from the available render area.
 - Plot coordinates use almost the complete stage (`0.495` of each half-axis),
   so the drawing reaches the scope edges instead of sitting in the center.
+- Large jumps between multiplied copies are treated as blanked flyback paths on
+  the ASCII display, keeping the visible shapes separate.
 - Rendering is capped near 20 FPS.
 
 Audio:
@@ -291,6 +302,8 @@ Audio:
 - X is routed to the left stereo channel and Y to the right using
   `ChannelMergerNode`.
 - The fundamental frequency follows the `Hz` control.
+- Copy multiplication is part of the sampled path, so its octave-rich audio and
+  on-screen multiplicity come from the same data rather than separate effects.
 - Motion updates the audio geometry at a restrained interval.
 - Master gain is intentionally low (`0.018`) and fades in/out to avoid abrupt
   output.
@@ -738,7 +751,8 @@ Current automated coverage checks:
 
 - homepage renderer exists and emits a substantial character frame;
 - all oscilloscope controls have correct default state;
-- preset, frequency, ratio, phase, form, pause, and reset interactions;
+- geometric buttons, frequency, ratio, phase, form, copies, pause, and random
+  interactions;
 - every route and primary heading;
 - all six generated route scenes;
 - project details and system inventory;
@@ -827,10 +841,13 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 “cozy tech corner.”
 
 Build the homepage around a large code-rendered ASCII XY oscilloscope
-instrument. Include Circle, Eight, Knot, Rose, Star, and Orbit presets;
-fundamental frequency; editable X:Y ratios; phase, form, rotation, scale, and
-motion controls; direct pointer manipulation; pause/run; reset; and optional
-stereo Web Audio muted by default. Generate left and right audio from the same
+instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
+visible shape buttons; include fundamental frequency, editable X:Y ratios,
+phase, form, rotation, scale, motion, and 1×/2×/4×/8× copy controls; direct
+pointer manipulation; pause/run; true geometry randomization; and optional
+stereo Web Audio muted by default. Multiplying copies must traverse the
+geometry multiple times per base cycle so the visible multiplication also
+creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
 character grid, orientation-aware glyphs, a Bayer dither matrix, phosphor
 persistence, near-full-panel plotting, a capped frame rate, hidden-tab pausing,

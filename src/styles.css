@@ -421,7 +421,7 @@ main {
 .scope-stage {
   position: absolute;
   z-index: 2;
-  inset: 48px 15px 218px;
+  inset: 48px 15px 260px;
   overflow: hidden;
   cursor: crosshair;
   touch-action: none;
@@ -519,12 +519,47 @@ main {
   border-bottom: 1px solid var(--fine);
 }
 
-.scope-controls > :nth-child(3n) {
+.scope-controls > :nth-child(4),
+.scope-controls > :nth-child(7),
+.scope-controls > :nth-child(10) {
   border-right: 0;
 }
 
-.scope-controls > :nth-last-child(-n + 3) {
+.scope-controls > :nth-child(n + 8) {
   border-bottom: 0;
+}
+
+.scope-shapes {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  border-right: 0;
+}
+
+.scope-shapes button {
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 4px;
+  border: 0;
+  border-right: 1px solid var(--fine);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  font: 800 0.47rem/1 var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.scope-shapes button:last-child {
+  border-right: 0;
+}
+
+.scope-shapes button:hover {
+  color: var(--cyan);
+}
+
+.scope-shapes button[aria-pressed="true"] {
+  background: var(--cyan);
+  color: var(--ink);
 }
 
 .scope-control > span {
@@ -1996,7 +2031,7 @@ main {
   }
 
   .hero-art {
-    min-height: 700px;
+    min-height: 780px;
   }
 
   .oscilloscope-grid {
@@ -2011,7 +2046,7 @@ main {
   }
 
   .scope-stage {
-    bottom: 315px;
+    bottom: 385px;
     inset-inline: 8px;
   }
 
@@ -2021,19 +2056,29 @@ main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .scope-controls > :nth-child(3n) {
+  .scope-shapes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .scope-controls > .scope-control,
+  .scope-controls > .scope-actions {
     border-right: 1px solid var(--fine);
   }
 
-  .scope-controls > :nth-child(2n) {
+  .scope-controls > :nth-child(3),
+  .scope-controls > :nth-child(5),
+  .scope-controls > :nth-child(7),
+  .scope-controls > :nth-child(9),
+  .scope-controls > .scope-actions {
     border-right: 0;
   }
 
-  .scope-controls > :nth-last-child(-n + 3) {
+  .scope-controls > :nth-child(n + 8) {
     border-bottom: 1px solid var(--fine);
   }
 
-  .scope-controls > :nth-last-child(-n + 1) {
+  .scope-actions {
+    grid-column: 1 / -1;
     border-bottom: 0;
   }
 
