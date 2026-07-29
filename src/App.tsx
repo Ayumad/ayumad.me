@@ -134,6 +134,14 @@ function Header({ path }: { path: string }) {
 
   return (
     <header className="site-header">
+      <div className="system-bar" aria-hidden="true">
+        <span>AYUMAD_OS :: TTY1</span>
+        <span className="system-bar-track">
+          <i />
+        </span>
+        <span>NET: ONLINE</span>
+        <span>CA/BAY_AREA</span>
+      </div>
       <div className="header-inner">
         <Link
           className="wordmark"
@@ -141,9 +149,9 @@ function Header({ path }: { path: string }) {
           aria-label="Ayumad.me home"
           onClick={() => setMenuOpen(false)}
         >
-          <span aria-hidden="true">[</span>
-          AYUMAD.ME
-          <span aria-hidden="true">]</span>
+          <span aria-hidden="true">╭─</span>
+          <strong>ayush@ayumad</strong>
+          <span aria-hidden="true">:~$</span>
         </Link>
 
         <nav
@@ -161,20 +169,23 @@ function Header({ path }: { path: string }) {
               onClick={() => setMenuOpen(false)}
               aria-current={isActive ? "page" : undefined}
             >
-              <span>{item.index}</span>
-              {item.label}
+              <span>[{item.index}]</span>
+              <strong>{item.label}</strong>
             </Link>
           )})}
         </nav>
 
         <div className="header-actions">
+          <span className="header-mode" aria-hidden="true">
+            {path === "/" ? "HOME" : path.slice(1).toUpperCase()}
+          </span>
           <button
             type="button"
             className="icon-button theme-toggle"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
           >
-            <span aria-hidden="true">{theme === "dark" ? "☼" : "◐"}</span>
+            <span aria-hidden="true">{theme === "dark" ? "LT" : "DK"}</span>
           </button>
           <button
             type="button"
@@ -184,7 +195,7 @@ function Header({ path }: { path: string }) {
             aria-controls="site-navigation"
             aria-label={menuOpen ? "Close navigation" : "Open navigation"}
           >
-            <span aria-hidden="true">{menuOpen ? "×" : "≡"}</span>
+            <span aria-hidden="true">{menuOpen ? "[X]" : "[::]"}</span>
           </button>
         </div>
       </div>
@@ -224,11 +235,25 @@ function SectionHeading({
 }) {
   return (
     <header className="page-heading">
-      <p className="eyebrow">
-        <span>{index}</span> / {eyebrow}
-      </p>
-      <h1>{title}</h1>
-      <p className="page-intro">{description}</p>
+      <div className="page-heading-top">
+        <p className="eyebrow">
+          <span>NODE_{index}</span> :: /{eyebrow}
+        </p>
+        <span className="page-coordinates" aria-hidden="true">
+          X:{Number(index) * 19 + 7}.00 / Y:{Number(index) * 11 + 4}.00
+        </span>
+      </div>
+      <div className="page-heading-grid">
+        <div>
+          <h1>{title}</h1>
+          <p className="page-intro">{description}</p>
+        </div>
+        <pre className="page-sigil" aria-hidden="true">{String.raw`┌─[ ROUTE ${index} ]──────────────┐
+│ ${eyebrow.toUpperCase().padEnd(29, " ")}│
+│ ▓▓▓▓▒▒▒░░  SIGNAL LOCKED     │
+│ ├─────╼ ● ╾─────┤            │
+└───────────────────────────────┘`}</pre>
+      </div>
     </header>
   );
 }
@@ -236,9 +261,9 @@ function SectionHeading({
 function SignalLine() {
   return (
     <div className="signal-line" aria-hidden="true">
-      <span>+</span>
+      <span>╾●</span>
       <span />
-      <span>+</span>
+      <span>●╼</span>
     </div>
   );
 }
@@ -247,58 +272,93 @@ function HomePage() {
   return (
     <>
       <section className="hero section-shell">
-        <div className="hero-copy">
-          <p className="eyebrow live-label">
-            <span className="status-dot" aria-hidden="true" />
-            Bay Area / online
-          </p>
-          <h1>
-            A cozy corner for
-            <span>curious technology.</span>
-          </h1>
-          <p className="hero-deck">
-            I&apos;m Ayush—a Computer Engineering student who likes going beneath the
-            interface. This is a living map of the systems, sounds, machines, and ideas
-            I&apos;m taking apart and putting back together.
-          </p>
-          <div className="hero-actions">
-            <Link className="button primary" to="/projects">
-              Explore projects <span aria-hidden="true">↗</span>
-            </Link>
-            <Link className="button text-button" to="/now">
-              See what&apos;s current <span aria-hidden="true">→</span>
-            </Link>
+        <pre className="ascii-mark" aria-hidden="true">{` █████╗ ██╗   ██╗██╗   ██╗███╗   ███╗ █████╗ ██████╗
+██╔══██╗╚██╗ ██╔╝██║   ██║████╗ ████║██╔══██╗██╔══██╗
+███████║ ╚████╔╝ ██║   ██║██╔████╔██║███████║██║  ██║
+██╔══██║  ╚██╔╝  ██║   ██║██║╚██╔╝██║██╔══██║██║  ██║
+██║  ██║   ██║   ╚██████╔╝██║ ╚═╝ ██║██║  ██║██████╔╝
+╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝`}</pre>
+
+        <div className="hero-grid">
+          <div className="hero-copy terminal-tile">
+            <div className="tile-bar">
+              <span>01</span>
+              <span>~/identity/readme.md</span>
+              <span>[RO]</span>
+            </div>
+            <div className="hero-copy-body">
+              <p className="eyebrow live-label">
+                <span className="status-dot" aria-hidden="true" />
+                Bay Area / online / signal acquired
+              </p>
+              <h1>
+                A cozy corner for
+                <span>curious technology.</span>
+              </h1>
+              <p className="hero-deck">
+                I&apos;m Ayush—a Computer Engineering student who likes going beneath the
+                interface. This is a living map of the systems, sounds, machines, and ideas
+                I&apos;m taking apart and putting back together.
+              </p>
+              <div className="hero-actions">
+                <Link className="button primary" to="/projects">
+                  ./open projects <span aria-hidden="true">↗</span>
+                </Link>
+                <Link className="button text-button" to="/now">
+                  tail -f now.log <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
           </div>
+
+          <motion.div
+            className="ascii-console signal-tile dither-panel"
+            initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
+            transition={{ delay: 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="console-bar tile-bar">
+              <span>02</span>
+              <span>/dev/curiosity_graph</span>
+              <span className="console-lights" aria-hidden="true">● REC</span>
+            </div>
+            <div className="signal-viewport">
+              <span className="viewport-axis axis-x" aria-hidden="true">X 00 ───────────── 99</span>
+              <span className="viewport-axis axis-y" aria-hidden="true">Y<br />0<br />│<br />│<br />9</span>
+              <pre aria-label="ASCII node graph of Ayush's technology interests">{String.raw`
+                 .       +                .
+        [ NOTES ]──────┐       .────────[ AUDIO ]
+             │         │       │             │
+       .─────┴────.    ▼       ▼       .────┴────.
+      /  INDEX +   \  ╔═══════════╗   / WAVEFORM  \
+     :  RETRIEVAL   :─║ AYUMAD.IO ║──:  + SIGNAL  :
+      \_____  _____/  ╚═════╤═════╝   \____  ____/
+            \/             │               \/
+        [ AI / ML ]◀────────┼────────▶[ HARDWARE ]
+             │              │               │
+         tokens()       curiosity_       proxmox()
+          models()        loop           zfs.pool()
+             │              │               │
+             └──────────────┴───────────────┘
+
+        >>> system.status = "experimenting" _
+`}</pre>
+              <div className="scan-beam" aria-hidden="true" />
+            </div>
+            <div className="console-readout">
+              <span>fps 60.00</span>
+              <span>nodes 04</span>
+              <span>signal warm</span>
+              <span>drift +0.02</span>
+            </div>
+          </motion.div>
         </div>
 
-        <motion.div
-          className="ascii-console dither-panel"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1, duration: 0.45 }}
-        >
-          <div className="console-bar">
-            <span>~/ayush/curiosity</span>
-            <span className="console-lights" aria-hidden="true">● ● ●</span>
-          </div>
-          <pre aria-label="ASCII diagram of Ayush's technology interests">{`       .           *       .
-  ┌──────────────────────────┐
-  │  > whoami                │
-  │  ayush / technologist    │
-  │                          │
-  │  ai ............. active │
-  │  audio .......... tuned  │
-  │  homelab ........ online │
-  │  notes ........ connected│
-  │                          │
-  │  curiosity --limit=none_ │
-  └──────────────────────────┘
-        *       .`}</pre>
-          <div className="console-readout">
-            <span>signal: warm</span>
-            <span>status: experimenting</span>
-          </div>
-        </motion.div>
+        <div className="hero-ticker" aria-hidden="true">
+          <span>AI_&_NOTES</span><i>////</i><span>HOMELAB</span><i>////</i>
+          <span>AUDIO_SIGNAL</span><i>////</i><span>LINUX</span><i>////</i>
+          <span>CREATIVE_CODE</span><i>////</i><span>OWN_YOUR_STACK</span>
+        </div>
       </section>
 
       <section className="home-map section-shell" aria-labelledby="map-title">
@@ -345,6 +405,7 @@ function HomePage() {
       </section>
 
       <section className="current-strip section-shell">
+        <div className="strip-label" aria-hidden="true">[ ACTIVE_PROCESS // PID 042 ]</div>
         <div>
           <p className="eyebrow">[ currently ]</p>
           <h2>Building a cloud with a power button.</h2>
@@ -706,10 +767,14 @@ function NotFoundPage() {
 function Footer() {
   return (
     <footer className="site-footer">
+      <div className="footer-marquee" aria-hidden="true">
+        <span>AYUMAD.ME :: END OF TRANSMISSION :: KEEP THE SYSTEM CURIOUS :: </span>
+        <span>AYUMAD.ME :: END OF TRANSMISSION :: KEEP THE SYSTEM CURIOUS :: </span>
+      </div>
       <div className="section-shell footer-inner">
-        <p>Built with curiosity in the Bay Area.</p>
-        <p className="footer-ascii" aria-hidden="true">·:*¨༺ 2026 ༻¨*:·</p>
-        <a href="mailto:hello@ayumad.me">hello@ayumad.me</a>
+        <p>ayush@bay-area:~$ built_with --curiosity</p>
+        <p className="footer-ascii" aria-hidden="true">[ 2026 // EOF ]</p>
+        <a href="mailto:hello@ayumad.me">mailto://hello@ayumad.me ↗</a>
       </div>
     </footer>
   );
@@ -731,6 +796,10 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <RouteEffects path={path} />
       <ParticleField />
+      <div className="crt-overlay" aria-hidden="true" />
+      <div className="edge-coordinates" aria-hidden="true">
+        <span>000</span><span>AYUMAD_SIGNAL</span><span>999</span>
+      </div>
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Header path={path} />
       <main id="main-content">

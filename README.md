@@ -3,9 +3,9 @@
 Ayush Madhukar's cozy tech corner—a personal map of AI, audio, hardware,
 notes, servers, Linux, and tiny experiments.
 
-The site is intentionally more notebook than résumé. It uses a traditional,
-content-first structure with ASCII compositions, dithered textures, warm
-technical colors, and restrained particle movement.
+The site is intentionally more notebook than résumé. Its visual system combines
+ASCII compositions, tiled Linux desktop geometry, node-graph diagrams, CRT
+texture, sharp terminal typography, and a restrained field of drifting glyphs.
 
 ## Prerequisites
 
@@ -26,8 +26,10 @@ The development site runs at `http://localhost:3000`.
 - `npm run dev` — start the development server
 - `npm run build` — type-check and create a production build
 - `npm run preview` — preview the production build
+- `npm run typecheck` — run TypeScript without building
 - `npm run lint` — run ESLint
 - `npm test` — run the automated test suite
+- `npm run validate` — run every release check in sequence
 
 ## Editing content
 
