@@ -33,7 +33,17 @@ describe("Ayumad.me", () => {
 
     expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Hermes Remote" })).toBeInTheDocument();
     expect(screen.getAllByText("Completed")).toHaveLength(3);
+  });
+
+  it("shows concrete systems from the editable content layer", () => {
+    renderAt("/systems");
+
+    expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
+    expect(screen.getByText("RTX 5080 desktop / 4K OLED")).toBeInTheDocument();
+    expect(screen.getByText("X-T4 / 18–55 + X100VI")).toBeInTheDocument();
+    expect(screen.getByText("Dusk / Daybreak / Zero:RED")).toBeInTheDocument();
   });
 
   it.each([
