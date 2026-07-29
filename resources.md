@@ -716,6 +716,9 @@ Requirements:
 - Canonical URL is updated to `https://ayumad.me/#/route`.
 - Base HTML includes author, theme color, Open Graph, and X/Twitter metadata.
 - Local `favicon.png` and `og.png`; no hotlinked artwork.
+- The 128×128 favicon uses a near-black field, cyan pixel `A`, sparse
+  right-edge density trail, and dark clipped corner rules. It must remain
+  recognizable when reduced to 16×16 and should be cache-busted when replaced.
 - `robots.txt` allows crawling.
 - `sitemap.xml` lists the canonical root.
 - A styled 404 exists for unknown hash routes.
