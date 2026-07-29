@@ -7,6 +7,10 @@ The site is intentionally more notebook than résumé. Its visual system combine
 ASCII compositions, tiled Linux desktop geometry, node-graph diagrams, CRT
 texture, sharp terminal typography, and a restrained field of drifting glyphs.
 
+No AI-generated imagery ships with the site. The visible artwork is composed
+from type, CSS, canvas glyphs, and hand-built ASCII; the social card uses the
+same deterministic graphic language.
+
 ## Prerequisites
 
 - Node.js `>=22.13.0`
