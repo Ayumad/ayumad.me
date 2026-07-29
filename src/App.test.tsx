@@ -418,6 +418,7 @@ describe("Ayumad.me", () => {
     );
 
     expect(selector).toHaveValue("ascii");
+    expect(screen.getByRole("option", { name: "CRT+" })).toHaveValue("crt");
     fireEvent.change(selector, { target: { value: "dither" } });
 
     expect(document.documentElement.dataset.renderer).toBe("dither");

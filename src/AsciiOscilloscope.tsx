@@ -237,6 +237,7 @@ const bayer4 = [
 const toneRamp = " .,:;+*#@";
 const crtRamp = "  .:-=+*#@";
 const ditherRamp = "  ░▒▓█";
+const glitchRamp = "  .:;+=x#";
 const noteNames = [
   "C",
   "C#",
@@ -908,7 +909,9 @@ export default function AsciiOscilloscope() {
             ? 0.54
             : renderMode === "dither"
               ? 0.64
-              : 0.72;
+              : renderMode === "glitch"
+                ? 0.66
+                : 0.72;
 
       for (let index = 0; index < intensity.length; index += 1) {
         intensity[index] *= persistence;
@@ -1062,16 +1065,20 @@ export default function AsciiOscilloscope() {
       for (let row = 0; row < rows; row += 1) {
         let line = "";
         for (let column = 0; column < columns; column += 1) {
+          const glitchTick = Math.floor(renderFrame / 2);
+          const glitchBurst =
+            renderMode === "glitch" && renderFrame % 79 >= 69;
           const glitchBand =
             renderMode === "glitch" &&
-            (row * 13 + renderFrame) % 47 < 3;
+            ((row * 17 + glitchTick) % 47 < (glitchBurst ? 7 : 3) ||
+              (glitchBurst && (row + glitchTick) % 13 < 2));
+          const glitchOffset = glitchBand
+            ? (row + glitchTick) % 2 === 0
+              ? glitchBurst ? 6 : 3
+              : glitchBurst ? -6 : -3
+            : 0;
           const sourceColumn = clamp(
-            column +
-              (glitchBand
-                ? (row + renderFrame) % 2 === 0
-                  ? 2
-                  : -2
-                : 0),
+            column + glitchOffset,
             0,
             columns - 1,
           );
@@ -1104,11 +1111,24 @@ export default function AsciiOscilloscope() {
 
           if (
             renderMode === "glitch" &&
-            value > 0.22 &&
-            (row * 31 + column * 17 + renderFrame) % 61 === 0
+            value > 0.18 &&
+            (row * 29 + column * 43 + renderFrame) %
+              (glitchBurst ? 41 : 97) ===
+              0
           ) {
-            line += ["<", ">", "#", "/", "\\"][
-              (row + column + renderFrame) % 5
+            line += " ";
+            continue;
+          }
+
+          if (
+            renderMode === "glitch" &&
+            value > 0.22 &&
+            (row * 31 + column * 17 + renderFrame) %
+              (glitchBurst ? 23 : 53) ===
+              0
+          ) {
+            line += ["<", ">", "#", "/", "\\", "░", "▓", "_"][
+              (row + column + renderFrame) % 8
             ];
             continue;
           }
@@ -1121,7 +1141,12 @@ export default function AsciiOscilloscope() {
           const threshold =
             (bayer4[(row % 4) * 4 + (column % 4)] / 15 - 0.5) * 0.16;
           const level = clamp(value + threshold, 0, 0.99);
-          const ramp = renderMode === "crt" ? crtRamp : toneRamp;
+          const ramp =
+            renderMode === "crt"
+              ? crtRamp
+              : renderMode === "glitch"
+                ? glitchRamp
+                : toneRamp;
           const rampIndex = Math.floor(level * ramp.length);
           line += ramp[rampIndex] ?? " ";
         }

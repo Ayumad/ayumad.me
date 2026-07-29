@@ -174,18 +174,24 @@ the rendering grammar across the entire site, including the homepage
 oscilloscope, every route scene, the ambient canvas, surface texture, and
 post-processing overlay.
 
+All five modes now share one restrained CRT chassis across the complete site:
+fine scanlines, edge vignette, a slow phosphor sweep, mild contrast, and cyan
+glyph bloom. The selector changes the signal conversion on top of that common
+display rather than turning the CRT treatment on and off.
+
 | Value | Character conversion | Whole-site treatment |
 | --- | --- | --- |
-| `ASCII` | directional line glyphs and the standard density ramp | 104px technical grid, restrained cyan glow |
-| `Dither` | ordered Bayer thresholds mapped to `░▒▓█` | 4px halftone field, harder contrast, no text bloom |
-| `Glitch` | deterministic row displacement and sparse character corruption | cyan/violet channel split and intermittent scan bands |
-| `Particles` | trace topology reduced to `· • ●` | denser point canvas, lighter surfaces, reduced background grid |
-| `CRT` | smooth phosphor ramp with longer persistence | scanlines, vignette, bloom, modest contrast/saturation lift |
+| `ASCII` | directional line glyphs and the standard density ramp | 104px technical grid over the shared CRT chassis |
+| `Dither` | ordered Bayer thresholds mapped to `░▒▓█` | 4px halftone field, harder contrast, and shared scanlines |
+| `Glitch` | burst-driven row tearing, dropouts, and expanded corruption glyphs | cyan/violet channel separation, fractured surface rules, data columns, and hard signal bands |
+| `Particles` | trace topology reduced to `· • ●` | denser split-point canvas, lighter surfaces, and shared phosphor sweep |
+| `CRT+` | smooth phosphor ramp with the longest persistence | stronger aperture mask, vignette, bloom, saturation, and faster sweep |
 
 These are alternate render paths, not five color themes. Content, hierarchy,
-controls, and cyan identity remain stable. Glitch movement is deterministic and
-brief so text remains readable. CRT is implemented as a CSS post-process rather
-than falsely presenting itself as a WebGL simulation.
+controls, and cyan identity remain stable. Glitch is intentionally the most
+visually separate mode, but its tearing remains deterministic and brief enough
+that interface text stays readable. The shared CRT chassis and stronger CRT+
+mode are CSS post-processes rather than falsely presented WebGL simulations.
 
 ## 4. Global structure
 
@@ -206,7 +212,7 @@ Every route uses the same shell:
 - sticky header;
 - `AYUMAD.ME` wordmark with a cyan `▓` marker;
 - indexed desktop navigation;
-- native `ASCII / Dither / Glitch / Particles / CRT` renderer selector;
+- native `ASCII / Dither / Glitch / Particles / CRT+` renderer selector;
 - icon-only dark/light control (`☼` and `◐`) with a clear accessible label;
 - icon-only mobile menu (`≡` and `×`);
 - skip link;
@@ -375,8 +381,9 @@ Renderer:
 - Rendering is capped near 20 FPS.
 - The global renderer mode changes the trace conversion itself:
   `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
-  displaces scan rows, `Particles` sparsifies the trace into point glyphs, and
-  `CRT` extends persistence and uses a smooth phosphor ramp.
+  tears scan rows with deterministic dropouts and corruption bursts,
+  `Particles` sparsifies the trace into point glyphs, and `CRT+` extends
+  persistence and uses a smooth phosphor ramp.
 
 Audio:
 
@@ -702,9 +709,10 @@ Scenes update around 12.5 FPS, pause when the document is hidden, and render a
 stable frame when the user prefers reduced motion.
 
 Mode conversion follows the same grammar as the homepage: Dither maps geometry
-to ordered block density, Glitch shifts deterministic bands, Particles reduces
-connections to points, and CRT adds sparse phosphor ghosts while CSS supplies
-scanlines and vignette. Labels and data remain legible through every conversion.
+to ordered block density, Glitch applies deterministic signal tears, dropouts,
+and corruption bursts, Particles reduces connections to points, and CRT+ adds
+sparse phosphor ghosts. CSS supplies a shared CRT chassis to every mode. Labels
+and data remain legible through every conversion.
 
 ## 13. Motion and texture
 
@@ -713,10 +721,13 @@ scanlines and vignette. Labels and data remain legible through every conversion.
 - The background particle canvas renders a sparse character-density field at
   roughly 8 FPS.
 - The canvas changes glyph set, density, cell size, color, and scan displacement
-  with the global renderer. Particles is deliberately denser; CRT is larger and
-  softer; Dither uses block glyphs; Glitch uses offset symbol bands.
-- A fixed, non-interactive CSS post-process layer supplies mode-wide halftone,
-  chromatic displacement, particle topology, or CRT scanline/vignette effects.
+  with the global renderer. Particles is deliberately denser; CRT+ is larger and
+  softer; Dither uses block glyphs; Glitch uses split-color characters, wider
+  offset bands, and deterministic tear lines.
+- A fixed, non-interactive CSS post-process always supplies scanlines, vignette,
+  a slow phosphor sweep, and restrained glyph bloom. Mode-specific layers add
+  halftone, chromatic signal tearing, particle topology, or CRT+ aperture-mask
+  overdrive without removing the common display treatment.
 - Canvas DPR is capped at `1.25`.
 - Particles are non-interactive and disappear entirely under reduced motion.
 - All animation loops listen for `visibilitychange`.
@@ -991,16 +1002,18 @@ persistence, near-full-panel plotting, a capped frame rate, hidden-tab pausing,
 and reduced-motion support. Render pause/run, randomize, and audio state as
 cohesive monochrome CSS icons with accessible labels and title tooltips.
 
-Offer ASCII, Dither, Glitch, Particles, and CRT modes. Treat them as global
+Offer ASCII, Dither, Glitch, Particles, and CRT+ modes. Treat them as global
 rendering grammars, not palette presets. One selection must change the
 oscilloscope’s character conversion, all generated subpage scenes, the ambient
 canvas, and a restrained whole-page post-process while leaving content and
 layout stable. Persist the choice in localStorage, apply it before React loads,
-and keep the black/cyan identity in every mode. Dither uses ordered `░▒▓█`
-density; Glitch uses deterministic row displacement and brief cyan/violet
-splits; Particles uses sparse point topology; CRT uses extended phosphor
-persistence plus CSS scanlines, vignette, and bloom. Disable moving glitch
-effects for reduced motion.
+and keep the black/cyan identity in every mode. All modes share fine scanlines,
+edge vignette, slow phosphor sweep, mild contrast, and restrained cyan bloom.
+Dither uses ordered `░▒▓█` density; Glitch uses deterministic burst tearing,
+dropouts, expanded corruption glyphs, fractured surfaces, and cyan/violet
+channel separation; Particles uses sparse point topology; CRT+ uses extended
+phosphor persistence plus a stronger aperture mask, vignette, saturation, and
+bloom. Disable moving glitch and sweep effects for reduced motion.
 
 Give each subpage a different code-rendered ASCII heading scene tied to its
 content: Work signal multiplexing, Projects build timeline, Systems network
