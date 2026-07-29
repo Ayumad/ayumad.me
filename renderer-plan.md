@@ -337,8 +337,9 @@ Invalid or outdated values fall back to the Star default.
 ### Design rule
 
 Every shape must first read as its standard, straight-on form. Motion should
-move light around a 2D trace or rotate an authored 3D object; it must not warp a
-circle, tilt a square, or randomize a star into noise.
+rigidly rotate a 2D trace while moving light around its outline, or rotate an
+authored 3D object. It must not warp a circle, alter a square's proportions, or
+randomize a star into noise.
 
 Selecting a shape:
 
@@ -636,19 +637,27 @@ The Orbit preset uses `xRatio = 5`, `yRatio = 3`, and `form = 0.93`.
 
 After generating the authored point:
 
-1. apply the preset's locked rotation;
+1. add the current visual-only planar spin to the preset's locked rotation;
 2. apply the copy layout;
 3. apply user scale.
 
 ```ts
-const rotatedX = x * Math.cos(rotation) - y * Math.sin(rotation);
-const rotatedY = x * Math.sin(rotation) + y * Math.cos(rotation);
+const visualRotation = elapsedSeconds * motion * 1.8;
+const liveRotation = baseRotation + visualRotation;
+const rotatedX =
+  x * Math.cos(liveRotation) - y * Math.sin(liveRotation);
+const rotatedY =
+  x * Math.sin(liveRotation) + y * Math.cos(liveRotation);
 
 return {
   x: (layout.center.x + rotatedX * layout.scale) * scale,
   y: (layout.center.y + rotatedY * layout.scale) * scale,
 };
 ```
+
+Apply rotation before copy placement so every multiplied shape spins around its
+own center rather than rotating the complete copy grid. Do not pass
+`visualRotation` into the audio sampler.
 
 ## 7. Multiplication
 
@@ -1216,7 +1225,7 @@ const bayer4 = [
 
 ## 11. Visible motion
 
-Motion must be easy to see without changing the shape.
+Motion must be easy to see without deforming the shape.
 
 ```ts
 const motionHead =
@@ -1245,6 +1254,8 @@ const traceTail = motion > 0
 For 2D:
 
 ```ts
+const planarRotation = elapsedSeconds * motion * 1.8;
+
 const strength = motion > 0
   ? 0.42 + traceTail * 0.46 + traceHead * 0.70
   : 0.62;
@@ -1253,7 +1264,10 @@ const strength = motion > 0
 For 3D, combine the head and tail with depth as defined in the projection
 section.
 
-The outline stays fixed in 2D. Motion changes brightness only. In 3D, motion
+The 2D geometry remains rigid while the complete outline rotates around each
+copy's center. Motion also changes trace brightness. Zero is straight-on,
+Pause freezes the current angle, and reduced motion renders at zero elapsed
+time. The visual rotation must not enter the Fourier/audio path. In 3D, Motion
 changes both trace brightness and authored yaw/pitch rotation.
 
 ## 12. Rendering modes
