@@ -861,11 +861,6 @@ main {
   letter-spacing: 0.05em;
 }
 
-.scope-dimension[aria-pressed="true"] {
-  background: var(--cyan);
-  color: var(--ink);
-}
-
 .scope-icon-pause::before {
   position: absolute;
   inset: 2px 3px;
@@ -962,7 +957,8 @@ main {
   min-width: 0;
 }
 
-.scope-audio[aria-pressed="true"] {
+.scope-actions button.scope-dimension[aria-pressed="true"],
+.scope-actions button.scope-audio[aria-pressed="true"] {
   background: var(--cyan);
   color: var(--ink);
 }
