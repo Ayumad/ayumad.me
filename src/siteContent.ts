@@ -12,7 +12,7 @@ export interface ShowcaseTopic {
   summary: string;
   items: string[];
   ascii: string;
-  tone: "lime" | "coral" | "cyan";
+  tone: "lime" | "violet" | "cyan";
 }
 
 export interface Project {
@@ -108,7 +108,7 @@ export const showcaseTopics: ShowcaseTopic[] = [
     items: ["ThinkStation P520", "Proxmox + ZFS", "GPU passthrough", "Docker / LXC"],
     ascii:
       "  [ THINKSTATION P520 ]\n       ├── ZFS ────── 4 TB\n       ├── VM ─────── GPU\n       └── LXC ────── SERVICES",
-    tone: "coral",
+    tone: "violet",
   },
   {
     title: "Audio",
