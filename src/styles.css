@@ -831,8 +831,11 @@ main {
 }
 
 .scope-actions button {
+  display: grid;
   min-width: 0;
+  min-height: 55px;
   padding: 0 6px;
+  place-items: center;
   border: 0;
   border-right: 1px solid var(--fine);
   background: var(--surface-2);
@@ -841,6 +844,94 @@ main {
   font: 800 0.48rem/1 var(--mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.scope-action-icon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+}
+
+.scope-icon-pause::before {
+  position: absolute;
+  inset: 2px 3px;
+  background:
+    linear-gradient(
+      90deg,
+      currentColor 0 4px,
+      transparent 4px 8px,
+      currentColor 8px 12px
+    );
+  content: "";
+}
+
+.scope-icon-play::before {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 11px solid currentColor;
+  content: "";
+}
+
+.scope-icon-random::before,
+.scope-icon-random::after {
+  position: absolute;
+  left: 1px;
+  width: 14px;
+  height: 6px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  content: "";
+  transform-origin: center;
+}
+
+.scope-icon-random::before {
+  top: 2px;
+  transform: rotate(22deg);
+}
+
+.scope-icon-random::after {
+  bottom: 2px;
+  transform: rotate(-22deg);
+}
+
+.scope-icon-audio-on::before,
+.scope-icon-audio-off::before {
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 13px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 32%, 32% 32%, 72% 0, 72% 100%, 32% 68%, 0 68%);
+  content: "";
+}
+
+.scope-icon-audio-on::after {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  width: 6px;
+  height: 12px;
+  border-right: 2px solid currentColor;
+  border-radius: 50%;
+  content: "";
+}
+
+.scope-icon-audio-off::after {
+  position: absolute;
+  right: 0;
+  bottom: 3px;
+  width: 10px;
+  height: 2px;
+  background: currentColor;
+  content: "";
+  transform: rotate(-45deg);
+  transform-origin: center;
 }
 
 .scope-actions button:last-child {

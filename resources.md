@@ -294,6 +294,9 @@ Controls:
   one of five restrained motion values, and a multiplier. It never randomizes
   ratio, phase, form, or rotation, and it preserves the current note.
 - `Audio off` / `Audio on`: explicit stereo output switch.
+- Pause/run, Random, and Audio are shown as custom monochrome CSS icons rather
+  than text. Each icon-only button retains a descriptive accessible name and
+  native title tooltip.
 
 Ratio, phase, form, rotation, and stage dragging are intentionally not exposed.
 Those values define the authored identity of each shape; removing them prevents
@@ -905,7 +908,8 @@ creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
 character grid, orientation-aware glyphs, a Bayer dither matrix, phosphor
 persistence, near-full-panel plotting, a capped frame rate, hidden-tab pausing,
-and reduced-motion support.
+and reduced-motion support. Render pause/run, randomize, and audio state as
+cohesive monochrome CSS icons with accessible labels and title tooltips.
 
 Offer ASCII, Dither, Glitch, Particles, and CRT modes. Treat them as global
 rendering grammars, not palette presets. One selection must change the
