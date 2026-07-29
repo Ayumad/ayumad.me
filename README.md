@@ -1,7 +1,7 @@
 # Ayumad.me
 
-Ayush Madhukar's cozy tech corner—a personal map of AI, audio, hardware,
-notes, servers, Linux, and tiny experiments.
+Ayush Madhukar's field log—a personal map of AI, audio, hardware, notes,
+servers, Linux, systems, signals, and useful detours.
 
 The site is intentionally more notebook than résumé. Its visual system combines
 ASCII compositions, tiled Linux desktop geometry, node-graph diagrams, CRT

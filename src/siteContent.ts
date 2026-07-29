@@ -191,9 +191,9 @@ export const socialLinks: SocialLink[] = [
 
 export const pageMeta: Record<string, { title: string; description: string }> = {
   "/": {
-    title: "Ayumad.me — Cozy tech corner",
+    title: "Ayumad.me — Systems, signals, and useful detours",
     description:
-      "Ayush Madhukar's living map of AI, audio, hardware, notes, servers, Linux, and tiny experiments.",
+      "Ayush Madhukar's field log of projects, systems, signals, and experiments in progress.",
   },
   "/showcase": {
     title: "Showcase — Ayumad.me",

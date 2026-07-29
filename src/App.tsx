@@ -292,8 +292,8 @@ function HomePage() {
                 Bay Area / online / signal acquired
               </p>
               <h1>
-                A cozy corner for
-                <span>curious technology.</span>
+                Systems, signals,
+                <span>and useful detours.</span>
               </h1>
               <p className="hero-deck">
                 I&apos;m Ayush—a Computer Engineering student who likes going beneath the
