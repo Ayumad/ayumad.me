@@ -142,6 +142,32 @@ describe("Ayumad.me", () => {
     random.mockRestore();
   });
 
+  it("corrects character-cell aspect ratio for standard shapes", () => {
+    renderAt("/");
+    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
+
+    const lines =
+      document.querySelector<HTMLPreElement>(".oscilloscope-grid")
+        ?.textContent?.split("\n") ?? [];
+    const points: Array<[number, number]> = [];
+
+    lines.forEach((line, row) => {
+      [...line].forEach((character, column) => {
+        if (character !== " ") points.push([column, row]);
+      });
+    });
+
+    const columns = points.map(([column]) => column);
+    const rows = points.map(([, row]) => row);
+    const characterWidth = Math.max(...columns) - Math.min(...columns) + 1;
+    const characterHeight = Math.max(...rows) - Math.min(...rows) + 1;
+    const physicalRatio = (characterWidth * 0.6) / (characterHeight * 0.91);
+
+    expect(points.length).toBeGreaterThan(100);
+    expect(physicalRatio).toBeGreaterThan(0.85);
+    expect(physicalRatio).toBeLessThan(1.15);
+  });
+
   it("renders project stories on the projects route", () => {
     renderAt("/projects");
 
