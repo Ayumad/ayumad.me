@@ -26,39 +26,73 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-const heroField = String.raw`
-                         .........:::::::::::
-                 ....::::::------======++++**
-            ...::::---===+++****####%%%%@@@@@
-         ..:::--==++**##%%@@@@@@@@@@@@@@@@@@@
-       .::--=++*##%@@@@@@@%%%%%%######*******
-      .:-=+*#%@@@@%%##**++===----::::........
-     .-=*#%@@@%#*+=-::..             ........
-    .-+#@@@%#+=-.           ..::--==++***####
-    :=#@@@%*=:          .:-=+*#%%@@@@@@@@@@@@
-   .+%@@@#+:         .-=*#%@@@@@@@%%%####****
-   :#@@@%+:        .-+#@@@@%#*+=--:::........
-   -%@@@#-         :*%@@@%*=-.        ........
-   =@@@@*.        .+@@@@#=:      .:-==++***###
-   =@@@@*.        :#@@@%=.     :=*#%@@@@@@@@@@
-   -%@@@#-        :%@@@#-     :#@@@@@%%##*****
-   :#@@@%+:       .#@@@%=.    =@@@%*=-::......
-   .+%@@@#+:       +@@@@#-    -@@@#=.     .....
-    -+#@@@%*=:     :%@@@%+:   .%@%=. .:-=++***
-     -=*%@@@@#+-.   =@@@@#=.   +@@#-=*%@@@@@@@
-      :-+#%@@@@%*=: .#@@@@%*-. :%@%%@@@@%%####
-       .:-=*#%@@@@%#+*@@@@@@@%#*%@@@%*=-::....
-          .:-=+*#%@@@@@@@@@@@@@@@@@%*-.     ....
-              .::-=+*##%%%%%%%%%#*=-. .:-=++***
-                    ..::--------::..:=*#%@@@@@@@
-                         ...........#@@@@@@@@@@@
+const homeField = String.raw`
+         ░▒▓██████▓▒░              ██▓▒░        ░▒▓██
+       ░▓██▒░    ░▒██▓░            ████▓▒░    ░▒▓████
+     ░▓██▒░        ░▒██▓░          ██▒██▓▒░  ░▒▓██▒██
+    ▒██▓░            ░▓██▒         ██▒░██▓▒░▒▓██░▒██
+   ▓██▒                ▒██▓        ██▒ ░▒██▓██▒░ ▒██
+  ██████████████████████████       ██▒   ░▒██▒░   ▒██
+  ██▒                    ▒██       ██▒     ░░     ▒██
+  ██▒                    ▒██       ██▒            ▒██
+  ██▒                    ▒██       ██▒            ▒██
+  ██▒                    ▒██       ██▒            ▒██
+  ██▒                    ▒██       ██▒            ▒██
+  ▓▒░                    ░▒▓       ▓▒░            ░▒▓
 `;
 
-const headingField = String.raw` .  .::  ::--==++**##%%@@
-  ..::--==++**##%%@@%%##*
-::--==++**##%%@@%%##**++=
-==++**##%%@@%%##**++==--:
-**##%%@@%%##**++==--::.. `;
+const sectionArt = {
+  work: String.raw`
+    ┌─────────┐
+    │ AI      ├──────┐
+    └─────────┘      │
+    ┌─────────┐      ├────  WORK
+    │ HOMELAB ├──────┤
+    └─────────┘      │
+    ┌─────────┐      │
+    │ AUDIO   ├──────┘
+    └─────────┘`,
+  projects: String.raw`
+    2023 ── OWLBOT          ●
+         └─ DELULUBOT       ●
+
+    2024 ── AUDIO VIS       ●
+
+    NOW  ── HOMELAB         ◐`,
+  systems: String.raw`
+    ┌────────────────────┐
+    │ KNOWLEDGE          │
+    ├────────────────────┤
+    │ AI                 │
+    ├────────────────────┤
+    │ HARDWARE           │
+    ├────────────────────┤
+    │ AUDIO              │
+    └────────────────────┘`,
+  now: String.raw`
+    JUL 2026
+
+    01  BUILDING
+    02  LEARNING
+    03  TUNING
+    04  DESIGNING
+
+    UPDATED BY HAND`,
+  about: String.raw`
+    FOOTHILL              SJSU
+    COMPUTER SCIENCE ───► COMPUTER ENGINEERING
+              \             /
+               \           /
+                BAY AREA, CA`,
+  contact: String.raw`
+    ┌──────────────────────────┐
+    │ hello@ayumad.me          │
+    ├──────────────────────────┤
+    │ \                      / │
+    │   \                  /   │
+    │     \______________/     │
+    └──────────────────────────┘`,
+} as const;
 
 const contactField = String.raw`
 @@%%##**++==--::..        ..::--==++**##%%@@
@@ -256,11 +290,13 @@ function SectionHeading({
   label,
   title,
   description,
+  art,
 }: {
   index: string;
   label: string;
   title: string;
   description: string;
+  art: string;
 }) {
   return (
     <header className="page-heading">
@@ -272,7 +308,7 @@ function SectionHeading({
         <h1>{title}</h1>
         <p className="page-intro">{description}</p>
       </div>
-      <pre className="heading-field" aria-hidden="true">{headingField}</pre>
+      <pre className={`heading-field art-${label.toLowerCase()}`} aria-hidden="true">{art}</pre>
     </header>
   );
 }
@@ -301,7 +337,7 @@ function HomePage() {
     <>
       <section className="hero section-shell">
         <div className="hero-art">
-          <pre aria-hidden="true">{heroField}</pre>
+          <pre aria-hidden="true">{homeField}</pre>
           <p aria-hidden="true">{" .,:;irsXA253hMHGS#9B&@"}</p>
         </div>
 
@@ -380,6 +416,7 @@ function ShowcasePage() {
         label="Work"
         title="Work"
         description="Three areas that connect most of what I build."
+        art={sectionArt.work}
       />
 
       <div className="showcase-list">
@@ -428,6 +465,7 @@ function ProjectsPage() {
         label="Projects"
         title="Projects"
         description="Selected software, hardware, and research projects."
+        art={sectionArt.projects}
       />
 
       <div className="project-list">
@@ -494,6 +532,7 @@ function SystemsPage() {
         label="Systems"
         title="Systems"
         description="The four areas behind my projects and daily tools."
+        art={sectionArt.systems}
       />
 
       <div className="systems-list">
@@ -536,6 +575,7 @@ function NowPage() {
         label="Now"
         title="Now"
         description="What I am working on and learning."
+        art={sectionArt.now}
       />
 
       <div className="now-meta">
@@ -583,6 +623,7 @@ function AboutPage() {
         label="About"
         title="About"
         description="Computer Engineering student based in the Bay Area."
+        art={sectionArt.about}
       />
 
       <div className="about-layout">
@@ -656,6 +697,7 @@ function ContactPage() {
         label="Contact"
         title="Contact"
         description="Email and GitHub are the best ways to reach me."
+        art={sectionArt.contact}
       />
 
       <pre className="contact-field" aria-hidden="true">{contactField}</pre>
