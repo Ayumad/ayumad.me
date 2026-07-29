@@ -43,6 +43,7 @@ Most site copy and structured content lives in:
 - `src/nowData.ts` — the hand-maintained Now page
 - `src/App.tsx` — page composition and shared interface behavior
 - `src/styles.css` — themes, responsive layout, and visual system
+- `resources.md` — complete design, content, architecture, and rebuild specification
 
 The site uses hash routes so every section can be opened directly without
 server-side routing configuration.
