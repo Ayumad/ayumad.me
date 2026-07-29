@@ -724,7 +724,7 @@ main {
   bottom: 41px;
   left: 15px;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--cyan) 14%, transparent);
@@ -745,7 +745,7 @@ main {
   border-bottom: 1px solid var(--fine);
 }
 
-.scope-controls > :nth-child(5) {
+.scope-controls > :nth-child(6) {
   border-right: 0;
 }
 
@@ -2351,7 +2351,7 @@ main {
   }
 
   .hero-art {
-    min-height: 720px;
+    min-height: 780px;
   }
 
   .oscilloscope-grid {
@@ -2366,7 +2366,7 @@ main {
   }
 
   .scope-stage {
-    bottom: 338px;
+    bottom: 390px;
     inset-inline: 8px;
   }
 
@@ -2388,6 +2388,11 @@ main {
   .scope-controls > :nth-child(3),
   .scope-controls > :nth-child(5),
   .scope-controls > .scope-actions {
+    border-right: 0;
+  }
+
+  .scope-controls > .scope-units {
+    grid-column: 1 / -1;
     border-right: 0;
   }
 
