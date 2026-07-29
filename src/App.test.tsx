@@ -37,13 +37,13 @@ describe("Ayumad.me", () => {
       "A1, 55 hertz",
     );
     expect(screen.getByText("A1 55")).toBeInTheDocument();
-    expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(3);
-    expect(screen.getByRole("spinbutton", { name: "Y ratio" })).toHaveValue(2);
-    expect(screen.getByRole("slider", { name: "Phase" })).toHaveValue("90");
-    expect(screen.getByRole("slider", { name: "Form" })).toHaveValue("0.12");
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
     expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
-    expect(screen.getByRole("slider", { name: "Copies" })).toHaveValue("0");
+    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
+    expect(screen.queryByRole("spinbutton", { name: "X ratio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("slider", { name: "Phase" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("slider", { name: "Form" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("slider", { name: "Rotation" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -70,16 +70,13 @@ describe("Ayumad.me", () => {
     fireEvent.change(screen.getByRole("slider", { name: "Frequency" }), {
       target: { value: "45" },
     });
-    fireEvent.change(screen.getByRole("spinbutton", { name: "X ratio" }), {
-      target: { value: "7" },
+    fireEvent.change(screen.getByRole("slider", { name: "Scale" }), {
+      target: { value: "0.84" },
     });
-    fireEvent.change(screen.getByRole("slider", { name: "Phase" }), {
-      target: { value: "180" },
+    fireEvent.change(screen.getByRole("slider", { name: "Motion" }), {
+      target: { value: "0.24" },
     });
-    fireEvent.change(screen.getByRole("slider", { name: "Form" }), {
-      target: { value: "0.3" },
-    });
-    fireEvent.change(screen.getByRole("slider", { name: "Copies" }), {
+    fireEvent.change(screen.getByRole("slider", { name: "Multiplier" }), {
       target: { value: "2" },
     });
 
@@ -93,10 +90,19 @@ describe("Ayumad.me", () => {
       "A2, 110 hertz",
     );
     expect(screen.getByText("A2 110")).toBeInTheDocument();
-    expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(7);
-    expect(screen.getByText("180°")).toBeInTheDocument();
-    expect(screen.getByText("30%")).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.84");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.24");
     expect(screen.getByText("4×")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.96");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.12");
+
+    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.08");
+    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
 
     fireEvent.click(screen.getByRole("button", { name: "Pause animation" }));
     expect(screen.getByRole("button", { name: "Run animation" })).toHaveAttribute(
@@ -110,7 +116,9 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "true",
     );
-    expect(screen.getByRole("slider", { name: "Copies" })).toHaveValue("2");
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.91");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.14");
+    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
     expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
       "aria-pressed",
       "true",
