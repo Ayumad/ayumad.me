@@ -44,9 +44,19 @@ Most site copy and structured content lives in:
 - `src/App.tsx` — page composition and shared interface behavior
 - `src/styles.css` — themes, responsive layout, and visual system
 - `resources.md` — complete design, content, architecture, and rebuild specification
+- `renderer-plan.md` — copy-paste blueprint for rebuilding the homepage
+  renderer as a dedicated audiovisual tool
 
 The site uses hash routes so every section can be opened directly without
 server-side routing configuration.
+
+## Standalone renderer blueprint
+
+The homepage instrument has a separate, self-contained implementation plan in
+[`renderer-plan.md`](renderer-plan.md). It documents the exact 2D formulas,
+authored 3D scenes, character rasterizer, five rendering modes, Web Audio
+engine, guardrails, test matrix, and roadmap needed to build it as an
+independent website.
 
 ## Deployment
 
