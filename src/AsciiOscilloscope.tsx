@@ -207,10 +207,13 @@ const noteNames = [
   "A#",
   "B",
 ];
+const frequencyStartMidi = 21;
+const frequencyOctaves = 3;
+const semitonesPerOctave = 12;
 const musicalNotes: MusicalNote[] = Array.from(
-  { length: 32 },
+  { length: frequencyOctaves * semitonesPerOctave + 1 },
   (_, index) => {
-    const midi = 26 + index;
+    const midi = frequencyStartMidi + index;
     const frequency = 440 * 2 ** ((midi - 69) / 12);
     return {
       midi,
