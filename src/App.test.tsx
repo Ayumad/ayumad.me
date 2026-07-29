@@ -27,7 +27,7 @@ describe("Ayumad.me", () => {
     const signalText = renderedSignal?.textContent ?? "";
     expect(signalText.length).toBeGreaterThan(1_000);
     expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
-    expect(screen.getByRole("button", { name: /Knot shape/i })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
@@ -45,8 +45,8 @@ describe("Ayumad.me", () => {
       "A1, 55 hertz",
     );
     expect(screen.getByText("A1 55")).toBeInTheDocument();
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.96");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
     expect(screen.getByRole("slider", { name: "Render units" })).toHaveValue(
       "72",
@@ -59,8 +59,10 @@ describe("Ayumad.me", () => {
       screen.getByRole("button", { name: "Show 3D geometry" }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(renderedSignal).toHaveAttribute("data-dimension", "2d");
-    expect(renderedSignal).toHaveAttribute("data-geometry", "knot");
+    expect(renderedSignal).toHaveAttribute("data-geometry", "star");
     expect(renderedSignal).toHaveAttribute("data-units", "72");
+    expect(screen.queryByRole("button", { name: /Eight shape/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Rose shape/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("spinbutton", { name: "X ratio" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Phase" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Form" })).not.toBeInTheDocument();
@@ -141,11 +143,11 @@ describe("Ayumad.me", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.96");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.12");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
 
     fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.08");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.14");
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
 
@@ -168,13 +170,16 @@ describe("Ayumad.me", () => {
       randomizeButton.querySelector(".scope-icon-random"),
     ).toBeInTheDocument();
     fireEvent.click(randomizeButton);
-    expect(screen.getByRole("button", { name: /Rose shape/i })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.84");
     expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.18");
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("1");
+    expect(screen.getByRole("slider", { name: "Render units" })).toHaveValue(
+      "96",
+    );
     expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -188,14 +193,20 @@ describe("Ayumad.me", () => {
     const multiplier = screen.getByRole("slider", {
       name: "Multiplier",
     }) as HTMLInputElement;
+    const units = screen.getByRole("slider", {
+      name: "Render units",
+    }) as HTMLInputElement;
     const random = vi.spyOn(Math, "random");
-    const complexShapes = ["Eight", "Knot", "Rose", "Star", "Orbit"];
+    const complexShapes = ["Circle", "Star", "Spiral", "Knot", "Orbit"];
 
     for (let index = 0; index < 18; index += 1) {
       random.mockReturnValue((index + 0.25) / 18);
       fireEvent.click(randomizeButton);
 
       expect(Number(multiplier.value)).toBeLessThan(3);
+      if (Number(multiplier.value) === 2) {
+        expect(Number(units.value)).toBe(120);
+      }
 
       for (const shape of complexShapes) {
         const button = screen.getByRole("button", {
@@ -204,6 +215,7 @@ describe("Ayumad.me", () => {
 
         if (button.getAttribute("aria-pressed") === "true") {
           expect(Number(multiplier.value)).toBeLessThanOrEqual(1);
+          expect(Number(units.value)).toBeGreaterThanOrEqual(96);
         }
       }
     }
@@ -215,14 +227,14 @@ describe("Ayumad.me", () => {
     renderAt("/");
     const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
     const geometries = [
-      ["Line", "wave"],
+      ["Wave", "wave-surface"],
       ["Circle", "torus"],
+      ["Triangle", "pyramid"],
       ["Square", "cube"],
-      ["Eight", "lemniscate"],
-      ["Knot", "torus-knot"],
-      ["Rose", "rose-cage"],
       ["Star", "star-prism"],
-      ["Polygon", "hexagonal-prism"],
+      ["Hex", "hexagonal-prism"],
+      ["Spiral", "helix"],
+      ["Knot", "torus-knot"],
       ["Orbit", "orbital-cage"],
     ];
 
@@ -311,14 +323,14 @@ describe("Ayumad.me", () => {
     const multiplier = screen.getByRole("slider", { name: "Multiplier" });
     const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
     const shapes = [
-      "Line",
+      "Wave",
       "Circle",
+      "Triangle",
       "Square",
-      "Eight",
-      "Knot",
-      "Rose",
       "Star",
-      "Polygon",
+      "Hex",
+      "Spiral",
+      "Knot",
       "Orbit",
     ];
 
