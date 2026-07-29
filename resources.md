@@ -52,7 +52,7 @@ Current locations:
 
 Write directly and specifically. Prefer an ordinary word over a stylized label.
 Most interface labels should be one or two words: `Work`, `Projects`, `Systems`,
-`Now`, `About`, `Contact`, `Shape`, `Phase`, `Scale`, `Motion`, `Random`.
+`Now`, `About`, `Contact`, `Shape`, `Scale`, `Motion`, `Multiply`, `Random`.
 
 The prose should sound curious, practical, and hands-on. Ayush is interested in
 what hardware and software can do after the defaults get out of the way. He
@@ -264,7 +264,7 @@ This is a working browser instrument, not a video or canned text animation.
 
 Available shape buttons:
 
-| Shape | Generator | Starting geometry |
+| Shape | Generator | Locked straight-on geometry |
 | --- | --- | --- |
 | Line | Lissajous | 1:1, 0° phase |
 | Circle | Lissajous | 1:1, 90° phase |
@@ -277,33 +277,27 @@ Available shape buttons:
 
 Controls:
 
-- Eight visible geometric shape buttons replace a hidden preset menu. Selecting
-  one loads sensible starting geometry while leaving frequency and copy count
-  available for performance.
+- Eight visible geometric shape buttons replace a hidden preset menu. Every
+  selection restores a curated, straight-on silhouette and resets its rotation
+  clock, scale, and motion defaults. Frequency and multiplier remain unchanged.
 - `Hz`: selects chromatic equal-tempered notes from D1 (36.71 Hz) through A3
   (220 Hz). The range input operates in semitone steps, automatically snaps
   every pointer/keyboard change to an exact note frequency, and displays both
   note name and Hz value.
-- `Ratio`: independently changes X and Y integer ratios from 1–9.
-- `Phase`: 0–360°.
-- `Form`: morph amount/harmonic depth.
-- `Rotate`: −180–180°.
-- `Scale`: 55–100%.
+- `Scale`: 70–100%. The higher floor keeps the shape visually present.
 - `Motion`: 0–100%.
-- `Copies`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
+- `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
 - `Pause` / `Run`: stops or resumes geometric motion.
-- `Random`: chooses a geometry family and randomizes ratio, phase, form,
-  rotation, scale, motion, and copy count while preserving the current base
-  frequency.
+- `Random`: chooses one of the eight locked silhouettes, a safe 84–98% scale,
+  one of five restrained motion values, and a multiplier. It never randomizes
+  ratio, phase, form, or rotation, and it preserves the current note.
 - `Audio off` / `Audio on`: explicit stereo output switch.
 
-Direct manipulation:
-
-- Drag horizontally over the render area to change phase.
-- Drag vertically to change form.
-- Sliders and numeric controls provide keyboard-accessible equivalents.
+Ratio, phase, form, rotation, and stage dragging are intentionally not exposed.
+Those values define the authored identity of each shape; removing them prevents
+high-density, folded results that no longer read as the selected silhouette.
 
 Renderer:
 
@@ -317,6 +311,9 @@ Renderer:
   so the drawing reaches the scope edges instead of sitting in the center.
 - Large jumps between multiplied copies are treated as blanked flyback paths on
   the ASCII display, keeping the visible shapes separate.
+- Motion rotates the locked planar silhouette without altering its phase or
+  form, so animation cannot dissolve a line, circle, or other recognizable
+  shape into noise.
 - Rendering is capped near 20 FPS.
 - The global renderer mode changes the trace conversion itself:
   `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
@@ -701,9 +698,8 @@ Requirements:
   persists without changing document meaning.
 - Decorative ASCII, particles, and textures use `aria-hidden`.
 - The oscilloscope figure has a descriptive hidden caption.
-- Oscilloscope controls use real labels, inputs, outputs, button states, and a
-  grouped X:Y ratio.
-- Direct drag controls always have keyboard-accessible slider equivalents.
+- Oscilloscope controls use real labels, inputs, outputs, and button states.
+- Every exposed adjustment has a native keyboard-accessible control.
 - Audio state uses `aria-pressed` and begins off.
 - Native `details`/`summary` powers project expansion.
 - External GitHub links use `rel="noreferrer"`.
@@ -800,8 +796,8 @@ Current automated coverage checks:
 
 - homepage renderer exists and emits a substantial character frame;
 - all oscilloscope controls have correct default state;
-- geometric buttons, frequency, ratio, phase, form, copies, pause, and random
-  interactions;
+- curated shape resets, frequency, scale, motion, multiplier, pause, and safe
+  random interactions;
 - every route and primary heading;
 - all six generated route scenes;
 - project details and system inventory;
@@ -896,10 +892,14 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 Build the homepage around a large code-rendered ASCII XY oscilloscope
 instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
 visible shape buttons; include a D1–A3 frequency slider quantized to chromatic
-equal-tempered notes with note-name/Hz readout, editable X:Y ratios,
-phase, form, rotation, scale, motion, and 1×/2×/4×/8× copy controls; direct
-pointer manipulation; pause/run; true geometry randomization; and optional
-stereo Web Audio muted by default. Multiplying copies must traverse the
+equal-tempered notes with note-name/Hz readout, scale, motion, and
+1×/2×/4×/8× multiplier controls; pause/run; curated random combinations; and
+optional stereo Web Audio muted by default. Lock ratio, phase, form, and base
+rotation inside each authored preset rather than exposing them. Each shape
+button must reset to a recognizable straight-on silhouette. Motion may rotate
+that planar silhouette but must not morph its phase or form. Random may select
+only a shape, safe 84–98% scale, restrained motion value, and multiplier; it
+must never generate arbitrary geometry. Multiplying copies must traverse the
 geometry multiple times per base cycle so the visible multiplication also
 creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
@@ -925,8 +925,9 @@ transmission. Do not reuse one generic animation.
 
 Store editable content in typed data modules. Keep Now content in its own file.
 Use native semantic elements, clear focus states, keyboard equivalents for
-pointer controls, aria states for menu/theme/audio, and decorative hiding for
-ASCII. Support 320px phones through wide desktops without horizontal overflow.
+every exposed instrument control, aria states for menu/theme/audio, and
+decorative hiding for ASCII. Support 320px phones through wide desktops without
+horizontal overflow.
 
 Implement automated tests for all routes, unknown-route handling, theme
 persistence, renderer persistence/conversion, mobile-menu keyboard behavior,
