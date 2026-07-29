@@ -167,6 +167,26 @@ Use ASCII as information, not decoration pasted onto a page.
 - Static ASCII is acceptable for small diagrams, dividers, and the `AM`
   monogram. Large hero fields should be rendered.
 
+### Global render modes
+
+The header includes one native selector labeled `Renderer`. Its value changes
+the rendering grammar across the entire site, including the homepage
+oscilloscope, every route scene, the ambient canvas, surface texture, and
+post-processing overlay.
+
+| Value | Character conversion | Whole-site treatment |
+| --- | --- | --- |
+| `ASCII` | directional line glyphs and the standard density ramp | 104px technical grid, restrained cyan glow |
+| `Dither` | ordered Bayer thresholds mapped to `░▒▓█` | 4px halftone field, harder contrast, no text bloom |
+| `Glitch` | deterministic row displacement and sparse character corruption | cyan/violet channel split and intermittent scan bands |
+| `Particles` | trace topology reduced to `· • ●` | denser point canvas, lighter surfaces, reduced background grid |
+| `CRT` | smooth phosphor ramp with longer persistence | scanlines, vignette, bloom, modest contrast/saturation lift |
+
+These are alternate render paths, not five color themes. Content, hierarchy,
+controls, and cyan identity remain stable. Glitch movement is deterministic and
+brief so text remains readable. CRT is implemented as a CSS post-process rather
+than falsely presenting itself as a WebGL simulation.
+
 ## 4. Global structure
 
 The site is a React single-page application using hash routes:
@@ -186,6 +206,7 @@ Every route uses the same shell:
 - sticky header;
 - `AYUMAD.ME` wordmark with a cyan `▓` marker;
 - indexed desktop navigation;
+- native `ASCII / Dither / Glitch / Particles / CRT` renderer selector;
 - icon-only dark/light control (`☼` and `◐`) with a clear accessible label;
 - icon-only mobile menu (`≡` and `×`);
 - skip link;
@@ -197,6 +218,10 @@ Every route uses the same shell:
 
 Theme preference is stored in `localStorage` under `ayumad-theme`. The initial
 theme is applied in the document head before React loads to prevent a flash.
+Renderer preference is stored under `ayumad-renderer` and is bootstrapped in
+the same document-head script. The active value is exposed as
+`data-renderer` on the root element so CSS and code-rendered systems share one
+state.
 
 ## 5. Home
 
@@ -290,6 +315,10 @@ Renderer:
 - Large jumps between multiplied copies are treated as blanked flyback paths on
   the ASCII display, keeping the visible shapes separate.
 - Rendering is capped near 20 FPS.
+- The global renderer mode changes the trace conversion itself:
+  `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
+  displaces scan rows, `Particles` sparsifies the trace into point glyphs, and
+  `CRT` extends persistence and uses a smooth phosphor ramp.
 
 Audio:
 
@@ -589,7 +618,8 @@ Do not add placeholder social accounts.
 ## 12. Generated route scenes
 
 All six subpage heading scenes use one shared renderer and a fixed 48×22
-character buffer. Common primitives include:
+character buffer. A mode-specific post-processing pass converts that meaningful
+source frame without changing the scene’s content. Common primitives include:
 
 - point placement;
 - text writing;
@@ -612,12 +642,22 @@ Each page has separate scene logic:
 Scenes update around 12.5 FPS, pause when the document is hidden, and render a
 stable frame when the user prefers reduced motion.
 
+Mode conversion follows the same grammar as the homepage: Dither maps geometry
+to ordered block density, Glitch shifts deterministic bands, Particles reduces
+connections to points, and CRT adds sparse phosphor ghosts while CSS supplies
+scanlines and vignette. Labels and data remain legible through every conversion.
+
 ## 13. Motion and texture
 
 - `motion/react` handles route entrances and restrained row hover/scroll
   movement.
 - The background particle canvas renders a sparse character-density field at
   roughly 8 FPS.
+- The canvas changes glyph set, density, cell size, color, and scan displacement
+  with the global renderer. Particles is deliberately denser; CRT is larger and
+  softer; Dither uses block glyphs; Glitch uses offset symbol bands.
+- A fixed, non-interactive CSS post-process layer supplies mode-wide halftone,
+  chromatic displacement, particle topology, or CRT scanline/vignette effects.
 - Canvas DPR is capped at `1.25`.
 - Particles are non-interactive and disappear entirely under reduced motion.
 - All animation loops listen for `visibilitychange`.
@@ -654,6 +694,8 @@ Requirements:
 - Current navigation link uses `aria-current="page"`.
 - Mobile menu exposes `aria-expanded`, `aria-controls`, and closes on Escape.
 - Theme and menu icons have descriptive labels and titles.
+- The renderer is a labeled native select, retains keyboard behavior, and
+  persists without changing document meaning.
 - Decorative ASCII, particles, and textures use `aria-hidden`.
 - The oscilloscope figure has a descriptive hidden caption.
 - Oscilloscope controls use real labels, inputs, outputs, button states, and a
@@ -706,9 +748,10 @@ File map:
 | `src/AsciiOscilloscope.tsx` | homepage vector renderer, controls, Fourier audio |
 | `src/AsciiScene.tsx` | six generated subpage heading scenes |
 | `src/ParticleField.tsx` | low-density background canvas |
+| `src/renderMode.ts` | typed mode list, validator, and shared React context |
 | `src/styles.css` | tokens, layout, textures, route styles, breakpoints |
-| `src/App.test.tsx` | routes, content, theme, menu, controls, generated scenes |
-| `index.html` | base SEO, theme bootstrap, favicon and social metadata |
+| `src/App.test.tsx` | routes, content, theme, renderer, menu, controls, generated scenes |
+| `index.html` | base SEO, theme/renderer bootstrap, favicon and social metadata |
 | `public/og.png` | deterministic social preview |
 | `public/favicon.png` | local favicon |
 | `public/robots.txt` | crawl policy |
@@ -758,6 +801,7 @@ Current automated coverage checks:
 - project details and system inventory;
 - unknown-route handling;
 - theme persistence;
+- all five renderer values, persistence, and route-scene conversion;
 - mobile menu open, close, and Escape behavior.
 
 Release flow:
@@ -783,6 +827,8 @@ Common edits:
   `src/siteContent.ts`.
 - Page structure: edit `src/App.tsx`.
 - Theme/layout: edit `src/styles.css`.
+- Renderer choices/context: edit `src/renderMode.ts`; conversion behavior lives
+  in the oscilloscope, route-scene, particle, and CSS files together.
 - Homepage instrument: edit `src/AsciiOscilloscope.tsx`.
 - Subpage animation: edit the matching renderer in `src/AsciiScene.tsx`.
 - Route metadata: edit `pageMeta` in `src/siteContent.ts`.
@@ -826,9 +872,10 @@ of truth.
 
 Create hash routes for Home, Work, Projects, Systems, Now, About, and Contact,
 plus a styled not-found route. Implement a shared sticky indexed navigation,
-icon-based persistent dark/light theme, accessible mobile menu, skip link,
-footer, route metadata, error boundary, local favicon/social card hooks,
-robots.txt, sitemap.xml, and Vercel configuration.
+icon-based persistent dark/light theme, a persistent native global renderer
+selector, accessible mobile menu, skip link, footer, route metadata, error
+boundary, local favicon/social card hooks, robots.txt, sitemap.xml, and Vercel
+configuration.
 
 The aesthetic must be black and cyan, editorial, technical, old-internet, and
 ASCII-led, with influence from TouchDesigner, Arch/Hyprland customization,
@@ -853,6 +900,17 @@ character grid, orientation-aware glyphs, a Bayer dither matrix, phosphor
 persistence, near-full-panel plotting, a capped frame rate, hidden-tab pausing,
 and reduced-motion support.
 
+Offer ASCII, Dither, Glitch, Particles, and CRT modes. Treat them as global
+rendering grammars, not palette presets. One selection must change the
+oscilloscope’s character conversion, all generated subpage scenes, the ambient
+canvas, and a restrained whole-page post-process while leaving content and
+layout stable. Persist the choice in localStorage, apply it before React loads,
+and keep the black/cyan identity in every mode. Dither uses ordered `░▒▓█`
+density; Glitch uses deterministic row displacement and brief cyan/violet
+splits; Particles uses sparse point topology; CRT uses extended phosphor
+persistence plus CSS scanlines, vignette, and bloom. Disable moving glitch
+effects for reduced motion.
+
 Give each subpage a different code-rendered ASCII heading scene tied to its
 content: Work signal multiplexing, Projects build timeline, Systems network
 packets, Now process monitor, About education/interests graph, and Contact mail
@@ -864,10 +922,11 @@ pointer controls, aria states for menu/theme/audio, and decorative hiding for
 ASCII. Support 320px phones through wide desktops without horizontal overflow.
 
 Implement automated tests for all routes, unknown-route handling, theme
-persistence, mobile-menu keyboard behavior, project expansion/content,
-homepage instrument controls, and all generated scenes. Add scripts for
-typecheck, lint, test, build, and a combined validate command. Do not add a
-database, authentication, API credentials, or live integrations.
+persistence, renderer persistence/conversion, mobile-menu keyboard behavior,
+project expansion/content, homepage instrument controls, and all generated
+scenes. Add scripts for typecheck, lint, test, build, and a combined validate
+command. Do not add a database, authentication, API credentials, or live
+integrations.
 ```
 
 ## 22. References

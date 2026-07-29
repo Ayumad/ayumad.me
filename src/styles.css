@@ -139,6 +139,200 @@ button {
   pointer-events: none;
 }
 
+.render-overlay {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-renderer="dither"] body {
+  background:
+    linear-gradient(90deg, transparent 49.6%, var(--fine) 50%, transparent 50.4%) 0 0 / 64px 64px,
+    linear-gradient(0deg, transparent 49.6%, var(--fine) 50%, transparent 50.4%) 0 0 / 64px 64px,
+    var(--bg);
+}
+
+:root[data-renderer="dither"] body::before {
+  opacity: 0.38;
+  background-size: 4px 4px;
+}
+
+:root[data-renderer="dither"] .render-overlay {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 72%, transparent) 0 0.6px, transparent 0.8px)
+      0 0 / 4px 4px,
+    radial-gradient(circle, color-mix(in srgb, var(--violet) 54%, transparent) 0 0.6px, transparent 0.8px)
+      2px 2px / 4px 4px;
+  mix-blend-mode: screen;
+  opacity: 0.09;
+  mask-image: linear-gradient(115deg, black, transparent 36%, black 76%, transparent);
+}
+
+:root[data-renderer="dither"] .oscilloscope-grid,
+:root[data-renderer="dither"] .heading-field,
+:root[data-renderer="dither"] .topic-ascii,
+:root[data-renderer="dither"] .contact-field {
+  text-shadow: none;
+}
+
+:root[data-renderer="dither"] .page-heading,
+:root[data-renderer="dither"] .showcase-row,
+:root[data-renderer="dither"] .project-card,
+:root[data-renderer="dither"] .system-row,
+:root[data-renderer="dither"] .now-row {
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 13%, transparent) 0 0.55px, transparent 0.8px);
+  background-size: 4px 4px;
+}
+
+@keyframes glitch-scan {
+  0%,
+  88%,
+  100% {
+    transform: translateX(0);
+  }
+  89% {
+    transform: translateX(6px);
+  }
+  90% {
+    transform: translateX(-3px);
+  }
+  91% {
+    transform: translateX(1px);
+  }
+}
+
+@keyframes glitch-band {
+  0%,
+  74%,
+  100% {
+    clip-path: inset(0 0 100% 0);
+    transform: translateX(0);
+  }
+  75% {
+    clip-path: inset(19% 0 73% 0);
+    transform: translateX(8px);
+  }
+  76% {
+    clip-path: inset(61% 0 30% 0);
+    transform: translateX(-5px);
+  }
+  77% {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+:root[data-renderer="glitch"] .render-overlay {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 47px,
+      color-mix(in srgb, var(--violet) 12%, transparent) 47px 49px,
+      transparent 49px 91px,
+      color-mix(in srgb, var(--cyan) 9%, transparent) 91px 92px
+    );
+  opacity: 0.65;
+  animation: glitch-scan 5.8s steps(1, end) infinite;
+}
+
+:root[data-renderer="glitch"] .render-overlay::before,
+:root[data-renderer="glitch"] .render-overlay::after {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--cyan) 7%, transparent);
+  content: "";
+  animation: glitch-band 4.7s steps(1, end) infinite;
+}
+
+:root[data-renderer="glitch"] .render-overlay::after {
+  background: color-mix(in srgb, var(--violet) 8%, transparent);
+  animation-delay: -2.4s;
+  animation-duration: 6.1s;
+}
+
+:root[data-renderer="glitch"] .wordmark,
+:root[data-renderer="glitch"] .page-heading h1,
+:root[data-renderer="glitch"] .hero h1 {
+  text-shadow:
+    2px 0 color-mix(in srgb, var(--cyan) 55%, transparent),
+    -2px 0 color-mix(in srgb, var(--violet) 58%, transparent);
+}
+
+:root[data-renderer="glitch"] .oscilloscope-grid,
+:root[data-renderer="glitch"] .heading-field {
+  text-shadow:
+    1px 0 color-mix(in srgb, var(--cyan) 78%, transparent),
+    -1px 0 color-mix(in srgb, var(--violet) 68%, transparent),
+    0 0 15px color-mix(in srgb, var(--cyan) 24%, transparent);
+}
+
+:root[data-renderer="particles"] body::before {
+  opacity: 0.07;
+}
+
+:root[data-renderer="particles"] .particle-field {
+  opacity: 0.82;
+}
+
+:root[data-renderer="particles"] .dither-wash {
+  opacity: 0.06;
+}
+
+:root[data-renderer="particles"] .render-overlay {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 58%, transparent) 0 0.75px, transparent 1px)
+      0 0 / 19px 19px,
+    radial-gradient(circle, color-mix(in srgb, var(--violet) 44%, transparent) 0 0.65px, transparent 1px)
+      9px 12px / 31px 31px;
+  opacity: 0.18;
+  mask-image: radial-gradient(ellipse 90% 72% at 50% 46%, black, transparent 88%);
+}
+
+:root[data-renderer="particles"] .page-heading,
+:root[data-renderer="particles"] .scope-shell,
+:root[data-renderer="particles"] .project-card {
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+}
+
+:root[data-renderer="crt"] body {
+  background:
+    radial-gradient(ellipse 90% 96% at 50% 45%, transparent 48%, color-mix(in srgb, var(--ink) 46%, transparent)),
+    var(--bg);
+}
+
+:root[data-renderer="crt"] .render-overlay {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 9%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
+    radial-gradient(ellipse 76% 94% at 50% 48%, transparent 48%, color-mix(in srgb, var(--ink) 62%, transparent));
+  mix-blend-mode: multiply;
+  opacity: 0.68;
+}
+
+:root[data-theme="light"][data-renderer="crt"] .render-overlay {
+  mix-blend-mode: normal;
+  opacity: 0.26;
+}
+
+:root[data-renderer="crt"] .route-frame {
+  filter: contrast(1.05) saturate(1.08);
+}
+
+:root[data-renderer="crt"] .oscilloscope-grid,
+:root[data-renderer="crt"] .heading-field,
+:root[data-renderer="crt"] .topic-ascii,
+:root[data-renderer="crt"] .contact-field {
+  text-shadow:
+    0 0 4px color-mix(in srgb, var(--cyan) 72%, transparent),
+    0 0 13px color-mix(in srgb, var(--cyan) 30%, transparent);
+}
+
 .section-shell {
   width: min(calc(100% - 64px), var(--max));
   margin-inline: auto;
@@ -237,6 +431,49 @@ button {
 .header-actions {
   display: flex;
   align-items: stretch;
+}
+
+.render-control {
+  position: relative;
+  display: flex;
+  min-width: 94px;
+  align-items: stretch;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.render-control::after {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  color: var(--cyan);
+  content: "⌄";
+  font: 700 0.62rem/1 var(--mono);
+  pointer-events: none;
+  transform: translateY(-58%);
+}
+
+.render-select {
+  width: 100%;
+  padding: 0 24px 0 11px;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  background: transparent;
+  color: var(--cyan);
+  cursor: pointer;
+  font: 800 0.58rem/1 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.render-select:hover {
+  background: var(--surface);
+}
+
+.render-select option {
+  background: var(--surface);
+  color: var(--text);
 }
 
 .plain-button {
@@ -2018,6 +2255,20 @@ main {
     padding-inline: 8px;
   }
 
+  .render-control {
+    min-width: 76px;
+  }
+
+  .render-control::after {
+    right: 7px;
+  }
+
+  .render-select {
+    padding-right: 19px;
+    padding-left: 7px;
+    font-size: 0.5rem;
+  }
+
   .icon-control {
     min-width: 52px;
     padding: 0;
@@ -2350,5 +2601,11 @@ main {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  :root[data-renderer="glitch"] .render-overlay,
+  :root[data-renderer="glitch"] .render-overlay::before,
+  :root[data-renderer="glitch"] .render-overlay::after {
+    animation: none;
   }
 }
