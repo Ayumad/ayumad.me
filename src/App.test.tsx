@@ -48,6 +48,11 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "false",
     );
+    expect(
+      screen.getByRole("button", { name: "Enable audio" }).querySelector(
+        ".scope-icon-audio-off",
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Renderer" })).toHaveValue(
       "ascii",
     );
@@ -104,14 +109,25 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
 
-    fireEvent.click(screen.getByRole("button", { name: "Pause animation" }));
+    const pauseButton = screen.getByRole("button", { name: "Pause animation" });
+    expect(pauseButton.querySelector(".scope-icon-pause")).toBeInTheDocument();
+    fireEvent.click(pauseButton);
     expect(screen.getByRole("button", { name: "Run animation" })).toHaveAttribute(
       "aria-pressed",
       "false",
     );
+    expect(
+      screen.getByRole("button", { name: "Run animation" }).querySelector(
+        ".scope-icon-play",
+      ),
+    ).toBeInTheDocument();
 
     const random = vi.spyOn(Math, "random").mockReturnValue(0.5);
-    fireEvent.click(screen.getByRole("button", { name: "Random" }));
+    const randomizeButton = screen.getByRole("button", { name: "Randomize" });
+    expect(
+      randomizeButton.querySelector(".scope-icon-random"),
+    ).toBeInTheDocument();
+    fireEvent.click(randomizeButton);
     expect(screen.getByRole("button", { name: /Rose shape/i })).toHaveAttribute(
       "aria-pressed",
       "true",
