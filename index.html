@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ayush Madhukar's cozy tech corner — AI, audio, hardware, notes, servers, Linux, and tiny experiments."
+    />
+    <meta name="author" content="Ayush Madhukar" />
+    <meta name="theme-color" content="#11130f" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ayumad.me" />
+    <meta property="og:title" content="Ayumad.me — Cozy tech corner" />
+    <meta
+      property="og:description"
+      content="A living map of the systems, projects, tools, and ideas Ayush is exploring."
+    />
+    <meta property="og:url" content="https://ayumad.me/" />
+    <meta property="og:image" content="https://ayumad.me/og.png" />
+    <meta property="og:image:width" content="1774" />
+    <meta property="og:image:height" content="887" />
+    <meta property="og:image:alt" content="Ayumad.me cozy tech corner" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ayumad.me — Cozy tech corner" />
+    <meta
+      name="twitter:description"
+      content="AI, audio, hardware, notes, servers, Linux, and tiny experiments."
+    />
+    <meta name="twitter:image" content="https://ayumad.me/og.png" />
+    <link rel="canonical" href="https://ayumad.me/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Ayumad.me — Cozy tech corner</title>
+    <script>
+      (() => {
+        const saved = localStorage.getItem("ayumad-theme");
+        const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme =
+          saved === "light" || saved === "dark" ? saved : systemDark ? "dark" : "light";
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>This site needs JavaScript to navigate between sections.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
