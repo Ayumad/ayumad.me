@@ -12,6 +12,12 @@ import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
+  isRenderMode,
+  RenderModeContext,
+  renderModes,
+  type RenderMode,
+} from "./renderMode";
+import {
   aboutContent,
   futureIdeas,
   homeContent,
@@ -112,6 +118,20 @@ function useTheme() {
   };
 }
 
+function useRenderer() {
+  const [renderMode, setRenderMode] = useState<RenderMode>(() => {
+    const current = document.documentElement.dataset.renderer;
+    return isRenderMode(current) ? current : "ascii";
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.renderer = renderMode;
+    localStorage.setItem("ayumad-renderer", renderMode);
+  }, [renderMode]);
+
+  return { renderMode, setRenderMode };
+}
+
 function RouteEffects({ path }: { path: string }) {
   const reducedMotion = useReducedMotion();
 
@@ -131,7 +151,15 @@ function RouteEffects({ path }: { path: string }) {
   return null;
 }
 
-function Header({ path }: { path: string }) {
+function Header({
+  path,
+  renderMode,
+  setRenderMode,
+}: {
+  path: string;
+  renderMode: RenderMode;
+  setRenderMode: (mode: RenderMode) => void;
+}) {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -178,6 +206,25 @@ function Header({ path }: { path: string }) {
         </nav>
 
         <div className="header-actions">
+          <label className="render-control">
+            <span className="sr-only">Renderer</span>
+            <select
+              className="render-select"
+              aria-label="Renderer"
+              value={renderMode}
+              onChange={(event) => {
+                if (isRenderMode(event.target.value)) {
+                  setRenderMode(event.target.value);
+                }
+              }}
+            >
+              {renderModes.map((mode) => (
+                <option key={mode.value} value={mode.value}>
+                  {mode.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <button
             type="button"
             className="plain-button icon-control"
@@ -662,6 +709,7 @@ function Footer() {
 
 export default function App() {
   const path = useHashPath();
+  const { renderMode, setRenderMode } = useRenderer();
   const page =
     path === "/" ? <HomePage /> :
     path === "/showcase" ? <ShowcasePage /> :
@@ -673,16 +721,23 @@ export default function App() {
     <NotFoundPage />;
 
   return (
-    <MotionConfig reducedMotion="user">
-      <RouteEffects path={path} />
-      <ParticleField />
-      <div className="dither-wash" aria-hidden="true" />
-      <a className="skip-link" href="#main-content">Skip to content</a>
-      <Header path={path} />
-      <main id="main-content">
-        <PageTransition path={path}>{page}</PageTransition>
-      </main>
-      <Footer />
-    </MotionConfig>
+    <RenderModeContext.Provider value={renderMode}>
+      <MotionConfig reducedMotion="user">
+        <RouteEffects path={path} />
+        <ParticleField />
+        <div className="dither-wash" aria-hidden="true" />
+        <div className="render-overlay" aria-hidden="true" />
+        <a className="skip-link" href="#main-content">Skip to content</a>
+        <Header
+          path={path}
+          renderMode={renderMode}
+          setRenderMode={setRenderMode}
+        />
+        <main id="main-content">
+          <PageTransition path={path}>{page}</PageTransition>
+        </main>
+        <Footer />
+      </MotionConfig>
+    </RenderModeContext.Provider>
   );
 }
