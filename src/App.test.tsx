@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 function renderAt(path: string) {
@@ -25,7 +25,10 @@ describe("Ayumad.me", () => {
     const signalText = renderedSignal?.textContent ?? "";
     expect(signalText.length).toBeGreaterThan(1_000);
     expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
-    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("knot");
+    expect(screen.getByRole("button", { name: /Knot shape/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("55");
     expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(3);
     expect(screen.getByRole("spinbutton", { name: "Y ratio" })).toHaveValue(2);
@@ -33,6 +36,7 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("slider", { name: "Form" })).toHaveValue("0.12");
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
     expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
+    expect(screen.getByRole("slider", { name: "Copies" })).toHaveValue("0");
     expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -52,9 +56,7 @@ describe("Ayumad.me", () => {
   it("updates the oscilloscope from its accessible controls", () => {
     renderAt("/");
 
-    fireEvent.change(screen.getByRole("combobox", { name: "Preset" }), {
-      target: { value: "star" },
-    });
+    fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
     fireEvent.change(screen.getByRole("slider", { name: "Frequency" }), {
       target: { value: "110" },
     });
@@ -67,12 +69,19 @@ describe("Ayumad.me", () => {
     fireEvent.change(screen.getByRole("slider", { name: "Form" }), {
       target: { value: "0.3" },
     });
+    fireEvent.change(screen.getByRole("slider", { name: "Copies" }), {
+      target: { value: "2" },
+    });
 
-    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("star");
+    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("110");
     expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(7);
     expect(screen.getByText("180°")).toBeInTheDocument();
     expect(screen.getByText("30%")).toBeInTheDocument();
+    expect(screen.getByText("4×")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Pause animation" }));
     expect(screen.getByRole("button", { name: "Run animation" })).toHaveAttribute(
@@ -80,9 +89,18 @@ describe("Ayumad.me", () => {
       "false",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Reset" }));
-    expect(screen.getByRole("combobox", { name: "Preset" })).toHaveValue("knot");
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("55");
+    const random = vi.spyOn(Math, "random").mockReturnValue(0.5);
+    fireEvent.click(screen.getByRole("button", { name: "Random" }));
+    expect(screen.getByRole("button", { name: /Rose shape/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByRole("slider", { name: "Copies" })).toHaveValue("2");
+    expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    random.mockRestore();
   });
 
   it("renders project stories on the projects route", () => {
