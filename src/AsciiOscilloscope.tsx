@@ -1,9 +1,4 @@
-import {
-  type PointerEvent as ReactPointerEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { useRenderMode } from "./renderMode";
 
@@ -144,7 +139,7 @@ const presets: Preset[] = [
     yRatio: 1,
     phaseDegrees: 0,
     form: 0.9,
-    rotationDegrees: -90,
+    rotationDegrees: 0,
     scale: 0.96,
     motion: 0.1,
   },
@@ -340,7 +335,7 @@ function signalPoint(
   );
   const localTheta =
     (copyPosition - Math.floor(copyPosition)) * Math.PI * 2;
-  const livePhase = settings.phase + time * settings.motion * 0.28;
+  const livePhase = settings.phase;
   const liveRotation = settings.rotation + time * settings.motion * 0.08;
   let point: Point;
 
@@ -505,20 +500,11 @@ export default function AsciiOscilloscope() {
   const renderNowRef = useRef<((clear?: boolean) => void) | null>(null);
   const audioGraphRef = useRef<AudioGraph | null>(null);
   const suspendTimerRef = useRef<number | null>(null);
-  const draggingRef = useRef(false);
   const elapsedRef = useRef(0);
   const runningRef = useRef(true);
   const audioEnabledRef = useRef(false);
   const [presetId, setPresetId] = useState<PresetId>(initialSettings.preset);
-  const [generator, setGenerator] = useState<GeneratorId>(
-    initialSettings.generator,
-  );
   const [frequency, setFrequency] = useState(initialSettings.frequency);
-  const [xRatio, setXRatio] = useState(initialSettings.xRatio);
-  const [yRatio, setYRatio] = useState(initialSettings.yRatio);
-  const [phaseDegrees, setPhaseDegrees] = useState(90);
-  const [form, setForm] = useState(initialSettings.form);
-  const [rotationDegrees, setRotationDegrees] = useState(0);
   const [scale, setScale] = useState(initialSettings.scale);
   const [motion, setMotion] = useState(initialSettings.motion);
   const [octave, setOctave] = useState(0);
@@ -772,13 +758,13 @@ export default function AsciiOscilloscope() {
   useEffect(() => {
     const nextSettings: SignalSettings = {
       preset: presetId,
-      generator,
+      generator: preset.generator,
       frequency,
-      xRatio,
-      yRatio,
-      phase: radians(phaseDegrees),
-      form,
-      rotation: radians(rotationDegrees),
+      xRatio: preset.xRatio,
+      yRatio: preset.yRatio,
+      phase: radians(preset.phaseDegrees),
+      form: preset.form,
+      rotation: radians(preset.rotationDegrees),
       scale,
       motion,
       copies,
@@ -794,13 +780,8 @@ export default function AsciiOscilloscope() {
     }
   }, [
     presetId,
-    generator,
+    preset,
     frequency,
-    xRatio,
-    yRatio,
-    phaseDegrees,
-    form,
-    rotationDegrees,
     scale,
     motion,
     copies,
@@ -904,71 +885,22 @@ export default function AsciiOscilloscope() {
 
   const applyPreset = (id: PresetId) => {
     const next = presets.find((item) => item.id === id) ?? defaultPreset;
+    elapsedRef.current = 0;
+    renderNowRef.current?.(true);
     setPresetId(next.id);
-    setGenerator(next.generator);
-    setXRatio(next.xRatio);
-    setYRatio(next.yRatio);
-    setPhaseDegrees(next.phaseDegrees);
-    setForm(next.form);
-    setRotationDegrees(next.rotationDegrees);
     setScale(next.scale);
     setMotion(next.motion);
   };
 
   const randomize = () => {
     const next = presets[Math.floor(Math.random() * presets.length)];
-    const pointBased =
-      next.generator === "star" || next.generator === "polygon";
+    const safeMotion = [0, 0.08, 0.14, 0.22, 0.32];
     elapsedRef.current = 0;
     setPresetId(next.id);
-    setGenerator(next.generator);
-    setXRatio(
-      pointBased
-        ? 3 + Math.floor(Math.random() * 7)
-        : 1 + Math.floor(Math.random() * 9),
-    );
-    setYRatio(1 + Math.floor(Math.random() * 5));
-    setPhaseDegrees(Math.round(Math.random() * 360));
-    setForm(Number((0.15 + Math.random() * 0.8).toFixed(2)));
-    setRotationDegrees(Math.round(-180 + Math.random() * 360));
-    setScale(Number((0.72 + Math.random() * 0.28).toFixed(2)));
-    setMotion(Number((0.04 + Math.random() * 0.66).toFixed(2)));
+    setScale(Number((0.84 + Math.random() * 0.14).toFixed(2)));
+    setMotion(safeMotion[Math.floor(Math.random() * safeMotion.length)]);
     setOctave(Math.floor(Math.random() * 4));
     setRunning(true);
-  };
-
-  const setFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
-    const y = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
-    setPhaseDegrees(Math.round(x * 360));
-    setForm(Math.round((1 - y) * 100) / 100);
-  };
-
-  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    draggingRef.current = true;
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    setFromPointer(event);
-  };
-
-  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!draggingRef.current) return;
-    setFromPointer(event);
-  };
-
-  const onPointerEnd = (event: ReactPointerEvent<HTMLDivElement>) => {
-    draggingRef.current = false;
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
-
-  const updateRatio = (
-    value: string,
-    setter: (next: number) => void,
-  ) => {
-    const parsed = Number(value);
-    if (Number.isFinite(parsed)) setter(Math.round(clamp(parsed, 1, 9)));
   };
 
   return (
@@ -978,9 +910,8 @@ export default function AsciiOscilloscope() {
     >
       <figcaption id="oscilloscope-description" className="sr-only">
         An interactive real-time ASCII XY oscilloscope instrument. Choose a
-        geometric shape, change its frequency and geometry, multiply it into
-        octave copies, drag the trace, or use the controls. Stereo audio is
-        muted by default.
+        curated geometric shape, tune its note, scale, motion, and multiplier,
+        or enable optional stereo audio. Audio is muted by default.
       </figcaption>
 
       <div className="scope-header" aria-hidden="true">
@@ -994,17 +925,12 @@ export default function AsciiOscilloscope() {
       <div
         className="scope-stage"
         ref={containerRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerEnd}
-        onPointerCancel={onPointerEnd}
         aria-hidden="true"
       >
         <div className="scope-axis scope-axis-x" />
         <div className="scope-axis scope-axis-y" />
         <pre className="oscilloscope-grid" ref={outputRef} />
         <span className="scope-origin">0</span>
-        <span className="scope-drag">DRAG</span>
       </div>
 
       <div className="scope-controls">
@@ -1044,79 +970,12 @@ export default function AsciiOscilloscope() {
           </output>
         </label>
 
-        <div
-          className="scope-control scope-ratio"
-          role="group"
-          aria-labelledby="scope-ratio-label"
-        >
-          <span id="scope-ratio-label">Ratio</span>
-          <input
-            aria-label="X ratio"
-            type="number"
-            min="1"
-            max="9"
-            value={xRatio}
-            onChange={(event) => updateRatio(event.target.value, setXRatio)}
-          />
-          <span aria-hidden="true">:</span>
-          <input
-            aria-label="Y ratio"
-            type="number"
-            min="1"
-            max="9"
-            value={yRatio}
-            onChange={(event) => updateRatio(event.target.value, setYRatio)}
-          />
-        </div>
-
-        <label className="scope-control">
-          <span>Phase</span>
-          <input
-            aria-label="Phase"
-            type="range"
-            min="0"
-            max="360"
-            step="1"
-            value={phaseDegrees}
-            onChange={(event) => setPhaseDegrees(Number(event.target.value))}
-          />
-          <output>{phaseDegrees}°</output>
-        </label>
-
-        <label className="scope-control">
-          <span>Form</span>
-          <input
-            aria-label="Form"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={form}
-            onChange={(event) => setForm(Number(event.target.value))}
-          />
-          <output>{Math.round(form * 100)}%</output>
-        </label>
-
-        <label className="scope-control">
-          <span>Rotate</span>
-          <input
-            aria-label="Rotation"
-            type="range"
-            min="-180"
-            max="180"
-            step="1"
-            value={rotationDegrees}
-            onChange={(event) => setRotationDegrees(Number(event.target.value))}
-          />
-          <output>{rotationDegrees}°</output>
-        </label>
-
         <label className="scope-control">
           <span>Scale</span>
           <input
             aria-label="Scale"
             type="range"
-            min="0.55"
+            min="0.7"
             max="1"
             step="0.01"
             value={scale}
@@ -1140,9 +999,9 @@ export default function AsciiOscilloscope() {
         </label>
 
         <label className="scope-control">
-          <span>Copies</span>
+          <span>Multiply</span>
           <input
-            aria-label="Copies"
+            aria-label="Multiplier"
             type="range"
             min="0"
             max="3"
@@ -1179,8 +1038,8 @@ export default function AsciiOscilloscope() {
       </div>
 
       <div className="scope-footer" aria-hidden="true">
-        <span>X:Y {xRatio}:{yRatio}</span>
-        <span>PHASE {phaseDegrees}°</span>
+        <span>SHAPE {preset.label}</span>
+        <span>SCALE {Math.round(scale * 100)}%</span>
         <span>OCT +{octave}</span>
       </div>
     </figure>
