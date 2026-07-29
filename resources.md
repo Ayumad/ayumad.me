@@ -262,6 +262,11 @@ Current focus:
 
 This is a working browser instrument, not a video or canned text animation.
 
+The complete standalone export of this instrument—including its exact 2D and
+3D implementation, five renderer modes, audio engine, dedicated-tool
+architecture, validation matrix, and copy-paste build prompt—lives in
+[`renderer-plan.md`](renderer-plan.md).
+
 Available shape buttons:
 
 | Shape | Generator | Locked straight-on geometry |
