@@ -255,6 +255,7 @@ const musicalNotes: MusicalNote[] = Array.from(
 const outputGain = 0.018;
 const fourierHarmonics = 48;
 const audioSamples = 512;
+const renderUnitOptions = [48, 72, 96, 120] as const;
 
 function mix(from: number, to: number, amount: number) {
   return from + (to - from) * amount;
@@ -791,6 +792,7 @@ export default function AsciiOscilloscope() {
   const [scale, setScale] = useState(initialSettings.scale);
   const [motion, setMotion] = useState(initialSettings.motion);
   const [octave, setOctave] = useState(0);
+  const [renderUnits, setRenderUnits] = useState(72);
   const [running, setRunning] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(true);
@@ -820,9 +822,9 @@ export default function AsciiOscilloscope() {
     const configureGrid = () => {
       const width = container.clientWidth || 680;
       const height = container.clientHeight || 390;
-      columns = width < 430 ? 48 : width < 610 ? 60 : 72;
-      const fontSize = Math.min(14.5, (width / columns) * 1.58);
-      rows = Math.round(clamp(height / (fontSize * 0.94), 24, 34));
+      columns = renderUnits;
+      const fontSize = clamp((width / columns) * 1.58, 4.8, 22);
+      rows = Math.round(clamp(height / (fontSize * 0.94), 16, 72));
       const physicalGridWidth = (columns - 1) * fontSize * 0.6;
       const physicalGridHeight = (rows - 1) * fontSize * 0.91;
       horizontalCorrection = Math.min(
@@ -1100,6 +1102,8 @@ export default function AsciiOscilloscope() {
       output.textContent = lines.join("\n");
       output.dataset.clippedSamples = clippedSamples.toString();
       output.dataset.dimension = current.dimension;
+      output.dataset.units = columns.toString();
+      output.dataset.rows = rows.toString();
       output.dataset.geometry =
         current.dimension === "3d"
           ? spatialGeometryNames[current.preset]
@@ -1154,7 +1158,7 @@ export default function AsciiOscilloscope() {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [reducedMotion, renderMode]);
+  }, [reducedMotion, renderMode, renderUnits]);
 
   useEffect(() => {
     const nextSettings: SignalSettings = {
@@ -1310,8 +1314,8 @@ export default function AsciiOscilloscope() {
       <figcaption id="oscilloscope-description" className="sr-only">
         An interactive real-time ASCII XY oscilloscope instrument. Choose a
         curated geometric shape, switch between 2D and 3D geometry, tune its
-        note, scale, motion, and multiplier, or enable optional stereo audio.
-        Audio is muted by default.
+        note, scale, motion, multiplier, and character-grid resolution, or
+        enable optional stereo audio. Audio is muted by default.
       </figcaption>
 
       <div className="scope-header" aria-hidden="true">
@@ -1412,6 +1416,21 @@ export default function AsciiOscilloscope() {
           <output>{copies}×</output>
         </label>
 
+        <label className="scope-control scope-units">
+          <span>Units</span>
+          <input
+            aria-label="Render units"
+            aria-valuetext={`${renderUnits} horizontal character units`}
+            type="range"
+            min={renderUnitOptions[0]}
+            max={renderUnitOptions[renderUnitOptions.length - 1]}
+            step="24"
+            value={renderUnits}
+            onChange={(event) => setRenderUnits(Number(event.target.value))}
+          />
+          <output>{renderUnits}</output>
+        </label>
+
         <div className="scope-actions">
           <button
             className="scope-dimension"
@@ -1486,7 +1505,8 @@ export default function AsciiOscilloscope() {
       <div className="scope-footer" aria-hidden="true">
         <span>SHAPE {preset.label}</span>
         <span>
-          {dimension.toUpperCase()} / SCALE {Math.round(scale * 100)}%
+          {dimension.toUpperCase()} / {renderUnits}U /{" "}
+          {Math.round(scale * 100)}%
         </span>
         <span>OCT +{octave}</span>
       </div>
