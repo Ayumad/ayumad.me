@@ -60,6 +60,11 @@ describe("Ayumad.me", () => {
     ).toHaveAttribute("aria-pressed", "false");
     expect(renderedSignal).toHaveAttribute("data-dimension", "2d");
     expect(renderedSignal).toHaveAttribute("data-geometry", "star");
+    expect(renderedSignal).toHaveAttribute(
+      "data-motion-model",
+      "planar-rotation-and-trace",
+    );
+    expect(renderedSignal).toHaveAttribute("data-planar-rotation", "0.0000");
     expect(renderedSignal).toHaveAttribute("data-units", "72");
     expect(screen.queryByRole("button", { name: /Eight shape/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Rose shape/i })).not.toBeInTheDocument();
@@ -243,6 +248,10 @@ describe("Ayumad.me", () => {
       screen.getByRole("button", { name: "Show 2D geometry" }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(grid).toHaveAttribute("data-dimension", "3d");
+    expect(grid).toHaveAttribute(
+      "data-motion-model",
+      "spatial-rotation-and-trace",
+    );
 
     for (const [shape, geometry] of geometries) {
       fireEvent.click(
@@ -256,6 +265,10 @@ describe("Ayumad.me", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Show 2D geometry" }));
     expect(grid).toHaveAttribute("data-dimension", "2d");
+    expect(grid).toHaveAttribute(
+      "data-motion-model",
+      "planar-rotation-and-trace",
+    );
   });
 
   it("increases grid detail for crowded multiplied geometry", () => {
