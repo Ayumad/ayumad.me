@@ -30,7 +30,7 @@ export const nowEntries: NowEntry[] = [
   {
     label: "Designing",
     marker: "04",
-    title: "This small corner of the internet",
+    title: "This patch of the internet",
     description:
       "Shaping Ayumad.me into a public map of projects, systems, notes, and experiments—not a résumé wearing a nicer shirt.",
     detail: "TypeScript · motion · dither · words",
