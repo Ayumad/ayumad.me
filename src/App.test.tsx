@@ -132,13 +132,42 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "true",
     );
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.91");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.14");
-    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.94");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
+    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
     expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
+    random.mockRestore();
+  });
+
+  it("keeps every randomized variant within its authored density limit", () => {
+    renderAt("/");
+    const randomizeButton = screen.getByRole("button", { name: "Randomize" });
+    const multiplier = screen.getByRole("slider", {
+      name: "Multiplier",
+    }) as HTMLInputElement;
+    const random = vi.spyOn(Math, "random");
+    const complexShapes = ["Eight", "Knot", "Rose", "Star", "Orbit"];
+
+    for (let index = 0; index < 16; index += 1) {
+      random.mockReturnValue((index + 0.25) / 16);
+      fireEvent.click(randomizeButton);
+
+      expect(Number(multiplier.value)).toBeLessThan(3);
+
+      for (const shape of complexShapes) {
+        const button = screen.getByRole("button", {
+          name: new RegExp(`${shape} shape`, "i"),
+        });
+
+        if (button.getAttribute("aria-pressed") === "true") {
+          expect(Number(multiplier.value)).toBeLessThanOrEqual(1);
+        }
+      }
+    }
+
     random.mockRestore();
   });
 

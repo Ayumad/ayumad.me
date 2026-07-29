@@ -291,9 +291,10 @@ Controls:
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
 - `Pause` / `Run`: stops or resumes geometric motion.
-- `Random`: chooses one of the eight locked silhouettes, a safe 84–98% scale,
-  one of five restrained motion values, and a multiplier. It never randomizes
-  ratio, phase, form, or rotation, and it preserves the current note.
+- `Random`: chooses one of 16 hand-authored complete variants instead of
+  combining parameters independently. It never selects 8×; Eight, Knot, Rose,
+  Star, and Orbit are limited to 1× or 2×, while only Line, Circle, and Polygon
+  can receive 4×. It preserves the current note.
 - `Audio off` / `Audio on`: explicit stereo output switch.
 - Pause/run, Random, and Audio are shown as custom monochrome CSS icons rather
   than text. Each icon-only button retains a descriptive accessible name and
@@ -910,9 +911,10 @@ button must reset to a recognizable straight-on silhouette. Compensate for the
 physical width/height ratio of monospace character cells so circles, regular
 polygons, stars, and Lissajous figures render with standard proportions.
 Motion must move a brightness highlight around the fixed outline without
-changing any geometry. Random may select
-only a shape, safe 84–98% scale, restrained motion value, and multiplier; it
-must never generate arbitrary geometry. Multiplying copies must traverse the
+changing any geometry. Random must select from a hand-authored bank of complete
+variants rather than combining parameters independently. It must never select
+8×; limit Eight, Knot, Rose, Star, and Orbit to 1× or 2×, and permit 4× only for
+Line, Circle, and Polygon. Multiplying copies must traverse the
 geometry multiple times per base cycle so the visible multiplication also
 creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
