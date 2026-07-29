@@ -244,6 +244,17 @@ button {
   background: var(--surface);
 }
 
+.icon-control {
+  min-width: 52px;
+  padding: 0;
+  color: var(--text);
+  font: 500 1.12rem/1 var(--mono);
+}
+
+.icon-control:hover {
+  color: var(--acid);
+}
+
 .menu-toggle {
   display: none;
 }
@@ -1716,6 +1727,11 @@ main {
   .plain-button {
     min-width: 58px;
     padding-inline: 8px;
+  }
+
+  .icon-control {
+    min-width: 52px;
+    padding: 0;
   }
 
   .hero {
