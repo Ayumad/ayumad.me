@@ -81,14 +81,20 @@ describe("Ayumad.me", () => {
   });
 
   it.each([
-    ["/showcase", "Work"],
-    ["/systems", "Systems"],
-    ["/now", "Now"],
-    ["/about", "About"],
-    ["/contact", "Contact"],
-  ])("renders %s with its primary heading", (path, heading) => {
+    ["/showcase", "Work", "work"],
+    ["/projects", "Projects", "projects"],
+    ["/systems", "Systems", "systems"],
+    ["/now", "Now", "now"],
+    ["/about", "About", "about"],
+    ["/contact", "Contact", "contact"],
+  ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
     renderAt(path);
     expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
+    const renderedScene = document.querySelector<HTMLPreElement>(
+      `[data-ascii-scene="${scene}"]`,
+    );
+    expect(renderedScene).toBeInTheDocument();
+    expect(renderedScene?.textContent?.length).toBeGreaterThan(1_000);
   });
 
   it("renders a useful not-found route", () => {
