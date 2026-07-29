@@ -10,7 +10,9 @@ import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/
 import ParticleField from "./ParticleField";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
+  aboutContent,
   futureIdeas,
+  homeContent,
   navItems,
   pageMeta,
   projects,
@@ -43,39 +45,36 @@ const homeField = String.raw`
 
 const sectionArt = {
   work: String.raw`
-    ┌─────────┐
-    │ AI      ├──────┐
-    └─────────┘      │
-    ┌─────────┐      ├────  WORK
-    │ HOMELAB ├──────┤
-    └─────────┘      │
-    ┌─────────┐      │
-    │ AUDIO   ├──────┘
-    └─────────┘`,
+    NOTES ──────> HERMES <────── CLIENTS
+                     │
+                     │
+    P520 ───────> SERVICES
+                     │
+                     │
+    SOURCE ─────> AUDIO ───────> ROOM`,
   projects: String.raw`
     2023 ── OWLBOT          ●
          └─ DELULUBOT       ●
 
     2024 ── AUDIO VIS       ●
 
-    NOW  ── HOMELAB         ◐`,
+    NOW  ── HOMELAB         ◐
+         └─ HERMES REMOTE   ◐`,
   systems: String.raw`
-    ┌────────────────────┐
-    │ KNOWLEDGE          │
-    ├────────────────────┤
-    │ AI                 │
-    ├────────────────────┤
-    │ HARDWARE           │
-    ├────────────────────┤
-    │ AUDIO              │
-    └────────────────────┘`,
+    [ P520 ] ───── LAN ───── [ MAC MINI ]
+       │                         │
+    PROXMOX                   HERMES
+       │                         │
+    STORAGE                   TAILSCALE
+       └──────────┬──────────────┘
+              CLIENTS`,
   now: String.raw`
     JUL 2026
 
-    01  BUILDING
-    02  LEARNING
-    03  TUNING
-    04  DESIGNING
+    01  HERMES      ◐
+    02  LINUX       ◐
+    03  AUDIO       ◐
+    04  AYUMAD.ME   ◐
 
     UPDATED BY HAND`,
   about: String.raw`
@@ -327,7 +326,7 @@ function AsciiDivider() {
 
 function HomePage() {
   const descriptions = [
-    "AI, notes, infrastructure, and audio.",
+    "Hermes, servers, notes, and audio.",
     "Selected builds and experiments.",
     "The tools and systems I use.",
     "What I am working on now.",
@@ -349,10 +348,7 @@ function HomePage() {
             <span>Ayush</span>
             <span>Madhukar</span>
           </h1>
-          <p className="hero-deck">
-            I work across AI, audio, hardware, and self-hosted systems. This site is an
-            index of projects, notes, and things I am learning.
-          </p>
+          <p className="hero-deck">{homeContent.intro}</p>
           <div className="hero-actions">
             <Link className="button primary" to="/projects">Projects</Link>
             <Link className="button" to="/about">About</Link>
@@ -362,10 +358,9 @@ function HomePage() {
         <aside className="hero-index" aria-label="Primary interests">
           <p className="label">Topics</p>
           <ol>
-            <li><span>01</span>AI + Notes</li>
-            <li><span>02</span>Homelab</li>
-            <li><span>03</span>Audio</li>
-            <li><span>04</span>Hardware</li>
+            {homeContent.topics.map((topic, index) => (
+              <li key={topic}><span>0{index + 1}</span>{topic}</li>
+            ))}
           </ol>
           <p>Bay Area, California</p>
         </aside>
@@ -399,11 +394,9 @@ function HomePage() {
         </div>
         <div>
           <p className="label">Current</p>
-          <h2>Homelab</h2>
+          <h2>{homeContent.current.title}</h2>
         </div>
-        <p>
-          A Proxmox server for local AI, storage, media, and small services.
-        </p>
+        <p>{homeContent.current.description}</p>
         <Link className="text-link" to="/now">Now <span aria-hidden="true">↗</span></Link>
       </section>
     </>
@@ -417,7 +410,7 @@ function ShowcasePage() {
         index="01"
         label="Work"
         title="Work"
-        description="Three areas that connect most of what I build."
+        description="The three areas I keep coming back to."
         art={sectionArt.work}
       />
 
@@ -533,7 +526,7 @@ function SystemsPage() {
         index="03"
         label="Systems"
         title="Systems"
-        description="The four areas behind my projects and daily tools."
+        description="The machines, software, and audio systems I actually use."
         art={sectionArt.systems}
       />
 
@@ -615,35 +608,19 @@ function NowPage() {
 }
 
 function AboutPage() {
-  const skills = ["Python", "C++", "React", "Linux", "TensorFlow", "PyTorch", "Proxmox", "ZFS"];
-  const interests = ["AI", "Audio", "Homelabs", "Retro Games", "Photography", "Creative Code"];
-
   return (
     <section className="section-shell page-section">
       <SectionHeading
         index="05"
         label="About"
         title="About"
-        description="Computer Engineering student based in the Bay Area."
+        description={aboutContent.intro}
         art={sectionArt.about}
       />
 
       <div className="about-layout">
         <article className="about-story">
-          <p>
-            I treat technology as both an engineering discipline and a creative medium.
-            I am most interested in systems that are personal, modular, understandable,
-            and useful.
-          </p>
-          <p>
-            I started by jailbreaking devices, running emulators, and finding out what
-            hardware could do beyond its intended use. That interest now extends to
-            servers, models, audio chains, and knowledge systems.
-          </p>
-          <p>
-            I learn through comparison, troubleshooting, and building. The goal is to
-            understand a system well enough to change it with intent.
-          </p>
+          {aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </article>
 
         <aside className="about-profile">
@@ -664,26 +641,24 @@ function AboutPage() {
         <section>
           <p className="label">Education</p>
           <dl>
-            <div>
-              <dt>San José State</dt>
-              <dd>Computer Engineering</dd>
-            </div>
-            <div>
-              <dt>Foothill College</dt>
-              <dd>Computer Science</dd>
-            </div>
+            {aboutContent.education.map((entry) => (
+              <div key={entry.school}>
+                <dt>{entry.school}</dt>
+                <dd>{entry.program}</dd>
+              </div>
+            ))}
           </dl>
         </section>
         <section>
           <p className="label">Skills</p>
           <ul className="large-tags">
-            {skills.map((skill) => <li key={skill}>{skill}</li>)}
+            {aboutContent.skills.map((skill) => <li key={skill}>{skill}</li>)}
           </ul>
         </section>
         <section>
           <p className="label">Interests</p>
           <ul className="interest-list">
-            {interests.map((interest) => <li key={interest}>{interest}</li>)}
+            {aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}
           </ul>
         </section>
       </div>
