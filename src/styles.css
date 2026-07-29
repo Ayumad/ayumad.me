@@ -854,7 +854,8 @@ main {
   border-left: 1px solid var(--line);
   background: var(--surface);
   color: var(--art);
-  font: 800 clamp(0.58rem, 0.92vw, 0.88rem)/1.35 var(--mono);
+  font: 800 clamp(0.48rem, 0.72vw, 0.68rem)/1.05 var(--mono);
+  font-variant-ligatures: none;
   letter-spacing: 0.04em;
   text-shadow: 0 0 18px color-mix(in srgb, var(--art) 30%, transparent);
   white-space: pre;
@@ -2083,10 +2084,10 @@ main {
   }
 
   .heading-field {
-    min-height: 180px;
+    min-height: 230px;
     border-top: 1px solid var(--line);
     border-left: 0;
-    font-size: clamp(0.62rem, 3vw, 0.86rem);
+    font-size: clamp(0.48rem, 2.4vw, 0.64rem);
   }
 
   .showcase-row,
