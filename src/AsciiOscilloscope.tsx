@@ -635,7 +635,11 @@ function copyLayout(index: number, count: number) {
   return { center: { x: 0, y: 0 }, scale: 1 };
 }
 
-function signalPoint(theta: number, settings: SignalSettings): Point {
+function signalPoint(
+  theta: number,
+  settings: SignalSettings,
+  visualRotation = 0,
+): Point {
   const normalizedTheta =
     ((theta / (Math.PI * 2)) % 1 + 1) % 1;
   const copyPosition = normalizedTheta * settings.copies;
@@ -646,7 +650,7 @@ function signalPoint(theta: number, settings: SignalSettings): Point {
   const localTheta =
     (copyPosition - Math.floor(copyPosition)) * Math.PI * 2;
   const livePhase = settings.phase;
-  const liveRotation = settings.rotation;
+  const liveRotation = settings.rotation + visualRotation;
   let point: Point;
 
   if (settings.generator === "wave") {
@@ -919,6 +923,7 @@ export default function AsciiOscilloscope() {
 
       const motionHead =
         (time * current.motion * 3.6) % (Math.PI * 2);
+      const planarRotation = time * current.motion * 1.8;
 
       if (current.dimension === "3d") {
         const spin = time * current.motion * 2.4;
@@ -1005,11 +1010,11 @@ export default function AsciiOscilloscope() {
           }
         }
       } else {
-        let previousPoint = signalPoint(0, current);
+        let previousPoint = signalPoint(0, current, planarRotation);
 
         for (let sample = 1; sample <= samples; sample += 1) {
           const theta = (sample / samples) * Math.PI * 2;
-          const point = signalPoint(theta, current);
+          const point = signalPoint(theta, current, planarRotation);
           const deltaX = point.x - previousPoint.x;
           const deltaY = point.y - previousPoint.y;
           const flyback =
@@ -1156,6 +1161,12 @@ export default function AsciiOscilloscope() {
       output.textContent = lines.join("\n");
       output.dataset.clippedSamples = clippedSamples.toString();
       output.dataset.dimension = current.dimension;
+      output.dataset.motionModel =
+        current.dimension === "2d"
+          ? "planar-rotation-and-trace"
+          : "spatial-rotation-and-trace";
+      output.dataset.planarRotation =
+        current.dimension === "2d" ? planarRotation.toFixed(4) : "0.0000";
       output.dataset.units = columns.toString();
       output.dataset.rows = rows.toString();
       output.dataset.geometry =

@@ -320,12 +320,14 @@ Controls:
   semitone steps, automatically snaps every pointer/keyboard change to an exact
   note frequency, and displays both note name and Hz value.
 - `Scale`: 70–100%. The higher floor keeps the shape visually present.
-- `Motion`: 0–100%. In 2D it controls a high-contrast trace head with a visible
-  fading tail around the fixed outline. In 3D it drives object rotation, a
-  second shape-specific rotation axis, and the same moving trace light. Every
-  spatial preset has its own initial camera and axis rates, so symmetric objects
-  such as the torus visibly tumble. Zero is static, Pause freezes the current
-  frame, and reduced-motion mode uses a fixed authored view.
+- `Motion`: 0–100%. In 2D it rigidly rotates every copy around its own center
+  while a high-contrast trace head and visible fading tail travel around the
+  outline. It never bends or changes the proportions of the authored shape. In
+  3D it drives object rotation, a second shape-specific rotation axis, and the
+  same moving trace light. Every spatial preset has its own initial camera and
+  axis rates, so symmetric objects such as the torus visibly tumble. Zero is
+  static, Pause freezes the current angle, and reduced-motion mode uses the
+  straight-on authored view.
 - `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
@@ -372,9 +374,11 @@ Renderer:
 - Physical character cells are taller than they are wide. The plot applies a
   measured horizontal correction from the active grid’s cell dimensions so a
   mathematical circle appears circular rather than as a wide ellipse.
-- Motion moves a brightness highlight around the locked outline without
-  changing phase, form, rotation, or scale, so animation cannot bend or smear a
-  standard shape.
+- In 2D, Motion adds one rigid visual rotation after authored geometry is
+  sampled and before each copy is placed. The spin is
+  `elapsedSeconds × motion × 1.8` radians. It also moves the brightness
+  highlight around the outline without changing phase, form, scale, or audio
+  geometry, so animation cannot bend or smear a standard shape.
 - 3D scenes rotate projected X/Y/Z wireframes with perspective and depth-based
   intensity. Each shape has its own construction, initial camera, yaw rate, and
   pitch rate rather than sharing a generic extrusion or single-axis spin.
@@ -979,9 +983,11 @@ than exposing them. Each shape
 button must reset to a recognizable straight-on silhouette. Compensate for the
 physical width/height ratio of monospace character cells so circles, regular
 polygons, stars, and Lissajous figures render with standard proportions.
-Motion must move a brightness highlight around the fixed outline without
-changing any geometry. Make the head and fading tail visibly distinct at low
-motion values. Add a 3D toggle that maps Wave to a seven-rail surface, Circle
+Motion must rigidly rotate each 2D copy around its own center while moving a
+brightness highlight around the unchanged outline. Use
+`elapsedSeconds × motion × 1.8` radians for the planar spin. Make the head and
+fading tail visibly distinct at low motion values. Keep audio geometry fixed.
+Add a 3D toggle that maps Wave to a seven-rail surface, Circle
 to a tumbling torus, Triangle to a pyramid, Square to a cube, Star and Hex to
 extruded prisms, Spiral to a helix, Knot to a torus knot, and Orbit to an
 orbital cage. Generate and perspective-project real X/Y/Z wireframes in code.
