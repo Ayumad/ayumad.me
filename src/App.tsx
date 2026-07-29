@@ -19,7 +19,8 @@ import {
 } from "./renderMode";
 import {
   aboutContent,
-  futureIdeas,
+  gearCategories,
+  hermesSections,
   homeContent,
   navItems,
   pageMeta,
@@ -27,6 +28,7 @@ import {
   showcaseTopics,
   socialLinks,
   systemLayers,
+  writeups,
   type ProjectStatus,
 } from "./siteContent";
 
@@ -316,6 +318,9 @@ function HomePage() {
     "Hermes, servers, notes, and audio.",
     "Selected builds and experiments.",
     "The tools and systems I use.",
+    "Inside the autonomous agent.",
+    "The 100+ devices I use daily.",
+    "Field notes on building things.",
     "What I am working on now.",
     "Background, education, and interests.",
     "Email and GitHub.",
@@ -381,7 +386,7 @@ function HomePage() {
           <h2>{homeContent.current.title}</h2>
         </div>
         <p>{homeContent.current.description}</p>
-        <Link className="text-link" to="/now">Now <span aria-hidden="true">↗</span></Link>
+        <Link className="text-link" to="/hermes">Hermes <span aria-hidden="true">↗</span></Link>
       </section>
     </>
   );
@@ -421,11 +426,6 @@ function ShowcasePage() {
           </motion.article>
         ))}
       </div>
-
-      <aside className="plain-note">
-        <p className="label">Next</p>
-        <p>Detailed notes and project pages will be added as the work develops.</p>
-      </aside>
     </section>
   );
 }
@@ -437,18 +437,21 @@ function statusLabel(status: ProjectStatus) {
 }
 
 function ProjectsPage() {
+  const active = projects.filter((p) => p.status === "in-progress" || p.status === "planned");
+  const completed = projects.filter((p) => p.status === "completed");
+
   return (
     <section className="section-shell page-section">
       <SectionHeading
         index="02"
         label="Projects"
         title="Projects"
-        description="Selected software, hardware, and research projects."
+        description="Current work, completed builds, and experiments."
         scene="projects"
       />
 
       <div className="project-list">
-        {projects.map((project, index) => (
+        {active.map((project, index) => (
           <motion.article
             className="project-row"
             key={project.slug}
@@ -486,18 +489,46 @@ function ProjectsPage() {
 
       <div className="future-panel">
         <div>
-          <p className="label">Later</p>
-          <h2>Archive</h2>
-          <p>Planned sections for personal data, media, and longer project notes.</p>
+          <p className="label">Archive</p>
+          <h2>Completed</h2>
+          <p>Past builds and experiments.</p>
         </div>
-        <ul>
-          {futureIdeas.map((idea) => (
-            <li key={idea}>
-              <span>{idea}</span>
-              <span>Planned</span>
-            </li>
+        <div className="project-list">
+          {completed.map((project, index) => (
+            <motion.article
+              className="project-row"
+              key={project.slug}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ delay: index * 0.04 }}
+            >
+              <div className="project-index" aria-hidden="true">
+                <span>0{index + 1}</span>
+                <i>░▒▓█</i>
+              </div>
+              <div className="project-main">
+                <div className="project-meta">
+                  <span className={`status status-${project.status}`}>
+                    {statusLabel(project.status)}
+                  </span>
+                  <span>{project.year}</span>
+                </div>
+                <h2>{project.title}</h2>
+                <p>{project.summary}</p>
+              </div>
+              <div className="project-detail">
+                <ul className="tag-list">
+                  {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
+                </ul>
+                <details>
+                  <summary>Details <span aria-hidden="true">+</span></summary>
+                  <p>{project.story}</p>
+                </details>
+              </div>
+            </motion.article>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );
@@ -546,11 +577,156 @@ function SystemsPage() {
   );
 }
 
-function NowPage() {
+function HermesPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading
         index="04"
+        label="Hermes"
+        title="Hermes"
+        description="An autonomous AI agent that runs daily operations — briefs, memory, cron jobs, multi-model routing."
+        scene="systems"
+      />
+
+      <div className="hermes-intro">
+        <p>
+          Hermes started as a way to stop rebuilding AI tooling on every device.
+          One server on a Mac mini, connected from everywhere over Tailscale.
+          It handles morning briefs, interview prep, session journals, and 13 cron automations — all fire and forget.
+        </p>
+      </div>
+
+      <div className="hermes-sections">
+        {hermesSections.map((section, index) => (
+          <motion.article
+            className="system-row"
+            key={section.title}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ delay: index * 0.05 }}
+          >
+            <span className="row-number">0{index + 1}</span>
+            <div>
+              <h2>{section.title}</h2>
+              <p>{section.description}</p>
+            </div>
+            <ul>
+              {section.items.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </motion.article>
+        ))}
+      </div>
+
+      <div className="hermes-architecture">
+        <pre className="topic-ascii" aria-hidden="true">{String.raw`
+  ┌─────────────────────────────────────────┐
+  │              HERMES AGENT               │
+  ├─────────┬───────────┬───────────────────┤
+  │ BRIEF   │ CRON      │ MEMORY            │
+  │ 9:30am  │ 13 jobs   │ Mnemosyne v3.14   │
+  │ 6:00pm  │ fire+     │ local embeddings  │
+  │ 10:00pm │ forget    │ knowledge graph   │
+  ├─────────┴───────────┴───────────────────┤
+  │         MODEL ROUTING                   │
+  │  Mimo V2.5 → Kimi K3 → DeepSeek V4     │
+  │         OpenCode Go ($10/mo)            │
+  ├─────────────────────────────────────────┤
+  │         SURFACES                        │
+  │  Telegram · WebUI · Discord · Cron      │
+  │         Tailscale Mesh                  │
+  └─────────────────────────────────────────┘`}</pre>
+      </div>
+    </section>
+  );
+}
+
+function GearPage() {
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading
+        index="05"
+        label="Gear"
+        title="Gear"
+        description="The devices, speakers, cameras, and tools I use daily. Updated from the vault loadout."
+        scene="about"
+      />
+
+      <div className="gear-categories">
+        {gearCategories.map((cat, catIndex) => (
+          <motion.section
+            className="gear-category"
+            key={cat.category}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ delay: catIndex * 0.04 }}
+          >
+            <h2>{cat.category}</h2>
+            <div className="gear-table">
+              {cat.items.map((item) => (
+                <div className="gear-row" key={item.name}>
+                  <span className="gear-name">{item.name}</span>
+                  <span className="gear-role">{item.role}</span>
+                  <span className={`gear-status gear-status-${item.status}`}>{item.status}</span>
+                </div>
+              ))}
+            </div>
+          </motion.section>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WriteupsPage() {
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading
+        index="06"
+        label="Writeups"
+        title="Writeups"
+        description="Field notes on building, configuring, and breaking things."
+        scene="projects"
+      />
+
+      <div className="writeup-list">
+        {writeups.map((post, index) => (
+          <motion.article
+            className="writeup-row"
+            key={post.slug}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ delay: index * 0.04 }}
+          >
+            <div className="writeup-meta">
+              <time dateTime={post.date}>{post.date}</time>
+              <ul className="tag-list">
+                {post.tags.map((tag) => <li key={tag}>{tag}</li>)}
+              </ul>
+            </div>
+            <div className="writeup-main">
+              <h2>{post.title}</h2>
+              <p>{post.summary}</p>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+
+      <aside className="plain-note">
+        <p className="label">More</p>
+        <p>Writing longer-form notes on GPU passthrough, Arch daily driving, audio system tuning, and the Hermes build process.</p>
+      </aside>
+    </section>
+  );
+}
+
+function NowPage() {
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading
+        index="07"
         label="Now"
         title="Now"
         description="What I am working on and learning."
@@ -595,7 +771,7 @@ function AboutPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading
-        index="05"
+        index="08"
         label="About"
         title="About"
         description={aboutContent.intro}
@@ -654,7 +830,7 @@ function ContactPage() {
   return (
     <section className="section-shell page-section contact-page">
       <SectionHeading
-        index="06"
+        index="09"
         label="Contact"
         title="Contact"
         description="Email and GitHub are the best ways to reach me."
@@ -715,6 +891,9 @@ export default function App() {
     path === "/showcase" ? <ShowcasePage /> :
     path === "/projects" ? <ProjectsPage /> :
     path === "/systems" ? <SystemsPage /> :
+    path === "/hermes" ? <HermesPage /> :
+    path === "/gear" ? <GearPage /> :
+    path === "/writeups" ? <WriteupsPage /> :
     path === "/now" ? <NowPage /> :
     path === "/about" ? <AboutPage /> :
     path === "/contact" ? <ContactPage /> :
