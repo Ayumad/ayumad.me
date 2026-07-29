@@ -6,16 +6,38 @@ import {
 } from "react";
 import { useReducedMotion } from "motion/react";
 
-interface Interval {
-  name: string;
-  numerator: number;
-  denominator: number;
-}
+type PresetId = "circle" | "eight" | "knot" | "rose" | "star" | "orbit";
+type GeneratorId = "lissajous" | "rose" | "star" | "orbit";
 
 interface SignalSettings {
-  interval: Interval;
+  preset: PresetId;
+  generator: GeneratorId;
+  frequency: number;
+  xRatio: number;
+  yRatio: number;
   phase: number;
-  harmonic: number;
+  form: number;
+  rotation: number;
+  scale: number;
+  motion: number;
+}
+
+interface Preset {
+  id: PresetId;
+  label: string;
+  generator: GeneratorId;
+  xRatio: number;
+  yRatio: number;
+  phaseDegrees: number;
+  form: number;
+  rotationDegrees: number;
+  scale: number;
+  motion: number;
+}
+
+interface Point {
+  x: number;
+  y: number;
 }
 
 interface AudioGraph {
@@ -25,24 +47,92 @@ interface AudioGraph {
   gain: GainNode;
 }
 
-const intervals: Interval[] = [
-  { name: "FIFTH", numerator: 3, denominator: 2 },
-  { name: "THIRD", numerator: 5, denominator: 4 },
-  { name: "SEVENTH", numerator: 7, denominator: 5 },
-  { name: "FOURTH", numerator: 4, denominator: 3 },
+const presets: Preset[] = [
+  {
+    id: "circle",
+    label: "CIRCLE",
+    generator: "lissajous",
+    xRatio: 1,
+    yRatio: 1,
+    phaseDegrees: 90,
+    form: 0,
+    rotationDegrees: 0,
+    scale: 0.98,
+    motion: 0.08,
+  },
+  {
+    id: "eight",
+    label: "EIGHT",
+    generator: "lissajous",
+    xRatio: 2,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0.04,
+    rotationDegrees: 0,
+    scale: 0.98,
+    motion: 0.15,
+  },
+  {
+    id: "knot",
+    label: "KNOT",
+    generator: "lissajous",
+    xRatio: 3,
+    yRatio: 2,
+    phaseDegrees: 90,
+    form: 0.12,
+    rotationDegrees: 0,
+    scale: 0.98,
+    motion: 0.22,
+  },
+  {
+    id: "rose",
+    label: "ROSE",
+    generator: "rose",
+    xRatio: 5,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0.78,
+    rotationDegrees: -90,
+    scale: 0.96,
+    motion: 0.18,
+  },
+  {
+    id: "star",
+    label: "STAR",
+    generator: "star",
+    xRatio: 5,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0.82,
+    rotationDegrees: 0,
+    scale: 0.96,
+    motion: 0.12,
+  },
+  {
+    id: "orbit",
+    label: "ORBIT",
+    generator: "orbit",
+    xRatio: 5,
+    yRatio: 3,
+    phaseDegrees: 0,
+    form: 0.58,
+    rotationDegrees: 0,
+    scale: 0.96,
+    motion: 0.2,
+  },
 ];
 
+const defaultPreset = presets[2];
 const bayer4 = [
   0, 8, 2, 10,
   12, 4, 14, 6,
   3, 11, 1, 9,
   15, 7, 13, 5,
 ];
-
 const toneRamp = " .,:;+*#@";
-const baseFrequency = 55;
-const driftFrequency = 0.022;
 const outputGain = 0.018;
+const fourierHarmonics = 48;
+const audioSamples = 512;
 
 function mix(from: number, to: number, amount: number) {
   return from + (to - from) * amount;
@@ -50,6 +140,10 @@ function mix(from: number, to: number, amount: number) {
 
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.max(minimum, Math.min(maximum, value));
+}
+
+function radians(degrees: number) {
+  return (degrees / 180) * Math.PI;
 }
 
 function structuralGlyph(angle: number, crossing: boolean) {
@@ -62,7 +156,8 @@ function structuralGlyph(angle: number, crossing: boolean) {
   return "/";
 }
 
-function signal(angle: number, phase: number, harmonic: number) {
+function harmonicSignal(angle: number, phase: number, form: number) {
+  const harmonic = form * 0.38;
   return (
     (Math.sin(angle + phase) +
       harmonic * Math.sin(angle * 2 - phase * 0.5)) /
@@ -70,97 +165,240 @@ function signal(angle: number, phase: number, harmonic: number) {
   );
 }
 
-function createWave(
-  context: AudioContext,
-  phase: number,
-  harmonic: number,
-) {
-  const scale = 1 / (1 + harmonic);
-  const real = new Float32Array(3);
-  const imaginary = new Float32Array(3);
+function starPoint(theta: number, points: number, form: number): Point {
+  const pointCount = Math.round(clamp(points, 3, 9));
+  const vertexCount = pointCount * 2;
+  const position = (theta / (Math.PI * 2)) * vertexCount;
+  const vertex = Math.floor(position) % vertexCount;
+  const amount = position - Math.floor(position);
 
-  real[1] = Math.sin(phase) * scale;
-  imaginary[1] = Math.cos(phase) * scale;
-  real[2] = Math.sin(-phase * 0.5) * harmonic * scale;
-  imaginary[2] = Math.cos(-phase * 0.5) * harmonic * scale;
+  const getVertex = (index: number) => {
+    const angle = (index * Math.PI) / pointCount - Math.PI / 2;
+    const radius = index % 2 === 0 ? 1 : 1 - form * 0.72;
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
+    };
+  };
 
-  return context.createPeriodicWave(real, imaginary, {
-    disableNormalization: true,
-  });
+  const from = getVertex(vertex);
+  const to = getVertex((vertex + 1) % vertexCount);
+  return {
+    x: mix(from.x, to.x, amount),
+    y: mix(from.y, to.y, amount),
+  };
 }
 
-function updateAudioGraph(graph: AudioGraph, settings: SignalSettings) {
+function signalPoint(
+  theta: number,
+  settings: SignalSettings,
+  time: number,
+): Point {
+  const livePhase = settings.phase + time * settings.motion * 0.28;
+  const liveRotation = settings.rotation + time * settings.motion * 0.08;
+  let point: Point;
+
+  if (settings.generator === "rose") {
+    const radius =
+      (1 - settings.form) * 0.84 +
+      settings.form * Math.cos(Math.max(2, settings.xRatio) * theta + livePhase);
+    const angle = Math.max(1, settings.yRatio) * theta;
+    point = {
+      x: radius * Math.cos(angle),
+      y: radius * Math.sin(angle),
+    };
+  } else if (settings.generator === "star") {
+    point = starPoint(
+      theta * Math.max(1, settings.yRatio),
+      settings.xRatio,
+      settings.form,
+    );
+  } else if (settings.generator === "orbit") {
+    const outer = Math.max(2, settings.xRatio);
+    const inner = Math.min(Math.max(1, settings.yRatio), outer - 1);
+    const difference = outer - inner;
+    const distance = 0.2 + settings.form * inner;
+    const denominator = difference + distance;
+    point = {
+      x:
+        (difference * Math.cos(inner * theta) +
+          distance * Math.cos(difference * theta + livePhase)) /
+        denominator,
+      y:
+        (difference * Math.sin(inner * theta) -
+          distance * Math.sin(difference * theta + livePhase)) /
+        denominator,
+    };
+  } else {
+    point = {
+      x: harmonicSignal(settings.xRatio * theta, livePhase, settings.form),
+      y: harmonicSignal(settings.yRatio * theta, 0, settings.form),
+    };
+  }
+
+  const cosine = Math.cos(liveRotation);
+  const sine = Math.sin(liveRotation);
+  return {
+    x: (point.x * cosine - point.y * sine) * settings.scale,
+    y: (point.x * sine + point.y * cosine) * settings.scale,
+  };
+}
+
+function createStereoWaves(
+  context: AudioContext,
+  settings: SignalSettings,
+  time: number,
+) {
+  const xSamples = new Float32Array(audioSamples);
+  const ySamples = new Float32Array(audioSamples);
+
+  for (let sample = 0; sample < audioSamples; sample += 1) {
+    const theta = (sample / audioSamples) * Math.PI * 2;
+    const point = signalPoint(theta, settings, time);
+    xSamples[sample] = point.x;
+    ySamples[sample] = point.y;
+  }
+
+  const xReal = new Float32Array(fourierHarmonics + 1);
+  const xImaginary = new Float32Array(fourierHarmonics + 1);
+  const yReal = new Float32Array(fourierHarmonics + 1);
+  const yImaginary = new Float32Array(fourierHarmonics + 1);
+
+  for (let harmonic = 1; harmonic <= fourierHarmonics; harmonic += 1) {
+    let xCosine = 0;
+    let xSine = 0;
+    let yCosine = 0;
+    let ySine = 0;
+
+    for (let sample = 0; sample < audioSamples; sample += 1) {
+      const angle = (harmonic * sample * Math.PI * 2) / audioSamples;
+      const cosine = Math.cos(angle);
+      const sine = Math.sin(angle);
+      xCosine += xSamples[sample] * cosine;
+      xSine += xSamples[sample] * sine;
+      yCosine += ySamples[sample] * cosine;
+      ySine += ySamples[sample] * sine;
+    }
+
+    const scale = 2 / audioSamples;
+    xReal[harmonic] = xCosine * scale;
+    xImaginary[harmonic] = xSine * scale;
+    yReal[harmonic] = yCosine * scale;
+    yImaginary[harmonic] = ySine * scale;
+  }
+
+  return {
+    xWave: context.createPeriodicWave(xReal, xImaginary, {
+      disableNormalization: true,
+    }),
+    yWave: context.createPeriodicWave(yReal, yImaginary, {
+      disableNormalization: true,
+    }),
+  };
+}
+
+function updateAudioGraph(
+  graph: AudioGraph,
+  settings: SignalSettings,
+  time: number,
+) {
   const { context, xOscillator, yOscillator } = graph;
   const now = context.currentTime;
-  const xFrequency =
-    settings.interval.numerator * baseFrequency + driftFrequency;
-  const yFrequency = settings.interval.denominator * baseFrequency;
 
   xOscillator.frequency.cancelScheduledValues(now);
   yOscillator.frequency.cancelScheduledValues(now);
 
   if (context.state === "running") {
-    xOscillator.frequency.setTargetAtTime(xFrequency, now, 0.015);
-    yOscillator.frequency.setTargetAtTime(yFrequency, now, 0.015);
+    xOscillator.frequency.setTargetAtTime(settings.frequency, now, 0.015);
+    yOscillator.frequency.setTargetAtTime(settings.frequency, now, 0.015);
   } else {
-    xOscillator.frequency.setValueAtTime(xFrequency, now);
-    yOscillator.frequency.setValueAtTime(yFrequency, now);
+    xOscillator.frequency.setValueAtTime(settings.frequency, now);
+    yOscillator.frequency.setValueAtTime(settings.frequency, now);
   }
 
-  xOscillator.setPeriodicWave(
-    createWave(context, settings.phase, settings.harmonic),
-  );
-  yOscillator.setPeriodicWave(
-    createWave(context, 0, settings.harmonic),
-  );
+  const { xWave, yWave } = createStereoWaves(context, settings, time);
+  xOscillator.setPeriodicWave(xWave);
+  yOscillator.setPeriodicWave(yWave);
+}
+
+function settingsFromPreset(
+  preset: Preset,
+  frequency = 55,
+): SignalSettings {
+  return {
+    preset: preset.id,
+    generator: preset.generator,
+    frequency,
+    xRatio: preset.xRatio,
+    yRatio: preset.yRatio,
+    phase: radians(preset.phaseDegrees),
+    form: preset.form,
+    rotation: radians(preset.rotationDegrees),
+    scale: preset.scale,
+    motion: preset.motion,
+  };
 }
 
 export default function AsciiOscilloscope() {
+  const initialSettings = settingsFromPreset(defaultPreset);
   const containerRef = useRef<HTMLDivElement>(null);
   const outputRef = useRef<HTMLPreElement>(null);
-  const settingsRef = useRef<SignalSettings>({
-    interval: intervals[0],
-    phase: Math.PI / 2,
-    harmonic: 0.12,
-  });
-  const renderNowRef = useRef<(() => void) | null>(null);
+  const settingsRef = useRef<SignalSettings>(initialSettings);
+  const renderNowRef = useRef<((clear?: boolean) => void) | null>(null);
   const audioGraphRef = useRef<AudioGraph | null>(null);
   const suspendTimerRef = useRef<number | null>(null);
   const draggingRef = useRef(false);
-  const [intervalIndex, setIntervalIndex] = useState(0);
+  const elapsedRef = useRef(0);
+  const runningRef = useRef(true);
+  const audioEnabledRef = useRef(false);
+  const [presetId, setPresetId] = useState<PresetId>(initialSettings.preset);
+  const [generator, setGenerator] = useState<GeneratorId>(
+    initialSettings.generator,
+  );
+  const [frequency, setFrequency] = useState(initialSettings.frequency);
+  const [xRatio, setXRatio] = useState(initialSettings.xRatio);
+  const [yRatio, setYRatio] = useState(initialSettings.yRatio);
   const [phaseDegrees, setPhaseDegrees] = useState(90);
-  const [harmonic, setHarmonic] = useState(0.12);
+  const [form, setForm] = useState(initialSettings.form);
+  const [rotationDegrees, setRotationDegrees] = useState(0);
+  const [scale, setScale] = useState(initialSettings.scale);
+  const [motion, setMotion] = useState(initialSettings.motion);
+  const [running, setRunning] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(true);
   const reducedMotion = useReducedMotion();
-  const interval = intervals[intervalIndex];
-  const phase = (phaseDegrees / 180) * Math.PI;
+  const preset = presets.find((item) => item.id === presetId) ?? defaultPreset;
 
   useEffect(() => {
     const container = containerRef.current;
     const output = outputRef.current;
     if (!container || !output) return;
 
-    let columns = 64;
-    let rows = 34;
+    let columns = 72;
+    let rows = 30;
     let intensity = new Float32Array(columns * rows);
     let direction = new Float32Array(columns * rows);
     let animationFrame = 0;
     let previousFrame = 0;
+    let previousClock = performance.now();
+    let lastAudioUpdate = 0;
     let visible = !document.hidden;
 
     const configureGrid = () => {
-      const width = container.clientWidth || 620;
-      columns = width < 430 ? 42 : width < 610 ? 52 : 64;
-      rows = width < 430 ? 28 : width < 610 ? 31 : 34;
+      const width = container.clientWidth || 680;
+      const height = container.clientHeight || 390;
+      columns = width < 430 ? 48 : width < 610 ? 60 : 72;
+      const fontSize = Math.min(14.5, (width / columns) * 1.58);
+      rows = Math.round(clamp(height / (fontSize * 0.94), 24, 34));
       intensity = new Float32Array(columns * rows);
       direction = new Float32Array(columns * rows);
       output.style.setProperty("--scope-columns", columns.toString());
+      output.style.setProperty("--scope-font-size", `${fontSize}px`);
     };
 
     const plot = (x: number, y: number, angle: number, strength: number) => {
-      const column = Math.round((x * 0.43 + 0.5) * (columns - 1));
-      const row = Math.round((0.5 - y * 0.43) * (rows - 1));
+      const column = Math.round((x * 0.495 + 0.5) * (columns - 1));
+      const row = Math.round((0.5 - y * 0.495) * (rows - 1));
       if (column < 1 || column >= columns - 1 || row < 1 || row >= rows - 1) return;
 
       const center = row * columns + column;
@@ -175,62 +413,47 @@ export default function AsciiOscilloscope() {
       ]) {
         intensity[neighbor] = Math.min(
           0.7,
-          intensity[neighbor] + strength * 0.23,
+          intensity[neighbor] + strength * 0.22,
         );
         direction[neighbor] = angle;
       }
     };
 
-    const render = (time: number) => {
-      const settings = settingsRef.current;
-      const drift = reducedMotion
-        ? 0
-        : (time / 1000) * Math.PI * 2 * driftFrequency;
-      const samples = 1700;
+    const render = (clear = false) => {
+      if (clear) intensity.fill(0);
+      const current = settingsRef.current;
+      const time = reducedMotion ? 0 : elapsedRef.current / 1000;
+      const samples = 1900;
 
       for (let index = 0; index < intensity.length; index += 1) {
-        intensity[index] *= 0.76;
+        intensity[index] *= 0.72;
       }
 
-      let previousX = 0;
-      let previousY = 0;
+      let previousPoint = signalPoint(0, current, time);
 
-      for (let sample = 0; sample <= samples; sample += 1) {
+      for (let sample = 1; sample <= samples; sample += 1) {
         const theta = (sample / samples) * Math.PI * 2;
-        const x = signal(
-          settings.interval.numerator * theta + drift,
-          settings.phase,
-          settings.harmonic,
-        ) * 0.94;
-        const y = signal(
-          settings.interval.denominator * theta,
-          0,
-          settings.harmonic,
-        ) * 0.94;
+        const point = signalPoint(theta, current, time);
+        const deltaX = point.x - previousPoint.x;
+        const deltaY = point.y - previousPoint.y;
+        const scaledDistance = Math.hypot(
+          deltaX * columns * 0.495,
+          deltaY * rows * 0.495,
+        );
+        const steps = Math.max(1, Math.ceil(scaledDistance));
+        const angle = Math.atan2(-deltaY * rows, deltaX * columns);
 
-        if (sample > 0) {
-          const deltaX = x - previousX;
-          const deltaY = y - previousY;
-          const scaledDistance = Math.hypot(
-            deltaX * columns * 0.43,
-            deltaY * rows * 0.43,
+        for (let step = 1; step <= steps; step += 1) {
+          const amount = step / steps;
+          plot(
+            mix(previousPoint.x, point.x, amount),
+            mix(previousPoint.y, point.y, amount),
+            angle,
+            0.6,
           );
-          const steps = Math.max(1, Math.ceil(scaledDistance));
-          const angle = Math.atan2(-deltaY * rows, deltaX * columns);
-
-          for (let step = 1; step <= steps; step += 1) {
-            const amount = step / steps;
-            plot(
-              mix(previousX, x, amount),
-              mix(previousY, y, amount),
-              angle,
-              0.58,
-            );
-          }
         }
 
-        previousX = x;
-        previousY = y;
+        previousPoint = point;
       }
 
       const lines: string[] = [];
@@ -241,7 +464,7 @@ export default function AsciiOscilloscope() {
           const value = intensity[cell];
 
           if (value > 0.7) {
-            line += structuralGlyph(direction[cell], value > 1.15);
+            line += structuralGlyph(direction[cell], value > 1.14);
             continue;
           }
 
@@ -258,20 +481,40 @@ export default function AsciiOscilloscope() {
     };
 
     const draw = (time: number) => {
-      if (time - previousFrame >= 50) {
+      const delta = Math.min(100, time - previousClock);
+      previousClock = time;
+      if (runningRef.current) elapsedRef.current += delta;
+
+      if (runningRef.current && time - previousFrame >= 50) {
         previousFrame = time;
-        render(time);
+        render();
       }
+
+      if (
+        audioEnabledRef.current &&
+        runningRef.current &&
+        time - lastAudioUpdate >= 250 &&
+        audioGraphRef.current
+      ) {
+        lastAudioUpdate = time;
+        updateAudioGraph(
+          audioGraphRef.current,
+          settingsRef.current,
+          elapsedRef.current / 1000,
+        );
+      }
+
       if (visible) animationFrame = window.requestAnimationFrame(draw);
     };
 
     const resize = () => {
       configureGrid();
-      render(reducedMotion ? 0 : performance.now());
+      render(true);
     };
 
     const onVisibility = () => {
       visible = !document.hidden;
+      previousClock = performance.now();
       if (visible && !reducedMotion) {
         window.cancelAnimationFrame(animationFrame);
         animationFrame = window.requestAnimationFrame(draw);
@@ -279,9 +522,8 @@ export default function AsciiOscilloscope() {
     };
 
     configureGrid();
-    render(reducedMotion ? 0 : performance.now());
-    renderNowRef.current = () =>
-      render(reducedMotion ? 0 : performance.now());
+    render(true);
+    renderNowRef.current = (clear = false) => render(clear);
 
     const resizeObserver =
       typeof ResizeObserver === "undefined" ? null : new ResizeObserver(resize);
@@ -289,7 +531,7 @@ export default function AsciiOscilloscope() {
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", onVisibility);
 
-    if (!reducedMotion) {
+    if (!reducedMotion && visible) {
       animationFrame = window.requestAnimationFrame(draw);
     }
 
@@ -303,12 +545,48 @@ export default function AsciiOscilloscope() {
   }, [reducedMotion]);
 
   useEffect(() => {
-    settingsRef.current = { interval, phase, harmonic };
-    renderNowRef.current?.();
+    const nextSettings: SignalSettings = {
+      preset: presetId,
+      generator,
+      frequency,
+      xRatio,
+      yRatio,
+      phase: radians(phaseDegrees),
+      form,
+      rotation: radians(rotationDegrees),
+      scale,
+      motion,
+    };
+    settingsRef.current = nextSettings;
+    renderNowRef.current?.(true);
     if (audioGraphRef.current) {
-      updateAudioGraph(audioGraphRef.current, settingsRef.current);
+      updateAudioGraph(
+        audioGraphRef.current,
+        nextSettings,
+        elapsedRef.current / 1000,
+      );
     }
-  }, [interval, phase, harmonic]);
+  }, [
+    presetId,
+    generator,
+    frequency,
+    xRatio,
+    yRatio,
+    phaseDegrees,
+    form,
+    rotationDegrees,
+    scale,
+    motion,
+  ]);
+
+  useEffect(() => {
+    runningRef.current = running;
+    renderNowRef.current?.();
+  }, [running]);
+
+  useEffect(() => {
+    audioEnabledRef.current = audioEnabled;
+  }, [audioEnabled]);
 
   useEffect(
     () => () => {
@@ -349,7 +627,7 @@ export default function AsciiOscilloscope() {
     gain.connect(context.destination);
 
     const graph = { context, xOscillator, yOscillator, gain };
-    updateAudioGraph(graph, settingsRef.current);
+    updateAudioGraph(graph, settingsRef.current, elapsedRef.current / 1000);
     xOscillator.start();
     yOscillator.start();
     audioGraphRef.current = graph;
@@ -373,6 +651,7 @@ export default function AsciiOscilloscope() {
       graph.gain.gain.cancelScheduledValues(now);
       graph.gain.gain.setValueAtTime(graph.gain.gain.value, now);
       graph.gain.gain.linearRampToValueAtTime(0, now + 0.06);
+      audioEnabledRef.current = false;
       setAudioEnabled(false);
       suspendTimerRef.current = window.setTimeout(() => {
         void graph.context.suspend();
@@ -383,10 +662,12 @@ export default function AsciiOscilloscope() {
 
     try {
       await graph.context.resume();
+      updateAudioGraph(graph, settingsRef.current, elapsedRef.current / 1000);
       const now = graph.context.currentTime;
       graph.gain.gain.cancelScheduledValues(now);
       graph.gain.gain.setValueAtTime(0.0001, now);
       graph.gain.gain.exponentialRampToValueAtTime(outputGain, now + 0.08);
+      audioEnabledRef.current = true;
       setAudioEnabled(true);
     } catch {
       setAudioAvailable(false);
@@ -394,12 +675,32 @@ export default function AsciiOscilloscope() {
     }
   };
 
+  const applyPreset = (id: PresetId, resetFrequency = false) => {
+    const next = presets.find((item) => item.id === id) ?? defaultPreset;
+    setPresetId(next.id);
+    setGenerator(next.generator);
+    setXRatio(next.xRatio);
+    setYRatio(next.yRatio);
+    setPhaseDegrees(next.phaseDegrees);
+    setForm(next.form);
+    setRotationDegrees(next.rotationDegrees);
+    setScale(next.scale);
+    setMotion(next.motion);
+    if (resetFrequency) setFrequency(55);
+  };
+
+  const reset = () => {
+    elapsedRef.current = 0;
+    applyPreset(defaultPreset.id, true);
+    setRunning(true);
+  };
+
   const setFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = clamp((event.clientX - bounds.left) / bounds.width, 0, 1);
     const y = clamp((event.clientY - bounds.top) / bounds.height, 0, 1);
     setPhaseDegrees(Math.round(x * 360));
-    setHarmonic(Math.round((1 - y) * 35) / 100);
+    setForm(Math.round((1 - y) * 100) / 100);
   };
 
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -420,22 +721,28 @@ export default function AsciiOscilloscope() {
     }
   };
 
+  const updateRatio = (
+    value: string,
+    setter: (next: number) => void,
+  ) => {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) setter(Math.round(clamp(parsed, 1, 9)));
+  };
+
   return (
     <figure
       className="hero-art oscilloscope"
       aria-labelledby="oscilloscope-description"
     >
       <figcaption id="oscilloscope-description" className="sr-only">
-        An interactive real-time ASCII XY oscilloscope for musical frequency
-        ratios. Drag the trace or use the controls to change its phase and
-        shape. Audio is muted by default.
+        An interactive real-time ASCII XY oscilloscope instrument. Choose a
+        shape, change its frequency and geometry, drag the trace, or use the
+        controls. Stereo audio is muted by default.
       </figcaption>
 
       <div className="scope-header" aria-hidden="true">
-        <span>XY / 120 BPM</span>
-        <span>
-          {interval.numerator}:{interval.denominator} {interval.name}
-        </span>
+        <span>XY / VECTOR</span>
+        <span>{preset.label} / {frequency} HZ</span>
       </div>
 
       <div
@@ -455,20 +762,59 @@ export default function AsciiOscilloscope() {
       </div>
 
       <div className="scope-controls">
-        <label className="scope-control scope-ratio">
-          <span>Ratio</span>
+        <label className="scope-control">
+          <span>Preset</span>
           <select
-            aria-label="Ratio"
-            value={intervalIndex}
-            onChange={(event) => setIntervalIndex(Number(event.target.value))}
+            aria-label="Preset"
+            value={presetId}
+            onChange={(event) => applyPreset(event.target.value as PresetId)}
           >
-            {intervals.map((item, index) => (
-              <option value={index} key={item.name}>
-                {item.numerator}:{item.denominator} {item.name}
+            {presets.map((item) => (
+              <option value={item.id} key={item.id}>
+                {item.label}
               </option>
             ))}
           </select>
         </label>
+
+        <label className="scope-control">
+          <span>Hz</span>
+          <input
+            aria-label="Frequency"
+            type="range"
+            min="35"
+            max="220"
+            step="1"
+            value={frequency}
+            onChange={(event) => setFrequency(Number(event.target.value))}
+          />
+          <output>{frequency}</output>
+        </label>
+
+        <div
+          className="scope-control scope-ratio"
+          role="group"
+          aria-labelledby="scope-ratio-label"
+        >
+          <span id="scope-ratio-label">Ratio</span>
+          <input
+            aria-label="X ratio"
+            type="number"
+            min="1"
+            max="9"
+            value={xRatio}
+            onChange={(event) => updateRatio(event.target.value, setXRatio)}
+          />
+          <span aria-hidden="true">:</span>
+          <input
+            aria-label="Y ratio"
+            type="number"
+            min="1"
+            max="9"
+            value={yRatio}
+            onChange={(event) => updateRatio(event.target.value, setYRatio)}
+          />
+        </div>
 
         <label className="scope-control">
           <span>Phase</span>
@@ -485,37 +831,90 @@ export default function AsciiOscilloscope() {
         </label>
 
         <label className="scope-control">
-          <span>Shape</span>
+          <span>Form</span>
           <input
-            aria-label="Shape"
+            aria-label="Form"
             type="range"
             min="0"
-            max="0.35"
+            max="1"
             step="0.01"
-            value={harmonic}
-            onChange={(event) => setHarmonic(Number(event.target.value))}
+            value={form}
+            onChange={(event) => setForm(Number(event.target.value))}
           />
-          <output>{Math.round(harmonic * 100)}%</output>
+          <output>{Math.round(form * 100)}%</output>
         </label>
 
-        <button
-          className="scope-audio"
-          type="button"
-          aria-label={audioEnabled ? "Mute audio" : "Enable audio"}
-          aria-pressed={audioEnabled}
-          disabled={!audioAvailable}
-          onClick={() => void toggleAudio()}
-        >
-          Audio {audioAvailable ? (audioEnabled ? "on" : "off") : "n/a"}
-        </button>
+        <label className="scope-control">
+          <span>Rotate</span>
+          <input
+            aria-label="Rotation"
+            type="range"
+            min="-180"
+            max="180"
+            step="1"
+            value={rotationDegrees}
+            onChange={(event) => setRotationDegrees(Number(event.target.value))}
+          />
+          <output>{rotationDegrees}°</output>
+        </label>
+
+        <label className="scope-control">
+          <span>Scale</span>
+          <input
+            aria-label="Scale"
+            type="range"
+            min="0.55"
+            max="1"
+            step="0.01"
+            value={scale}
+            onChange={(event) => setScale(Number(event.target.value))}
+          />
+          <output>{Math.round(scale * 100)}%</output>
+        </label>
+
+        <label className="scope-control">
+          <span>Motion</span>
+          <input
+            aria-label="Motion"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={motion}
+            onChange={(event) => setMotion(Number(event.target.value))}
+          />
+          <output>{Math.round(motion * 100)}%</output>
+        </label>
+
+        <div className="scope-actions">
+          <button
+            type="button"
+            aria-label={running ? "Pause animation" : "Run animation"}
+            aria-pressed={running}
+            onClick={() => setRunning((current) => !current)}
+          >
+            {running ? "Pause" : "Run"}
+          </button>
+          <button type="button" onClick={reset}>
+            Reset
+          </button>
+          <button
+            className="scope-audio"
+            type="button"
+            aria-label={audioEnabled ? "Mute audio" : "Enable audio"}
+            aria-pressed={audioEnabled}
+            disabled={!audioAvailable}
+            onClick={() => void toggleAudio()}
+          >
+            {audioAvailable ? (audioEnabled ? "Audio on" : "Audio off") : "No audio"}
+          </button>
+        </div>
       </div>
 
       <div className="scope-footer" aria-hidden="true">
-        <span>
-          X {Math.round(interval.numerator * baseFrequency + driftFrequency)} Hz
-        </span>
+        <span>X:Y {xRatio}:{yRatio}</span>
         <span>PHASE {phaseDegrees}°</span>
-        <span>Y {interval.denominator * baseFrequency} Hz</span>
+        <span>FFT {fourierHarmonics}</span>
       </div>
     </figure>
   );
