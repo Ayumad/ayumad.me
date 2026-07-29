@@ -15,7 +15,7 @@ describe("Ayumad.me", () => {
   it("renders the home page and all primary navigation destinations", () => {
     renderAt("/");
 
-    expect(screen.getByRole("heading", { name: /A cozy corner for/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Systems, signals/i })).toBeInTheDocument();
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Showcase/i })).toHaveAttribute(
