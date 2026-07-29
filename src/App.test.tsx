@@ -18,13 +18,20 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
     expect(
       screen.getByRole("figure", {
-        name: "A real-time ASCII XY oscilloscope tracing musical frequency ratios.",
+        name: /An interactive real-time ASCII XY oscilloscope/,
       }),
     ).toBeInTheDocument();
     const renderedSignal = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
     const signalText = renderedSignal?.textContent ?? "";
     expect(signalText.length).toBeGreaterThan(1_000);
     expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
+    expect(screen.getByRole("combobox", { name: "Ratio" })).toHaveValue("0");
+    expect(screen.getByRole("slider", { name: "Phase" })).toHaveValue("90");
+    expect(screen.getByRole("slider", { name: "Shape" })).toHaveValue("0.12");
+    expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
@@ -35,6 +42,24 @@ describe("Ayumad.me", () => {
       "href",
       "#/contact",
     );
+  });
+
+  it("updates the oscilloscope from its accessible controls", () => {
+    renderAt("/");
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Ratio" }), {
+      target: { value: "2" },
+    });
+    fireEvent.change(screen.getByRole("slider", { name: "Phase" }), {
+      target: { value: "180" },
+    });
+    fireEvent.change(screen.getByRole("slider", { name: "Shape" }), {
+      target: { value: "0.25" },
+    });
+
+    expect(screen.getByRole("combobox", { name: "Ratio" })).toHaveValue("2");
+    expect(screen.getByText("180°")).toBeInTheDocument();
+    expect(screen.getByText("25%")).toBeInTheDocument();
   });
 
   it("renders project stories on the projects route", () => {
