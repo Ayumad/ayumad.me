@@ -244,21 +244,23 @@ function Header({ path }: { path: string }) {
         <div className="header-actions">
           <button
             type="button"
-            className="plain-button"
+            className="plain-button icon-control"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
           >
-            {theme === "dark" ? "Light" : "Dark"}
+            <span aria-hidden="true">{theme === "dark" ? "☼" : "◐"}</span>
           </button>
           <button
             type="button"
-            className="plain-button menu-toggle"
+            className="plain-button icon-control menu-toggle"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-controls="site-navigation"
             aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            title={menuOpen ? "Close navigation" : "Open navigation"}
           >
-            {menuOpen ? "Close" : "Menu"}
+            <span aria-hidden="true">{menuOpen ? "×" : "≡"}</span>
           </button>
         </div>
       </div>
