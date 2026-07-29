@@ -40,6 +40,13 @@ interface Preset {
   motion: number;
 }
 
+interface RandomVariant {
+  preset: PresetId;
+  scale: number;
+  motion: number;
+  octave: 0 | 1 | 2;
+}
+
 interface Point {
   x: number;
   y: number;
@@ -155,6 +162,25 @@ const presets: Preset[] = [
     scale: 0.96,
     motion: 0.2,
   },
+];
+
+const randomVariants: RandomVariant[] = [
+  { preset: "line", scale: 0.96, motion: 0.08, octave: 0 },
+  { preset: "line", scale: 0.88, motion: 0.14, octave: 2 },
+  { preset: "circle", scale: 0.98, motion: 0.08, octave: 0 },
+  { preset: "circle", scale: 0.9, motion: 0.16, octave: 2 },
+  { preset: "eight", scale: 0.98, motion: 0.14, octave: 0 },
+  { preset: "eight", scale: 0.88, motion: 0.18, octave: 1 },
+  { preset: "knot", scale: 0.96, motion: 0.12, octave: 0 },
+  { preset: "knot", scale: 0.84, motion: 0.16, octave: 1 },
+  { preset: "rose", scale: 0.94, motion: 0.16, octave: 0 },
+  { preset: "rose", scale: 0.84, motion: 0.18, octave: 1 },
+  { preset: "star", scale: 0.96, motion: 0.14, octave: 0 },
+  { preset: "star", scale: 0.84, motion: 0.18, octave: 1 },
+  { preset: "polygon", scale: 0.96, motion: 0.12, octave: 0 },
+  { preset: "polygon", scale: 0.86, motion: 0.16, octave: 2 },
+  { preset: "orbit", scale: 0.94, motion: 0.14, octave: 0 },
+  { preset: "orbit", scale: 0.84, motion: 0.16, octave: 1 },
 ];
 
 const defaultPreset = presets[3];
@@ -880,13 +906,13 @@ export default function AsciiOscilloscope() {
   };
 
   const randomize = () => {
-    const next = presets[Math.floor(Math.random() * presets.length)];
-    const safeMotion = [0, 0.08, 0.14, 0.22, 0.32];
+    const variant =
+      randomVariants[Math.floor(Math.random() * randomVariants.length)];
     elapsedRef.current = 0;
-    setPresetId(next.id);
-    setScale(Number((0.84 + Math.random() * 0.14).toFixed(2)));
-    setMotion(safeMotion[Math.floor(Math.random() * safeMotion.length)]);
-    setOctave(Math.floor(Math.random() * 4));
+    setPresetId(variant.preset);
+    setScale(variant.scale);
+    setMotion(variant.motion);
+    setOctave(variant.octave);
     setRunning(true);
   };
 
