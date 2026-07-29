@@ -10,6 +10,8 @@ function renderAt(path: string) {
 describe("Ayumad.me", () => {
   beforeEach(() => {
     document.documentElement.dataset.theme = "dark";
+    document.documentElement.dataset.renderer = "ascii";
+    localStorage.removeItem("ayumad-renderer");
   });
 
   it("renders the home page and all primary navigation destinations", () => {
@@ -40,6 +42,9 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
       "aria-pressed",
       "false",
+    );
+    expect(screen.getByRole("combobox", { name: "Renderer" })).toHaveValue(
+      "ascii",
     );
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
@@ -153,6 +158,33 @@ describe("Ayumad.me", () => {
 
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(localStorage.getItem("ayumad-theme")).toBe("light");
+  });
+
+  it("applies and persists renderer modes across the complete shell", () => {
+    renderAt("/systems");
+    const selector = screen.getByRole("combobox", { name: "Renderer" });
+    const scene = document.querySelector<HTMLPreElement>(
+      '[data-ascii-scene="systems"]',
+    );
+
+    expect(selector).toHaveValue("ascii");
+    fireEvent.change(selector, { target: { value: "dither" } });
+
+    expect(document.documentElement.dataset.renderer).toBe("dither");
+    expect(localStorage.getItem("ayumad-renderer")).toBe("dither");
+    expect(scene).toHaveAttribute("data-render-mode", "dither");
+    expect(scene?.textContent).toMatch(/[░▒▓█]/);
+
+    fireEvent.change(selector, { target: { value: "particles" } });
+    expect(document.documentElement.dataset.renderer).toBe("particles");
+    expect(scene).toHaveAttribute("data-render-mode", "particles");
+    expect(scene?.textContent).toMatch(/[·•●]/);
+
+    for (const mode of ["glitch", "crt", "ascii"]) {
+      fireEvent.change(selector, { target: { value: mode } });
+      expect(document.documentElement.dataset.renderer).toBe(mode);
+      expect(localStorage.getItem("ayumad-renderer")).toBe(mode);
+    }
   });
 
   it("opens and closes the mobile navigation accessibly", () => {

@@ -37,6 +37,14 @@
         const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         document.documentElement.dataset.theme =
           saved === "light" || saved === "dark" ? saved : systemDark ? "dark" : "light";
+        const renderer = localStorage.getItem("ayumad-renderer");
+        document.documentElement.dataset.renderer =
+          renderer === "dither" ||
+          renderer === "glitch" ||
+          renderer === "particles" ||
+          renderer === "crt"
+            ? renderer
+            : "ascii";
       })();
     </script>
   </head>

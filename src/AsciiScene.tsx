@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
+import { type RenderMode, useRenderMode } from "./renderMode";
 
 export type AsciiSceneName =
   | "work"
@@ -320,8 +321,86 @@ const renderers: Record<AsciiSceneName, (frame: number) => Buffer> = {
   contact: renderContact,
 };
 
-function renderScene(scene: AsciiSceneName, frame: number) {
-  return renderers[scene](frame).map((row) => row.join("")).join("\n");
+const labelCharacter = /[A-Za-z0-9@.%[\]]/;
+const heavyCharacter = /[█▓◆●▣#@]/;
+const mediumCharacter = /[▒+*=<>/\\|─│┌┐└┘├○]/;
+
+function applyRenderMode(
+  source: Buffer,
+  frame: number,
+  renderMode: RenderMode,
+) {
+  if (renderMode === "ascii") return source;
+
+  if (renderMode === "glitch") {
+    return source.map((row, y) => {
+      const shifted = Array.from({ length: columns }, () => " ");
+      const isBand = (y * 13 + frame) % 41 < 2;
+      const offset = isBand ? ((y + frame) % 2 === 0 ? 2 : -2) : 0;
+
+      row.forEach((character, x) => {
+        const target = x + offset;
+        if (target < 0 || target >= columns) return;
+        const corrupt =
+          character !== " " &&
+          !labelCharacter.test(character) &&
+          (x * 17 + y * 31 + frame) % 29 === 0;
+        shifted[target] = corrupt
+          ? ["<", ">", "#", "/", "\\"][(x + y + frame) % 5]
+          : character;
+      });
+      return shifted;
+    });
+  }
+
+  return source.map((row, y) =>
+    row.map((character, x) => {
+      if (labelCharacter.test(character)) return character;
+
+      if (renderMode === "dither") {
+        if (heavyCharacter.test(character)) return "█";
+        if (mediumCharacter.test(character)) {
+          return (x * 5 + y * 3 + frame) % 4 < 2 ? "▓" : "▒";
+        }
+        if (character !== " ") return "░";
+        return (x * 7 + y * 11 + Math.floor(frame / 3)) % 67 === 0
+          ? "░"
+          : " ";
+      }
+
+      if (renderMode === "particles") {
+        if (heavyCharacter.test(character)) return "●";
+        if (mediumCharacter.test(character)) return "•";
+        if (character !== " ") return "·";
+        return (x * 19 + y * 23 + Math.floor(frame / 2)) % 89 === 0
+          ? "·"
+          : " ";
+      }
+
+      if (renderMode === "crt") {
+        if (heavyCharacter.test(character)) return "▓";
+        if (character !== " ") return character;
+        const previous = x > 0 ? row[x - 1] : " ";
+        return previous !== " " &&
+          !labelCharacter.test(previous) &&
+          (x + y + frame) % 3 === 0
+          ? "·"
+          : " ";
+      }
+
+      return character;
+    }),
+  );
+}
+
+function renderScene(
+  scene: AsciiSceneName,
+  frame: number,
+  renderMode: RenderMode,
+) {
+  return applyRenderMode(renderers[scene](frame), frame, renderMode)
+    .map((row) => row.join(""))
+    .join("\n");
 }
 
 export default function AsciiScene({
@@ -333,6 +412,7 @@ export default function AsciiScene({
 }) {
   const outputRef = useRef<HTMLPreElement>(null);
   const reducedMotion = useReducedMotion();
+  const renderMode = useRenderMode();
 
   useEffect(() => {
     const output = outputRef.current;
@@ -346,6 +426,7 @@ export default function AsciiScene({
       output.textContent = renderScene(
         scene,
         reducedMotion ? 0 : Math.floor(time / 80),
+        renderMode,
       );
     };
 
@@ -376,13 +457,14 @@ export default function AsciiScene({
       window.cancelAnimationFrame(animationFrame);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [reducedMotion, scene]);
+  }, [reducedMotion, renderMode, scene]);
 
   return (
     <pre
       ref={outputRef}
       className={className}
       data-ascii-scene={scene}
+      data-render-mode={renderMode}
       aria-hidden="true"
     />
   );

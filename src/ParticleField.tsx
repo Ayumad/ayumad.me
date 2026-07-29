@@ -1,11 +1,19 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
+import { useRenderMode } from "./renderMode";
 
-const glyphs = [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"];
+const glyphSets = {
+  ascii: [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"],
+  dither: [" ", " ", "░", "▒", "▓", "█"],
+  glitch: [" ", ".", "/", "\\", "<", ">", "#"],
+  particles: [" ", " ", "·", "•", "●", "✦"],
+  crt: [" ", " ", ".", ":", "+", "*"],
+} as const;
 
 export default function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotion = useReducedMotion();
+  const renderMode = useRenderMode();
 
   useEffect(() => {
     if (reducedMotion) return;
@@ -21,7 +29,15 @@ export default function ParticleField() {
     let height = 0;
     let visible = !document.hidden;
     let previousFrame = 0;
-    const cell = 24;
+    const cell =
+      renderMode === "particles"
+        ? 16
+        : renderMode === "dither"
+          ? 19
+          : renderMode === "crt"
+            ? 27
+            : 24;
+    const glyphs = glyphSets[renderMode];
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -44,10 +60,23 @@ export default function ParticleField() {
 
       const theme = document.documentElement.dataset.theme;
       context.fillStyle =
-        theme === "light" ? "rgba(0, 111, 104, 0.18)" : "rgba(72, 239, 208, 0.16)";
+        theme === "light"
+          ? renderMode === "glitch"
+            ? "rgba(80, 86, 141, 0.17)"
+            : "rgba(0, 111, 104, 0.18)"
+          : renderMode === "glitch"
+            ? "rgba(119, 127, 196, 0.2)"
+            : "rgba(72, 239, 208, 0.16)";
       context.font = `10px "SFMono-Regular", "Cascadia Code", monospace`;
       context.textAlign = "center";
       context.textBaseline = "middle";
+      context.shadowColor =
+        renderMode === "crt"
+          ? theme === "light"
+            ? "rgba(0, 111, 104, 0.28)"
+            : "rgba(72, 239, 208, 0.42)"
+          : "transparent";
+      context.shadowBlur = renderMode === "crt" ? 5 : 0;
 
       const phase = time * 0.00008;
       const columns = Math.ceil(width / cell);
@@ -66,11 +95,25 @@ export default function ParticleField() {
             1 - Math.hypot(x - width * 0.93, y - height * 0.12) / (width * 0.42),
           );
           const wave = (Math.sin(column * 0.48 + row * 0.3 + phase) + 1) * 0.08;
-          const density = Math.max(leftField, rightField) + wave - 0.14;
+          const densityBoost =
+            renderMode === "particles"
+              ? 0.06
+              : renderMode === "dither"
+                ? 0.02
+                : renderMode === "crt"
+                  ? -0.02
+                  : 0;
+          const density =
+            Math.max(leftField, rightField) + wave - 0.14 + densityBoost;
 
           if (density <= 0) continue;
           const glyphIndex = Math.min(glyphs.length - 1, Math.floor(density * glyphs.length));
-          context.fillText(glyphs[glyphIndex], x, y);
+          const glitchOffset =
+            renderMode === "glitch" &&
+            (row * 11 + Math.floor(time / 90)) % 43 < 2
+              ? ((row + Math.floor(time / 90)) % 2 === 0 ? 5 : -5)
+              : 0;
+          context.fillText(glyphs[glyphIndex], x + glitchOffset, y);
         }
       }
 
@@ -95,9 +138,16 @@ export default function ParticleField() {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, renderMode]);
 
   if (reducedMotion) return null;
 
-  return <canvas className="particle-field" ref={canvasRef} aria-hidden="true" />;
+  return (
+    <canvas
+      className="particle-field"
+      data-render-mode={renderMode}
+      ref={canvasRef}
+      aria-hidden="true"
+    />
+  );
 }
