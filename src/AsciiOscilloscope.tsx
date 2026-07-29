@@ -5,6 +5,7 @@ import {
   useState,
 } from "react";
 import { useReducedMotion } from "motion/react";
+import { useRenderMode } from "./renderMode";
 
 type PresetId =
   | "line"
@@ -163,6 +164,8 @@ const bayer4 = [
   15, 7, 13, 5,
 ];
 const toneRamp = " .,:;+*#@";
+const crtRamp = "  .:-=+*#@";
+const ditherRamp = "  ░▒▓█";
 const outputGain = 0.018;
 const fourierHarmonics = 48;
 const audioSamples = 512;
@@ -478,6 +481,7 @@ export default function AsciiOscilloscope() {
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(true);
   const reducedMotion = useReducedMotion();
+  const renderMode = useRenderMode();
   const preset = presets.find((item) => item.id === presetId) ?? defaultPreset;
   const copies = 2 ** octave;
 
@@ -535,10 +539,19 @@ export default function AsciiOscilloscope() {
       if (clear) intensity.fill(0);
       const current = settingsRef.current;
       const time = reducedMotion ? 0 : elapsedRef.current / 1000;
+      const renderFrame = Math.floor(elapsedRef.current / 80);
       const samples = 1900;
+      const persistence =
+        renderMode === "crt"
+          ? 0.84
+          : renderMode === "particles"
+            ? 0.54
+            : renderMode === "dither"
+              ? 0.64
+              : 0.72;
 
       for (let index = 0; index < intensity.length; index += 1) {
-        intensity[index] *= 0.72;
+        intensity[index] *= persistence;
       }
 
       let previousPoint = signalPoint(0, current, time);
@@ -577,8 +590,56 @@ export default function AsciiOscilloscope() {
       for (let row = 0; row < rows; row += 1) {
         let line = "";
         for (let column = 0; column < columns; column += 1) {
-          const cell = row * columns + column;
+          const glitchBand =
+            renderMode === "glitch" &&
+            (row * 13 + renderFrame) % 47 < 3;
+          const sourceColumn = clamp(
+            column +
+              (glitchBand
+                ? (row + renderFrame) % 2 === 0
+                  ? 2
+                  : -2
+                : 0),
+            0,
+            columns - 1,
+          );
+          const cell = row * columns + sourceColumn;
           const value = intensity[cell];
+
+          if (renderMode === "dither") {
+            const orderedThreshold =
+              bayer4[(row % 4) * 4 + (column % 4)] / 15;
+            const level = clamp(value * 0.94 - orderedThreshold * 0.32, 0, 0.99);
+            const rampIndex = Math.floor(level * ditherRamp.length);
+            line += ditherRamp[rampIndex] ?? " ";
+            continue;
+          }
+
+          if (renderMode === "particles") {
+            const particleGate = (row * 19 + column * 31 + renderFrame) % 7;
+            line +=
+              value > 1.08
+                ? "●"
+                : value > 0.72
+                  ? particleGate < 5
+                    ? "•"
+                    : " "
+                  : value > 0.34 && particleGate < 3
+                    ? "·"
+                    : " ";
+            continue;
+          }
+
+          if (
+            renderMode === "glitch" &&
+            value > 0.22 &&
+            (row * 31 + column * 17 + renderFrame) % 61 === 0
+          ) {
+            line += ["<", ">", "#", "/", "\\"][
+              (row + column + renderFrame) % 5
+            ];
+            continue;
+          }
 
           if (value > 0.7) {
             line += structuralGlyph(direction[cell], value > 1.14);
@@ -588,8 +649,9 @@ export default function AsciiOscilloscope() {
           const threshold =
             (bayer4[(row % 4) * 4 + (column % 4)] / 15 - 0.5) * 0.16;
           const level = clamp(value + threshold, 0, 0.99);
-          const rampIndex = Math.floor(level * toneRamp.length);
-          line += toneRamp[rampIndex] ?? " ";
+          const ramp = renderMode === "crt" ? crtRamp : toneRamp;
+          const rampIndex = Math.floor(level * ramp.length);
+          line += ramp[rampIndex] ?? " ";
         }
         lines.push(line);
       }
@@ -659,7 +721,7 @@ export default function AsciiOscilloscope() {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, renderMode]);
 
   useEffect(() => {
     const nextSettings: SignalSettings = {
