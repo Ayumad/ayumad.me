@@ -1016,23 +1016,55 @@ export default function AsciiOscilloscope() {
           <button
             type="button"
             aria-label={running ? "Pause animation" : "Run animation"}
+            title={running ? "Pause" : "Run"}
             aria-pressed={running}
             onClick={() => setRunning((current) => !current)}
           >
-            {running ? "Pause" : "Run"}
+            <span
+              className={`scope-action-icon ${
+                running ? "scope-icon-pause" : "scope-icon-play"
+              }`}
+              aria-hidden="true"
+            />
           </button>
-          <button type="button" onClick={randomize}>
-            Random
+          <button
+            type="button"
+            aria-label="Randomize"
+            title="Randomize"
+            onClick={randomize}
+          >
+            <span
+              className="scope-action-icon scope-icon-random"
+              aria-hidden="true"
+            />
           </button>
           <button
             className="scope-audio"
             type="button"
-            aria-label={audioEnabled ? "Mute audio" : "Enable audio"}
+            aria-label={
+              audioAvailable
+                ? audioEnabled
+                  ? "Mute audio"
+                  : "Enable audio"
+                : "Audio unavailable"
+            }
+            title={
+              audioAvailable
+                ? audioEnabled
+                  ? "Mute audio"
+                  : "Enable audio"
+                : "Audio unavailable"
+            }
             aria-pressed={audioEnabled}
             disabled={!audioAvailable}
             onClick={() => void toggleAudio()}
           >
-            {audioAvailable ? (audioEnabled ? "Audio on" : "Audio off") : "No audio"}
+            <span
+              className={`scope-action-icon ${
+                audioEnabled ? "scope-icon-audio-on" : "scope-icon-audio-off"
+              }`}
+              aria-hidden="true"
+            />
           </button>
         </div>
       </div>
