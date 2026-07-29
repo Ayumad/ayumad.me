@@ -1,17 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
 
-interface Particle {
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  drift: number;
-  alpha: number;
-  glyph: string;
-}
-
-const glyphs = [".", "·", "+", ":", "*", "0", "1", "╱", "╲"];
+const glyphs = [" ", ".", ":", "-", "=", "+", "*", "#", "%", "@"];
 
 export default function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,24 +19,12 @@ export default function ParticleField() {
     let animationFrame = 0;
     let width = 0;
     let height = 0;
-    let particles: Particle[] = [];
     let visible = !document.hidden;
-
-    const makeParticles = () => {
-      const count = Math.min(72, Math.max(28, Math.round(width / 22)));
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        size: Math.random() * 4 + 7,
-        speed: Math.random() * 0.12 + 0.025,
-        drift: (Math.random() - 0.5) * 0.06,
-        alpha: Math.random() * 0.24 + 0.06,
-        glyph: glyphs[Math.floor(Math.random() * glyphs.length)],
-      }));
-    };
+    let previousFrame = 0;
+    const cell = 24;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.floor(width * dpr);
@@ -54,42 +32,46 @@ export default function ParticleField() {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      makeParticles();
     };
 
-    const draw = () => {
+    const draw = (time: number) => {
+      if (time - previousFrame < 120) {
+        animationFrame = window.requestAnimationFrame(draw);
+        return;
+      }
+      previousFrame = time;
       context.clearRect(0, 0, width, height);
+
       const theme = document.documentElement.dataset.theme;
-      const rgb = theme === "light" ? "37, 75, 61" : "183, 255, 71";
+      context.fillStyle = theme === "light" ? "rgba(42, 77, 46, 0.18)" : "rgba(199, 255, 54, 0.16)";
+      context.font = `10px "SFMono-Regular", "Cascadia Code", monospace`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
 
-      particles.forEach((particle, index) => {
-        particle.y -= particle.speed;
-        particle.x += particle.drift;
+      const phase = time * 0.00008;
+      const columns = Math.ceil(width / cell);
+      const rows = Math.ceil(height / cell);
 
-        if (particle.y < -4) {
-          particle.y = height + 4;
-          particle.x = Math.random() * width;
+      for (let row = 0; row <= rows; row += 1) {
+        for (let column = 0; column <= columns; column += 1) {
+          const x = column * cell;
+          const y = row * cell;
+          const leftField = Math.max(
+            0,
+            1 - Math.hypot(x - width * 0.05, y - height * 0.78) / (width * 0.48),
+          );
+          const rightField = Math.max(
+            0,
+            1 - Math.hypot(x - width * 0.93, y - height * 0.12) / (width * 0.42),
+          );
+          const wave = (Math.sin(column * 0.48 + row * 0.3 + phase) + 1) * 0.08;
+          const density = Math.max(leftField, rightField) + wave - 0.14;
+
+          if (density <= 0) continue;
+          const glyphIndex = Math.min(glyphs.length - 1, Math.floor(density * glyphs.length));
+          context.fillText(glyphs[glyphIndex], x, y);
         }
-        if (particle.x < -4) particle.x = width + 4;
-        if (particle.x > width + 4) particle.x = -4;
-
-        context.fillStyle = `rgba(${rgb}, ${particle.alpha})`;
-        context.font = `${particle.size}px "SFMono-Regular", "Cascadia Code", monospace`;
-        context.fillText(particle.glyph, particle.x, particle.y);
-
-        if (index % 7 === 0) {
-          const next = particles[(index + 1) % particles.length];
-          const distance = Math.hypot(next.x - particle.x, next.y - particle.y);
-          if (distance < 150) {
-            context.beginPath();
-            context.strokeStyle = `rgba(${rgb}, ${Math.min(particle.alpha, 0.08)})`;
-            context.setLineDash([2, 7]);
-            context.moveTo(particle.x, particle.y);
-            context.lineTo(next.x, next.y);
-            context.stroke();
-          }
-        }
-      });
+      }
 
       if (visible) animationFrame = window.requestAnimationFrame(draw);
     };
@@ -98,12 +80,12 @@ export default function ParticleField() {
       visible = !document.hidden;
       if (visible) {
         window.cancelAnimationFrame(animationFrame);
-        draw();
+        animationFrame = window.requestAnimationFrame(draw);
       }
     };
 
     resize();
-    draw();
+    animationFrame = window.requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", onVisibility);
 

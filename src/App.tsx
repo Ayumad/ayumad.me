@@ -26,6 +26,48 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
+const heroField = String.raw`
+                         .........:::::::::::
+                 ....::::::------======++++**
+            ...::::---===+++****####%%%%@@@@@
+         ..:::--==++**##%%@@@@@@@@@@@@@@@@@@@
+       .::--=++*##%@@@@@@@%%%%%%######*******
+      .:-=+*#%@@@@%%##**++===----::::........
+     .-=*#%@@@%#*+=-::..             ........
+    .-+#@@@%#+=-.           ..::--==++***####
+    :=#@@@%*=:          .:-=+*#%%@@@@@@@@@@@@
+   .+%@@@#+:         .-=*#%@@@@@@@%%%####****
+   :#@@@%+:        .-+#@@@@%#*+=--:::........
+   -%@@@#-         :*%@@@%*=-.        ........
+   =@@@@*.        .+@@@@#=:      .:-==++***###
+   =@@@@*.        :#@@@%=.     :=*#%@@@@@@@@@@
+   -%@@@#-        :%@@@#-     :#@@@@@%%##*****
+   :#@@@%+:       .#@@@%=.    =@@@%*=-::......
+   .+%@@@#+:       +@@@@#-    -@@@#=.     .....
+    -+#@@@%*=:     :%@@@%+:   .%@%=. .:-=++***
+     -=*%@@@@#+-.   =@@@@#=.   +@@#-=*%@@@@@@@
+      :-+#%@@@@%*=: .#@@@@%*-. :%@%%@@@@%%####
+       .:-=*#%@@@@%#+*@@@@@@@%#*%@@@%*=-::....
+          .:-=+*#%@@@@@@@@@@@@@@@@@%*-.     ....
+              .::-=+*##%%%%%%%%%#*=-. .:-=++***
+                    ..::--------::..:=*#%@@@@@@@
+                         ...........#@@@@@@@@@@@
+`;
+
+const headingField = String.raw` .  .::  ::--==++**##%%@@
+  ..::--==++**##%%@@%%##*
+::--==++**##%%@@%%##**++=
+==++**##%%@@%%##**++==--:
+**##%%@@%%##**++==--::.. `;
+
+const contactField = String.raw`
+@@%%##**++==--::..        ..::--==++**##%%@@
+%%##**++==--::..   EMAIL   ..::--==++**##%%@
+##**++==--::..              ..::--==++**##%%
+**++==--::..  GITHUB · MAIL  ..::--==++**##%
+++==--::..                    ..::--==++**###
+`;
+
 function currentPath() {
   const hashPath = window.location.hash.slice(1);
   return hashPath.startsWith("/") ? hashPath : "/";
@@ -70,11 +112,10 @@ export class SiteErrorBoundary extends Component<PropsWithChildren, ErrorBoundar
     if (this.state.hasError) {
       return (
         <main className="error-screen">
-          <p className="eyebrow">[ unexpected signal ]</p>
-          <h1>Something slipped out of the stack.</h1>
-          <p>Refresh the page and the system should find its way back.</p>
+          <p className="label">Error</p>
+          <h1>Something went wrong.</h1>
           <button type="button" onClick={() => window.location.reload()}>
-            Reload site
+            Reload
           </button>
         </main>
       );
@@ -106,8 +147,8 @@ function RouteEffects({ path }: { path: string }) {
 
   useEffect(() => {
     const meta = pageMeta[path] ?? {
-      title: "Signal lost — Ayumad.me",
-      description: "This part of Ayumad.me could not be found.",
+      title: "Not found — Ayumad.me",
+      description: "The requested page could not be found.",
     };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
@@ -134,14 +175,6 @@ function Header({ path }: { path: string }) {
 
   return (
     <header className="site-header">
-      <div className="system-bar" aria-hidden="true">
-        <span>AYUMAD_OS :: TTY1</span>
-        <span className="system-bar-track">
-          <i />
-        </span>
-        <span>NET: ONLINE</span>
-        <span>CA/BAY_AREA</span>
-      </div>
       <div className="header-inner">
         <Link
           className="wordmark"
@@ -149,9 +182,7 @@ function Header({ path }: { path: string }) {
           aria-label="Ayumad.me home"
           onClick={() => setMenuOpen(false)}
         >
-          <span aria-hidden="true">╭─</span>
-          <strong>ayush@ayumad</strong>
-          <span aria-hidden="true">:~$</span>
+          AYUMAD.ME
         </Link>
 
         <nav
@@ -162,40 +193,38 @@ function Header({ path }: { path: string }) {
           {navItems.map((item) => {
             const isActive = path === item.path;
             return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={isActive ? "nav-link active" : "nav-link"}
-              onClick={() => setMenuOpen(false)}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <span>[{item.index}]</span>
-              <strong>{item.label}</strong>
-            </Link>
-          )})}
+              <Link
+                key={item.path}
+                to={item.path}
+                className={isActive ? "nav-link active" : "nav-link"}
+                onClick={() => setMenuOpen(false)}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <span>{item.index}</span>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="header-actions">
-          <span className="header-mode" aria-hidden="true">
-            {path === "/" ? "HOME" : path.slice(1).toUpperCase()}
-          </span>
           <button
             type="button"
-            className="icon-button theme-toggle"
+            className="plain-button"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
           >
-            <span aria-hidden="true">{theme === "dark" ? "LT" : "DK"}</span>
+            {theme === "dark" ? "Light" : "Dark"}
           </button>
           <button
             type="button"
-            className="icon-button menu-toggle"
+            className="plain-button menu-toggle"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-controls="site-navigation"
             aria-label={menuOpen ? "Close navigation" : "Open navigation"}
           >
-            <span aria-hidden="true">{menuOpen ? "[X]" : "[::]"}</span>
+            {menuOpen ? "Close" : "Menu"}
           </button>
         </div>
       </div>
@@ -211,10 +240,10 @@ function PageTransition({ children, path }: PropsWithChildren<{ path: string }>)
       <motion.div
         className="route-frame"
         key={path}
-        initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }}
+        initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
-        transition={{ duration: reducedMotion ? 0.01 : 0.32, ease: [0.22, 1, 0.36, 1] }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: reducedMotion ? 0.01 : 0.24, ease: [0.22, 1, 0.36, 1] }}
       >
         {children}
       </motion.div>
@@ -224,199 +253,120 @@ function PageTransition({ children, path }: PropsWithChildren<{ path: string }>)
 
 function SectionHeading({
   index,
-  eyebrow,
+  label,
   title,
   description,
 }: {
   index: string;
-  eyebrow: string;
+  label: string;
   title: string;
   description: string;
 }) {
   return (
     <header className="page-heading">
-      <div className="page-heading-top">
-        <p className="eyebrow">
-          <span>NODE_{index}</span> :: /{eyebrow}
+      <div className="heading-copy">
+        <p className="label">
+          <span>{index}</span>
+          {label}
         </p>
-        <span className="page-coordinates" aria-hidden="true">
-          X:{Number(index) * 19 + 7}.00 / Y:{Number(index) * 11 + 4}.00
-        </span>
+        <h1>{title}</h1>
+        <p className="page-intro">{description}</p>
       </div>
-      <div className="page-heading-grid">
-        <div>
-          <h1>{title}</h1>
-          <p className="page-intro">{description}</p>
-        </div>
-        <pre className="page-sigil" aria-hidden="true">{String.raw`┌─[ ROUTE ${index} ]──────────────┐
-│ ${eyebrow.toUpperCase().padEnd(29, " ")}│
-│ ▓▓▓▓▒▒▒░░  SIGNAL LOCKED     │
-│ ├─────╼ ● ╾─────┤            │
-└───────────────────────────────┘`}</pre>
-      </div>
+      <pre className="heading-field" aria-hidden="true">{headingField}</pre>
     </header>
   );
 }
 
-function SignalLine() {
+function AsciiDivider() {
   return (
-    <div className="signal-line" aria-hidden="true">
-      <span>╾●</span>
-      <span />
-      <span>●╼</span>
+    <div className="ascii-divider" aria-hidden="true">
+      <span> . : - = + * # % @ </span>
+      <i />
+      <span> @ % # * + = - : . </span>
     </div>
   );
 }
 
 function HomePage() {
+  const descriptions = [
+    "AI, notes, infrastructure, and audio.",
+    "Selected builds and experiments.",
+    "The tools and systems I use.",
+    "What I am working on now.",
+    "Background, education, and interests.",
+    "Email and GitHub.",
+  ];
+
   return (
     <>
       <section className="hero section-shell">
-        <pre className="ascii-mark" aria-hidden="true">{` █████╗ ██╗   ██╗██╗   ██╗███╗   ███╗ █████╗ ██████╗
-██╔══██╗╚██╗ ██╔╝██║   ██║████╗ ████║██╔══██╗██╔══██╗
-███████║ ╚████╔╝ ██║   ██║██╔████╔██║███████║██║  ██║
-██╔══██║  ╚██╔╝  ██║   ██║██║╚██╔╝██║██╔══██║██║  ██║
-██║  ██║   ██║   ╚██████╔╝██║ ╚═╝ ██║██║  ██║██████╔╝
-╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝`}</pre>
-
-        <div className="hero-grid">
-          <div className="hero-copy terminal-tile">
-            <div className="tile-bar">
-              <span>01</span>
-              <span>~/identity/readme.md</span>
-              <span>[RO]</span>
-            </div>
-            <div className="hero-copy-body">
-              <p className="eyebrow live-label">
-                <span className="status-dot" aria-hidden="true" />
-                Bay Area / online / signal acquired
-              </p>
-              <h1>
-                Systems, signals,
-                <span>and useful detours.</span>
-              </h1>
-              <p className="hero-deck">
-                I&apos;m Ayush—a Computer Engineering student who likes going beneath the
-                interface. This is a living map of the systems, sounds, machines, and ideas
-                I&apos;m taking apart and putting back together.
-              </p>
-              <div className="hero-actions">
-                <Link className="button primary" to="/projects">
-                  ./open projects <span aria-hidden="true">↗</span>
-                </Link>
-                <Link className="button text-button" to="/now">
-                  tail -f now.log <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <motion.div
-            className="ascii-console signal-tile dither-panel"
-            initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
-            animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
-            transition={{ delay: 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="console-bar tile-bar">
-              <span>02</span>
-              <span>/dev/curiosity_graph</span>
-              <span className="console-lights" aria-hidden="true">● REC</span>
-            </div>
-            <div className="signal-viewport">
-              <span className="viewport-axis axis-x" aria-hidden="true">X 00 ───────────── 99</span>
-              <span className="viewport-axis axis-y" aria-hidden="true">Y<br />0<br />│<br />│<br />9</span>
-              <pre aria-label="ASCII node graph of Ayush's technology interests">{String.raw`
-                 .       +                .
-        [ NOTES ]──────┐       .────────[ AUDIO ]
-             │         │       │             │
-       .─────┴────.    ▼       ▼       .────┴────.
-      /  INDEX +   \  ╔═══════════╗   / WAVEFORM  \
-     :  RETRIEVAL   :─║ AYUMAD.IO ║──:  + SIGNAL  :
-      \_____  _____/  ╚═════╤═════╝   \____  ____/
-            \/             │               \/
-        [ AI / ML ]◀────────┼────────▶[ HARDWARE ]
-             │              │               │
-         tokens()       curiosity_       proxmox()
-          models()        loop           zfs.pool()
-             │              │               │
-             └──────────────┴───────────────┘
-
-        >>> system.status = "experimenting" _
-`}</pre>
-              <div className="scan-beam" aria-hidden="true" />
-            </div>
-            <div className="console-readout">
-              <span>fps 60.00</span>
-              <span>nodes 04</span>
-              <span>signal warm</span>
-              <span>drift +0.02</span>
-            </div>
-          </motion.div>
+        <div className="hero-art">
+          <pre aria-hidden="true">{heroField}</pre>
+          <p aria-hidden="true">{" .,:;irsXA253hMHGS#9B&@"}</p>
         </div>
 
-        <div className="hero-ticker" aria-hidden="true">
-          <span>AI_&_NOTES</span><i>////</i><span>HOMELAB</span><i>////</i>
-          <span>AUDIO_SIGNAL</span><i>////</i><span>LINUX</span><i>////</i>
-          <span>CREATIVE_CODE</span><i>////</i><span>OWN_YOUR_STACK</span>
-        </div>
-      </section>
-
-      <section className="home-map section-shell" aria-labelledby="map-title">
-        <SignalLine />
-        <div className="section-lead">
-          <div>
-            <p className="eyebrow">[ quick map ]</p>
-            <h2 id="map-title">Pick a thread.</h2>
-          </div>
-          <p>
-            The site is organized by the things I keep returning to—not by job titles
-            or a timeline.
+        <div className="hero-copy">
+          <p className="label">Computer Engineering</p>
+          <h1 aria-label="Ayush Madhukar">
+            <span>Ayush</span>
+            <span>Madhukar</span>
+          </h1>
+          <p className="hero-deck">
+            I work across AI, audio, hardware, and self-hosted systems. This site is an
+            index of projects, notes, and things I am learning.
           </p>
+          <div className="hero-actions">
+            <Link className="button primary" to="/projects">Projects</Link>
+            <Link className="button" to="/about">About</Link>
+          </div>
         </div>
 
-        <div className="map-grid">
-          {navItems.slice(1, 7).map((item, index) => {
-            const descriptions = [
-              "Three deep interests and how they overlap.",
-              "Selected work, experiments, and build stories.",
-              "The layers behind the tools I use every day.",
-              "A small snapshot of what has my attention.",
-              "The longer story behind the curiosity.",
-              "A direct line if you want to talk.",
-            ];
-            return (
-              <motion.div
-                key={item.path}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.18 }}
-              >
-                <Link className="map-card" to={item.path}>
-                  <span className="map-index">{item.index}</span>
-                  <div>
-                    <h3>{item.label}</h3>
-                    <p>{descriptions[index]}</p>
-                  </div>
-                  <span className="map-arrow" aria-hidden="true">↗</span>
-                </Link>
-              </motion.div>
-            );
-          })}
+        <aside className="hero-index" aria-label="Primary interests">
+          <p className="label">Topics</p>
+          <ol>
+            <li><span>01</span>AI + Notes</li>
+            <li><span>02</span>Homelab</li>
+            <li><span>03</span>Audio</li>
+            <li><span>04</span>Hardware</li>
+          </ol>
+          <p>Bay Area, California</p>
+        </aside>
+      </section>
+
+      <section className="home-index section-shell" aria-labelledby="index-title">
+        <AsciiDivider />
+        <div className="section-title">
+          <p className="label">Navigation</p>
+          <h2 id="index-title">Index</h2>
+        </div>
+        <div className="index-list">
+          {navItems.slice(1).map((item, index) => (
+            <motion.div key={item.path} whileHover={{ x: 6 }} transition={{ duration: 0.14 }}>
+              <Link to={item.path} className="index-row">
+                <span>{item.index}</span>
+                <h3>{item.label}</h3>
+                <p>{descriptions[index]}</p>
+                <i aria-hidden="true">↗</i>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      <section className="current-strip section-shell">
-        <div className="strip-label" aria-hidden="true">[ ACTIVE_PROCESS // PID 042 ]</div>
+      <section className="current section-shell">
+        <div className="current-art" aria-hidden="true">
+          <span>░░▒▒▓▓████</span>
+          <span>░▒▓█▓▒░</span>
+          <span>████▓▓▒▒░░</span>
+        </div>
         <div>
-          <p className="eyebrow">[ currently ]</p>
-          <h2>Building a cloud with a power button.</h2>
+          <p className="label">Current</p>
+          <h2>Homelab</h2>
         </div>
         <p>
-          A Proxmox homelab for local AI, owned storage, media, and small services—built
-          to stay useful without becoming mysterious.
+          A Proxmox server for local AI, storage, media, and small services.
         </p>
-        <Link className="circle-link" to="/now" aria-label="Read the Now page">
-          <span aria-hidden="true">→</span>
-        </Link>
+        <Link className="text-link" to="/now">Now <span aria-hidden="true">↗</span></Link>
       </section>
     </>
   );
@@ -427,30 +377,28 @@ function ShowcasePage() {
     <section className="section-shell page-section">
       <SectionHeading
         index="01"
-        eyebrow="showcase"
-        title="Three threads, one practice."
-        description="The projects change, but these are the interests underneath them: making knowledge useful, infrastructure personal, and signals expressive."
+        label="Work"
+        title="Work"
+        description="Three areas that connect most of what I build."
       />
 
       <div className="showcase-list">
         {showcaseTopics.map((topic, index) => (
           <motion.article
-            className={`showcase-card tone-${topic.tone}`}
+            className={`showcase-row tone-${topic.tone}`}
             key={topic.title}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.06 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <div className="showcase-number">0{index + 1}</div>
+            <span className="row-number">0{index + 1}</span>
             <div className="showcase-copy">
-              <p className="eyebrow">{topic.eyebrow}</p>
+              <p className="label">{topic.eyebrow}</p>
               <h2>{topic.title}</h2>
               <p>{topic.summary}</p>
               <ul className="tag-list" aria-label={`${topic.title} topics`}>
-                {topic.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
+                {topic.items.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </div>
             <pre className="topic-ascii" aria-hidden="true">{topic.ascii}</pre>
@@ -458,12 +406,9 @@ function ShowcasePage() {
         ))}
       </div>
 
-      <aside className="phase-note">
-        <p className="eyebrow">[ next signal ]</p>
-        <p>
-          Deeper writeups will turn these into living field notes. For now, this is the
-          map—the practical work lives in Projects and Systems.
-        </p>
+      <aside className="plain-note">
+        <p className="label">Next</p>
+        <p>Detailed notes and project pages will be added as the work develops.</p>
       </aside>
     </section>
   );
@@ -480,59 +425,59 @@ function ProjectsPage() {
     <section className="section-shell page-section">
       <SectionHeading
         index="02"
-        eyebrow="projects"
-        title="Things built to answer a question."
-        description="The useful part is rarely just the final demo. Each project is a way to understand a system by giving it something real to do."
+        label="Projects"
+        title="Projects"
+        description="Selected software, hardware, and research projects."
       />
 
       <div className="project-list">
         {projects.map((project, index) => (
           <motion.article
-            className="project-card"
+            className="project-row"
             key={project.slug}
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.16 }}
-            transition={{ delay: index * 0.05 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ delay: index * 0.04 }}
           >
-            <div className="project-topline">
-              <span className={`status status-${project.status}`}>
-                <span aria-hidden="true" />
-                {statusLabel(project.status)}
-              </span>
-              <span>{project.year}</span>
+            <div className="project-index" aria-hidden="true">
+              <span>0{index + 1}</span>
+              <i>░▒▓█</i>
             </div>
-            <h2>{project.title}</h2>
-            <p className="project-summary">{project.summary}</p>
-            <ul className="tag-list">
-              {project.stack.map((tool) => (
-                <li key={tool}>{tool}</li>
-              ))}
-            </ul>
-            <details>
-              <summary>
-                Read the build story <span aria-hidden="true">+</span>
-              </summary>
-              <p>{project.story}</p>
-            </details>
+            <div className="project-main">
+              <div className="project-meta">
+                <span className={`status status-${project.status}`}>
+                  {statusLabel(project.status)}
+                </span>
+                <span>{project.year}</span>
+              </div>
+              <h2>{project.title}</h2>
+              <p>{project.summary}</p>
+            </div>
+            <div className="project-detail">
+              <ul className="tag-list">
+                {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
+              </ul>
+              <details>
+                <summary>Details <span aria-hidden="true">+</span></summary>
+                <p>{project.story}</p>
+              </details>
+            </div>
           </motion.article>
         ))}
       </div>
 
-      <div className="future-panel dither-panel">
+      <div className="future-panel">
         <div>
-          <p className="eyebrow">[ queued / phase 2+ ]</p>
-          <h2>More rooms in the archive.</h2>
-          <p>
-            These will come alive when the underlying data and stories are ready—not
-            before.
-          </p>
+          <p className="label">Later</p>
+          <h2>Archive</h2>
+          <p>Planned sections for personal data, media, and longer project notes.</p>
         </div>
         <ul>
           {futureIdeas.map((idea) => (
             <li key={idea}>
               <span>{idea}</span>
-              <span className="planned-badge">planned</span>
+              <span>Planned</span>
             </li>
           ))}
         </ul>
@@ -546,44 +491,38 @@ function SystemsPage() {
     <section className="section-shell page-section">
       <SectionHeading
         index="03"
-        eyebrow="systems"
-        title="The stack behind the stack."
-        description="I think in layers: what holds the data, what moves the signal, what makes it understandable, and what keeps the whole thing personal."
+        label="Systems"
+        title="Systems"
+        description="The four areas behind my projects and daily tools."
       />
 
-      <div className="systems-stack">
+      <div className="systems-list">
         {systemLayers.map((layer, index) => (
           <motion.article
-            className="system-layer"
+            className="system-row"
             key={layer.title}
-            initial={{ opacity: 0, x: -14 }}
+            initial={{ opacity: 0, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ delay: index * 0.06 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <div className="layer-index">{layer.index}</div>
-            <div className="layer-copy">
+            <span className="row-number">{layer.index}</span>
+            <div>
               <h2>{layer.title}</h2>
               <p>{layer.description}</p>
+              <small>Flow</small>
               <code>{layer.signal}</code>
             </div>
             <ul>
-              {layer.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
+              {layer.items.map((item) => <li key={item}>{item}</li>)}
             </ul>
           </motion.article>
         ))}
       </div>
 
-      <div className="systems-diagram" aria-label="Diagram connecting the four system layers">
-        <span>knowledge</span>
-        <i aria-hidden="true">↕</i>
-        <span>AI</span>
-        <i aria-hidden="true">↕</i>
-        <span>hardware</span>
-        <i aria-hidden="true">↕</i>
-        <span>audio</span>
+      <div className="system-band" aria-label="Four connected areas">
+        <span>Knowledge</span><i>·</i><span>AI</span><i>·</i>
+        <span>Hardware</span><i>·</i><span>Audio</span>
       </div>
     </section>
   );
@@ -594,32 +533,31 @@ function NowPage() {
     <section className="section-shell page-section">
       <SectionHeading
         index="04"
-        eyebrow="now"
-        title="A snapshot, not a promise."
-        description="A small record of what has my attention right now. The categories stay steady; the contents are meant to change."
+        label="Now"
+        title="Now"
+        description="What I am working on and learning."
       />
 
       <div className="now-meta">
-        <span>Last updated</span>
+        <span>Updated</span>
         <time dateTime="2026-07-29">{nowUpdated}</time>
-        <span className="blink" aria-hidden="true">_</span>
       </div>
 
-      <div className="now-grid">
+      <div className="now-list">
         {nowEntries.map((entry, index) => (
           <motion.article
-            className="now-card"
+            className="now-row"
             key={entry.label}
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.06 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <div className="now-card-head">
-              <span>{entry.marker}</span>
-              <p>{entry.label}</p>
+            <span>{entry.marker}</span>
+            <div>
+              <p className="label">{entry.label}</p>
+              <h2>{entry.title}</h2>
             </div>
-            <h2>{entry.title}</h2>
             <p>{entry.description}</p>
             <code>{entry.detail}</code>
           </motion.article>
@@ -627,8 +565,8 @@ function NowPage() {
       </div>
 
       <p className="now-footnote">
-        Inspired by <a href="https://nownownow.com/about" target="_blank" rel="noreferrer">nownownow.com</a>.
-        Updated by hand because the point is to notice what changed.
+        Based on <a href="https://nownownow.com/about" target="_blank" rel="noreferrer">Now pages</a>.
+        Updated manually.
       </p>
     </section>
   );
@@ -636,80 +574,75 @@ function NowPage() {
 
 function AboutPage() {
   const skills = ["Python", "C++", "React", "Linux", "TensorFlow", "PyTorch", "Proxmox", "ZFS"];
-  const interests = [
-    "Artificial intelligence",
-    "Audio systems",
-    "Homelabs",
-    "Retro gaming",
-    "Photography",
-    "Creative coding",
-  ];
+  const interests = ["AI", "Audio", "Homelabs", "Retro Games", "Photography", "Creative Code"];
 
   return (
     <section className="section-shell page-section">
       <SectionHeading
         index="05"
-        eyebrow="about"
-        title="Technology is the hobby."
-        description="Not only a field of study or a career path—the thing I would still be pulling apart, tuning, collecting, and talking about either way."
+        label="About"
+        title="About"
+        description="Computer Engineering student based in the Bay Area."
       />
 
       <div className="about-layout">
         <article className="about-story">
-          <p className="dropcap">
-            Ayush Madhukar is a Computer Engineering student in the Bay Area who treats
-            technology as both an engineering discipline and a personal creative
-            medium. He is drawn to systems that are personal, modular, understandable,
-            and expressive.
+          <p>
+            I treat technology as both an engineering discipline and a creative medium.
+            I am most interested in systems that are personal, modular, understandable,
+            and useful.
           </p>
           <p>
-            I have always been interested in finding the capabilities and limits of
-            things. When I was younger, that meant jailbreaking devices and running
-            emulators—making hardware do something it was not supposed to do. That
-            feeling never really went away.
+            I started by jailbreaking devices, running emulators, and finding out what
+            hardware could do beyond its intended use. That interest now extends to
+            servers, models, audio chains, and knowledge systems.
           </p>
           <p>
-            Now the objects are servers, models, audio chains, and knowledge systems.
-            I learn by comparing, troubleshooting, and building the missing piece. The
-            goal is not complexity for its own sake. It is the moment a complicated
-            system becomes understandable enough to feel personal.
+            I learn through comparison, troubleshooting, and building. The goal is to
+            understand a system well enough to change it with intent.
           </p>
         </article>
 
-        <aside className="about-sidebar">
-          <div className="profile-block dither-panel">
-            <div className="monogram" aria-hidden="true">AM</div>
-            <div>
-              <p>Ayush Madhukar</p>
-              <span>Bay Area, California</span>
-            </div>
+        <aside className="about-profile">
+          <div className="ascii-monogram" aria-hidden="true">
+            <pre>{String.raw` █████╗ ███╗   ███╗
+██╔══██╗████╗ ████║
+███████║██╔████╔██║
+██╔══██║██║╚██╔╝██║
+██║  ██║██║ ╚═╝ ██║
+╚═╝  ╚═╝╚═╝     ╚═╝`}</pre>
           </div>
-
-          <div className="fact-block">
-            <p className="eyebrow">[ education ]</p>
-            <h2>San José State University</h2>
-            <p>Computer Engineering</p>
-            <h2>Foothill College</h2>
-            <p>Associate degree, Computer Science</p>
-          </div>
+          <p>Ayush Madhukar</p>
+          <span>Bay Area, California</span>
         </aside>
       </div>
 
-      <div className="about-lists">
-        <div>
-          <p className="eyebrow">[ working vocabulary ]</p>
+      <div className="about-data">
+        <section>
+          <p className="label">Education</p>
+          <dl>
+            <div>
+              <dt>San José State</dt>
+              <dd>Computer Engineering</dd>
+            </div>
+            <div>
+              <dt>Foothill College</dt>
+              <dd>Computer Science</dd>
+            </div>
+          </dl>
+        </section>
+        <section>
+          <p className="label">Skills</p>
           <ul className="large-tags">
             {skills.map((skill) => <li key={skill}>{skill}</li>)}
           </ul>
-        </div>
-        <div>
-          <p className="eyebrow">[ recurring interests ]</p>
+        </section>
+        <section>
+          <p className="label">Interests</p>
           <ul className="interest-list">
-            {interests.map((interest, index) => (
-              <li key={interest}><span>0{index + 1}</span>{interest}</li>
-            ))}
+            {interests.map((interest) => <li key={interest}>{interest}</li>)}
           </ul>
-        </div>
+        </section>
       </div>
     </section>
   );
@@ -718,14 +651,14 @@ function AboutPage() {
 function ContactPage() {
   return (
     <section className="section-shell page-section contact-page">
-      <div className="contact-copy">
-        <p className="eyebrow">06 / contact</p>
-        <h1>Send a signal.</h1>
-        <p>
-          Questions, project ideas, strange hardware finds, audio recommendations, or
-          just a note from another person who likes going too deep on technology.
-        </p>
-      </div>
+      <SectionHeading
+        index="06"
+        label="Contact"
+        title="Contact"
+        description="Email and GitHub are the best ways to reach me."
+      />
+
+      <pre className="contact-field" aria-hidden="true">{contactField}</pre>
 
       <div className="contact-links">
         {socialLinks.map((link) => (
@@ -741,14 +674,6 @@ function ContactPage() {
           </a>
         ))}
       </div>
-
-      <div className="contact-terminal dither-panel" aria-label="ASCII sign-off">
-        <pre>{`$ ping ayush
-64 bytes from the bay area
-curiosity=alive  latency=human
-
-$ say hello_`}</pre>
-      </div>
     </section>
   );
 }
@@ -756,10 +681,10 @@ $ say hello_`}</pre>
 function NotFoundPage() {
   return (
     <section className="section-shell not-found">
-      <p className="eyebrow">[ 404 / no signal ]</p>
-      <h1>This path wandered off the map.</h1>
-      <p>The experiment you are looking for may have moved, changed shape, or not exist yet.</p>
-      <Link className="button primary" to="/">Return home</Link>
+      <p className="label">404</p>
+      <h1>Not found</h1>
+      <p>The requested page does not exist.</p>
+      <Link className="button primary" to="/">Home</Link>
     </section>
   );
 }
@@ -767,14 +692,13 @@ function NotFoundPage() {
 function Footer() {
   return (
     <footer className="site-footer">
-      <div className="footer-marquee" aria-hidden="true">
-        <span>AYUMAD.ME :: END OF TRANSMISSION :: KEEP THE SYSTEM CURIOUS :: </span>
-        <span>AYUMAD.ME :: END OF TRANSMISSION :: KEEP THE SYSTEM CURIOUS :: </span>
+      <div className="footer-texture" aria-hidden="true">
+        ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░
       </div>
       <div className="section-shell footer-inner">
-        <p>ayush@bay-area:~$ built_with --curiosity</p>
-        <p className="footer-ascii" aria-hidden="true">[ 2026 // EOF ]</p>
-        <a href="mailto:hello@ayumad.me">mailto://hello@ayumad.me ↗</a>
+        <p>AYUMAD.ME</p>
+        <p>2026</p>
+        <a href="mailto:hello@ayumad.me">Email ↗</a>
       </div>
     </footer>
   );
@@ -796,16 +720,11 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <RouteEffects path={path} />
       <ParticleField />
-      <div className="crt-overlay" aria-hidden="true" />
-      <div className="edge-coordinates" aria-hidden="true">
-        <span>000</span><span>AYUMAD_SIGNAL</span><span>999</span>
-      </div>
+      <div className="dither-wash" aria-hidden="true" />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Header path={path} />
       <main id="main-content">
-        <PageTransition path={path}>
-          {page}
-        </PageTransition>
+        <PageTransition path={path}>{page}</PageTransition>
       </main>
       <Footer />
     </MotionConfig>
