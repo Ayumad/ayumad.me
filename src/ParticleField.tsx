@@ -43,7 +43,8 @@ export default function ParticleField() {
       context.clearRect(0, 0, width, height);
 
       const theme = document.documentElement.dataset.theme;
-      context.fillStyle = theme === "light" ? "rgba(42, 77, 46, 0.18)" : "rgba(199, 255, 54, 0.16)";
+      context.fillStyle =
+        theme === "light" ? "rgba(0, 111, 104, 0.18)" : "rgba(72, 239, 208, 0.16)";
       context.font = `10px "SFMono-Regular", "Cascadia Code", monospace`;
       context.textAlign = "center";
       context.textBaseline = "middle";
