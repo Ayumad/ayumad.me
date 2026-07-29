@@ -34,6 +34,8 @@ export default function ParticleField() {
         ? 16
         : renderMode === "dither"
           ? 19
+          : renderMode === "glitch"
+            ? 18
           : renderMode === "crt"
             ? 27
             : 24;
@@ -59,24 +61,32 @@ export default function ParticleField() {
       context.clearRect(0, 0, width, height);
 
       const theme = document.documentElement.dataset.theme;
-      context.fillStyle =
+      const baseColor =
         theme === "light"
           ? renderMode === "glitch"
-            ? "rgba(80, 86, 141, 0.17)"
+            ? "rgba(49, 75, 71, 0.2)"
             : "rgba(0, 111, 104, 0.18)"
           : renderMode === "glitch"
-            ? "rgba(119, 127, 196, 0.2)"
+            ? "rgba(229, 244, 242, 0.16)"
             : "rgba(72, 239, 208, 0.16)";
+      const splitCyan =
+        theme === "light"
+          ? "rgba(0, 111, 104, 0.26)"
+          : "rgba(72, 239, 208, 0.3)";
+      const splitViolet =
+        theme === "light"
+          ? "rgba(80, 86, 141, 0.2)"
+          : "rgba(119, 127, 196, 0.28)";
+      context.fillStyle = baseColor;
       context.font = `10px "SFMono-Regular", "Cascadia Code", monospace`;
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.shadowColor =
-        renderMode === "crt"
-          ? theme === "light"
-            ? "rgba(0, 111, 104, 0.28)"
-            : "rgba(72, 239, 208, 0.42)"
-          : "transparent";
-      context.shadowBlur = renderMode === "crt" ? 5 : 0;
+        theme === "light"
+          ? "rgba(0, 111, 104, 0.22)"
+          : "rgba(72, 239, 208, 0.34)";
+      context.shadowBlur =
+        renderMode === "crt" ? 7 : renderMode === "dither" ? 1 : 2.5;
 
       const phase = time * 0.00008;
       const columns = Math.ceil(width / cell);
@@ -110,11 +120,32 @@ export default function ParticleField() {
           const glyphIndex = Math.min(glyphs.length - 1, Math.floor(density * glyphs.length));
           const glitchOffset =
             renderMode === "glitch" &&
-            (row * 11 + Math.floor(time / 90)) % 43 < 2
-              ? ((row + Math.floor(time / 90)) % 2 === 0 ? 5 : -5)
+            (row * 11 + Math.floor(time / 70)) % 37 < 3
+              ? ((row + Math.floor(time / 70)) % 2 === 0 ? 8 : -8)
               : 0;
-          context.fillText(glyphs[glyphIndex], x + glitchOffset, y);
+          const glyph = glyphs[glyphIndex];
+
+          if (renderMode === "glitch") {
+            context.fillStyle = splitViolet;
+            context.fillText(glyph, x + glitchOffset - 2, y);
+            context.fillStyle = splitCyan;
+            context.fillText(glyph, x + glitchOffset + 2, y);
+            context.fillStyle = baseColor;
+          } else {
+            context.fillText(glyph, x, y);
+          }
         }
+      }
+
+      if (renderMode === "glitch") {
+        const burst = Math.floor(time / 90);
+        for (let band = 0; band < 3; band += 1) {
+          const y = (burst * (97 + band * 53) + band * 181) % height;
+          const bandHeight = band === 1 ? 2 : 1;
+          context.fillStyle = band % 2 === 0 ? splitCyan : splitViolet;
+          context.fillRect(0, y, width, bandHeight);
+        }
+        context.fillStyle = baseColor;
       }
 
       if (visible) animationFrame = window.requestAnimationFrame(draw);

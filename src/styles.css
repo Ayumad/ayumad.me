@@ -141,11 +141,76 @@ button {
 
 .render-overlay {
   position: fixed;
-  z-index: 80;
+  z-index: 180;
   inset: 0;
   overflow: hidden;
-  opacity: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 9%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
+    radial-gradient(
+      ellipse 78% 94% at 50% 48%,
+      transparent 46%,
+      color-mix(in srgb, var(--ink) 58%, transparent)
+    );
+  mix-blend-mode: multiply;
+  opacity: 0.64;
   pointer-events: none;
+}
+
+.render-overlay::before,
+.render-overlay::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.render-overlay::before {
+  inset: 0;
+  opacity: 0;
+}
+
+.render-overlay::after {
+  top: -24vh;
+  right: 0;
+  left: 0;
+  height: 22vh;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--cyan) 6%, transparent) 46%,
+    color-mix(in srgb, var(--text) 4%, transparent) 52%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  opacity: 0.42;
+  animation: phosphor-sweep 12s linear infinite;
+}
+
+:root[data-theme="light"] .render-overlay {
+  mix-blend-mode: normal;
+  opacity: 0.24;
+}
+
+.route-frame {
+  filter: contrast(1.025) saturate(1.045);
+}
+
+.oscilloscope-grid,
+.heading-field,
+.topic-ascii,
+.contact-field {
+  text-shadow:
+    0 0 3px color-mix(in srgb, var(--cyan) 54%, transparent),
+    0 0 11px color-mix(in srgb, var(--cyan) 19%, transparent);
+}
+
+@keyframes phosphor-sweep {
+  to {
+    transform: translateY(148vh);
+  }
 }
 
 :root[data-renderer="dither"] body {
@@ -161,13 +226,18 @@ button {
 }
 
 :root[data-renderer="dither"] .render-overlay {
+  opacity: 0.6;
+}
+
+:root[data-renderer="dither"] .render-overlay::before {
+  inset: 0;
   background:
     radial-gradient(circle, color-mix(in srgb, var(--cyan) 72%, transparent) 0 0.6px, transparent 0.8px)
       0 0 / 4px 4px,
     radial-gradient(circle, color-mix(in srgb, var(--violet) 54%, transparent) 0 0.6px, transparent 0.8px)
       2px 2px / 4px 4px;
   mix-blend-mode: screen;
-  opacity: 0.09;
+  opacity: 0.1;
   mask-image: linear-gradient(115deg, black, transparent 36%, black 76%, transparent);
 }
 
@@ -190,83 +260,161 @@ button {
 
 @keyframes glitch-scan {
   0%,
-  88%,
+  82%,
   100% {
     transform: translateX(0);
   }
-  89% {
-    transform: translateX(6px);
+  83% {
+    transform: translateX(9px);
   }
-  90% {
-    transform: translateX(-3px);
+  84% {
+    transform: translateX(-6px);
   }
-  91% {
-    transform: translateX(1px);
+  85% {
+    transform: translateX(2px);
+  }
+  86% {
+    transform: translateX(-1px);
   }
 }
 
 @keyframes glitch-band {
   0%,
-  74%,
+  68%,
   100% {
     clip-path: inset(0 0 100% 0);
     transform: translateX(0);
   }
-  75% {
-    clip-path: inset(19% 0 73% 0);
-    transform: translateX(8px);
+  69% {
+    clip-path: inset(14% 0 77% 0);
+    transform: translateX(15px);
   }
-  76% {
-    clip-path: inset(61% 0 30% 0);
-    transform: translateX(-5px);
+  70% {
+    clip-path: inset(54% 0 34% 0);
+    transform: translateX(-11px);
   }
-  77% {
+  71% {
+    clip-path: inset(78% 0 14% 0);
+    transform: translateX(7px);
+  }
+  72% {
     clip-path: inset(0 0 100% 0);
   }
+}
+
+:root[data-renderer="glitch"] body {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 31px,
+      color-mix(in srgb, var(--cyan) 4%, transparent) 31px 32px,
+      transparent 32px 47px,
+      color-mix(in srgb, var(--violet) 5%, transparent) 47px 49px
+    ),
+    linear-gradient(90deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    linear-gradient(0deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    var(--bg);
 }
 
 :root[data-renderer="glitch"] .render-overlay {
   background:
     repeating-linear-gradient(
       0deg,
-      transparent 0 47px,
-      color-mix(in srgb, var(--violet) 12%, transparent) 47px 49px,
-      transparent 49px 91px,
-      color-mix(in srgb, var(--cyan) 9%, transparent) 91px 92px
+      color-mix(in srgb, var(--ink) 12%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 37px,
+      color-mix(in srgb, var(--violet) 16%, transparent) 37px 40px,
+      transparent 40px 71px,
+      color-mix(in srgb, var(--cyan) 14%, transparent) 71px 73px
+    ),
+    radial-gradient(
+      ellipse 82% 94% at 50% 48%,
+      transparent 44%,
+      color-mix(in srgb, var(--ink) 64%, transparent)
     );
-  opacity: 0.65;
-  animation: glitch-scan 5.8s steps(1, end) infinite;
+  mix-blend-mode: normal;
+  opacity: 0.78;
+  animation: glitch-scan 4.2s steps(1, end) infinite;
 }
 
 :root[data-renderer="glitch"] .render-overlay::before,
 :root[data-renderer="glitch"] .render-overlay::after {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--cyan) 7%, transparent);
+  height: auto;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--cyan) 18%, transparent) 0 7%,
+      transparent 7% 18%,
+      color-mix(in srgb, var(--violet) 14%, transparent) 18% 22%,
+      transparent 22% 37%
+    );
   content: "";
-  animation: glitch-band 4.7s steps(1, end) infinite;
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  animation: glitch-band 3.4s steps(1, end) infinite;
 }
 
 :root[data-renderer="glitch"] .render-overlay::after {
-  background: color-mix(in srgb, var(--violet) 8%, transparent);
-  animation-delay: -2.4s;
-  animation-duration: 6.1s;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 12%,
+      color-mix(in srgb, var(--violet) 19%, transparent) 12% 23%,
+      transparent 23% 29%,
+      color-mix(in srgb, var(--cyan) 12%, transparent) 29% 31%
+    );
+  animation-delay: -1.8s;
+  animation-duration: 4.7s;
+}
+
+:root[data-renderer="glitch"] .route-frame {
+  filter: contrast(1.12) saturate(1.18);
+}
+
+:root[data-renderer="glitch"] .site-header,
+:root[data-renderer="glitch"] .page-heading,
+:root[data-renderer="glitch"] .showcase-row,
+:root[data-renderer="glitch"] .project-card,
+:root[data-renderer="glitch"] .system-row,
+:root[data-renderer="glitch"] .now-row,
+:root[data-renderer="glitch"] .contact-links a,
+:root[data-renderer="glitch"] .site-footer {
+  border-color: color-mix(in srgb, var(--cyan) 68%, var(--line));
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 17%,
+      color-mix(in srgb, var(--cyan) 3%, transparent) 17% 17.4%,
+      transparent 17.4% 41%,
+      color-mix(in srgb, var(--violet) 4%, transparent) 41% 41.5%
+    );
+  box-shadow:
+    inset 3px 0 color-mix(in srgb, var(--cyan) 24%, transparent),
+    inset -2px 0 color-mix(in srgb, var(--violet) 21%, transparent);
 }
 
 :root[data-renderer="glitch"] .wordmark,
 :root[data-renderer="glitch"] .page-heading h1,
 :root[data-renderer="glitch"] .hero h1 {
   text-shadow:
-    2px 0 color-mix(in srgb, var(--cyan) 55%, transparent),
-    -2px 0 color-mix(in srgb, var(--violet) 58%, transparent);
+    3px 0 color-mix(in srgb, var(--cyan) 62%, transparent),
+    -3px 0 color-mix(in srgb, var(--violet) 66%, transparent),
+    0 0 12px color-mix(in srgb, var(--cyan) 18%, transparent);
 }
 
 :root[data-renderer="glitch"] .oscilloscope-grid,
-:root[data-renderer="glitch"] .heading-field {
+:root[data-renderer="glitch"] .heading-field,
+:root[data-renderer="glitch"] .topic-ascii,
+:root[data-renderer="glitch"] .contact-field {
   text-shadow:
-    1px 0 color-mix(in srgb, var(--cyan) 78%, transparent),
-    -1px 0 color-mix(in srgb, var(--violet) 68%, transparent),
-    0 0 15px color-mix(in srgb, var(--cyan) 24%, transparent);
+    2px 0 color-mix(in srgb, var(--cyan) 82%, transparent),
+    -2px 0 color-mix(in srgb, var(--violet) 74%, transparent),
+    0 0 16px color-mix(in srgb, var(--cyan) 28%, transparent);
 }
 
 :root[data-renderer="particles"] body::before {
@@ -282,12 +430,18 @@ button {
 }
 
 :root[data-renderer="particles"] .render-overlay {
+  opacity: 0.58;
+}
+
+:root[data-renderer="particles"] .render-overlay::before {
+  inset: 0;
   background:
     radial-gradient(circle, color-mix(in srgb, var(--cyan) 58%, transparent) 0 0.75px, transparent 1px)
       0 0 / 19px 19px,
     radial-gradient(circle, color-mix(in srgb, var(--violet) 44%, transparent) 0 0.65px, transparent 1px)
       9px 12px / 31px 31px;
-  opacity: 0.18;
+  mix-blend-mode: screen;
+  opacity: 0.19;
   mask-image: radial-gradient(ellipse 90% 72% at 50% 46%, black, transparent 88%);
 }
 
@@ -300,6 +454,8 @@ button {
 :root[data-renderer="crt"] body {
   background:
     radial-gradient(ellipse 90% 96% at 50% 45%, transparent 48%, color-mix(in srgb, var(--ink) 46%, transparent)),
+    linear-gradient(90deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    linear-gradient(0deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
     var(--bg);
 }
 
@@ -310,18 +466,44 @@ button {
       color-mix(in srgb, var(--ink) 9%, transparent) 0 1px,
       transparent 1px 3px
     ),
-    radial-gradient(ellipse 76% 94% at 50% 48%, transparent 48%, color-mix(in srgb, var(--ink) 62%, transparent));
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--cyan) 3%, transparent) 0 1px,
+      transparent 1px 3px,
+      color-mix(in srgb, var(--violet) 2%, transparent) 3px 4px,
+      transparent 4px 6px
+    ),
+    radial-gradient(ellipse 74% 92% at 50% 48%, transparent 44%, color-mix(in srgb, var(--ink) 72%, transparent));
   mix-blend-mode: multiply;
-  opacity: 0.68;
+  opacity: 0.82;
+}
+
+:root[data-renderer="crt"] .render-overlay::before {
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--cyan) 38%, transparent) 0 1px,
+      transparent 1px 3px,
+      color-mix(in srgb, var(--violet) 24%, transparent) 3px 4px,
+      transparent 4px 6px
+    );
+  mix-blend-mode: screen;
+  opacity: 0.055;
+}
+
+:root[data-renderer="crt"] .render-overlay::after {
+  opacity: 0.7;
+  animation-duration: 7.5s;
 }
 
 :root[data-theme="light"][data-renderer="crt"] .render-overlay {
   mix-blend-mode: normal;
-  opacity: 0.26;
+  opacity: 0.34;
 }
 
 :root[data-renderer="crt"] .route-frame {
-  filter: contrast(1.05) saturate(1.08);
+  filter: contrast(1.09) saturate(1.14) brightness(1.015);
 }
 
 :root[data-renderer="crt"] .oscilloscope-grid,
@@ -329,8 +511,9 @@ button {
 :root[data-renderer="crt"] .topic-ascii,
 :root[data-renderer="crt"] .contact-field {
   text-shadow:
-    0 0 4px color-mix(in srgb, var(--cyan) 72%, transparent),
-    0 0 13px color-mix(in srgb, var(--cyan) 30%, transparent);
+    0 0 4px color-mix(in srgb, var(--cyan) 86%, transparent),
+    0 0 12px color-mix(in srgb, var(--cyan) 46%, transparent),
+    0 0 24px color-mix(in srgb, var(--cyan) 20%, transparent);
 }
 
 .section-shell {
@@ -2667,6 +2850,7 @@ main {
     transition-duration: 0.01ms !important;
   }
 
+  .render-overlay::after,
   :root[data-renderer="glitch"] .render-overlay,
   :root[data-renderer="glitch"] .render-overlay::before,
   :root[data-renderer="glitch"] .render-overlay::after {
