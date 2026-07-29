@@ -324,6 +324,10 @@ Controls:
 - Pause/run, Random, and Audio are shown as custom monochrome CSS icons rather
   than text. Each icon-only button retains a descriptive accessible name and
   native title tooltip.
+- Filled active controls use the black `--ink` foreground on cyan; unfilled
+  active controls use cyan on the dark surface. The more-specific filled-state
+  rule comes after the shared action rule so 3D and Audio icons cannot become
+  cyan-on-cyan.
 
 Ratio, phase, form, rotation, and stage dragging are intentionally not exposed.
 Those values define the authored identity of each shape; removing them prevents
