@@ -48,6 +48,11 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
     expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.22");
     expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
+    expect(
+      screen.getByRole("button", { name: "Show 3D geometry" }),
+    ).toHaveAttribute("aria-pressed", "false");
+    expect(renderedSignal).toHaveAttribute("data-dimension", "2d");
+    expect(renderedSignal).toHaveAttribute("data-geometry", "knot");
     expect(screen.queryByRole("spinbutton", { name: "X ratio" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Phase" })).not.toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: "Form" })).not.toBeInTheDocument();
@@ -159,9 +164,9 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "true",
     );
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.94");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
-    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
+    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.84");
+    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.18");
+    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("1");
     expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -178,8 +183,8 @@ describe("Ayumad.me", () => {
     const random = vi.spyOn(Math, "random");
     const complexShapes = ["Eight", "Knot", "Rose", "Star", "Orbit"];
 
-    for (let index = 0; index < 16; index += 1) {
-      random.mockReturnValue((index + 0.25) / 16);
+    for (let index = 0; index < 18; index += 1) {
+      random.mockReturnValue((index + 0.25) / 18);
       fireEvent.click(randomizeButton);
 
       expect(Number(multiplier.value)).toBeLessThan(3);
@@ -196,6 +201,41 @@ describe("Ayumad.me", () => {
     }
 
     random.mockRestore();
+  });
+
+  it("maps every shape to an authored 3D wireframe", () => {
+    renderAt("/");
+    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
+    const geometries = [
+      ["Line", "wave"],
+      ["Circle", "torus"],
+      ["Square", "cube"],
+      ["Eight", "lemniscate"],
+      ["Knot", "torus-knot"],
+      ["Rose", "rose-cage"],
+      ["Star", "star-prism"],
+      ["Polygon", "hexagonal-prism"],
+      ["Orbit", "orbital-cage"],
+    ];
+
+    fireEvent.click(screen.getByRole("button", { name: "Show 3D geometry" }));
+    expect(
+      screen.getByRole("button", { name: "Show 2D geometry" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(grid).toHaveAttribute("data-dimension", "3d");
+
+    for (const [shape, geometry] of geometries) {
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: new RegExp(`${shape} shape`, "i"),
+        }),
+      );
+      expect(grid).toHaveAttribute("data-geometry", geometry);
+      expect(grid?.textContent?.trim().length).toBeGreaterThan(80);
+    }
+
+    fireEvent.click(screen.getByRole("button", { name: "Show 2D geometry" }));
+    expect(grid).toHaveAttribute("data-dimension", "2d");
   });
 
   it("corrects character-cell aspect ratio for standard shapes", () => {
@@ -224,7 +264,7 @@ describe("Ayumad.me", () => {
     expect(physicalRatio).toBeLessThan(1.15);
   });
 
-  it("keeps every shape inside the plot at maximum scale and multiplier", () => {
+  it("keeps every 2D and 3D shape inside the plot at maximum scale", () => {
     renderAt("/");
     const scale = screen.getByRole("slider", { name: "Scale" });
     const multiplier = screen.getByRole("slider", { name: "Multiplier" });
@@ -232,6 +272,7 @@ describe("Ayumad.me", () => {
     const shapes = [
       "Line",
       "Circle",
+      "Square",
       "Eight",
       "Knot",
       "Rose",
@@ -240,17 +281,26 @@ describe("Ayumad.me", () => {
       "Orbit",
     ];
 
-    for (const shape of shapes) {
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: new RegExp(`${shape} shape`, "i"),
-        }),
-      );
-      fireEvent.change(scale, { target: { value: "1" } });
+    for (const dimension of ["2d", "3d"]) {
+      if (dimension === "3d") {
+        fireEvent.click(
+          screen.getByRole("button", { name: "Show 3D geometry" }),
+        );
+      }
 
-      for (const octave of ["0", "1", "2", "3"]) {
-        fireEvent.change(multiplier, { target: { value: octave } });
-        expect(grid).toHaveAttribute("data-clipped-samples", "0");
+      for (const shape of shapes) {
+        fireEvent.click(
+          screen.getByRole("button", {
+            name: new RegExp(`${shape} shape`, "i"),
+          }),
+        );
+        fireEvent.change(scale, { target: { value: "1" } });
+
+        for (const octave of ["0", "1", "2", "3"]) {
+          fireEvent.change(multiplier, { target: { value: octave } });
+          expect(grid).toHaveAttribute("data-dimension", dimension);
+          expect(grid).toHaveAttribute("data-clipped-samples", "0");
+        }
       }
     }
   });

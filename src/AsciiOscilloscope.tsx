@@ -5,6 +5,7 @@ import { useRenderMode } from "./renderMode";
 type PresetId =
   | "line"
   | "circle"
+  | "square"
   | "eight"
   | "knot"
   | "rose"
@@ -12,10 +13,12 @@ type PresetId =
   | "polygon"
   | "orbit";
 type GeneratorId = "lissajous" | "rose" | "star" | "polygon" | "orbit";
+type DimensionMode = "2d" | "3d";
 
 interface SignalSettings {
   preset: PresetId;
   generator: GeneratorId;
+  dimension: DimensionMode;
   frequency: number;
   xRatio: number;
   yRatio: number;
@@ -50,6 +53,18 @@ interface RandomVariant {
 interface Point {
   x: number;
   y: number;
+}
+
+interface Point3D extends Point {
+  z: number;
+}
+
+interface ProjectedPoint extends Point {
+  depth: number;
+}
+
+interface Curve3D {
+  points: Point3D[];
 }
 
 interface AudioGraph {
@@ -89,6 +104,18 @@ const presets: Preset[] = [
     rotationDegrees: 0,
     scale: 0.98,
     motion: 0.08,
+  },
+  {
+    id: "square",
+    label: "SQUARE",
+    generator: "polygon",
+    xRatio: 4,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 1,
+    rotationDegrees: 45,
+    scale: 0.98,
+    motion: 0.1,
   },
   {
     id: "eight",
@@ -181,9 +208,12 @@ const randomVariants: RandomVariant[] = [
   { preset: "polygon", scale: 0.86, motion: 0.16, octave: 2 },
   { preset: "orbit", scale: 0.94, motion: 0.14, octave: 0 },
   { preset: "orbit", scale: 0.84, motion: 0.16, octave: 1 },
+  { preset: "square", scale: 0.96, motion: 0.1, octave: 0 },
+  { preset: "square", scale: 0.86, motion: 0.16, octave: 2 },
 ];
 
-const defaultPreset = presets[3];
+const defaultPreset =
+  presets.find((preset) => preset.id === "knot") ?? presets[0];
 const bayer4 = [
   0, 8, 2, 10,
   12, 4, 14, 6,
@@ -318,6 +348,239 @@ function polygonPoint(theta: number, sides: number, form: number): Point {
     y: mix(circle.y, polygon.y, form),
   };
 }
+
+function sampledCurve3D(
+  samples: number,
+  pointAt: (amount: number) => Point3D,
+  closed = true,
+): Curve3D {
+  const pointCount = closed ? samples + 1 : samples;
+  const divisor = closed ? samples : samples - 1;
+
+  return {
+    points: Array.from({ length: pointCount }, (_, index) =>
+      pointAt(index / divisor),
+    ),
+  };
+}
+
+function prismScene(
+  sides: number,
+  radius: number,
+  depth: number,
+  innerRadius?: number,
+): Curve3D[] {
+  const vertexCount = innerRadius === undefined ? sides : sides * 2;
+  const start = sides === 4 ? -Math.PI / 4 : -Math.PI / 2;
+  const vertices = Array.from({ length: vertexCount }, (_, index) => {
+    const angle = start + (index * Math.PI * 2) / vertexCount;
+    const vertexRadius =
+      innerRadius !== undefined && index % 2 === 1 ? innerRadius : radius;
+    return {
+      x: Math.cos(angle) * vertexRadius,
+      y: Math.sin(angle) * vertexRadius,
+    };
+  });
+
+  const face = (z: number): Curve3D => ({
+    points: [
+      ...vertices.map((point) => ({ ...point, z })),
+      { ...vertices[0], z },
+    ],
+  });
+
+  return [
+    face(-depth),
+    face(depth),
+    ...vertices.map((point) => ({
+      points: [
+        { ...point, z: -depth },
+        { ...point, z: depth },
+      ],
+    })),
+  ];
+}
+
+function waveScene(): Curve3D[] {
+  const wavePoint = (amount: number, strand: number): Point3D => {
+    const phase = amount * Math.PI * 4;
+    return {
+      x: mix(-0.78, 0.78, amount),
+      y: Math.sin(phase + strand * 0.32) * 0.28,
+      z: strand * 0.16 + Math.cos(phase * 0.5) * 0.1,
+    };
+  };
+
+  return [
+    ...[-1, 0, 1].map((strand) =>
+      sampledCurve3D(72, (amount) => wavePoint(amount, strand), false),
+    ),
+    ...Array.from({ length: 13 }, (_, index) => {
+      const amount = index / 12;
+      return {
+        points: [wavePoint(amount, -1), wavePoint(amount, 1)],
+      };
+    }),
+  ];
+}
+
+function torusScene(): Curve3D[] {
+  const majorRadius = 0.55;
+  const minorRadius = 0.2;
+  const torusPoint = (u: number, v: number): Point3D => ({
+    x: (majorRadius + minorRadius * Math.cos(v)) * Math.cos(u),
+    y: minorRadius * Math.sin(v),
+    z: (majorRadius + minorRadius * Math.cos(v)) * Math.sin(u),
+  });
+
+  return [
+    ...Array.from({ length: 7 }, (_, index) => {
+      const v = (index / 7) * Math.PI * 2;
+      return sampledCurve3D(64, (amount) =>
+        torusPoint(amount * Math.PI * 2, v),
+      );
+    }),
+    ...Array.from({ length: 10 }, (_, index) => {
+      const u = (index / 10) * Math.PI * 2;
+      return sampledCurve3D(28, (amount) =>
+        torusPoint(u, amount * Math.PI * 2),
+      );
+    }),
+  ];
+}
+
+function eightScene(): Curve3D[] {
+  const eightPoint = (amount: number, strand: number): Point3D => {
+    const theta = amount * Math.PI * 2;
+    return {
+      x: Math.sin(theta) * 0.66,
+      y: Math.sin(theta * 2) * 0.44,
+      z: Math.cos(theta) * 0.18 + strand * 0.055,
+    };
+  };
+
+  return [
+    ...[-1, 0, 1].map((strand) =>
+      sampledCurve3D(84, (amount) => eightPoint(amount, strand)),
+    ),
+    ...Array.from({ length: 12 }, (_, index) => {
+      const amount = index / 12;
+      return {
+        points: [eightPoint(amount, -1), eightPoint(amount, 1)],
+      };
+    }),
+  ];
+}
+
+function knotScene(): Curve3D[] {
+  return [-0.035, 0, 0.035].map((offset) =>
+    sampledCurve3D(108, (amount) => {
+      const theta = amount * Math.PI * 2;
+      const minorRadius = 0.19 + offset;
+      const ring = 0.49 + minorRadius * Math.cos(theta * 3);
+      return {
+        x: ring * Math.cos(theta * 2),
+        y: minorRadius * Math.sin(theta * 3),
+        z: ring * Math.sin(theta * 2),
+      };
+    }),
+  );
+}
+
+function roseScene(): Curve3D[] {
+  const rosePoint = (amount: number, layer: number): Point3D => {
+    const theta = amount * Math.PI * 2;
+    const radius = Math.cos(theta * 5) * 0.66;
+    return {
+      x: radius * Math.cos(theta),
+      y: radius * Math.sin(theta),
+      z: layer * 0.065 + Math.sin(theta * 5) * 0.11,
+    };
+  };
+
+  return [
+    ...[-2, -1, 0, 1, 2].map((layer) =>
+      sampledCurve3D(100, (amount) => rosePoint(amount, layer)),
+    ),
+    ...Array.from({ length: 15 }, (_, index) => {
+      const amount = index / 15;
+      return {
+        points: [rosePoint(amount, -2), rosePoint(amount, 2)],
+      };
+    }),
+  ];
+}
+
+function orbitScene(): Curve3D[] {
+  const orbitalCircle = (amount: number, tilt: number): Point3D => {
+    const theta = amount * Math.PI * 2;
+    return {
+      x: Math.cos(theta) * 0.68,
+      y: Math.sin(theta) * Math.cos(tilt) * 0.68,
+      z: Math.sin(theta) * Math.sin(tilt) * 0.68,
+    };
+  };
+
+  return [
+    ...[0, Math.PI / 3, -Math.PI / 3].map((tilt) =>
+      sampledCurve3D(72, (amount) => orbitalCircle(amount, tilt)),
+    ),
+    sampledCurve3D(108, (amount) => {
+      const theta = amount * Math.PI * 2;
+      return {
+        x: Math.cos(theta * 3) * 0.58,
+        y: Math.sin(theta) * 0.5,
+        z: Math.sin(theta * 3) * 0.58,
+      };
+    }),
+  ];
+}
+
+function projectPoint3D(
+  point: Point3D,
+  yaw: number,
+  pitch: number,
+): ProjectedPoint {
+  const yawCosine = Math.cos(yaw);
+  const yawSine = Math.sin(yaw);
+  const pitchCosine = Math.cos(pitch);
+  const pitchSine = Math.sin(pitch);
+  const rotatedX = point.x * yawCosine + point.z * yawSine;
+  const yawDepth = -point.x * yawSine + point.z * yawCosine;
+  const rotatedY = point.y * pitchCosine - yawDepth * pitchSine;
+  const depth = point.y * pitchSine + yawDepth * pitchCosine;
+  const perspective = 3.4 / (4 - depth);
+
+  return {
+    x: rotatedX * perspective * 1.08,
+    y: rotatedY * perspective * 1.08,
+    depth,
+  };
+}
+
+const spatialScenes: Record<PresetId, Curve3D[]> = {
+  line: waveScene(),
+  circle: torusScene(),
+  square: prismScene(4, 0.68, 0.48),
+  eight: eightScene(),
+  knot: knotScene(),
+  rose: roseScene(),
+  star: prismScene(5, 0.7, 0.25, 0.31),
+  polygon: prismScene(6, 0.7, 0.3),
+  orbit: orbitScene(),
+};
+
+const spatialGeometryNames: Record<PresetId, string> = {
+  line: "wave",
+  circle: "torus",
+  square: "cube",
+  eight: "lemniscate",
+  knot: "torus-knot",
+  rose: "rose-cage",
+  star: "star-prism",
+  polygon: "hexagonal-prism",
+  orbit: "orbital-cage",
+};
 
 function copyLayout(index: number, count: number) {
   if (count === 2) {
@@ -497,6 +760,7 @@ function settingsFromPreset(
   return {
     preset: preset.id,
     generator: preset.generator,
+    dimension: "2d",
     frequency,
     xRatio: preset.xRatio,
     yRatio: preset.yRatio,
@@ -520,6 +784,9 @@ export default function AsciiOscilloscope() {
   const elapsedRef = useRef(0);
   const runningRef = useRef(true);
   const [presetId, setPresetId] = useState<PresetId>(initialSettings.preset);
+  const [dimension, setDimension] = useState<DimensionMode>(
+    initialSettings.dimension,
+  );
   const [frequency, setFrequency] = useState(initialSettings.frequency);
   const [scale, setScale] = useState(initialSettings.scale);
   const [motion, setMotion] = useState(initialSettings.motion);
@@ -617,52 +884,147 @@ export default function AsciiOscilloscope() {
         intensity[index] *= persistence;
       }
 
-      let previousPoint = signalPoint(0, current);
       const motionHead =
-        (time * current.motion * Math.PI * 0.85) % (Math.PI * 2);
+        (time * current.motion * 3.6) % (Math.PI * 2);
 
-      for (let sample = 1; sample <= samples; sample += 1) {
-        const theta = (sample / samples) * Math.PI * 2;
-        const point = signalPoint(theta, current);
-        const deltaX = point.x - previousPoint.x;
-        const deltaY = point.y - previousPoint.y;
-        const flyback = current.copies > 1 && Math.hypot(deltaX, deltaY) > 0.55;
-        if (flyback) {
-          previousPoint = point;
-          continue;
+      if (current.dimension === "3d") {
+        const spin = time * current.motion * 2.4;
+        const yaw = 0.72 + spin;
+        const pitch = -0.48 + Math.sin(spin * 0.58) * 0.12;
+        const scene = spatialScenes[current.preset];
+        const totalSegments = scene.reduce(
+          (total, curve) => total + Math.max(0, curve.points.length - 1),
+          0,
+        );
+        let segmentNumber = 0;
+
+        for (let copyIndex = 0; copyIndex < current.copies; copyIndex += 1) {
+          const layout = copyLayout(copyIndex, current.copies);
+
+          for (const curve of scene) {
+            for (let index = 1; index < curve.points.length; index += 1) {
+              const from = projectPoint3D(curve.points[index - 1], yaw, pitch);
+              const to = projectPoint3D(curve.points[index], yaw, pitch);
+              const fromPoint = {
+                x:
+                  (layout.center.x + from.x * layout.scale) *
+                  current.scale,
+                y:
+                  (layout.center.y + from.y * layout.scale) *
+                  current.scale,
+              };
+              const toPoint = {
+                x:
+                  (layout.center.x + to.x * layout.scale) *
+                  current.scale,
+                y:
+                  (layout.center.y + to.y * layout.scale) *
+                  current.scale,
+              };
+              const deltaX = toPoint.x - fromPoint.x;
+              const deltaY = toPoint.y - fromPoint.y;
+              const scaledDistance = Math.hypot(
+                deltaX * columns * horizontalCorrection * plotHalfHeight,
+                deltaY * rows * plotHalfHeight,
+              );
+              const steps = Math.max(1, Math.ceil(scaledDistance));
+              const angle = Math.atan2(
+                -deltaY * rows,
+                deltaX * columns * horizontalCorrection,
+              );
+              const progress =
+                (segmentNumber / Math.max(1, totalSegments)) * Math.PI * 2;
+              const trailDistance =
+                ((motionHead - progress) % (Math.PI * 2) + Math.PI * 2) %
+                (Math.PI * 2);
+              const headDistance = Math.abs(
+                Math.atan2(
+                  Math.sin(progress - motionHead),
+                  Math.cos(progress - motionHead),
+                ),
+              );
+              const traceHead =
+                current.motion > 0
+                  ? Math.exp(
+                      -(headDistance * headDistance) / 0.035,
+                    )
+                  : 0;
+              const traceTail =
+                current.motion > 0 ? Math.exp(-trailDistance * 1.25) : 0;
+              const depth =
+                clamp(((from.depth + to.depth) * 0.5 + 0.8) / 1.6, 0, 1);
+              const strength =
+                0.32 + depth * 0.38 + traceTail * 0.32 + traceHead * 0.58;
+
+              for (let step = 1; step <= steps; step += 1) {
+                const amount = step / steps;
+                plot(
+                  mix(fromPoint.x, toPoint.x, amount),
+                  mix(fromPoint.y, toPoint.y, amount),
+                  angle,
+                  strength,
+                );
+              }
+
+              segmentNumber += 1;
+            }
+          }
         }
-        const scaledDistance = Math.hypot(
-          deltaX * columns * horizontalCorrection * plotHalfHeight,
-          deltaY * rows * plotHalfHeight,
-        );
-        const steps = Math.max(1, Math.ceil(scaledDistance));
-        const angle = Math.atan2(
-          -deltaY * rows,
-          deltaX * columns * horizontalCorrection,
-        );
-        const angularDistance = Math.abs(
-          Math.atan2(
-            Math.sin(theta - motionHead),
-            Math.cos(theta - motionHead),
-          ),
-        );
-        const highlight =
-          current.motion > 0
-            ? Math.exp(-(angularDistance * angularDistance) / 0.08)
-            : 0;
-        const strength = current.motion > 0 ? 0.5 + highlight * 0.34 : 0.6;
+      } else {
+        let previousPoint = signalPoint(0, current);
 
-        for (let step = 1; step <= steps; step += 1) {
-          const amount = step / steps;
-          plot(
-            mix(previousPoint.x, point.x, amount),
-            mix(previousPoint.y, point.y, amount),
-            angle,
-            strength,
+        for (let sample = 1; sample <= samples; sample += 1) {
+          const theta = (sample / samples) * Math.PI * 2;
+          const point = signalPoint(theta, current);
+          const deltaX = point.x - previousPoint.x;
+          const deltaY = point.y - previousPoint.y;
+          const flyback =
+            current.copies > 1 && Math.hypot(deltaX, deltaY) > 0.55;
+          if (flyback) {
+            previousPoint = point;
+            continue;
+          }
+          const scaledDistance = Math.hypot(
+            deltaX * columns * horizontalCorrection * plotHalfHeight,
+            deltaY * rows * plotHalfHeight,
           );
-        }
+          const steps = Math.max(1, Math.ceil(scaledDistance));
+          const angle = Math.atan2(
+            -deltaY * rows,
+            deltaX * columns * horizontalCorrection,
+          );
+          const headDistance = Math.abs(
+            Math.atan2(
+              Math.sin(theta - motionHead),
+              Math.cos(theta - motionHead),
+            ),
+          );
+          const trailDistance =
+            ((motionHead - theta) % (Math.PI * 2) + Math.PI * 2) %
+            (Math.PI * 2);
+          const traceHead =
+            current.motion > 0
+              ? Math.exp(-(headDistance * headDistance) / 0.035)
+              : 0;
+          const traceTail =
+            current.motion > 0 ? Math.exp(-trailDistance * 1.25) : 0;
+          const strength =
+            current.motion > 0
+              ? 0.42 + traceTail * 0.46 + traceHead * 0.7
+              : 0.62;
 
-        previousPoint = point;
+          for (let step = 1; step <= steps; step += 1) {
+            const amount = step / steps;
+            plot(
+              mix(previousPoint.x, point.x, amount),
+              mix(previousPoint.y, point.y, amount),
+              angle,
+              strength,
+            );
+          }
+
+          previousPoint = point;
+        }
       }
 
       const lines: string[] = [];
@@ -737,6 +1099,11 @@ export default function AsciiOscilloscope() {
 
       output.textContent = lines.join("\n");
       output.dataset.clippedSamples = clippedSamples.toString();
+      output.dataset.dimension = current.dimension;
+      output.dataset.geometry =
+        current.dimension === "3d"
+          ? spatialGeometryNames[current.preset]
+          : current.preset;
     };
 
     const draw = (time: number) => {
@@ -793,6 +1160,7 @@ export default function AsciiOscilloscope() {
     const nextSettings: SignalSettings = {
       preset: presetId,
       generator: preset.generator,
+      dimension,
       frequency,
       xRatio: preset.xRatio,
       yRatio: preset.yRatio,
@@ -811,6 +1179,7 @@ export default function AsciiOscilloscope() {
   }, [
     presetId,
     preset,
+    dimension,
     frequency,
     scale,
     motion,
@@ -927,6 +1296,12 @@ export default function AsciiOscilloscope() {
     setRunning(true);
   };
 
+  const toggleDimension = () => {
+    elapsedRef.current = 0;
+    renderNowRef.current?.(true);
+    setDimension((current) => (current === "2d" ? "3d" : "2d"));
+  };
+
   return (
     <figure
       className="hero-art oscilloscope"
@@ -934,12 +1309,13 @@ export default function AsciiOscilloscope() {
     >
       <figcaption id="oscilloscope-description" className="sr-only">
         An interactive real-time ASCII XY oscilloscope instrument. Choose a
-        curated geometric shape, tune its note, scale, motion, and multiplier,
-        or enable optional stereo audio. Audio is muted by default.
+        curated geometric shape, switch between 2D and 3D geometry, tune its
+        note, scale, motion, and multiplier, or enable optional stereo audio.
+        Audio is muted by default.
       </figcaption>
 
       <div className="scope-header" aria-hidden="true">
-        <span>XY / VECTOR</span>
+        <span>XY / VECTOR {dimension.toUpperCase()}</span>
         <span>
           {preset.label} / {musicalNote.name} {formatFrequency(frequency)} HZ /{" "}
           {copies}X
@@ -1038,6 +1414,20 @@ export default function AsciiOscilloscope() {
 
         <div className="scope-actions">
           <button
+            className="scope-dimension"
+            type="button"
+            aria-label={
+              dimension === "3d" ? "Show 2D geometry" : "Show 3D geometry"
+            }
+            title={dimension === "3d" ? "2D geometry" : "3D geometry"}
+            aria-pressed={dimension === "3d"}
+            onClick={toggleDimension}
+          >
+            <span className="scope-icon-3d" aria-hidden="true">
+              3D
+            </span>
+          </button>
+          <button
             type="button"
             aria-label={running ? "Pause animation" : "Run animation"}
             title={running ? "Pause" : "Run"}
@@ -1095,7 +1485,9 @@ export default function AsciiOscilloscope() {
 
       <div className="scope-footer" aria-hidden="true">
         <span>SHAPE {preset.label}</span>
-        <span>SCALE {Math.round(scale * 100)}%</span>
+        <span>
+          {dimension.toUpperCase()} / SCALE {Math.round(scale * 100)}%
+        </span>
         <span>OCT +{octave}</span>
       </div>
     </figure>
