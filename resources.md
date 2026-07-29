@@ -268,6 +268,7 @@ Available shape buttons:
 | --- | --- | --- |
 | Line | Lissajous | exact 1:1 diagonal |
 | Circle | Lissajous | unit circle, 1:1 at 90° |
+| Square | Polygon interpolation | exact regular square |
 | Eight | Lissajous | exact 2:1 figure eight |
 | Knot | Lissajous | exact 3:2 knot at 90° |
 | Rose | Polar rose | pure five-petal rose |
@@ -275,26 +276,45 @@ Available shape buttons:
 | Polygon | Polygon interpolation | exact regular hexagon |
 | Orbit | Hypotrochoid | 5:3 hypocycloid |
 
+The `3D` control switches the same renderer to authored spatial wireframes:
+
+| Shape | 3D construction |
+| --- | --- |
+| Line | oscillating ribbon wave |
+| Circle | latitude/longitude torus |
+| Square | wireframe cube |
+| Eight | layered spatial lemniscate |
+| Knot | three-strand 2:3 torus knot |
+| Rose | connected five-petal rose cage |
+| Star | extruded five-point star prism |
+| Polygon | extruded hexagonal prism |
+| Orbit | intersecting orbital cage and spiral |
+
 Controls:
 
-- Eight visible geometric shape buttons replace a hidden preset menu. Every
+- Nine visible geometric shape buttons replace a hidden preset menu. Every
   selection restores a curated, straight-on silhouette and resets its rotation
   clock, scale, and motion defaults. Frequency and multiplier remain unchanged.
+- `3D`: toggles between the standard 2D trace and the selected shape’s authored
+  perspective wireframe. It is true geometry generated in code, not an image,
+  shader filter, or prerecorded animation.
 - `Hz`: selects 37 chromatic equal-tempered notes spanning three complete
   octaves from A0 (27.50 Hz) through A3 (220 Hz). The range input operates in
   semitone steps, automatically snaps every pointer/keyboard change to an exact
   note frequency, and displays both note name and Hz value.
 - `Scale`: 70–100%. The higher floor keeps the shape visually present.
-- `Motion`: 0–100%. It controls the speed of a bright trace head traveling
-  around the fixed outline; it never changes the shape coordinates.
+- `Motion`: 0–100%. In 2D it controls a high-contrast trace head with a visible
+  fading tail around the fixed outline. In 3D it drives object rotation, a
+  smaller tilt oscillation, and the same moving trace light. Zero is static,
+  Pause freezes the current frame, and reduced-motion mode uses a fixed view.
 - `Multiply`: 1×, 2×, 4×, or 8×. Copies are traversed within one base cycle, so
   2× emphasizes one octave above the base frequency, 4× emphasizes two
   octaves, and 8× emphasizes three.
 - `Pause` / `Run`: stops or resumes geometric motion.
-- `Random`: chooses one of 16 hand-authored complete variants instead of
+- `Random`: chooses one of 18 hand-authored complete variants instead of
   combining parameters independently. It never selects 8×; Eight, Knot, Rose,
-  Star, and Orbit are limited to 1× or 2×, while only Line, Circle, and Polygon
-  can receive 4×. It preserves the current note.
+  Star, and Orbit are limited to 1× or 2×, while Line, Circle, Square, and
+  Polygon can receive 4×. It preserves the current note and 2D/3D mode.
 - `Audio off` / `Audio on`: explicit stereo output switch.
 - Pause/run, Random, and Audio are shown as custom monochrome CSS icons rather
   than text. Each icon-only button retains a descriptive accessible name and
@@ -312,8 +332,9 @@ Renderer:
 - Lower-intensity persistence uses the density ramp and a 4×4 Bayer threshold.
 - The trace decays between frames for phosphor persistence.
 - Grid dimensions and font size derive from the available render area.
-- Plot coordinates use almost the complete stage (`0.495` of each half-axis),
-  so the drawing reaches the scope edges instead of sitting in the center.
+- Plot coordinates derive their safe half-axis from the active row count,
+  reserving one complete raster cell for the trace and glow. Shapes reach the
+  scope edges without dropping extrema at 100% scale.
 - Large jumps between multiplied copies are treated as blanked flyback paths on
   the ASCII display, keeping the visible shapes separate.
 - Physical character cells are taller than they are wide. The plot applies a
@@ -322,6 +343,9 @@ Renderer:
 - Motion moves a brightness highlight around the locked outline without
   changing phase, form, rotation, or scale, so animation cannot bend or smear a
   standard shape.
+- 3D scenes rotate projected X/Y/Z wireframes with perspective and depth-based
+  intensity. Each shape has its own construction rather than sharing a generic
+  extrusion.
 - Rendering is capped near 20 FPS.
 - The global renderer mode changes the trace conversion itself:
   `ASCII` uses orientation, `Dither` uses ordered block density, `Glitch`
@@ -807,10 +831,11 @@ Current automated coverage checks:
 - all oscilloscope controls have correct default state;
 - curated shape resets, frequency, scale, motion, multiplier, pause, and safe
   random interactions;
+- all nine shapes map to their intended 3D construction and toggle back to 2D;
 - circle output stays physically proportional after monospace cell-aspect
   correction;
-- every shape remains inside the drawable plot at maximum scale across all four
-  multiplier settings;
+- every 2D and 3D shape remains inside the drawable plot at maximum scale
+  across all four multiplier settings;
 - every route and primary heading;
 - all six generated route scenes;
 - project details and system inventory;
@@ -904,7 +929,8 @@ hero imagery, third-party character art, fake terminal jokes, or the phrase
 
 Build the homepage around a large code-rendered ASCII XY oscilloscope
 instrument. Present Line, Circle, Eight, Knot, Rose, Star, Polygon, and Orbit as
-visible shape buttons; include an A0–A3 frequency slider spanning three full
+visible shape buttons, adding Square as the direct 2D counterpart to Cube;
+include an A0–A3 frequency slider spanning three full
 chromatic octaves with note-name/Hz readout, scale, motion, and
 1×/2×/4×/8× multiplier controls; pause/run; curated random combinations; and
 optional stereo Web Audio muted by default. Lock ratio, phase, form, and base
@@ -913,10 +939,17 @@ button must reset to a recognizable straight-on silhouette. Compensate for the
 physical width/height ratio of monospace character cells so circles, regular
 polygons, stars, and Lissajous figures render with standard proportions.
 Motion must move a brightness highlight around the fixed outline without
-changing any geometry. Random must select from a hand-authored bank of complete
+changing any geometry. Make the head and fading tail visibly distinct at low
+motion values. Add a 3D toggle that maps Line to a wave ribbon, Circle to a
+torus, Square to a cube, Eight to a spatial lemniscate, Knot to a torus knot,
+Rose to a rose cage, Star and Polygon to extruded prisms, and Orbit to an
+orbital cage. Generate and perspective-project real X/Y/Z wireframes in code.
+Motion must rotate 3D geometry with depth lighting; zero must be static, Pause
+must freeze it, and reduced-motion mode must use a fixed view.
+Random must select from a hand-authored bank of complete
 variants rather than combining parameters independently. It must never select
 8×; limit Eight, Knot, Rose, Star, and Orbit to 1× or 2×, and permit 4× only for
-Line, Circle, and Polygon. Multiplying copies must traverse the
+Line, Circle, Square, and Polygon. Multiplying copies must traverse the
 geometry multiple times per base cycle so the visible multiplication also
 creates octave-rich audio. Generate left and right audio from the same
 parametric X/Y geometry using PeriodicWave/Fourier synthesis. Use a responsive
