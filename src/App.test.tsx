@@ -31,7 +31,12 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "true",
     );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("55");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("33");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
+      "aria-valuetext",
+      "A1, 55 hertz",
+    );
+    expect(screen.getByText("A1 55")).toBeInTheDocument();
     expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(3);
     expect(screen.getByRole("spinbutton", { name: "Y ratio" })).toHaveValue(2);
     expect(screen.getByRole("slider", { name: "Phase" })).toHaveValue("90");
@@ -63,7 +68,7 @@ describe("Ayumad.me", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
     fireEvent.change(screen.getByRole("slider", { name: "Frequency" }), {
-      target: { value: "110" },
+      target: { value: "45" },
     });
     fireEvent.change(screen.getByRole("spinbutton", { name: "X ratio" }), {
       target: { value: "7" },
@@ -82,7 +87,12 @@ describe("Ayumad.me", () => {
       "aria-pressed",
       "true",
     );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("110");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
+    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
+      "aria-valuetext",
+      "A2, 110 hertz",
+    );
+    expect(screen.getByText("A2 110")).toBeInTheDocument();
     expect(screen.getByRole("spinbutton", { name: "X ratio" })).toHaveValue(7);
     expect(screen.getByText("180°")).toBeInTheDocument();
     expect(screen.getByText("30%")).toBeInTheDocument();
