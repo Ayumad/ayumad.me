@@ -6,8 +6,16 @@ import {
 } from "react";
 import { useReducedMotion } from "motion/react";
 
-type PresetId = "circle" | "eight" | "knot" | "rose" | "star" | "orbit";
-type GeneratorId = "lissajous" | "rose" | "star" | "orbit";
+type PresetId =
+  | "line"
+  | "circle"
+  | "eight"
+  | "knot"
+  | "rose"
+  | "star"
+  | "polygon"
+  | "orbit";
+type GeneratorId = "lissajous" | "rose" | "star" | "polygon" | "orbit";
 
 interface SignalSettings {
   preset: PresetId;
@@ -20,6 +28,7 @@ interface SignalSettings {
   rotation: number;
   scale: number;
   motion: number;
+  copies: number;
 }
 
 interface Preset {
@@ -48,6 +57,18 @@ interface AudioGraph {
 }
 
 const presets: Preset[] = [
+  {
+    id: "line",
+    label: "LINE",
+    generator: "lissajous",
+    xRatio: 1,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0,
+    rotationDegrees: 0,
+    scale: 0.96,
+    motion: 0.04,
+  },
   {
     id: "circle",
     label: "CIRCLE",
@@ -109,6 +130,18 @@ const presets: Preset[] = [
     motion: 0.12,
   },
   {
+    id: "polygon",
+    label: "POLYGON",
+    generator: "polygon",
+    xRatio: 6,
+    yRatio: 1,
+    phaseDegrees: 0,
+    form: 0.9,
+    rotationDegrees: -90,
+    scale: 0.96,
+    motion: 0.1,
+  },
+  {
     id: "orbit",
     label: "ORBIT",
     generator: "orbit",
@@ -122,7 +155,7 @@ const presets: Preset[] = [
   },
 ];
 
-const defaultPreset = presets[2];
+const defaultPreset = presets[3];
 const bayer4 = [
   0, 8, 2, 10,
   12, 4, 14, 6,
@@ -189,11 +222,76 @@ function starPoint(theta: number, points: number, form: number): Point {
   };
 }
 
+function polygonPoint(theta: number, sides: number, form: number): Point {
+  const sideCount = Math.round(clamp(sides, 3, 9));
+  const position = (theta / (Math.PI * 2)) * sideCount;
+  const vertex = Math.floor(position) % sideCount;
+  const amount = position - Math.floor(position);
+
+  const getVertex = (index: number) => {
+    const angle = (index * Math.PI * 2) / sideCount - Math.PI / 2;
+    return { x: Math.cos(angle), y: Math.sin(angle) };
+  };
+
+  const from = getVertex(vertex);
+  const to = getVertex((vertex + 1) % sideCount);
+  const polygon = {
+    x: mix(from.x, to.x, amount),
+    y: mix(from.y, to.y, amount),
+  };
+  const circle = { x: Math.cos(theta - Math.PI / 2), y: Math.sin(theta - Math.PI / 2) };
+
+  return {
+    x: mix(circle.x, polygon.x, form),
+    y: mix(circle.y, polygon.y, form),
+  };
+}
+
+function copyLayout(index: number, count: number) {
+  if (count === 2) {
+    return {
+      center: { x: index === 0 ? -0.5 : 0.5, y: 0 },
+      scale: 0.43,
+    };
+  }
+
+  if (count === 4) {
+    return {
+      center: {
+        x: index % 2 === 0 ? -0.5 : 0.5,
+        y: index < 2 ? 0.5 : -0.5,
+      },
+      scale: 0.4,
+    };
+  }
+
+  if (count === 8) {
+    return {
+      center: {
+        x: [-0.72, -0.24, 0.24, 0.72][index % 4],
+        y: index < 4 ? 0.5 : -0.5,
+      },
+      scale: 0.2,
+    };
+  }
+
+  return { center: { x: 0, y: 0 }, scale: 1 };
+}
+
 function signalPoint(
   theta: number,
   settings: SignalSettings,
   time: number,
 ): Point {
+  const normalizedTheta =
+    ((theta / (Math.PI * 2)) % 1 + 1) % 1;
+  const copyPosition = normalizedTheta * settings.copies;
+  const copyIndex = Math.min(
+    settings.copies - 1,
+    Math.floor(copyPosition),
+  );
+  const localTheta =
+    (copyPosition - Math.floor(copyPosition)) * Math.PI * 2;
   const livePhase = settings.phase + time * settings.motion * 0.28;
   const liveRotation = settings.rotation + time * settings.motion * 0.08;
   let point: Point;
@@ -201,15 +299,21 @@ function signalPoint(
   if (settings.generator === "rose") {
     const radius =
       (1 - settings.form) * 0.84 +
-      settings.form * Math.cos(Math.max(2, settings.xRatio) * theta + livePhase);
-    const angle = Math.max(1, settings.yRatio) * theta;
+      settings.form * Math.cos(Math.max(2, settings.xRatio) * localTheta + livePhase);
+    const angle = Math.max(1, settings.yRatio) * localTheta;
     point = {
       x: radius * Math.cos(angle),
       y: radius * Math.sin(angle),
     };
   } else if (settings.generator === "star") {
     point = starPoint(
-      theta * Math.max(1, settings.yRatio),
+      (localTheta + livePhase) * Math.max(1, settings.yRatio),
+      settings.xRatio,
+      settings.form,
+    );
+  } else if (settings.generator === "polygon") {
+    point = polygonPoint(
+      (localTheta + livePhase) * Math.max(1, settings.yRatio),
       settings.xRatio,
       settings.form,
     );
@@ -221,26 +325,31 @@ function signalPoint(
     const denominator = difference + distance;
     point = {
       x:
-        (difference * Math.cos(inner * theta) +
-          distance * Math.cos(difference * theta + livePhase)) /
+        (difference * Math.cos(inner * localTheta) +
+          distance * Math.cos(difference * localTheta + livePhase)) /
         denominator,
       y:
-        (difference * Math.sin(inner * theta) -
-          distance * Math.sin(difference * theta + livePhase)) /
+        (difference * Math.sin(inner * localTheta) -
+          distance * Math.sin(difference * localTheta + livePhase)) /
         denominator,
     };
   } else {
     point = {
-      x: harmonicSignal(settings.xRatio * theta, livePhase, settings.form),
-      y: harmonicSignal(settings.yRatio * theta, 0, settings.form),
+      x: harmonicSignal(settings.xRatio * localTheta, livePhase, settings.form),
+      y: harmonicSignal(settings.yRatio * localTheta, 0, settings.form),
     };
   }
 
   const cosine = Math.cos(liveRotation);
   const sine = Math.sin(liveRotation);
+  const rotated = {
+    x: point.x * cosine - point.y * sine,
+    y: point.x * sine + point.y * cosine,
+  };
+  const layout = copyLayout(copyIndex, settings.copies);
   return {
-    x: (point.x * cosine - point.y * sine) * settings.scale,
-    y: (point.x * sine + point.y * cosine) * settings.scale,
+    x: (layout.center.x + rotated.x * layout.scale) * settings.scale,
+    y: (layout.center.y + rotated.y * layout.scale) * settings.scale,
   };
 }
 
@@ -336,6 +445,7 @@ function settingsFromPreset(
     rotation: radians(preset.rotationDegrees),
     scale: preset.scale,
     motion: preset.motion,
+    copies: 1,
   };
 }
 
@@ -363,11 +473,13 @@ export default function AsciiOscilloscope() {
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const [scale, setScale] = useState(initialSettings.scale);
   const [motion, setMotion] = useState(initialSettings.motion);
+  const [octave, setOctave] = useState(0);
   const [running, setRunning] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(true);
   const reducedMotion = useReducedMotion();
   const preset = presets.find((item) => item.id === presetId) ?? defaultPreset;
+  const copies = 2 ** octave;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -436,6 +548,11 @@ export default function AsciiOscilloscope() {
         const point = signalPoint(theta, current, time);
         const deltaX = point.x - previousPoint.x;
         const deltaY = point.y - previousPoint.y;
+        const flyback = current.copies > 1 && Math.hypot(deltaX, deltaY) > 0.55;
+        if (flyback) {
+          previousPoint = point;
+          continue;
+        }
         const scaledDistance = Math.hypot(
           deltaX * columns * 0.495,
           deltaY * rows * 0.495,
@@ -556,6 +673,7 @@ export default function AsciiOscilloscope() {
       rotation: radians(rotationDegrees),
       scale,
       motion,
+      copies,
     };
     settingsRef.current = nextSettings;
     renderNowRef.current?.(true);
@@ -577,6 +695,7 @@ export default function AsciiOscilloscope() {
     rotationDegrees,
     scale,
     motion,
+    copies,
   ]);
 
   useEffect(() => {
@@ -675,7 +794,7 @@ export default function AsciiOscilloscope() {
     }
   };
 
-  const applyPreset = (id: PresetId, resetFrequency = false) => {
+  const applyPreset = (id: PresetId) => {
     const next = presets.find((item) => item.id === id) ?? defaultPreset;
     setPresetId(next.id);
     setGenerator(next.generator);
@@ -686,12 +805,27 @@ export default function AsciiOscilloscope() {
     setRotationDegrees(next.rotationDegrees);
     setScale(next.scale);
     setMotion(next.motion);
-    if (resetFrequency) setFrequency(55);
   };
 
-  const reset = () => {
+  const randomize = () => {
+    const next = presets[Math.floor(Math.random() * presets.length)];
+    const pointBased =
+      next.generator === "star" || next.generator === "polygon";
     elapsedRef.current = 0;
-    applyPreset(defaultPreset.id, true);
+    setPresetId(next.id);
+    setGenerator(next.generator);
+    setXRatio(
+      pointBased
+        ? 3 + Math.floor(Math.random() * 7)
+        : 1 + Math.floor(Math.random() * 9),
+    );
+    setYRatio(1 + Math.floor(Math.random() * 5));
+    setPhaseDegrees(Math.round(Math.random() * 360));
+    setForm(Number((0.15 + Math.random() * 0.8).toFixed(2)));
+    setRotationDegrees(Math.round(-180 + Math.random() * 360));
+    setScale(Number((0.72 + Math.random() * 0.28).toFixed(2)));
+    setMotion(Number((0.04 + Math.random() * 0.66).toFixed(2)));
+    setOctave(Math.floor(Math.random() * 4));
     setRunning(true);
   };
 
@@ -736,13 +870,14 @@ export default function AsciiOscilloscope() {
     >
       <figcaption id="oscilloscope-description" className="sr-only">
         An interactive real-time ASCII XY oscilloscope instrument. Choose a
-        shape, change its frequency and geometry, drag the trace, or use the
-        controls. Stereo audio is muted by default.
+        geometric shape, change its frequency and geometry, multiply it into
+        octave copies, drag the trace, or use the controls. Stereo audio is
+        muted by default.
       </figcaption>
 
       <div className="scope-header" aria-hidden="true">
         <span>XY / VECTOR</span>
-        <span>{preset.label} / {frequency} HZ</span>
+        <span>{preset.label} / {frequency} HZ / {copies}X</span>
       </div>
 
       <div
@@ -762,20 +897,19 @@ export default function AsciiOscilloscope() {
       </div>
 
       <div className="scope-controls">
-        <label className="scope-control">
-          <span>Preset</span>
-          <select
-            aria-label="Preset"
-            value={presetId}
-            onChange={(event) => applyPreset(event.target.value as PresetId)}
-          >
-            {presets.map((item) => (
-              <option value={item.id} key={item.id}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="scope-shapes" role="group" aria-label="Shape">
+          {presets.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              aria-label={`${item.label} shape`}
+              aria-pressed={presetId === item.id}
+              onClick={() => applyPreset(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
 
         <label className="scope-control">
           <span>Hz</span>
@@ -886,6 +1020,20 @@ export default function AsciiOscilloscope() {
           <output>{Math.round(motion * 100)}%</output>
         </label>
 
+        <label className="scope-control">
+          <span>Copies</span>
+          <input
+            aria-label="Copies"
+            type="range"
+            min="0"
+            max="3"
+            step="1"
+            value={octave}
+            onChange={(event) => setOctave(Number(event.target.value))}
+          />
+          <output>{copies}×</output>
+        </label>
+
         <div className="scope-actions">
           <button
             type="button"
@@ -895,8 +1043,8 @@ export default function AsciiOscilloscope() {
           >
             {running ? "Pause" : "Run"}
           </button>
-          <button type="button" onClick={reset}>
-            Reset
+          <button type="button" onClick={randomize}>
+            Random
           </button>
           <button
             className="scope-audio"
@@ -914,7 +1062,7 @@ export default function AsciiOscilloscope() {
       <div className="scope-footer" aria-hidden="true">
         <span>X:Y {xRatio}:{yRatio}</span>
         <span>PHASE {phaseDegrees}°</span>
-        <span>FFT {fourierHarmonics}</span>
+        <span>OCT +{octave}</span>
       </div>
     </figure>
   );
