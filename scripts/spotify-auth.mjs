@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import { randomBytes } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { chmod, writeFile } from "node:fs/promises";
 import { createInterface } from "node:readline/promises";
 import process from "node:process";
@@ -15,7 +16,10 @@ const readline = createInterface({
   output: process.stdout,
 });
 
-const clientId = (await readline.question("Spotify Client ID: ")).trim();
+const clientId = (
+  process.env.SPOTIFY_CLIENT_ID ??
+  (await readline.question("Spotify Client ID: "))
+).trim();
 readline.close();
 
 function readSecret(prompt) {
@@ -54,7 +58,10 @@ function readSecret(prompt) {
   });
 }
 
-const clientSecret = (await readSecret("Spotify Client Secret (hidden): ")).trim();
+const clipboardSecret = process.env.SPOTIFY_AUTH_USE_CLIPBOARD === "1"
+  ? execFileSync("pbpaste", { encoding: "utf8" })
+  : null;
+const clientSecret = (clipboardSecret ?? await readSecret("Spotify Client Secret (hidden): ")).trim();
 
 if (!clientId || !clientSecret) {
   throw new Error("Both the Spotify Client ID and Client Secret are required.");
