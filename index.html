@@ -33,18 +33,24 @@
     <title>Ayumad.me — Ayush Madhukar</title>
     <script>
       (() => {
-        const saved = localStorage.getItem("ayumad-theme");
+        const params = new URLSearchParams(window.location.search);
+        const incomingTheme = params.get("theme");
+        const saved = incomingTheme || localStorage.getItem("ayumad-theme");
         const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        document.documentElement.dataset.theme =
-          saved === "light" || saved === "dark" ? saved : systemDark ? "dark" : "light";
-        const renderer = localStorage.getItem("ayumad-renderer");
-        document.documentElement.dataset.renderer =
+        const theme = saved === "light" || saved === "dark" ? saved : systemDark ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("ayumad-theme", theme);
+        const incomingRenderer = params.get("renderer");
+        const renderer = incomingRenderer || localStorage.getItem("ayumad-renderer");
+        const selectedRenderer =
           renderer === "dither" ||
           renderer === "glitch" ||
           renderer === "particles" ||
           renderer === "crt"
             ? renderer
             : "ascii";
+        document.documentElement.dataset.renderer = selectedRenderer;
+        localStorage.setItem("ayumad-renderer", selectedRenderer);
       })();
     </script>
   </head>

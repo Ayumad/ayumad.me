@@ -25,8 +25,7 @@
     "@fontsource/vt323": "^5.3.0",
     "motion": "^12.43.0",
     "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "react-markdown": "^10.1.0"
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

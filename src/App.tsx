@@ -2,9 +2,7 @@ import {
   type AnchorHTMLAttributes,
   Component,
   type ErrorInfo,
-  lazy,
   type PropsWithChildren,
-  Suspense,
   useEffect,
   useRef,
   useState,
@@ -12,7 +10,6 @@ import {
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
-import { blogPosts, findBlogPost } from "./blog";
 import ParticleField from "./ParticleField";
 import { RendererMenu } from "./RendererMenu";
 import { nowEntries, nowUpdated } from "./nowData";
@@ -32,6 +29,7 @@ import { useSpotifyPlayback } from "./useSpotifyPlayback";
 import {
   activityConnections,
   aboutContent,
+  blogPosts,
   gearCategories,
   homeContent,
   legacyRedirects,
@@ -43,8 +41,6 @@ import {
   systemLayers,
   type ProjectStatus,
 } from "./siteContent";
-
-const ReactMarkdown = lazy(() => import("react-markdown"));
 
 type Theme = "light" | "dark";
 
@@ -98,6 +94,42 @@ function Link({ to, children, ...props }: SiteLinkProps) {
   );
 }
 
+type ExternalLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
+  href: string;
+};
+
+function withVisualContext(href: string) {
+  const url = new URL(href);
+  const theme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  const renderer = document.documentElement.dataset.renderer;
+  url.searchParams.set("theme", theme);
+  url.searchParams.set("renderer", isRenderMode(renderer) ? renderer : "ascii");
+  return url.toString();
+}
+
+function syncVisualContextLinks() {
+  document.querySelectorAll<HTMLAnchorElement>("[data-visual-context-href]").forEach((link) => {
+    const href = link.dataset.visualContextHref;
+    if (href) link.href = withVisualContext(href);
+  });
+}
+
+function ExternalLink({ href, children, onClick, ...props }: ExternalLinkProps) {
+  return (
+    <a
+      href={withVisualContext(href)}
+      data-visual-context-href={href}
+      onClick={(event) => {
+        event.currentTarget.href = withVisualContext(href);
+        onClick?.(event);
+      }}
+      {...props}
+    >
+      {children}
+    </a>
+  );
+}
+
 export class SiteErrorBoundary extends Component<PropsWithChildren, ErrorBoundaryState> {
   state: ErrorBoundaryState = { hasError: false };
 
@@ -135,6 +167,7 @@ function useTheme() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("ayumad-theme", theme);
+    syncVisualContextLinks();
   }, [theme]);
 
   return {
@@ -152,6 +185,7 @@ function useRenderer() {
   useEffect(() => {
     document.documentElement.dataset.renderer = renderMode;
     localStorage.setItem("ayumad-renderer", renderMode);
+    syncVisualContextLinks();
   }, [renderMode]);
 
   return { renderMode, setRenderMode };
@@ -161,7 +195,7 @@ function RouteEffects({ path }: { path: string }) {
   useEffect(() => {
     const project = path.startsWith("/projects/") ? projects.find((item) => item.path === path) : undefined;
     const system = path.startsWith("/systems/") ? systemLayers.find((item) => item.path === path) : undefined;
-    const post = path.startsWith("/blog/") ? findBlogPost(path.slice("/blog/".length)) : undefined;
+    const post = path.startsWith("/blog/") ? blogPosts.find((item) => item.slug === path.slice("/blog/".length)) : undefined;
     const meta = pageMeta[path] ??
       (project ? { title: `${project.title} — Ayumad.me`, description: project.summary } : undefined) ??
       (system ? { title: `${system.title} System — Ayumad.me`, description: system.description } : undefined) ??
@@ -171,9 +205,9 @@ function RouteEffects({ path }: { path: string }) {
     };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
-    document
-      .querySelector('link[rel="canonical"]')
-      ?.setAttribute("href", `https://ayumad.me/#${path}`);
+    const canonical = post?.url ??
+      (path === "/blog" ? "https://ayumad.github.io/blog/" : `https://ayumad.me/#${path}`);
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonical);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [path]);
 
@@ -220,7 +254,7 @@ function Header({
           {navItems.map((item) => {
             if (item.external) {
               return (
-                <a
+                <ExternalLink
                   key={item.path}
                   href={item.path}
                   className="nav-link"
@@ -229,7 +263,7 @@ function Header({
                   <span>{item.index}</span>
                   {item.label}
                   <i aria-hidden="true">↗</i>
-                </a>
+                </ExternalLink>
               );
             }
             const isActive = item.path === "/" ? path === "/" : path === item.path || path.startsWith(`${item.path}/`);
@@ -465,12 +499,12 @@ function HomePage() {
           {navItems.slice(1).map((item, index) => (
             <motion.div key={item.path} whileHover={{ x: 6 }} transition={{ duration: 0.14 }}>
               {item.external ? (
-                <a href={item.path} className="index-row">
+                <ExternalLink href={item.path} className="index-row">
                   <span>{item.index}</span>
                   <h3>{item.label}</h3>
                   <p>{descriptions[index]}</p>
                   <i aria-hidden="true">↗</i>
-                </a>
+                </ExternalLink>
               ) : (
                 <Link to={item.path} className="index-row">
                   <span>{item.index}</span>
@@ -809,7 +843,11 @@ function RelatedLinks({ links }: { links: { label: string; path: string }[] }) {
       <p className="label">Continue through the map</p>
       <div>
         {links.map((link) => (
-          <Link key={link.path} to={link.path}>{link.label}<span aria-hidden="true">↗</span></Link>
+          link.path.startsWith("http") ? (
+            <ExternalLink key={link.path} href={link.path}>{link.label}<span aria-hidden="true">↗</span></ExternalLink>
+          ) : (
+            <Link key={link.path} to={link.path}>{link.label}<span aria-hidden="true">↗</span></Link>
+          )
         ))}
       </div>
     </aside>
@@ -922,8 +960,8 @@ function BlogPage() {
       <SectionHeading
         index="05"
         label="Blog"
-        title="Blog"
-        description="Long-form public adaptations of the systems and ideas developing in the private notebook."
+        title="Blog → Knowledge"
+        description="The Blog now lives inside the public knowledge base, where finished essays can connect directly to the projects, systems, and notes behind them."
         scene="writeups"
       />
 
@@ -945,29 +983,32 @@ function BlogPage() {
               </ul>
             </div>
             <div className="writeup-main">
-              <h2><Link to={`/blog/${post.slug}`}>{post.title}</Link></h2>
+              <h2><ExternalLink href={post.url}>{post.title}</ExternalLink></h2>
               <p>{post.summary}</p>
-              <Link className="text-link" to={`/blog/${post.slug}`}>Read article <span aria-hidden="true">↗</span></Link>
+              <ExternalLink className="text-link" href={post.url}>Read in Knowledge <span aria-hidden="true">↗</span></ExternalLink>
             </div>
           </motion.article>
         ))}
       </div>
 
-      <aside className="plain-note"><p className="label">Publishing boundary</p><p>These are edited public pieces, not raw vault notes. Private context and operational material stay outside the site.</p></aside>
+      <aside className="plain-note">
+        <p className="label">One public writing layer</p>
+        <p>Essays and public notes now share one searchable home. Private context and operational material remain outside both deployed sites.</p>
+        <ExternalLink className="text-link" href="https://ayumad.github.io/blog/">Open the Blog <span aria-hidden="true">↗</span></ExternalLink>
+      </aside>
     </section>
   );
 }
 
 function BlogPostPage({ slug }: { slug: string }) {
-  const post = findBlogPost(slug);
+  const post = blogPosts.find((item) => item.slug === slug);
   if (!post) return <NotFoundPage />;
-  const related = blogPosts.filter((item) => item.slug !== slug).slice(0, 2);
 
   return (
     <article className="section-shell article-page">
       <header className="article-header">
-        <Link className="text-link" to="/blog">← Blog</Link>
-        <p className="label">Essay / {post.readingTime}</p>
+        <ExternalLink className="text-link" href="https://ayumad.github.io/blog/">← Public Blog</ExternalLink>
+        <p className="label">Essay / {post.readingTime} / Canonical copy</p>
         <h1>{post.title}</h1>
         <p>{post.summary}</p>
         <div>
@@ -975,14 +1016,16 @@ function BlogPostPage({ slug }: { slug: string }) {
           <ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
         </div>
       </header>
-      <div className="article-body">
-        <Suspense fallback={<p className="article-loading">Loading article…</p>}>
-          <ReactMarkdown>{post.content}</ReactMarkdown>
-        </Suspense>
+      <div className="article-body article-handoff">
+        <p>This article has moved into Ayush’s public knowledge base so its references, related systems, and future updates live together.</p>
+        <ExternalLink className="button primary" href={post.url}>Read the complete essay <span aria-hidden="true">↗</span></ExternalLink>
       </div>
-      <aside className="related-links" aria-label="Related articles">
-        <p className="label">Keep reading</p>
-        <div>{related.map((item) => <Link key={item.slug} to={`/blog/${item.slug}`}>{item.title}<span aria-hidden="true">↗</span></Link>)}</div>
+      <aside className="related-links" aria-label="Continue to the public knowledge base">
+        <p className="label">Continue exploring</p>
+        <div>
+          <ExternalLink href="https://ayumad.github.io/blog/">All essays<span aria-hidden="true">↗</span></ExternalLink>
+          <ExternalLink href="https://ayumad.github.io/">Public knowledge<span aria-hidden="true">↗</span></ExternalLink>
+        </div>
       </aside>
     </article>
   );
@@ -1214,6 +1257,8 @@ function Footer() {
         <p>AYUMAD.ME <span>/ PUBLIC INDEX</span></p>
         <p>2026</p>
         <div>
+          <ExternalLink href="https://ayumad.github.io/blog/">Blog ↗</ExternalLink>
+          <ExternalLink href="https://ayumad.github.io/">Knowledge ↗</ExternalLink>
           <a href="/ayush-madhukar-resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
           <a href="mailto:Ayumadbro123@gmail.com">Email ↗</a>
         </div>

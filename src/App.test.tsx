@@ -103,7 +103,11 @@ describe("Ayumad.me", () => {
     );
     expect(within(navigation).getByRole("link", { name: /Knowledge/i })).toHaveAttribute(
       "href",
-      "https://ayumad.github.io",
+      "https://ayumad.github.io/?theme=dark&renderer=ascii",
+    );
+    expect(within(navigation).getByRole("link", { name: /Blog/i })).toHaveAttribute(
+      "href",
+      "https://ayumad.github.io/blog/?theme=dark&renderer=ascii",
     );
   });
 
@@ -411,7 +415,7 @@ describe("Ayumad.me", () => {
     ["/projects", "Projects", "projects"],
     ["/systems", "Systems", "systems"],
     ["/gear", "Gear", "gear"],
-    ["/blog", "Blog", "writeups"],
+    ["/blog", "Blog → Knowledge", "writeups"],
     ["/about", "About", "about"],
     ["/contact", "Contact", "contact"],
   ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
@@ -444,7 +448,7 @@ describe("Ayumad.me", () => {
     );
   });
 
-  it("renders project, system, and blog detail routes", async () => {
+  it("renders project, system, and legacy blog handoff routes", () => {
     const project = renderAt("/projects/hermes");
     expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "The idea" })).toBeInTheDocument();
@@ -461,9 +465,25 @@ describe("Ayumad.me", () => {
         name: "One Agent, Every Device: Why Hermes Lives on a Mac mini",
       }),
     ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("heading", { name: "Why the Mac mini fits" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Read the complete essay/i })).toHaveAttribute(
+      "href",
+      "https://ayumad.github.io/blog/hermes-on-mac-mini/?theme=dark&renderer=ascii",
+    );
+  });
+
+  it("carries the current visual context into the public blog and knowledge base", () => {
+    document.documentElement.dataset.theme = "light";
+    document.documentElement.dataset.renderer = "particles";
+    renderAt("/projects/hermes");
+
+    expect(screen.getByRole("link", { name: /Why Hermes lives on a Mac mini/i })).toHaveAttribute(
+      "href",
+      "https://ayumad.github.io/blog/hermes-on-mac-mini/?theme=light&renderer=particles",
+    );
+    expect(screen.getByRole("link", { name: "Knowledge ↗" })).toHaveAttribute(
+      "href",
+      "https://ayumad.github.io/?theme=light&renderer=particles",
+    );
   });
 
   it("keeps legacy bookmarks working", () => {
@@ -516,6 +536,10 @@ describe("Ayumad.me", () => {
 
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(localStorage.getItem("ayumad-theme")).toBe("light");
+    expect(
+      within(screen.getByRole("navigation", { name: "Main navigation" }))
+        .getByRole("link", { name: /Knowledge/i }),
+    ).toHaveAttribute("href", "https://ayumad.github.io/?theme=light&renderer=ascii");
   });
 
   it("applies and persists renderer modes across the complete shell", () => {
@@ -543,6 +567,10 @@ describe("Ayumad.me", () => {
     expect(document.querySelector(".transition-mode.transition-particles")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "particles");
     expect(scene?.textContent).toMatch(/[·•●]/);
+    expect(
+      within(screen.getByRole("navigation", { name: "Main navigation" }))
+        .getByRole("link", { name: /Blog/i }),
+    ).toHaveAttribute("href", "https://ayumad.github.io/blog/?theme=dark&renderer=particles");
 
     for (const [mode, label] of [
       ["glitch", "Glitch"],
