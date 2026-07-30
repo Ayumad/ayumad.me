@@ -2,13 +2,17 @@ import {
   type AnchorHTMLAttributes,
   Component,
   type ErrorInfo,
+  lazy,
   type PropsWithChildren,
+  Suspense,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
+import { blogPosts, findBlogPost } from "./blog";
 import ParticleField from "./ParticleField";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
@@ -20,17 +24,18 @@ import {
 import {
   aboutContent,
   gearCategories,
-  hermesSections,
   homeContent,
+  legacyRedirects,
   navItems,
   pageMeta,
   projects,
   showcaseTopics,
   socialLinks,
   systemLayers,
-  writeups,
   type ProjectStatus,
 } from "./siteContent";
+
+const ReactMarkdown = lazy(() => import("react-markdown"));
 
 type Theme = "light" | "dark";
 
@@ -48,15 +53,24 @@ const contactField = String.raw`
 
 function currentPath() {
   const hashPath = window.location.hash.slice(1);
-  return hashPath.startsWith("/") ? hashPath : "/";
+  const path = hashPath.startsWith("/") ? hashPath : "/";
+  return legacyRedirects[path] ?? path;
 }
 
 function useHashPath() {
   const [path, setPath] = useState(currentPath);
 
   useEffect(() => {
-    const handleHashChange = () => setPath(currentPath());
+    const handleHashChange = () => {
+      const rawPath = window.location.hash.slice(1);
+      const nextPath = currentPath();
+      if (rawPath && rawPath !== nextPath && legacyRedirects[rawPath]) {
+        window.history.replaceState(null, "", `#${nextPath}`);
+      }
+      setPath(nextPath);
+    };
     window.addEventListener("hashchange", handleHashChange);
+    handleHashChange();
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
@@ -135,10 +149,14 @@ function useRenderer() {
 }
 
 function RouteEffects({ path }: { path: string }) {
-  const reducedMotion = useReducedMotion();
-
   useEffect(() => {
-    const meta = pageMeta[path] ?? {
+    const project = path.startsWith("/projects/") ? projects.find((item) => item.path === path) : undefined;
+    const system = path.startsWith("/systems/") ? systemLayers.find((item) => item.path === path) : undefined;
+    const post = path.startsWith("/blog/") ? findBlogPost(path.slice("/blog/".length)) : undefined;
+    const meta = pageMeta[path] ??
+      (project ? { title: `${project.title} — Ayumad.me`, description: project.summary } : undefined) ??
+      (system ? { title: `${system.title} System — Ayumad.me`, description: system.description } : undefined) ??
+      (post ? { title: `${post.title} — Ayumad.me`, description: post.summary } : undefined) ?? {
       title: "Not found — Ayumad.me",
       description: "The requested page could not be found.",
     };
@@ -147,8 +165,8 @@ function RouteEffects({ path }: { path: string }) {
     document
       .querySelector('link[rel="canonical"]')
       ?.setAttribute("href", `https://ayumad.me/#${path}`);
-    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-  }, [path, reducedMotion]);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [path]);
 
   return null;
 }
@@ -191,7 +209,7 @@ function Header({
           aria-label="Main navigation"
         >
           {navItems.map((item) => {
-            const isActive = path === item.path;
+            const isActive = item.path === "/" ? path === "/" : path === item.path || path.startsWith(`${item.path}/`);
             return (
               <Link
                 key={item.path}
@@ -253,21 +271,88 @@ function Header({
   );
 }
 
-function PageTransition({ children, path }: PropsWithChildren<{ path: string }>) {
+function PageTransition({
+  children,
+  path,
+  renderMode,
+}: PropsWithChildren<{ path: string; renderMode: RenderMode }>) {
+  return (
+    <div
+      className={`route-frame route-${renderMode}`}
+      data-route-path={path}
+      key={path}
+    >
+      <span className="route-transition-pattern" aria-hidden="true" />
+      <div className="route-content">{children}</div>
+    </div>
+  );
+}
+
+const transitionGlyphs: Record<RenderMode, string> = {
+  ascii: "@ % # * + = - : .",
+  dither: "░ ▒ ▓ █ ▓ ▒ ░",
+  glitch: "ERR 0x7F // SYNC LOST",
+  particles: "· ｡ ° ✦ ° ｡ ·",
+  crt: "CH 03 // SIGNAL LOCK",
+};
+
+function TransitionPortal({
+  mode,
+  label,
+}: {
+  mode: RenderMode;
+  label: string;
+}) {
   const reducedMotion = useReducedMotion();
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        className="route-frame"
-        key={path}
-        initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: reducedMotion ? 0.01 : 0.24, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
+    <motion.div
+      className={`transition-portal transition-mode transition-${mode}`}
+      aria-hidden="true"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reducedMotion ? 0.01 : 0.12 }}
+    >
+      <span className="transition-plane" />
+      <span className="transition-pattern" />
+      <span className="transition-aperture" />
+      <span className="transition-readout">
+        <i>RENDER</i>
+        <strong>{label}</strong>
+        <em>{transitionGlyphs[mode]}</em>
+      </span>
+    </motion.div>
+  );
+}
+
+function RendererTransition({ renderMode }: { renderMode: RenderMode }) {
+  const reducedMotion = useReducedMotion();
+  const previousMode = useRef(renderMode);
+  const [activeMode, setActiveMode] = useState<RenderMode | null>(null);
+
+  useEffect(() => {
+    if (previousMode.current === renderMode) return;
+
+    previousMode.current = renderMode;
+    setActiveMode(renderMode);
+    const timeout = window.setTimeout(
+      () => setActiveMode(null),
+      reducedMotion ? 80 : 940,
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [reducedMotion, renderMode]);
+
+  return (
+    <AnimatePresence>
+      {activeMode && (
+        <TransitionPortal
+          key={activeMode}
+          mode={activeMode}
+          label={renderModes.find((mode) => mode.value === activeMode)?.label ?? activeMode}
+        />
+      )}
     </AnimatePresence>
   );
 }
@@ -315,15 +400,13 @@ function AsciiDivider() {
 
 function HomePage() {
   const descriptions = [
-    "Hermes, servers, notes, and audio.",
-    "Selected builds and experiments.",
-    "The tools and systems I use.",
-    "Inside the autonomous agent.",
-    "The 100+ devices I use daily.",
-    "Field notes on building things.",
-    "What I am working on now.",
+    "AI, infrastructure, audio, and Linux hardware.",
+    "Current builds, experiments, and what is happening now.",
+    "The connected systems behind the projects.",
+    "A curated snapshot of the tools I use.",
+    "Long-form notes from the public knowledge layer.",
     "Background, education, and interests.",
-    "Email and GitHub.",
+    "Email, GitHub, and résumé.",
   ];
 
   return (
@@ -348,7 +431,13 @@ function HomePage() {
           <p className="label">Topics</p>
           <ol>
             {homeContent.topics.map((topic, index) => (
-              <li key={topic}><span>0{index + 1}</span>{topic}</li>
+              <li key={topic.path}>
+                <Link to={topic.path}>
+                  <span>0{index + 1}</span>
+                  <strong>{topic.label}</strong>
+                  <i aria-hidden="true">↗</i>
+                </Link>
+              </li>
             ))}
           </ol>
           <p>Bay Area, California</p>
@@ -386,20 +475,20 @@ function HomePage() {
           <h2>{homeContent.current.title}</h2>
         </div>
         <p>{homeContent.current.description}</p>
-        <Link className="text-link" to="/hermes">Hermes <span aria-hidden="true">↗</span></Link>
+        <Link className="text-link" to="/projects/hermes">Hermes <span aria-hidden="true">↗</span></Link>
       </section>
     </>
   );
 }
 
-function ShowcasePage() {
+function WorkPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading
         index="01"
         label="Work"
         title="Work"
-        description="The three areas I keep coming back to."
+        description="The four systems I keep returning to — and the work that connects them."
         scene="work"
       />
 
@@ -421,6 +510,9 @@ function ShowcasePage() {
               <ul className="tag-list" aria-label={`${topic.title} topics`}>
                 {topic.items.map((item) => <li key={item}>{item}</li>)}
               </ul>
+              <Link className="text-link" to={topic.path}>
+                Explore {topic.title} <span aria-hidden="true">↗</span>
+              </Link>
             </div>
             <pre className="topic-ascii" aria-hidden="true">{topic.ascii}</pre>
           </motion.article>
@@ -437,8 +529,8 @@ function statusLabel(status: ProjectStatus) {
 }
 
 function ProjectsPage() {
-  const active = projects.filter((p) => p.status === "in-progress" || p.status === "planned");
-  const completed = projects.filter((p) => p.status === "completed");
+  const current = projects.filter((project) => !project.archived);
+  const archived = projects.filter((project) => project.archived);
 
   return (
     <section className="section-shell page-section">
@@ -446,12 +538,30 @@ function ProjectsPage() {
         index="02"
         label="Projects"
         title="Projects"
-        description="Current work, completed builds, and experiments."
+        description="Current systems in motion, with the older experiments kept as a compact archive."
         scene="projects"
       />
 
+      <section className="now-inline" aria-labelledby="current-work-title">
+        <div className="now-inline-heading">
+          <p className="label">Currently building</p>
+          <h2 id="current-work-title">Now</h2>
+          <time dateTime="2026-07-30">Updated {nowUpdated}</time>
+        </div>
+        <div className="now-inline-grid">
+          {nowEntries.slice(0, 4).map((entry) => (
+            <article key={entry.label}>
+              <span aria-hidden="true">{entry.marker}</span>
+              <p className="label">{entry.label}</p>
+              <h3>{entry.title}</h3>
+              <p>{entry.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <div className="project-list">
-        {active.map((project, index) => (
+        {current.map((project, index) => (
           <motion.article
             className="project-row"
             key={project.slug}
@@ -471,65 +581,44 @@ function ProjectsPage() {
                 </span>
                 <span>{project.year}</span>
               </div>
-              <h2>{project.title}</h2>
+              <h2><Link to={project.path}>{project.title}</Link></h2>
               <p>{project.summary}</p>
             </div>
             <div className="project-detail">
               <ul className="tag-list">
                 {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
               </ul>
-              <details>
+              <details open>
                 <summary>Details <span aria-hidden="true">+</span></summary>
                 <p>{project.story}</p>
               </details>
+              <Link className="text-link" to={project.path}>
+                Full project <span aria-hidden="true">↗</span>
+              </Link>
             </div>
           </motion.article>
         ))}
       </div>
 
-      <div className="future-panel">
-        <div>
+      <section className="archive-panel" aria-labelledby="archive-title">
+        <div className="archive-intro">
           <p className="label">Archive</p>
-          <h2>Completed</h2>
-          <p>Past builds and experiments.</p>
+          <h2 id="archive-title">Earlier experiments</h2>
+          <p>Small projects that still belong in the map without competing with current work.</p>
         </div>
-        <div className="project-list">
-          {completed.map((project, index) => (
-            <motion.article
-              className="project-row"
-              key={project.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ delay: index * 0.04 }}
-            >
-              <div className="project-index" aria-hidden="true">
-                <span>0{index + 1}</span>
-                <i>░▒▓█</i>
-              </div>
-              <div className="project-main">
-                <div className="project-meta">
-                  <span className={`status status-${project.status}`}>
-                    {statusLabel(project.status)}
-                  </span>
-                  <span>{project.year}</span>
-                </div>
-                <h2>{project.title}</h2>
-                <p>{project.summary}</p>
-              </div>
-              <div className="project-detail">
-                <ul className="tag-list">
-                  {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
-                </ul>
-                <details>
-                  <summary>Details <span aria-hidden="true">+</span></summary>
-                  <p>{project.story}</p>
-                </details>
-              </div>
-            </motion.article>
+        <div className="archive-grid">
+          {archived.map((project) => (
+            <article key={project.slug}>
+              <div><span>{project.year}</span><span>{statusLabel(project.status)}</span></div>
+              <h3>{project.title}</h3>
+              <p>{project.summary}</p>
+              <ul className="tag-list">
+                {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
+              </ul>
+            </article>
           ))}
         </div>
-      </div>
+      </section>
     </section>
   );
 }
@@ -541,7 +630,7 @@ function SystemsPage() {
         index="03"
         label="Systems"
         title="Systems"
-        description="The machines, software, and audio systems I actually use."
+        description="Four connected systems, each with its own page and a clear relationship to the work."
         scene="systems"
       />
 
@@ -557,13 +646,14 @@ function SystemsPage() {
           >
             <span className="row-number">{layer.index}</span>
             <div>
-              <h2>{layer.title}</h2>
+              <h2><Link to={layer.path}>{layer.title}</Link></h2>
               <p>{layer.description}</p>
               <small>Flow</small>
               <code>{layer.signal}</code>
             </div>
             <ul>
               {layer.items.map((item) => <li key={item}>{item}</li>)}
+              <li><Link className="text-link" to={layer.path}>Open system <span aria-hidden="true">↗</span></Link></li>
             </ul>
           </motion.article>
         ))}
@@ -577,66 +667,97 @@ function SystemsPage() {
   );
 }
 
-function HermesPage() {
+function DetailSections({ sections }: { sections: { heading: string; paragraphs: string[]; bullets?: string[] }[] }) {
+  return (
+    <div className="detail-sections">
+      {sections.map((section, index) => (
+        <motion.section
+          key={section.heading}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ delay: index * 0.04 }}
+        >
+          <span className="row-number">0{index + 1}</span>
+          <div>
+            <h2>{section.heading}</h2>
+            {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {section.bullets && (
+              <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+            )}
+          </div>
+        </motion.section>
+      ))}
+    </div>
+  );
+}
+
+function RelatedLinks({ links }: { links: { label: string; path: string }[] }) {
+  if (!links.length) return null;
+  return (
+    <aside className="related-links" aria-label="Related pages">
+      <p className="label">Continue through the map</p>
+      <div>
+        {links.map((link) => (
+          <Link key={link.path} to={link.path}>{link.label}<span aria-hidden="true">↗</span></Link>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+function ProjectDetailPage({ slug }: { slug: string }) {
+  const project = projects.find((item) => item.slug === slug && !item.archived);
+  if (!project) return <NotFoundPage />;
+
   return (
     <section className="section-shell page-section">
       <SectionHeading
-        index="04"
-        label="Hermes"
-        title="Hermes"
-        description="An autonomous AI agent that runs daily operations — briefs, memory, cron jobs, multi-model routing."
+        index="02"
+        label="Project"
+        title={project.title}
+        description={project.summary}
+        scene={project.slug === "hermes" ? "hermes" : "projects"}
+      />
+      <div className="detail-lead">
+        <div className="detail-facts">
+          {project.facts.map((fact) => (
+            <div key={fact.label}><span>{fact.label}</span><strong>{fact.value}</strong></div>
+          ))}
+        </div>
+        <p>{project.story}</p>
+        <ul className="tag-list">{project.stack.map((item) => <li key={item}>{item}</li>)}</ul>
+      </div>
+      <DetailSections sections={project.sections} />
+      <RelatedLinks links={project.related} />
+    </section>
+  );
+}
+
+function SystemDetailPage({ slug }: { slug: string }) {
+  const system = systemLayers.find((item) => item.slug === slug);
+  if (!system) return <NotFoundPage />;
+
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading
+        index="03"
+        label={`${system.index} System`}
+        title={system.title}
+        description={system.description}
         scene="systems"
       />
-
-      <div className="hermes-intro">
-        <p>
-          Hermes started as a way to stop rebuilding AI tooling on every device.
-          One server on a Mac mini, connected from everywhere over Tailscale.
-          It handles morning briefs, interview prep, session journals, and 13 cron automations — all fire and forget.
-        </p>
+      <div className="detail-lead">
+        <div className="signal-card">
+          <span>System flow</span>
+          <code>{system.signal}</code>
+        </div>
+        <ul className="detail-index">
+          {system.items.map((item, index) => <li key={item}><span>0{index + 1}</span>{item}</li>)}
+        </ul>
       </div>
-
-      <div className="hermes-sections">
-        {hermesSections.map((section, index) => (
-          <motion.article
-            className="system-row"
-            key={section.title}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span className="row-number">0{index + 1}</span>
-            <div>
-              <h2>{section.title}</h2>
-              <p>{section.description}</p>
-            </div>
-            <ul>
-              {section.items.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </motion.article>
-        ))}
-      </div>
-
-      <div className="hermes-architecture">
-        <pre className="topic-ascii" aria-hidden="true">{String.raw`
-  ┌─────────────────────────────────────────┐
-  │              HERMES AGENT               │
-  ├─────────┬───────────┬───────────────────┤
-  │ BRIEF   │ CRON      │ MEMORY            │
-  │ 9:30am  │ 13 jobs   │ Mnemosyne v3.14   │
-  │ 6:00pm  │ fire+     │ local embeddings  │
-  │ 10:00pm │ forget    │ knowledge graph   │
-  ├─────────┴───────────┴───────────────────┤
-  │         MODEL ROUTING                   │
-  │  Mimo V2.5 → Kimi K3 → DeepSeek V4     │
-  │         OpenCode Go ($10/mo)            │
-  ├─────────────────────────────────────────┤
-  │         SURFACES                        │
-  │  Telegram · WebUI · Discord · Cron      │
-  │         Tailscale Mesh                  │
-  └─────────────────────────────────────────┘`}</pre>
-      </div>
+      <DetailSections sections={system.sections} />
+      <RelatedLinks links={system.related} />
     </section>
   );
 }
@@ -648,9 +769,15 @@ function GearPage() {
         index="05"
         label="Gear"
         title="Gear"
-        description="The devices, speakers, cameras, and tools I use daily. Updated from the vault loadout."
-        scene="about"
+        description="A deliberately edited set of the devices that currently matter to how I work and listen."
+        scene="gear"
       />
+
+      <div className="snapshot-note">
+        <span>Vault snapshot</span>
+        <strong>July 2026</strong>
+        <p>Current primary gear only. Prices, locations, sold items, and uncertain records are intentionally omitted.</p>
+      </div>
 
       <div className="gear-categories">
         {gearCategories.map((cat, catIndex) => (
@@ -668,7 +795,7 @@ function GearPage() {
                 <div className="gear-row" key={item.name}>
                   <span className="gear-name">{item.name}</span>
                   <span className="gear-role">{item.role}</span>
-                  <span className={`gear-status gear-status-${item.status}`}>{item.status}</span>
+                  <span className="gear-status">active</span>
                 </div>
               ))}
             </div>
@@ -679,19 +806,19 @@ function GearPage() {
   );
 }
 
-function WriteupsPage() {
+function BlogPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading
-        index="06"
-        label="Writeups"
-        title="Writeups"
-        description="Field notes on building, configuring, and breaking things."
-        scene="projects"
+        index="05"
+        label="Blog"
+        title="Blog"
+        description="Long-form public adaptations of the systems and ideas developing in the private notebook."
+        scene="writeups"
       />
 
       <div className="writeup-list">
-        {writeups.map((post, index) => (
+        {blogPosts.map((post, index) => (
           <motion.article
             className="writeup-row"
             key={post.slug}
@@ -702,68 +829,52 @@ function WriteupsPage() {
           >
             <div className="writeup-meta">
               <time dateTime={post.date}>{post.date}</time>
+              <span>{post.readingTime}</span>
               <ul className="tag-list">
                 {post.tags.map((tag) => <li key={tag}>{tag}</li>)}
               </ul>
             </div>
             <div className="writeup-main">
-              <h2>{post.title}</h2>
+              <h2><Link to={`/blog/${post.slug}`}>{post.title}</Link></h2>
               <p>{post.summary}</p>
+              <Link className="text-link" to={`/blog/${post.slug}`}>Read article <span aria-hidden="true">↗</span></Link>
             </div>
           </motion.article>
         ))}
       </div>
 
-      <aside className="plain-note">
-        <p className="label">More</p>
-        <p>Writing longer-form notes on GPU passthrough, Arch daily driving, audio system tuning, and the Hermes build process.</p>
-      </aside>
+      <aside className="plain-note"><p className="label">Publishing boundary</p><p>These are edited public pieces, not raw vault notes. Private context and operational material stay outside the site.</p></aside>
     </section>
   );
 }
 
-function NowPage() {
+function BlogPostPage({ slug }: { slug: string }) {
+  const post = findBlogPost(slug);
+  if (!post) return <NotFoundPage />;
+  const related = blogPosts.filter((item) => item.slug !== slug).slice(0, 2);
+
   return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="07"
-        label="Now"
-        title="Now"
-        description="What I am working on and learning."
-        scene="now"
-      />
-
-      <div className="now-meta">
-        <span>Updated</span>
-        <time dateTime="2026-07-29">{nowUpdated}</time>
+    <article className="section-shell article-page">
+      <header className="article-header">
+        <Link className="text-link" to="/blog">← Blog</Link>
+        <p className="label">Essay / {post.readingTime}</p>
+        <h1>{post.title}</h1>
+        <p>{post.summary}</p>
+        <div>
+          <time dateTime={post.date}>{post.date}</time>
+          <ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
+        </div>
+      </header>
+      <div className="article-body">
+        <Suspense fallback={<p className="article-loading">Loading article…</p>}>
+          <ReactMarkdown>{post.content}</ReactMarkdown>
+        </Suspense>
       </div>
-
-      <div className="now-list">
-        {nowEntries.map((entry, index) => (
-          <motion.article
-            className="now-row"
-            key={entry.label}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span>{entry.marker}</span>
-            <div>
-              <p className="label">{entry.label}</p>
-              <h2>{entry.title}</h2>
-            </div>
-            <p>{entry.description}</p>
-            <code>{entry.detail}</code>
-          </motion.article>
-        ))}
-      </div>
-
-      <p className="now-footnote">
-        Based on <a href="https://nownownow.com/about" target="_blank" rel="noreferrer">Now pages</a>.
-        Updated manually.
-      </p>
-    </section>
+      <aside className="related-links" aria-label="Related articles">
+        <p className="label">Keep reading</p>
+        <div>{related.map((item) => <Link key={item.slug} to={`/blog/${item.slug}`}>{item.title}<span aria-hidden="true">↗</span></Link>)}</div>
+      </aside>
+    </article>
   );
 }
 
@@ -771,7 +882,7 @@ function AboutPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading
-        index="08"
+        index="06"
         label="About"
         title="About"
         description={aboutContent.intro}
@@ -830,7 +941,7 @@ function ContactPage() {
   return (
     <section className="section-shell page-section contact-page">
       <SectionHeading
-        index="09"
+        index="07"
         label="Contact"
         title="Contact"
         description="Email and GitHub are the best ways to reach me."
@@ -846,6 +957,7 @@ function ContactPage() {
             href={link.href}
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noreferrer" : undefined}
+            download={link.download ? "Ayush-Madhukar-Resume.pdf" : undefined}
           >
             <span>{link.label}</span>
             <strong>{link.handle}</strong>
@@ -871,33 +983,37 @@ function NotFoundPage() {
 function Footer() {
   return (
     <footer className="site-footer">
-      <div className="footer-texture" aria-hidden="true">
-        ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░
-      </div>
       <div className="section-shell footer-inner">
-        <p>AYUMAD.ME</p>
+        <p>AYUMAD.ME <span>/ PUBLIC INDEX</span></p>
         <p>2026</p>
-        <a href="mailto:hello@ayumad.me">Email ↗</a>
+        <div>
+          <a href="/ayush-madhukar-resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
+          <a href="mailto:hello@ayumad.me">Email ↗</a>
+        </div>
       </div>
     </footer>
   );
 }
 
+function resolvePage(path: string) {
+  if (path === "/") return <HomePage />;
+  if (path === "/work") return <WorkPage />;
+  if (path === "/projects") return <ProjectsPage />;
+  if (path.startsWith("/projects/")) return <ProjectDetailPage slug={path.slice("/projects/".length)} />;
+  if (path === "/systems") return <SystemsPage />;
+  if (path.startsWith("/systems/")) return <SystemDetailPage slug={path.slice("/systems/".length)} />;
+  if (path === "/gear") return <GearPage />;
+  if (path === "/blog") return <BlogPage />;
+  if (path.startsWith("/blog/")) return <BlogPostPage slug={path.slice("/blog/".length)} />;
+  if (path === "/about") return <AboutPage />;
+  if (path === "/contact") return <ContactPage />;
+  return <NotFoundPage />;
+}
+
 export default function App() {
   const path = useHashPath();
   const { renderMode, setRenderMode } = useRenderer();
-  const page =
-    path === "/" ? <HomePage /> :
-    path === "/showcase" ? <ShowcasePage /> :
-    path === "/projects" ? <ProjectsPage /> :
-    path === "/systems" ? <SystemsPage /> :
-    path === "/hermes" ? <HermesPage /> :
-    path === "/gear" ? <GearPage /> :
-    path === "/writeups" ? <WriteupsPage /> :
-    path === "/now" ? <NowPage /> :
-    path === "/about" ? <AboutPage /> :
-    path === "/contact" ? <ContactPage /> :
-    <NotFoundPage />;
+  const page = resolvePage(path);
 
   return (
     <RenderModeContext.Provider value={renderMode}>
@@ -906,6 +1022,7 @@ export default function App() {
         <ParticleField />
         <div className="dither-wash" aria-hidden="true" />
         <div className="render-overlay" aria-hidden="true" />
+        <RendererTransition renderMode={renderMode} />
         <a className="skip-link" href="#main-content">Skip to content</a>
         <Header
           path={path}
@@ -913,7 +1030,9 @@ export default function App() {
           setRenderMode={setRenderMode}
         />
         <main id="main-content">
-          <PageTransition path={path}>{page}</PageTransition>
+          <PageTransition path={path} renderMode={renderMode}>
+            {page}
+          </PageTransition>
         </main>
         <Footer />
       </MotionConfig>

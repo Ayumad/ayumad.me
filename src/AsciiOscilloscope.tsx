@@ -1532,10 +1532,14 @@ export default function AsciiOscilloscope() {
             title="Randomize"
             onClick={randomize}
           >
-            <span
-              className="scope-action-icon scope-icon-random"
-              aria-hidden="true"
-            />
+            <span className="scope-action-icon scope-icon-random" aria-hidden="true">
+              <svg viewBox="0 0 20 20" focusable="false">
+                <rect x="2.5" y="2.5" width="15" height="15" rx="2.5" />
+                <circle cx="6.5" cy="6.5" r="1.2" />
+                <circle cx="10" cy="10" r="1.2" />
+                <circle cx="13.5" cy="13.5" r="1.2" />
+              </svg>
+            </span>
           </button>
           <button
             className="scope-audio"
@@ -1559,11 +1563,21 @@ export default function AsciiOscilloscope() {
             onClick={() => void toggleAudio()}
           >
             <span
-              className={`scope-action-icon ${
-                audioEnabled ? "scope-icon-audio-on" : "scope-icon-audio-off"
-              }`}
+              className={`scope-action-icon ${audioEnabled ? "scope-icon-audio-on" : "scope-icon-audio-off"}`}
               aria-hidden="true"
-            />
+            >
+              <svg viewBox="0 0 22 20" focusable="false">
+                <path className="speaker-shape" d="M2.5 7.2h3.3L10 3.8v12.4l-4.2-3.4H2.5z" />
+                {audioEnabled ? (
+                  <>
+                    <path className="sound-wave" d="M13 7a4.2 4.2 0 0 1 0 6" />
+                    <path className="sound-wave" d="M15.8 4.8a7.2 7.2 0 0 1 0 10.4" />
+                  </>
+                ) : (
+                  <path className="mute-slash" d="M12.5 7.2l6 6m0-6l-6 6" />
+                )}
+              </svg>
+            </span>
           </button>
         </div>
       </div>

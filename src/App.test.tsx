@@ -88,7 +88,7 @@ describe("Ayumad.me", () => {
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
       "href",
-      "#/showcase",
+      "#/work",
     );
     expect(within(navigation).getByRole("link", { name: /Contact/i })).toHaveAttribute(
       "href",
@@ -374,26 +374,33 @@ describe("Ayumad.me", () => {
   it("renders project stories on the projects route", () => {
     renderAt("/projects");
 
-    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Hermes" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
-    expect(screen.getAllByText("Completed")).toHaveLength(3);
+    expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Earlier experiments" })).toBeInTheDocument();
+    for (const disclosure of document.querySelectorAll("details")) {
+      expect(disclosure).toHaveAttribute("open");
+    }
   });
 
   it("shows concrete systems from the editable content layer", () => {
     renderAt("/systems");
 
     expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
-    expect(screen.getByText("RTX 5080 desktop / 4K OLED")).toBeInTheDocument();
-    expect(screen.getByText("X-T4 / 18–55 + X100VI")).toBeInTheDocument();
-    expect(screen.getByText("Dusk / Daybreak / Zero:RED")).toBeInTheDocument();
+    expect(screen.getByText("Creekwood / RTX 5080")).toBeInTheDocument();
+    expect(screen.getByText("Bazzite / RX 9070 XT")).toBeInTheDocument();
+    expect(screen.getByText("Audeze LCD-X")).toBeInTheDocument();
+    expect(screen.getByText("Curated public layer")).toBeInTheDocument();
   });
 
   it.each([
-    ["/showcase", "Work", "work"],
+    ["/work", "Work", "work"],
     ["/projects", "Projects", "projects"],
     ["/systems", "Systems", "systems"],
-    ["/now", "Now", "now"],
+    ["/gear", "Gear", "gear"],
+    ["/blog", "Blog", "writeups"],
     ["/about", "About", "about"],
     ["/contact", "Contact", "contact"],
   ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
@@ -404,6 +411,63 @@ describe("Ayumad.me", () => {
     );
     expect(renderedScene).toBeInTheDocument();
     expect(renderedScene?.textContent?.length).toBeGreaterThan(1_000);
+  });
+
+  it("links every home topic to a meaningful destination", () => {
+    renderAt("/");
+    expect(screen.getByRole("link", { name: /AI \+ Notes/i })).toHaveAttribute(
+      "href",
+      "#/systems/knowledge",
+    );
+    expect(screen.getByRole("link", { name: /Homelab/i })).toHaveAttribute(
+      "href",
+      "#/projects/homelab",
+    );
+    expect(screen.getByRole("link", { name: /Headphones/i })).toHaveAttribute(
+      "href",
+      "#/systems/audio",
+    );
+    expect(screen.getByRole("link", { name: /Linux PCs/i })).toHaveAttribute(
+      "href",
+      "#/systems/hardware",
+    );
+  });
+
+  it("renders project, system, and blog detail routes", async () => {
+    const project = renderAt("/projects/hermes");
+    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The idea" })).toBeInTheDocument();
+    project.unmount();
+
+    const system = renderAt("/systems/audio");
+    expect(screen.getByRole("heading", { name: "Audio" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The stack" })).toBeInTheDocument();
+    system.unmount();
+
+    renderAt("/blog/hermes-on-mac-mini");
+    expect(
+      screen.getByRole("heading", {
+        name: "One Agent, Every Device: Why Hermes Lives on a Mac mini",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Why the Mac mini fits" }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps legacy bookmarks working", () => {
+    renderAt("/hermes");
+    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/projects/hermes");
+  });
+
+  it("publishes the resume from contact and the footer", () => {
+    renderAt("/contact");
+    const resumeLinks = screen.getAllByRole("link", { name: /Résumé/i });
+    expect(resumeLinks).toHaveLength(2);
+    for (const link of resumeLinks) {
+      expect(link).toHaveAttribute("href", "/ayush-madhukar-resume.pdf");
+    }
   });
 
   it("renders a useful not-found route", () => {
@@ -436,11 +500,13 @@ describe("Ayumad.me", () => {
 
     expect(document.documentElement.dataset.renderer).toBe("dither");
     expect(localStorage.getItem("ayumad-renderer")).toBe("dither");
+    expect(document.querySelector(".transition-mode.transition-dither")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "dither");
     expect(scene?.textContent).toMatch(/[░▒▓█]/);
 
     fireEvent.change(selector, { target: { value: "particles" } });
     expect(document.documentElement.dataset.renderer).toBe("particles");
+    expect(document.querySelector(".transition-mode.transition-particles")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "particles");
     expect(scene?.textContent).toMatch(/[·•●]/);
 
@@ -448,7 +514,23 @@ describe("Ayumad.me", () => {
       fireEvent.change(selector, { target: { value: mode } });
       expect(document.documentElement.dataset.renderer).toBe(mode);
       expect(localStorage.getItem("ayumad-renderer")).toBe(mode);
+      expect(
+        document.querySelector(`.transition-mode.transition-${mode}`),
+      ).toBeInTheDocument();
     }
+  });
+
+  it("uses the active visual mode for content-aware route transitions", () => {
+    renderAt("/");
+
+    window.location.hash = "#/projects";
+    fireEvent(window, new HashChangeEvent("hashchange"));
+
+    const frame = document.querySelector(".route-frame.route-ascii");
+    expect(frame).toBeInTheDocument();
+    expect(frame).toHaveAttribute("data-route-path", "/projects");
+    expect(frame?.querySelector(".route-transition-pattern")).toBeInTheDocument();
+    expect(document.querySelector(".transition-route")).not.toBeInTheDocument();
   });
 
   it("opens and closes the mobile navigation accessibly", () => {

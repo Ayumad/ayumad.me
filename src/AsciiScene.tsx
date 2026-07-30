@@ -6,6 +6,9 @@ export type AsciiSceneName =
   | "work"
   | "projects"
   | "systems"
+  | "hermes"
+  | "gear"
+  | "writeups"
   | "now"
   | "about"
   | "contact";
@@ -139,7 +142,7 @@ function renderWork(frame: number) {
   write(buffer, 26, 2, "HERMES");
   write(buffer, 39, 2, "CLIENT");
 
-  write(buffer, 2, 8, "P520");
+  write(buffer, 2, 8, "HARDWARE");
   write(buffer, 10, 8, "[");
   for (let index = 0; index < 22; index += 1) {
     put(buffer, 11 + index, 8, index < load ? "█" : "░");
@@ -147,7 +150,7 @@ function renderWork(frame: number) {
   write(buffer, 33, 8, "]");
   write(buffer, 37, 8, `${Math.round((load / 22) * 100)}%`);
 
-  write(buffer, 2, 14, "AUDIO");
+  write(buffer, 2, 14, "HEADPHONES");
   for (let x = 10; x < 45; x += 1) {
     const sample = Math.sin(x * 0.62 + phase);
     const y = 16 + Math.round(sample * 2.2);
@@ -156,8 +159,8 @@ function renderWork(frame: number) {
   }
   line(buffer, { x: 10, y: 16 }, { x: 44, y: 16 }, "·");
 
-  write(buffer, 2, 20, "TOOLS");
-  write(buffer, 37, 20, "SIGNAL");
+  write(buffer, 2, 20, "AI · LAB · AUDIO · LINUX");
+  write(buffer, 39, 20, "WORK");
   addDither(buffer, frame);
   return buffer;
 }
@@ -165,22 +168,25 @@ function renderWork(frame: number) {
 function renderProjects(frame: number) {
   const buffer = createBuffer();
   const active = spinner[Math.floor(frame / 4) % spinner.length];
-  const scanRow = 4 + (Math.floor(frame / 5) % 15);
+  const scanRow = 4 + (Math.floor(frame / 5) % 8) * 2;
   const entries = [
+    ["NOW", "HERMES", active],
+    ["NOW", "AYUMAD.ME", active],
+    ["NOW", "RAG", active],
+    ["PLAN", "VOICE", "○"],
+    ["NOW", "HOMELAB", active],
+    ["2024", "AUDIO VIS", "●"],
     ["2023", "OWLBOT", "●"],
     ["2023", "DELULUBOT", "●"],
-    ["2024", "AUDIO VIS", "●"],
-    ["NOW", "HOMELAB", active],
-    ["NOW", "HERMES", active],
   ];
 
   write(buffer, 2, 1, "YEAR");
   write(buffer, 10, 1, "PROJECT");
   write(buffer, 39, 1, "STATE");
-  line(buffer, { x: 6, y: 3 }, { x: 6, y: 19 }, "│");
+  line(buffer, { x: 6, y: 3 }, { x: 6, y: 18 }, "│");
 
   entries.forEach(([year, project, state], index) => {
-    const y = 4 + index * 3;
+    const y = 4 + index * 2;
     put(buffer, 6, y, "├");
     line(buffer, { x: 7, y }, { x: 9, y }, "─");
     write(buffer, 1, y, year);
@@ -189,10 +195,12 @@ function renderProjects(frame: number) {
   });
 
   for (let x = 9; x < 39; x += 1) {
-    if ((x + frame) % 3 === 0) put(buffer, x, scanRow, "·");
+    if ((x + frame) % 3 === 0 && buffer[scanRow][x] === " ") {
+      put(buffer, x, scanRow, "·");
+    }
   }
-  write(buffer, 2, 20, `BUILD ${active}`);
-  write(buffer, 34, 20, "5 TARGETS");
+  write(buffer, 2, 20, `ACTIVE 5 ${active}`);
+  write(buffer, 34, 20, "ARCHIVE 3");
   addDither(buffer, frame);
   return buffer;
 }
@@ -202,9 +210,9 @@ function renderSystems(frame: number) {
   const forward = (frame % 60) / 59;
   const returnPath = 1 - forward;
 
-  box(buffer, 1, 2, 15, 6, "P520");
-  box(buffer, 32, 2, 46, 6, "MAC MINI");
-  box(buffer, 17, 16, 31, 20, "CLIENTS");
+  box(buffer, 1, 2, 15, 6, "KNOWLEDGE");
+  box(buffer, 32, 2, 46, 6, "AI");
+  box(buffer, 17, 16, 31, 20, "HARDWARE");
   box(buffer, 1, 16, 13, 20, "AUDIO");
 
   line(buffer, { x: 15, y: 4 }, { x: 32, y: 4 }, "─");
@@ -216,10 +224,119 @@ function renderSystems(frame: number) {
   movingPoint(buffer, { x: 39, y: 6 }, { x: 25, y: 16 }, forward, "●");
   movingPoint(buffer, { x: 8, y: 6 }, { x: 21, y: 16 }, returnPath, "○");
 
-  write(buffer, 19, 3, "LAN");
-  write(buffer, 17, 10, "TAILSCALE");
-  write(buffer, 2, 12, "ZFS");
-  write(buffer, 38, 12, "HERMES");
+  write(buffer, 18, 3, "CONTEXT");
+  write(buffer, 16, 10, "CONNECTED SYSTEMS");
+  write(buffer, 2, 12, "VAULT");
+  write(buffer, 38, 12, "TOOLS");
+  addDither(buffer, frame);
+  return buffer;
+}
+
+function renderHermes(frame: number) {
+  const buffer = createBuffer();
+  const packet = (frame % 60) / 59;
+  const model = Math.floor(frame / 18) % 3;
+
+  write(buffer, 2, 1, "HERMES / CONTROL PLANE");
+  write(buffer, 39, 1, "LIVE");
+  box(buffer, 1, 4, 14, 8, "MAC MINI");
+  box(buffer, 18, 3, 31, 9, "HERMES");
+  box(buffer, 35, 4, 46, 8, "MEMORY");
+
+  line(buffer, { x: 14, y: 6 }, { x: 18, y: 6 }, "─");
+  line(buffer, { x: 31, y: 6 }, { x: 35, y: 6 }, "─");
+  movingPoint(buffer, { x: 14, y: 6 }, { x: 35, y: 6 }, packet, "◆");
+
+  const jobs = [
+    ["WORKFLOW", "REPEAT"],
+    ["RETRIEVE", "GROUND"],
+    ["CLIENT", "CONNECT"],
+  ];
+  jobs.forEach(([job, state], index) => {
+    const x = 1 + index * 16;
+    line(buffer, { x: 24, y: 9 }, { x: x + 5, y: 13 }, "·");
+    write(buffer, x, 14, job);
+    write(buffer, x, 15, state);
+  });
+
+  write(buffer, 2, 18, "ROUTE");
+  const models = ["FAST", "DEEP", "LOCAL"];
+  models.forEach((name, index) => {
+    const x = 10 + index * 12;
+    write(buffer, x, 18, name);
+    if (index === model) {
+      line(buffer, { x, y: 20 }, { x: Math.min(46, x + name.length - 1), y: 20 }, "━");
+    }
+  });
+  write(buffer, 2, 20, "ONE BACKEND / MANY SURFACES");
+  addDither(buffer, frame);
+  return buffer;
+}
+
+function renderGear(frame: number) {
+  const buffer = createBuffer();
+  const categories = [
+    ["COMPUTE", 10],
+    ["AUDIO", 10],
+    ["CAMERA", 5],
+    ["GAMING", 5],
+    ["MOBILE", 5],
+  ] as const;
+  const cursor = Math.floor(frame / 5) % categories.length;
+
+  write(buffer, 2, 1, "LOADOUT / CURATED INVENTORY");
+  write(buffer, 37, 1, "ACTIVE");
+  write(buffer, 2, 3, "CATEGORY");
+  write(buffer, 16, 3, "QTY");
+  write(buffer, 21, 3, "DENSITY");
+
+  categories.forEach(([category, count], index) => {
+    const y = 6 + index * 3;
+    const fill = Math.round((count / 11) * 21);
+    write(buffer, 2, y, category);
+    write(buffer, 16, y, String(count).padStart(2, "0"));
+    put(buffer, 20, y, "[");
+    for (let unit = 0; unit < 21; unit += 1) {
+      put(buffer, 21 + unit, y, unit < fill ? "█" : "░");
+    }
+    put(buffer, 42, y, "]");
+    put(buffer, 45, y, index === cursor ? "◆" : "·");
+  });
+
+  write(buffer, 2, 21, "35 SHOWN");
+  write(buffer, 29, 21, "JUL 2026 SNAPSHOT");
+  addDither(buffer, frame);
+  return buffer;
+}
+
+function renderWriteups(frame: number) {
+  const buffer = createBuffer();
+  const cursor = spinner[Math.floor(frame / 5) % spinner.length];
+  const entries = [
+    ["01", "HERMES / MAC MINI", "2026"],
+    ["02", "PUBLIC / PRIVATE VAULT", "2026"],
+    ["03", "DESKTOP HEADPHONES", "2026"],
+    ["04", "TWO BAZZITE PCS", "2026"],
+  ];
+
+  write(buffer, 2, 1, "PUBLIC BLOG");
+  write(buffer, 35, 1, "04 ENTRIES");
+  line(buffer, { x: 2, y: 3 }, { x: 45, y: 3 }, "─");
+
+  entries.forEach(([index, title, year], row) => {
+    const y = 6 + row * 4;
+    write(buffer, 2, y, index);
+    put(buffer, 6, y, "├");
+    line(buffer, { x: 7, y }, { x: 10, y }, "─");
+    write(buffer, 12, y, title);
+    write(buffer, 42, y, year);
+    line(buffer, { x: 12, y: y + 1 }, { x: 38, y: y + 1 }, "·");
+    if (row === Math.floor(frame / 18) % entries.length) {
+      put(buffer, 39, y + 1, cursor);
+    }
+  });
+
+  write(buffer, 2, 21, "VAULT → EDIT → PUBLISH → LINK");
   addDither(buffer, frame);
   return buffer;
 }
@@ -227,29 +344,31 @@ function renderSystems(frame: number) {
 function renderNow(frame: number) {
   const buffer = createBuffer();
   const active = spinner[Math.floor(frame / 4) % spinner.length];
-  const cursor = Math.floor(frame / 3) % 24;
+  const cursor = Math.floor(frame / 3) % 20;
   const tasks = [
     ["01", "HERMES", "BUILD"],
-    ["02", "LINUX", "LEARN"],
-    ["03", "AUDIO", "TUNE"],
-    ["04", "AYUMAD.ME", "DESIGN"],
+    ["02", "RAG", "CONNECT"],
+    ["03", "BAZZITE", "CONFIG"],
+    ["04", "HEADPHONES", "TUNE"],
+    ["05", "AYUMAD.ME", "DESIGN"],
+    ["06", "VOICE", "RESEARCH"],
   ];
 
   write(buffer, 2, 2, "PID");
   write(buffer, 8, 2, "TASK");
-  write(buffer, 27, 2, "MODE");
+  write(buffer, 25, 2, "MODE");
   write(buffer, 42, 2, "RUN");
   line(buffer, { x: 1, y: 4 }, { x: 46, y: 4 }, "─");
 
   tasks.forEach(([pid, task, mode], index) => {
-    const y = 7 + index * 3;
+    const y = 6 + index * 2;
     write(buffer, 2, y, pid);
     write(buffer, 8, y, task);
-    write(buffer, 27, y, mode);
+    write(buffer, 25, y, mode);
     write(buffer, 43, y, active);
   });
 
-  for (let index = 0; index < 24; index += 1) {
+  for (let index = 0; index < 20; index += 1) {
     put(buffer, 18 + index, 20, index === cursor ? "█" : "░");
   }
   write(buffer, 2, 20, "QUEUE");
@@ -272,7 +391,7 @@ function renderAbout(frame: number) {
   line(buffer, { x: 7, y: 6 }, { x: 24, y: 13 }, "·");
   write(buffer, 19, 13, "[ BAY AREA ]");
 
-  const interests = ["LINUX", "AUDIO", "CAMERAS", "SERVERS"];
+  const interests = ["AI", "LINUX", "AUDIO", "HARDWARE"];
   interests.forEach((interest, index) => {
     const x = 1 + index * 12;
     line(buffer, { x: 24, y: 14 }, { x: x + 3, y: 18 }, "·");
@@ -306,7 +425,7 @@ function renderContact(frame: number) {
     put(buffer, 29 - ring, 14 + ring, "\\");
   }
 
-  write(buffer, 2, 20, "MAIL");
+  write(buffer, 2, 20, "MAIL · GITHUB · RESUME");
   write(buffer, 41, 20, progress > 0.88 ? "ACK" : "...");
   addDither(buffer, frame);
   return buffer;
@@ -316,6 +435,9 @@ const renderers: Record<AsciiSceneName, (frame: number) => Buffer> = {
   work: renderWork,
   projects: renderProjects,
   systems: renderSystems,
+  hermes: renderHermes,
+  gear: renderGear,
+  writeups: renderWriteups,
   now: renderNow,
   about: renderAbout,
   contact: renderContact,
