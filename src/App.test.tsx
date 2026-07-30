@@ -1,4 +1,11 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -81,8 +88,8 @@ describe("Ayumad.me", () => {
         ".scope-icon-audio-off",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Renderer" })).toHaveValue(
-      "ascii",
+    expect(screen.getByRole("button", { name: "Renderer" })).toHaveTextContent(
+      "ASCII",
     );
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
@@ -513,14 +520,16 @@ describe("Ayumad.me", () => {
 
   it("applies and persists renderer modes across the complete shell", () => {
     renderAt("/systems");
-    const selector = screen.getByRole("combobox", { name: "Renderer" });
+    const selector = screen.getByRole("button", { name: "Renderer" });
     const scene = document.querySelector<HTMLPreElement>(
       '[data-ascii-scene="systems"]',
     );
 
-    expect(selector).toHaveValue("ascii");
-    expect(screen.getByRole("option", { name: "CRT+" })).toHaveValue("crt");
-    fireEvent.change(selector, { target: { value: "dither" } });
+    expect(selector).toHaveTextContent("ASCII");
+    expect(selector).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(selector);
+    expect(screen.getByRole("listbox", { name: "Visual renderer" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("option", { name: /Dither/i }));
 
     expect(document.documentElement.dataset.renderer).toBe("dither");
     expect(localStorage.getItem("ayumad-renderer")).toBe("dither");
@@ -528,20 +537,154 @@ describe("Ayumad.me", () => {
     expect(scene).toHaveAttribute("data-render-mode", "dither");
     expect(scene?.textContent).toMatch(/[░▒▓█]/);
 
-    fireEvent.change(selector, { target: { value: "particles" } });
+    fireEvent.click(selector);
+    fireEvent.click(screen.getByRole("option", { name: /Particles/i }));
     expect(document.documentElement.dataset.renderer).toBe("particles");
     expect(document.querySelector(".transition-mode.transition-particles")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "particles");
     expect(scene?.textContent).toMatch(/[·•●]/);
 
-    for (const mode of ["glitch", "crt", "ascii"]) {
-      fireEvent.change(selector, { target: { value: mode } });
+    for (const [mode, label] of [
+      ["glitch", "Glitch"],
+      ["crt", "CRT+"],
+      ["ascii", "ASCII"],
+    ]) {
+      fireEvent.click(selector);
+      fireEvent.click(screen.getByRole("option", { name: new RegExp(label) }));
       expect(document.documentElement.dataset.renderer).toBe(mode);
       expect(localStorage.getItem("ayumad-renderer")).toBe(mode);
       expect(
         document.querySelector(`.transition-mode.transition-${mode}`),
       ).toBeInTheDocument();
     }
+  });
+
+  it("operates the renderer menu by keyboard and restores focus", async () => {
+    renderAt("/");
+    const trigger = screen.getByRole("button", { name: "Renderer" });
+
+    fireEvent.keyDown(trigger, { key: "End" });
+    const crtOption = screen.getByRole("option", { name: /CRT\+/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(crtOption).toHaveFocus();
+
+    fireEvent.keyDown(crtOption, { key: "Enter" });
+    expect(document.documentElement.dataset.renderer).toBe("crt");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    fireEvent.click(trigger);
+    const selectedCrt = screen.getByRole("option", { name: /CRT\+/i });
+    expect(selectedCrt).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(selectedCrt, { key: "Home" });
+    expect(screen.getByRole("option", { name: /ASCII/i })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole("option", { name: /ASCII/i }), {
+      key: "Escape",
+    });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveFocus();
+
+    fireEvent.click(trigger);
+    fireEvent.pointerDown(document.body);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shares live Spotify playback across Home and Contact without refetching", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "playing",
+        isPlaying: true,
+        title: "Test Signal",
+        artists: ["Test Artist"],
+        album: "Test Album",
+        artwork: "https://i.scdn.co/image/test-artwork",
+        url: "https://open.spotify.com/track/test",
+        progressMs: 45_000,
+        durationMs: 180_000,
+      }),
+    );
+    renderAt("/");
+
+    expect(await screen.findByText("Test Signal")).toBeInTheDocument();
+    expect(screen.getByText("Now listening")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Track progress" })).toHaveAttribute(
+      "aria-valuenow",
+      "25",
+    );
+    const fallbackImage = screen.getByRole("img", { name: "Album art for Test Album" });
+    expect(fallbackImage).toBeInTheDocument();
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "ascii",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    fireEvent.error(fallbackImage);
+    expect(
+      screen.getByRole("img", {
+        name: "Album artwork unavailable for Test Album",
+      }),
+    ).toBeInTheDocument();
+
+    const trigger = screen.getByRole("button", { name: "Renderer" });
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("option", { name: /Particles/i }));
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "particles",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    window.location.hash = "#/contact";
+    fireEvent(window, new HashChangeEvent("hashchange"));
+    expect(await screen.findByRole("heading", { name: "Contact" })).toBeInTheDocument();
+    expect(screen.getByText("Test Signal")).toBeInTheDocument();
+    expect(screen.getByText("Now listening")).toBeInTheDocument();
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "particles",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the latest Spotify track visible as Last listened", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "recent",
+        isPlaying: false,
+        title: "Recent Signal",
+        artists: ["Recent Artist"],
+        album: "Recent Album",
+        artwork: null,
+        url: "https://open.spotify.com/track/recent",
+        playedAt: "2026-07-30T18:00:00.000Z",
+      }),
+    );
+    renderAt("/");
+
+    expect(await screen.findByText("Recent Signal")).toBeInTheDocument();
+    expect(screen.getByText("Last listened")).toBeInTheDocument();
+    expect(screen.getByText("Recent Artist")).toBeInTheDocument();
+  });
+
+  it("shows loading and idle Spotify states without inactive progress", async () => {
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(() => undefined));
+    renderAt("/");
+    expect(screen.getByText("Checking Spotify…")).toBeInTheDocument();
+
+    cleanup();
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "idle",
+        isPlaying: false,
+      }),
+    );
+    renderAt("/contact");
+    expect(await screen.findByText("Nothing has played recently.")).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar", { name: "Track progress" })).not.toBeInTheDocument();
   });
 
   it("uses the active visual mode for content-aware route transitions", () => {

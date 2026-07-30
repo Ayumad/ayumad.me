@@ -14,6 +14,7 @@ import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import { blogPosts, findBlogPost } from "./blog";
 import ParticleField from "./ParticleField";
+import { RendererMenu } from "./RendererMenu";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
   isRenderMode,
@@ -23,10 +24,11 @@ import {
 } from "./renderMode";
 import {
   formatPlaybackTime,
-  isSpotifyPlayback,
   playbackProgress,
-  type SpotifyPlayback,
 } from "./spotify";
+import { SpotifyArtwork } from "./SpotifyArtwork";
+import { SpotifyPlaybackProvider } from "./SpotifyPlaybackProvider";
+import { useSpotifyPlayback } from "./useSpotifyPlayback";
 import {
   activityConnections,
   aboutContent,
@@ -247,25 +249,11 @@ function Header({
         </nav>
 
         <div className="header-actions">
-          <label className="render-control">
-            <span className="sr-only">Renderer</span>
-            <select
-              className="render-select"
-              aria-label="Renderer"
-              value={renderMode}
-              onChange={(event) => {
-                if (isRenderMode(event.target.value)) {
-                  setRenderMode(event.target.value);
-                }
-              }}
-            >
-              {renderModes.map((mode) => (
-                <option key={mode.value} value={mode.value}>
-                  {mode.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <RendererMenu
+            key={path}
+            renderMode={renderMode}
+            setRenderMode={setRenderMode}
+          />
           <button
             type="button"
             className="plain-button icon-control"
@@ -447,6 +435,7 @@ function HomePage() {
             <Link className="button primary" to="/projects">Projects</Link>
             <Link className="button" to="/about">About</Link>
           </div>
+          <SpotifyHomeSignal />
         </div>
 
         <aside className="hero-index" aria-label="Primary interests">
@@ -509,6 +498,96 @@ function HomePage() {
         <Link className="text-link" to="/projects/hermes">Hermes <span aria-hidden="true">↗</span></Link>
       </section>
     </>
+  );
+}
+
+function SpotifyHomeSignal() {
+  const { playback, requestFailed } = useSpotifyPlayback();
+  const hasTrack = Boolean(playback?.configured && playback.title);
+  const progress = playback ? playbackProgress(playback) : null;
+  const signal = playback?.isPlaying
+    ? "Now listening"
+    : playback?.state === "recent"
+      ? "Last listened"
+      : "Audio signal";
+  const status = requestFailed
+    ? "offline"
+    : playback?.state === "playing"
+      ? "live"
+      : playback?.state === "recent"
+        ? "recent"
+        : "standby";
+  const fallback = requestFailed
+    ? "Listening activity is temporarily unavailable."
+    : playback === null
+      ? "Checking Spotify…"
+      : !playback.configured
+        ? "Spotify is not connected."
+        : playback.state === "idle"
+          ? "Nothing has played recently."
+          : "Listening activity is temporarily unavailable.";
+
+  const content = (
+    <>
+      {hasTrack && playback?.artwork ? (
+        <SpotifyArtwork
+          artwork={playback.artwork}
+          album={playback.album}
+          compact
+        />
+      ) : (
+        <span className="spotify-home-fallback" aria-hidden="true">♪</span>
+      )}
+      <span className="spotify-home-copy">
+        <span className="spotify-home-meta">
+          <span>{signal}</span>
+          <i>{status}</i>
+        </span>
+        {hasTrack ? (
+          <>
+            <strong>{playback?.title}</strong>
+            <small>
+              {playback?.artists?.join(", ") || playback?.album || "Spotify"}
+            </small>
+          </>
+        ) : (
+          <>
+            <strong>Spotify</strong>
+            <small>{fallback}</small>
+          </>
+        )}
+      </span>
+      {progress !== null ? (
+        <span
+          className="spotify-home-progress"
+          role="progressbar"
+          aria-label="Track progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+        >
+          <i style={{ width: `${progress}%` }} />
+        </span>
+      ) : null}
+      <span className="spotify-home-arrow" aria-hidden="true">↗</span>
+    </>
+  );
+
+  return playback?.url ? (
+    <a
+      className="spotify-home-signal is-linked"
+      href={playback.url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Open ${playback.title ?? "track"} on Spotify`}
+      aria-live="polite"
+    >
+      {content}
+    </a>
+  ) : (
+    <div className="spotify-home-signal" aria-live="polite">
+      {content}
+    </div>
   );
 }
 
@@ -1029,40 +1108,7 @@ function ContactPage() {
 }
 
 function SpotifyActivityCard() {
-  const [playback, setPlayback] = useState<SpotifyPlayback | null>(null);
-  const [requestFailed, setRequestFailed] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-
-    const loadPlayback = async () => {
-      try {
-        const response = await fetch("/api/spotify", {
-          headers: { Accept: "application/json" },
-        });
-        const payload: unknown = await response.json();
-        if (!response.ok || !isSpotifyPlayback(payload)) {
-          throw new Error("Spotify activity is unavailable");
-        }
-        if (active) {
-          setPlayback(payload);
-          setRequestFailed(false);
-        }
-      } catch {
-        if (active) setRequestFailed(true);
-      }
-    };
-
-    void loadPlayback();
-    const poll = window.setInterval(() => {
-      if (document.visibilityState === "visible") void loadPlayback();
-    }, 30_000);
-
-    return () => {
-      active = false;
-      window.clearInterval(poll);
-    };
-  }, []);
+  const { playback, requestFailed } = useSpotifyPlayback();
 
   const progress = playback ? playbackProgress(playback) : null;
   const hasTrack = Boolean(playback?.configured && playback.title);
@@ -1100,13 +1146,9 @@ function SpotifyActivityCard() {
       {hasTrack ? (
         <div className="spotify-playback">
           {playback?.artwork ? (
-            <img
-              className="spotify-artwork"
-              src={playback.artwork}
-              alt=""
-              loading="lazy"
-              width="160"
-              height="160"
+            <SpotifyArtwork
+              artwork={playback.artwork}
+              album={playback.album}
             />
           ) : (
             <div className="spotify-artwork spotify-artwork-fallback" aria-hidden="true">
@@ -1201,26 +1243,28 @@ export default function App() {
   const page = resolvePage(path);
 
   return (
-    <RenderModeContext.Provider value={renderMode}>
-      <MotionConfig reducedMotion="user">
-        <RouteEffects path={path} />
-        <ParticleField />
-        <div className="dither-wash" aria-hidden="true" />
-        <div className="render-overlay" aria-hidden="true" />
-        <RendererTransition renderMode={renderMode} />
-        <a className="skip-link" href="#main-content">Skip to content</a>
-        <Header
-          path={path}
-          renderMode={renderMode}
-          setRenderMode={setRenderMode}
-        />
-        <main id="main-content">
-          <PageTransition path={path} renderMode={renderMode}>
-            {page}
-          </PageTransition>
-        </main>
-        <Footer />
-      </MotionConfig>
-    </RenderModeContext.Provider>
+    <SpotifyPlaybackProvider>
+      <RenderModeContext.Provider value={renderMode}>
+        <MotionConfig reducedMotion="user">
+          <RouteEffects path={path} />
+          <ParticleField />
+          <div className="dither-wash" aria-hidden="true" />
+          <div className="render-overlay" aria-hidden="true" />
+          <RendererTransition renderMode={renderMode} />
+          <a className="skip-link" href="#main-content">Skip to content</a>
+          <Header
+            path={path}
+            renderMode={renderMode}
+            setRenderMode={setRenderMode}
+          />
+          <main id="main-content">
+            <PageTransition path={path} renderMode={renderMode}>
+              {page}
+            </PageTransition>
+          </main>
+          <Footer />
+        </MotionConfig>
+      </RenderModeContext.Provider>
+    </SpotifyPlaybackProvider>
   );
 }
