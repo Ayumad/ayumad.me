@@ -94,6 +94,10 @@ describe("Ayumad.me", () => {
       "href",
       "#/contact",
     );
+    expect(within(navigation).getByRole("link", { name: /Knowledge/i })).toHaveAttribute(
+      "href",
+      "https://ayumad.github.io",
+    );
   });
 
   it("spans three complete chromatic octaves from A0 through A3", () => {

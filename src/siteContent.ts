@@ -4,6 +4,7 @@ export interface NavItem {
   label: string;
   path: string;
   index: string;
+  external?: boolean;
 }
 
 export interface HomeTopic {
@@ -96,6 +97,7 @@ export const navItems: NavItem[] = [
   { label: "Blog", path: "/blog", index: "05" },
   { label: "About", path: "/about", index: "06" },
   { label: "Contact", path: "/contact", index: "07" },
+  { label: "Knowledge", path: "https://ayumad.github.io", index: "08", external: true },
 ];
 
 export const legacyRedirects: Record<string, string> = {

@@ -216,6 +216,20 @@ function Header({
           aria-label="Main navigation"
         >
           {navItems.map((item) => {
+            if (item.external) {
+              return (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  className="nav-link"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span>{item.index}</span>
+                  {item.label}
+                  <i aria-hidden="true">↗</i>
+                </a>
+              );
+            }
             const isActive = item.path === "/" ? path === "/" : path === item.path || path.startsWith(`${item.path}/`);
             return (
               <Link
@@ -414,6 +428,7 @@ function HomePage() {
     "Long-form notes from the public knowledge layer.",
     "Background, education, and interests.",
     "Email, GitHub, and résumé.",
+    "The navigable public layer of my Obsidian knowledge base.",
   ];
 
   return (
@@ -460,12 +475,21 @@ function HomePage() {
         <div className="index-list">
           {navItems.slice(1).map((item, index) => (
             <motion.div key={item.path} whileHover={{ x: 6 }} transition={{ duration: 0.14 }}>
-              <Link to={item.path} className="index-row">
-                <span>{item.index}</span>
-                <h3>{item.label}</h3>
-                <p>{descriptions[index]}</p>
-                <i aria-hidden="true">↗</i>
-              </Link>
+              {item.external ? (
+                <a href={item.path} className="index-row">
+                  <span>{item.index}</span>
+                  <h3>{item.label}</h3>
+                  <p>{descriptions[index]}</p>
+                  <i aria-hidden="true">↗</i>
+                </a>
+              ) : (
+                <Link to={item.path} className="index-row">
+                  <span>{item.index}</span>
+                  <h3>{item.label}</h3>
+                  <p>{descriptions[index]}</p>
+                  <i aria-hidden="true">↗</i>
+                </Link>
+              )}
             </motion.div>
           ))}
         </div>
