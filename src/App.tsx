@@ -500,7 +500,7 @@ function WorkPage() {
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
+            transition={{ duration: 0.16, delay: Math.min(index * 0.02, 0.06) }}
           >
             <span className="row-number">0{index + 1}</span>
             <div className="showcase-copy">
@@ -568,7 +568,7 @@ function ProjectsPage() {
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: index * 0.04 }}
+            transition={{ duration: 0.16, delay: Math.min(index * 0.015, 0.05) }}
           >
             <div className="project-index" aria-hidden="true">
               <span>0{index + 1}</span>
@@ -588,7 +588,7 @@ function ProjectsPage() {
               <ul className="tag-list">
                 {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
               </ul>
-              <details open>
+              <details>
                 <summary>Details <span aria-hidden="true">+</span></summary>
                 <p>{project.story}</p>
               </details>
@@ -642,7 +642,7 @@ function SystemsPage() {
             initial={{ opacity: 0, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ delay: index * 0.05 }}
+            transition={{ duration: 0.16, delay: Math.min(index * 0.02, 0.06) }}
           >
             <span className="row-number">{layer.index}</span>
             <div>
@@ -676,7 +676,7 @@ function DetailSections({ sections }: { sections: { heading: string; paragraphs:
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ delay: index * 0.04 }}
+          transition={{ duration: 0.16, delay: Math.min(index * 0.015, 0.05) }}
         >
           <span className="row-number">0{index + 1}</span>
           <div>
@@ -787,7 +787,7 @@ function GearPage() {
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: catIndex * 0.04 }}
+            transition={{ duration: 0.16, delay: Math.min(catIndex * 0.015, 0.05) }}
           >
             <h2>{cat.category}</h2>
             <div className="gear-table">
@@ -825,7 +825,7 @@ function BlogPage() {
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: index * 0.04 }}
+            transition={{ duration: 0.16, delay: Math.min(index * 0.015, 0.05) }}
           >
             <div className="writeup-meta">
               <time dateTime={post.date}>{post.date}</time>

@@ -4391,3 +4391,584 @@ main {
     justify-self: start;
   }
 }
+
+/* Compact subpage rhythm
+   Keep the expressive home page, but make information pages scan quickly. */
+
+.page-section {
+  padding-block: clamp(42px, 5vw, 76px);
+}
+
+.page-heading {
+  min-height: 275px;
+  margin-bottom: clamp(38px, 4vw, 60px);
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.65fr);
+}
+
+.heading-copy {
+  padding: clamp(24px, 3vw, 44px);
+}
+
+.page-heading h1 {
+  margin-top: 24px;
+  font-size: clamp(3.2rem, 6vw, 6rem);
+  line-height: 0.82;
+}
+
+:root[data-renderer="crt"] .page-heading h1 {
+  font-size: clamp(4rem, 7vw, 6.8rem);
+}
+
+.page-intro {
+  margin-top: 24px;
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  line-height: 1.5;
+}
+
+.heading-field {
+  padding: 18px;
+  font-size: clamp(0.44rem, 0.6vw, 0.58rem);
+}
+
+.showcase-row {
+  min-height: 285px;
+  grid-template-columns: 58px minmax(280px, 0.95fr) minmax(340px, 1.05fr);
+}
+
+.showcase-row:nth-child(2) {
+  grid-template-columns: 58px minmax(340px, 1.05fr) minmax(280px, 0.95fr);
+}
+
+.showcase-copy {
+  padding: clamp(24px, 3vw, 40px);
+}
+
+.showcase-copy h2 {
+  margin: 14px 0 16px;
+  font-size: clamp(2.1rem, 3.8vw, 4rem);
+}
+
+.showcase-copy > p:not(.label) {
+  line-height: 1.5;
+}
+
+.topic-ascii {
+  padding: 22px;
+  font-size: clamp(0.5rem, 0.78vw, 0.72rem);
+  line-height: 1.35;
+}
+
+.tag-list {
+  margin-top: 18px;
+}
+
+.tag-list li {
+  padding: 6px 8px;
+}
+
+.now-inline {
+  margin-bottom: 42px;
+}
+
+.now-inline-heading {
+  padding: clamp(24px, 3vw, 38px);
+}
+
+.now-inline-heading h2 {
+  margin: 16px 0;
+  font-size: clamp(3rem, 4.6vw, 4.8rem);
+}
+
+.now-inline-grid article {
+  padding: clamp(18px, 2vw, 28px);
+}
+
+.now-inline-grid h3 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.2rem, 1.7vw, 1.7rem);
+}
+
+.now-inline-grid article > p:last-child {
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.project-row {
+  min-height: 0;
+  grid-template-columns: 58px minmax(280px, 1fr) minmax(300px, 0.88fr);
+}
+
+.project-index {
+  padding: 20px 12px;
+}
+
+.project-index i {
+  font-size: 3.25rem;
+}
+
+.project-main,
+.project-detail {
+  padding: clamp(22px, 2.6vw, 36px);
+}
+
+.project-main h2 {
+  margin: 28px 0 16px;
+  font-size: clamp(2.2rem, 3.8vw, 4rem);
+}
+
+.project-main > p,
+.project-detail details p {
+  line-height: 1.5;
+}
+
+.project-detail details {
+  margin-top: 20px;
+}
+
+.archive-panel {
+  margin-top: 48px;
+}
+
+.archive-intro,
+.archive-grid article {
+  padding: clamp(22px, 2.6vw, 34px);
+}
+
+.archive-intro h2 {
+  margin: 18px 0 14px;
+  font-size: clamp(1.8rem, 3.2vw, 3.2rem);
+}
+
+.archive-grid h3 {
+  margin: 26px 0 12px;
+  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+}
+
+.system-row {
+  min-height: 190px;
+  grid-template-columns: 58px minmax(320px, 1.25fr) minmax(260px, 0.75fr);
+}
+
+.system-row > div,
+.system-row > ul {
+  padding: clamp(22px, 2.6vw, 36px);
+}
+
+.system-row h2 {
+  margin-bottom: 14px;
+  font-size: clamp(2.1rem, 3.6vw, 3.8rem);
+}
+
+.system-row p {
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.system-row ul {
+  gap: 8px;
+}
+
+.system-row li {
+  padding-bottom: 8px;
+}
+
+.system-band {
+  min-height: 82px;
+  margin-top: 24px;
+}
+
+.gear-categories {
+  gap: 32px;
+}
+
+.snapshot-note {
+  margin-bottom: 34px;
+}
+
+.gear-row {
+  min-height: 46px;
+}
+
+.writeup-row {
+  min-height: 110px;
+}
+
+.writeup-meta,
+.writeup-main {
+  padding: clamp(18px, 2.3vw, 28px);
+}
+
+.plain-note {
+  margin-top: 36px;
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.detail-lead {
+  margin-bottom: 42px;
+  padding: clamp(24px, 3vw, 40px);
+  gap: clamp(24px, 3vw, 46px);
+}
+
+.detail-lead > p {
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.detail-lead > .tag-list {
+  margin-top: -18px;
+}
+
+.detail-facts div {
+  padding: 12px 0;
+}
+
+.detail-sections > section {
+  grid-template-columns: 58px 1fr;
+}
+
+.detail-sections > section > div {
+  padding: clamp(24px, 3vw, 40px);
+}
+
+.detail-sections h2 {
+  margin-bottom: 18px;
+  font-size: clamp(2rem, 3.4vw, 3.6rem);
+}
+
+.detail-sections p {
+  margin-bottom: 14px;
+  font-size: clamp(0.94rem, 1vw, 1rem);
+  line-height: 1.6;
+}
+
+.detail-sections ul,
+.detail-index {
+  margin-top: 18px;
+}
+
+.detail-sections li,
+.detail-index li {
+  padding: 10px 0;
+}
+
+.related-links {
+  margin-top: 44px;
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.related-links > div {
+  margin-top: 16px;
+}
+
+.related-links a {
+  min-height: 60px;
+  padding: 14px;
+}
+
+.about-story,
+.about-profile {
+  padding: clamp(26px, 3.4vw, 48px);
+}
+
+.about-story p {
+  margin-bottom: 20px;
+  font-size: clamp(0.96rem, 1.1vw, 1.05rem);
+  line-height: 1.65;
+}
+
+.about-story p:first-child {
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  line-height: 1.5;
+}
+
+.about-data {
+  margin-top: 24px;
+}
+
+.about-data > section {
+  padding: clamp(22px, 2.5vw, 32px);
+}
+
+.about-data dl,
+.large-tags,
+.interest-list {
+  margin-top: 22px;
+}
+
+.contact-field {
+  padding: clamp(28px, 4vw, 48px);
+}
+
+.contact-links a {
+  min-height: 135px;
+  padding: clamp(22px, 2.6vw, 34px);
+}
+
+.contact-links strong {
+  font-size: clamp(1.35rem, 2.6vw, 2.7rem);
+}
+
+.article-page {
+  padding-block: clamp(42px, 5vw, 76px);
+}
+
+.article-header {
+  max-width: 1000px;
+  padding: clamp(28px, 3.4vw, 48px);
+}
+
+.article-header > .label {
+  margin-top: 38px;
+}
+
+.article-header h1 {
+  margin: 18px 0 22px;
+  font-size: clamp(2.7rem, 5vw, 5.2rem);
+}
+
+.article-header > p:not(.label) {
+  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.article-header > div {
+  margin-top: 24px;
+}
+
+.article-body {
+  max-width: 720px;
+  padding: clamp(44px, 5vw, 72px) 20px;
+}
+
+.article-body h2 {
+  margin: 48px 0 18px;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+.article-body p,
+.article-body li {
+  font-size: clamp(0.96rem, 1.05vw, 1.02rem);
+  line-height: 1.7;
+}
+
+/* Page navigation should feel immediate; mode switching retains its full portal. */
+.route-ascii .route-content,
+.route-dither .route-content,
+.route-glitch .route-content,
+.route-particles .route-content,
+.route-crt .route-content,
+.route-ascii .route-transition-pattern,
+.route-dither .route-transition-pattern,
+.route-glitch .route-transition-pattern,
+.route-particles .route-transition-pattern,
+.route-crt .route-transition-pattern,
+.route-glitch .route-transition-pattern::before {
+  animation-duration: 120ms;
+}
+
+@media (max-width: 900px) {
+  .page-heading {
+    min-height: 230px;
+    grid-template-columns: minmax(0, 1fr) 210px;
+  }
+
+  .page-heading h1 {
+    font-size: clamp(3.2rem, 10vw, 5.4rem);
+  }
+
+  .showcase-row,
+  .showcase-row:nth-child(2) {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .showcase-row .topic-ascii,
+  .showcase-row:nth-child(2) .topic-ascii {
+    min-height: 150px;
+  }
+
+  .project-row,
+  .system-row {
+    grid-template-columns: 48px 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .page-section {
+    padding-block: 30px 56px;
+  }
+
+  .page-heading {
+    margin-bottom: 34px;
+    grid-template-columns: 1fr;
+  }
+
+  .heading-copy {
+    min-height: 0;
+    padding: 24px 18px;
+  }
+
+  .page-heading h1,
+  :root[data-renderer="crt"] .page-heading h1 {
+    margin-top: 22px;
+    font-size: clamp(2.8rem, 14vw, 4.4rem);
+  }
+
+  .page-intro {
+    margin-top: 22px;
+  }
+
+  .heading-field {
+    min-height: 125px;
+    max-height: 125px;
+    padding: 12px;
+    font-size: clamp(0.4rem, 1.8vw, 0.52rem);
+  }
+
+  .showcase-copy {
+    padding: 24px 18px;
+  }
+
+  .showcase-copy h2 {
+    font-size: clamp(2.2rem, 11vw, 3.4rem);
+  }
+
+  .topic-ascii {
+    min-height: 90px;
+    max-height: 90px;
+  }
+
+  .now-inline {
+    margin-bottom: 34px;
+  }
+
+  .now-inline-heading,
+  .now-inline-grid article,
+  .archive-intro,
+  .archive-grid article {
+    padding: 22px 18px;
+  }
+
+  .now-inline-heading h2 {
+    font-size: 3.4rem;
+  }
+
+  .now-inline-grid article {
+    min-height: 82px;
+  }
+
+  .now-inline-grid h3 {
+    margin-bottom: 0;
+    padding-right: 26px;
+  }
+
+  .now-inline-grid article > p:last-child {
+    display: none;
+  }
+
+  .project-main,
+  .project-detail,
+  .system-row > div,
+  .system-row > ul {
+    padding: 22px 18px;
+  }
+
+  .project-main h2 {
+    margin-top: 24px;
+    font-size: clamp(2.1rem, 10vw, 3rem);
+  }
+
+  .project-detail details {
+    margin-top: 14px;
+  }
+
+  .project-detail summary {
+    min-height: 42px;
+  }
+
+  .archive-panel {
+    margin-top: 34px;
+  }
+
+  .system-row h2 {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .system-band {
+    min-height: 92px;
+    padding: 16px 12px;
+  }
+
+  .detail-lead {
+    margin-bottom: 34px;
+    padding: 22px 18px;
+  }
+
+  .detail-lead > .tag-list {
+    margin-top: 0;
+  }
+
+  .detail-sections > section {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+
+  .detail-sections .row-number {
+    padding-inline: 7px;
+  }
+
+  .detail-sections > section > div {
+    padding: 24px 16px;
+  }
+
+  .detail-sections h2 {
+    font-size: clamp(1.8rem, 9vw, 2.7rem);
+  }
+
+  .article-page {
+    padding-block: 30px 56px;
+  }
+
+  .article-header {
+    padding: 24px 18px;
+  }
+
+  .article-header > .label {
+    margin-top: 34px;
+  }
+
+  .article-header h1 {
+    font-size: clamp(2.25rem, 10.5vw, 3.35rem);
+  }
+
+  .article-body {
+    padding: 38px 8px;
+  }
+
+  .article-body h2 {
+    margin-top: 38px;
+  }
+
+  .contact-links a {
+    min-height: 112px;
+  }
+
+  .about-profile {
+    min-height: 210px;
+  }
+
+  .gear-row {
+    grid-template-columns: 1fr;
+  }
+
+  .gear-name {
+    padding: 11px 13px;
+  }
+
+  .gear-role {
+    padding: 10px 13px;
+    font-size: 0.78rem;
+  }
+
+  .gear-status {
+    display: none;
+  }
+}

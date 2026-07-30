@@ -381,7 +381,7 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Earlier experiments" })).toBeInTheDocument();
     for (const disclosure of document.querySelectorAll("details")) {
-      expect(disclosure).toHaveAttribute("open");
+      expect(disclosure).not.toHaveAttribute("open");
     }
   });
 
