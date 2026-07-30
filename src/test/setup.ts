@@ -47,3 +47,14 @@ Object.defineProperty(globalThis, "IntersectionObserver", {
   writable: true,
   value: IntersectionObserverMock,
 });
+
+Object.defineProperty(globalThis, "fetch", {
+  writable: true,
+  value: vi.fn(async () =>
+    Response.json({
+      configured: false,
+      state: "unavailable",
+      message: "Spotify is not connected yet.",
+    }),
+  ),
+});

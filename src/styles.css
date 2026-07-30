@@ -3039,7 +3039,7 @@ main {
 
 .activity-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .activity-grid article {
@@ -3089,6 +3089,106 @@ main {
   color: var(--soft);
   font-size: 0.78rem;
   line-height: 1.55;
+}
+
+.activity-grid .spotify-card {
+  position: relative;
+  grid-column: span 2;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--cyan) 14%, transparent) 0 1px, transparent 2px),
+    linear-gradient(135deg, color-mix(in srgb, var(--cyan) 5%, transparent), transparent 54%);
+  background-size: 20px 20px, auto;
+}
+
+.spotify-card > a {
+  display: block;
+  min-height: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+.activity-grid .spotify-card .activity-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spotify-card.is-linked:hover {
+  background-color: color-mix(in srgb, var(--cyan) 5%, transparent);
+}
+
+.spotify-playback {
+  display: grid;
+  margin-top: 30px;
+  grid-template-columns: minmax(76px, 112px) minmax(0, 1fr);
+  align-items: end;
+  gap: 18px;
+}
+
+.spotify-artwork {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  filter: saturate(0.85) contrast(1.05);
+}
+
+.spotify-artwork-fallback {
+  display: grid;
+  place-items: center;
+  color: var(--cyan);
+  font: 700 2rem/1 var(--display);
+}
+
+.activity-grid .spotify-copy h3 {
+  margin: 0 0 14px;
+}
+
+.spotify-copy strong,
+.spotify-copy small {
+  display: block;
+}
+
+.spotify-copy strong {
+  overflow: hidden;
+  font: 700 0.92rem/1.25 var(--display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-grid .spotify-copy p {
+  overflow: hidden;
+  margin-top: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-copy small {
+  margin-top: 9px;
+  color: var(--muted);
+  font: 600 0.58rem/1.2 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.spotify-progress {
+  position: absolute;
+  right: clamp(20px, 2.5vw, 34px);
+  bottom: 20px;
+  left: clamp(20px, 2.5vw, 34px);
+  height: 2px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.spotify-progress span {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
 }
 
 /* Utility pages and footer */
@@ -3428,6 +3528,10 @@ main {
 
   .activity-grid article:last-child {
     border-bottom: 0;
+  }
+
+  .activity-grid .spotify-card {
+    grid-column: span 2;
   }
 }
 
@@ -3792,6 +3896,14 @@ main {
 
   .activity-grid h3 {
     margin-top: 34px;
+  }
+
+  .activity-grid .spotify-card {
+    grid-column: auto;
+  }
+
+  .spotify-playback {
+    grid-template-columns: 88px minmax(0, 1fr);
   }
 
   .hermes-architecture pre {

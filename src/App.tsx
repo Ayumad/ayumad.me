@@ -22,6 +22,12 @@ import {
   type RenderMode,
 } from "./renderMode";
 import {
+  formatPlaybackTime,
+  isSpotifyPlayback,
+  playbackProgress,
+  type SpotifyPlayback,
+} from "./spotify";
+import {
   activityConnections,
   aboutContent,
   gearCategories,
@@ -969,28 +975,158 @@ function ContactPage() {
 
       <section className="activity-connections" aria-labelledby="activity-connections-title">
         <header>
-          <p className="label">Planned connections</p>
+          <p className="label">Live + planned connections</p>
           <h2 id="activity-connections-title">A live view of what I am into.</h2>
           <p>
-            Future integrations will turn this page into a small activity layer—showing
-            what I am listening to, watching, playing, and reading without mixing those
-            feeds into the primary contact links.
+            Spotify brings listening activity into the site directly. Watching,
+            playing, and reading connections will follow without mixing those feeds
+            into the primary contact links.
           </p>
         </header>
         <div className="activity-grid">
-          {activityConnections.map((connection) => (
-            <article key={connection.service}>
-              <div>
-                <span>{connection.signal}</span>
-                <i>{connection.status}</i>
-              </div>
-              <h3>{connection.service}</h3>
-              <p>{connection.description}</p>
-            </article>
-          ))}
+          {activityConnections.map((connection) =>
+            connection.service === "Spotify" ? (
+              <SpotifyActivityCard key={connection.service} />
+            ) : (
+              <article key={connection.service}>
+                <div>
+                  <span>{connection.signal}</span>
+                  <i>{connection.status}</i>
+                </div>
+                <h3>{connection.service}</h3>
+                <p>{connection.description}</p>
+              </article>
+            ),
+          )}
         </div>
       </section>
     </section>
+  );
+}
+
+function SpotifyActivityCard() {
+  const [playback, setPlayback] = useState<SpotifyPlayback | null>(null);
+  const [requestFailed, setRequestFailed] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadPlayback = async () => {
+      try {
+        const response = await fetch("/api/spotify", {
+          headers: { Accept: "application/json" },
+        });
+        const payload: unknown = await response.json();
+        if (!response.ok || !isSpotifyPlayback(payload)) {
+          throw new Error("Spotify activity is unavailable");
+        }
+        if (active) {
+          setPlayback(payload);
+          setRequestFailed(false);
+        }
+      } catch {
+        if (active) setRequestFailed(true);
+      }
+    };
+
+    void loadPlayback();
+    const poll = window.setInterval(() => {
+      if (document.visibilityState === "visible") void loadPlayback();
+    }, 30_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(poll);
+    };
+  }, []);
+
+  const progress = playback ? playbackProgress(playback) : null;
+  const hasTrack = Boolean(playback?.configured && playback.title);
+  const status = requestFailed
+    ? "offline"
+    : playback?.state === "playing"
+    ? "live"
+    : playback?.state === "recent"
+      ? "recent"
+      : "standby";
+  const detail = requestFailed
+    ? "Listening activity is temporarily unavailable."
+    : playback === null
+      ? "Checking the current signal…"
+      : !playback.configured
+        ? "The secure Spotify connection is ready for account authorization."
+        : playback.state === "idle"
+          ? "Nothing has played recently."
+          : playback.state === "unavailable"
+            ? "Listening activity is temporarily unavailable."
+            : null;
+
+  const content = (
+    <>
+      <div className="activity-card-header">
+        <span>
+          {playback?.isPlaying
+            ? "Now listening"
+            : playback?.state === "recent"
+              ? "Last listened"
+              : "Listening signal"}
+        </span>
+        <i>{status}</i>
+      </div>
+      {hasTrack ? (
+        <div className="spotify-playback">
+          {playback?.artwork ? (
+            <img
+              className="spotify-artwork"
+              src={playback.artwork}
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+          ) : (
+            <div className="spotify-artwork spotify-artwork-fallback" aria-hidden="true">
+              ♪
+            </div>
+          )}
+          <div className="spotify-copy">
+            <h3>Spotify</h3>
+            <strong>{playback?.title}</strong>
+            <p>{playback?.artists?.join(", ") || playback?.album}</p>
+            {!playback?.isPlaying && playback?.playedAt ? (
+              <small>{formatPlaybackTime(playback.playedAt)}</small>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <>
+          <h3>Spotify</h3>
+          <p>{detail}</p>
+        </>
+      )}
+      {progress !== null ? (
+        <div
+          className="spotify-progress"
+          role="progressbar"
+          aria-label="Track progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+        >
+          <span style={{ width: `${progress}%` }} />
+        </div>
+      ) : null}
+    </>
+  );
+
+  return playback?.url ? (
+    <article className="spotify-card is-linked">
+      <a href={playback.url} target="_blank" rel="noreferrer" aria-label={`Open ${playback.title ?? "track"} on Spotify`}>
+        {content}
+      </a>
+    </article>
+  ) : (
+    <article className="spotify-card">{content}</article>
   );
 }
 

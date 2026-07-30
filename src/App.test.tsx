@@ -470,7 +470,7 @@ describe("Ayumad.me", () => {
     }
   });
 
-  it("publishes current contact details and planned activity connections", () => {
+  it("publishes current contact details and activity connections", async () => {
     renderAt("/contact");
 
     const emailLinks = screen.getAllByRole("link", { name: /Email/i });
@@ -485,6 +485,9 @@ describe("Ayumad.me", () => {
     for (const service of ["Spotify", "IMDb", "MyAnimeList", "Steam", "Goodreads"]) {
       expect(screen.getByRole("heading", { name: service })).toBeInTheDocument();
     }
+    expect(
+      await screen.findByText(/secure Spotify connection is ready/i),
+    ).toBeInTheDocument();
   });
 
   it("renders a useful not-found route", () => {

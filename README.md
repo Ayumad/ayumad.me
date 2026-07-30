@@ -40,6 +40,8 @@ exact dependency lockfile is respected.
 - `npm run lint` — run ESLint
 - `npm test` — run the automated test suite
 - `npm run validate` — run every release check in sequence
+- `npm run spotify:auth` — authorize Spotify locally and create an ignored credential file
+- `npm run spotify:push-env` — securely add those credentials to Vercel production
 - `npm run deploy:preview` — validate, then create a Vercel preview
 - `npm run deploy` — validate, then deploy the checked workspace to production
 
@@ -78,7 +80,21 @@ independent website.
 Production is hosted on Vercel. The `main` branch is the production branch, and
 Vercel builds the static `dist` output with `npm run build`.
 
-No environment variables are required for Phase 1.
+The static site has no required environment variables. Live Spotify activity
+uses three server-only variables:
+
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
+- `SPOTIFY_REFRESH_TOKEN`
+
+Create a Spotify Web API app, add
+`http://127.0.0.1:8888/callback` as its redirect URI, and run
+`npm run spotify:auth`. The helper performs the authorization-code flow and
+writes the result to the gitignored `.env.spotify.local` file. It does not put
+credentials in source code or print the refresh token. Run
+`npm run spotify:push-env`, then `npm run deploy`, to activate the feed in
+production. Reauthorize when Spotify's refresh token expires or access is
+revoked.
 
 For a new machine, authenticate and link the services once:
 
@@ -100,9 +116,8 @@ runs whenever `main` changes.
 
 ## Project status
 
-Phase 1 is a static personal site. Spotify, IMDb, MyAnimeList, Steam, Goodreads,
-Jellyfin, AI-ush, the gear journal, and other live integrations are intentionally
-deferred. The Contact page publishes the intended listening, watching, playing,
-and reading signals without presenting placeholder data as live activity.
+The Contact page supports live Spotify listening activity with graceful
+recent-track and offline states. IMDb, MyAnimeList, Steam, Goodreads, Jellyfin,
+AI-ush, the gear journal, and other live integrations remain planned.
 
 Copyright remains with Ayush Madhukar. No open-source license is granted.
