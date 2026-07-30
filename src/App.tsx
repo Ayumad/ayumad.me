@@ -22,6 +22,7 @@ import {
   type RenderMode,
 } from "./renderMode";
 import {
+  activityConnections,
   aboutContent,
   gearCategories,
   homeContent,
@@ -47,7 +48,7 @@ const contactField = String.raw`
 @@%%##**++==--::..        ..::--==++**##%%@@
 %%##**++==--::..   EMAIL   ..::--==++**##%%@
 ##**++==--::..              ..::--==++**##%%
-**++==--::..  GITHUB · MAIL  ..::--==++**##%
+**++==--::.. GITHUB · LINKEDIN ..::--==++**#%
 ++==--::..                    ..::--==++**###
 `;
 
@@ -588,7 +589,7 @@ function ProjectsPage() {
               <ul className="tag-list">
                 {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
               </ul>
-              <details>
+              <details open>
                 <summary>Details <span aria-hidden="true">+</span></summary>
                 <p>{project.story}</p>
               </details>
@@ -904,7 +905,7 @@ function AboutPage() {
 ╚═╝  ╚═╝╚═╝     ╚═╝`}</pre>
           </div>
           <p>Ayush Madhukar</p>
-          <span>Bay Area, California</span>
+          <span>Fremont, California · ACM @ SJSU</span>
         </aside>
       </div>
 
@@ -944,7 +945,7 @@ function ContactPage() {
         index="07"
         label="Contact"
         title="Contact"
-        description="Email and GitHub are the best ways to reach me."
+        description="Email is the fastest way to reach me. You can also find my work and professional profile below."
         scene="contact"
       />
 
@@ -965,6 +966,30 @@ function ContactPage() {
           </a>
         ))}
       </div>
+
+      <section className="activity-connections" aria-labelledby="activity-connections-title">
+        <header>
+          <p className="label">Planned connections</p>
+          <h2 id="activity-connections-title">A live view of what I am into.</h2>
+          <p>
+            Future integrations will turn this page into a small activity layer—showing
+            what I am listening to, watching, playing, and reading without mixing those
+            feeds into the primary contact links.
+          </p>
+        </header>
+        <div className="activity-grid">
+          {activityConnections.map((connection) => (
+            <article key={connection.service}>
+              <div>
+                <span>{connection.signal}</span>
+                <i>{connection.status}</i>
+              </div>
+              <h3>{connection.service}</h3>
+              <p>{connection.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </section>
   );
 }
@@ -988,7 +1013,7 @@ function Footer() {
         <p>2026</p>
         <div>
           <a href="/ayush-madhukar-resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
-          <a href="mailto:hello@ayumad.me">Email ↗</a>
+          <a href="mailto:Ayumadbro123@gmail.com">Email ↗</a>
         </div>
       </div>
     </footer>

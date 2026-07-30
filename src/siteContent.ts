@@ -62,6 +62,13 @@ export interface SocialLink {
   download?: boolean;
 }
 
+export interface ActivityConnection {
+  service: string;
+  signal: string;
+  description: string;
+  status: "planned";
+}
+
 export interface NowEntry {
   label: string;
   marker: string;
@@ -583,23 +590,33 @@ export const gearCategories: GearCategory[] = [
 ];
 
 export const aboutContent = {
-  intro: "Computer Engineering student in the Bay Area building personal systems across AI, hardware, and creative technology.",
+  intro: "Computer Engineering student in Fremont building personal systems across AI, hardware, and creative technology.",
   story: [
     "I got into technology by jailbreaking devices and running emulators. I liked seeing hardware do something outside its intended path, then tracing backward until I understood why it worked.",
     "That instinct grew into Linux installations, self-hosted services, workstation builds, audio chains, and cameras. I am most interested in technology when it becomes a medium: something that can be arranged, tuned, and made personal rather than simply consumed.",
     "Most of my projects start with a practical friction point. Hermes came from wanting one agent across every device. The homelab came from wanting infrastructure I could actually inspect. This site came from wanting a public map rather than another compressed résumé.",
-    "I study Computer Engineering at San José State after completing Computer Science coursework at Foothill College. Outside class, I keep learning through the systems I use every day.",
+    "I study Computer Engineering at San José State University and participate in the ACM @ SJSU community after completing Computer Science coursework at Foothill College. Outside class, I keep learning through the systems I use every day.",
   ],
   education: [
     { school: "San José State University", program: "B.S. Computer Engineering — in progress" },
     { school: "Foothill College", program: "Computer Science studies" },
   ],
   skills: ["Python", "C++", "TypeScript", "React", "Linux", "Proxmox", "ZFS", "Docker", "Tailscale", "AI systems"],
-  interests: ["Local AI", "Knowledge systems", "Self-hosting", "Headphone audio", "Linux", "Photography", "Hardware", "Gaming + VR"],
+  interests: ["Local AI", "Knowledge systems", "Self-hosting", "Headphone audio", "Film", "Anime", "Photography", "Gaming + VR"],
 };
 
 export const socialLinks: SocialLink[] = [
-  { label: "Email", href: "mailto:hello@ayumad.me", handle: "hello@ayumad.me" },
+  {
+    label: "Email",
+    href: "mailto:Ayumadbro123@gmail.com",
+    handle: "Ayumadbro123@gmail.com",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/ayush-madhukar-6021a0249/",
+    handle: "Ayush Madhukar",
+    external: true,
+  },
   { label: "GitHub", href: "https://github.com/ayumad", handle: "@ayumad", external: true },
   {
     label: "Résumé",
@@ -607,6 +624,39 @@ export const socialLinks: SocialLink[] = [
     handle: "View / download PDF",
     external: true,
     download: true,
+  },
+];
+
+export const activityConnections: ActivityConnection[] = [
+  {
+    service: "Spotify",
+    signal: "Now listening",
+    description: "Current track, artist, album, and recent listening.",
+    status: "planned",
+  },
+  {
+    service: "IMDb",
+    signal: "Now watching",
+    description: "Current films, series, ratings, and watchlist activity.",
+    status: "planned",
+  },
+  {
+    service: "MyAnimeList",
+    signal: "Anime progress",
+    description: "Currently watching, episode progress, and completed series.",
+    status: "planned",
+  },
+  {
+    service: "Steam",
+    signal: "Now playing",
+    description: "Current game, recent sessions, and playtime.",
+    status: "planned",
+  },
+  {
+    service: "Goodreads",
+    signal: "Now reading",
+    description: "Current book, reading progress, and recently finished titles.",
+    status: "planned",
   },
 ];
 
@@ -641,6 +691,6 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   },
   "/contact": {
     title: "Contact — Ayumad.me",
-    description: "Contact Ayush Madhukar or download his résumé.",
+    description: "Email Ayush Madhukar, connect on LinkedIn or GitHub, and explore planned activity feeds.",
   },
 };

@@ -418,14 +418,14 @@ function renderContact(frame: number) {
 
   write(buffer, 2, 2, "TX");
   write(buffer, 8, 2, `${String(Math.floor(frame / 4) % 10000).padStart(4, "0")}`);
-  write(buffer, 31, 19, "hello@ayumad.me");
+  write(buffer, 24, 19, "Ayumadbro123@gmail.com");
 
   for (let ring = 0; ring < pulse; ring += 1) {
     put(buffer, 29 - ring, 8 - ring, "/");
     put(buffer, 29 - ring, 14 + ring, "\\");
   }
 
-  write(buffer, 2, 20, "MAIL · GITHUB · RESUME");
+  write(buffer, 2, 20, "MAIL · LINKEDIN · GITHUB · RESUME");
   write(buffer, 41, 20, progress > 0.88 ? "ACK" : "...");
   addDither(buffer, frame);
   return buffer;

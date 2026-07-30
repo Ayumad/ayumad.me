@@ -100,7 +100,9 @@ runs whenever `main` changes.
 
 ## Project status
 
-Phase 1 is a static personal site. Spotify, Jellyfin, Steam, Goodreads, AI-ush,
-the gear journal, and other live integrations are intentionally deferred.
+Phase 1 is a static personal site. Spotify, IMDb, MyAnimeList, Steam, Goodreads,
+Jellyfin, AI-ush, the gear journal, and other live integrations are intentionally
+deferred. The Contact page publishes the intended listening, watching, playing,
+and reading signals without presenting placeholder data as live activity.
 
 Copyright remains with Ayush Madhukar. No open-source license is granted.

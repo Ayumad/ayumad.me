@@ -381,7 +381,7 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Earlier experiments" })).toBeInTheDocument();
     for (const disclosure of document.querySelectorAll("details")) {
-      expect(disclosure).not.toHaveAttribute("open");
+      expect(disclosure).toHaveAttribute("open");
     }
   });
 
@@ -467,6 +467,23 @@ describe("Ayumad.me", () => {
     expect(resumeLinks).toHaveLength(2);
     for (const link of resumeLinks) {
       expect(link).toHaveAttribute("href", "/ayush-madhukar-resume.pdf");
+    }
+  });
+
+  it("publishes current contact details and planned activity connections", () => {
+    renderAt("/contact");
+
+    const emailLinks = screen.getAllByRole("link", { name: /Email/i });
+    expect(emailLinks).toHaveLength(2);
+    for (const link of emailLinks) {
+      expect(link).toHaveAttribute("href", "mailto:Ayumadbro123@gmail.com");
+    }
+    expect(screen.getByRole("link", { name: /LinkedIn/i })).toHaveAttribute(
+      "href",
+      "https://www.linkedin.com/in/ayush-madhukar-6021a0249/",
+    );
+    for (const service of ["Spotify", "IMDb", "MyAnimeList", "Steam", "Goodreads"]) {
+      expect(screen.getByRole("heading", { name: service })).toBeInTheDocument();
     }
   });
 
