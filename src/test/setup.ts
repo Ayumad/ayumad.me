@@ -2,11 +2,27 @@ import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
 
+const spotifyFetchMock = vi.fn(async () =>
+  Response.json({
+    configured: false,
+    state: "unavailable",
+    message: "Spotify is not connected yet.",
+  }),
+);
+
 afterEach(() => {
   cleanup();
   localStorage.clear();
   document.documentElement.dataset.theme = "dark";
-  window.location.hash = "#/";
+  window.history.replaceState({}, "", "/");
+  spotifyFetchMock.mockReset();
+  spotifyFetchMock.mockImplementation(async () =>
+    Response.json({
+      configured: false,
+      state: "unavailable",
+      message: "Spotify is not connected yet.",
+    }),
+  );
 });
 
 Object.defineProperty(window, "matchMedia", {
@@ -28,6 +44,11 @@ Object.defineProperty(window, "scrollTo", {
   value: vi.fn(),
 });
 
+Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
+  writable: true,
+  value: vi.fn(() => null),
+});
+
 class IntersectionObserverMock implements IntersectionObserver {
   readonly root = null;
   readonly rootMargin = "0px";
@@ -46,4 +67,9 @@ Object.defineProperty(window, "IntersectionObserver", {
 Object.defineProperty(globalThis, "IntersectionObserver", {
   writable: true,
   value: IntersectionObserverMock,
+});
+
+Object.defineProperty(globalThis, "fetch", {
+  writable: true,
+  value: spotifyFetchMock,
 });

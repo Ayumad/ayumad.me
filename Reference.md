@@ -46,7 +46,7 @@ A site that feels like a **map of Ayush — not a résumé**. Part showcase, not
 
 - **Live at:** https://ayumad-me.vercel.app/ (ayumad.me DNS may need reconfiguration)
 - **Framework:** React 19 + Vite
-- **Routing:** Client-side hash-based (`#/path`)
+- **Routing:** Client-side clean paths (`/path`) with Vercel SPA rewrites
 - **Theme:** Dark/light with localStorage persistence
 - **Styling:** CSS variables (Tailwind-ish utility classes, no Tailwind)
 - **Deployment:** Vercel with @vercel/analytics

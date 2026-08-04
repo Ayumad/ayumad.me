@@ -1,4 +1,11 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -81,18 +88,26 @@ describe("Ayumad.me", () => {
         ".scope-icon-audio-off",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Renderer" })).toHaveValue(
-      "ascii",
+    expect(screen.getByRole("button", { name: "Renderer" })).toHaveTextContent(
+      "ASCII",
     );
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
       "href",
-      "#/showcase",
+      "/work",
     );
     expect(within(navigation).getByRole("link", { name: /Contact/i })).toHaveAttribute(
       "href",
-      "#/contact",
+      "/contact",
+    );
+    expect(within(navigation).getByRole("link", { name: /Knowledge/i })).toHaveAttribute(
+      "href",
+      "/knowledge",
+    );
+    expect(within(navigation).getByRole("link", { name: /Blog/i })).toHaveAttribute(
+      "href",
+      "/blog",
     );
   });
 
@@ -374,26 +389,33 @@ describe("Ayumad.me", () => {
   it("renders project stories on the projects route", () => {
     renderAt("/projects");
 
-    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Hermes" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
-    expect(screen.getAllByText("Completed")).toHaveLength(3);
+    expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Earlier experiments" })).toBeInTheDocument();
+    for (const disclosure of document.querySelectorAll("details")) {
+      expect(disclosure).toHaveAttribute("open");
+    }
   });
 
   it("shows concrete systems from the editable content layer", () => {
     renderAt("/systems");
 
     expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
-    expect(screen.getByText("RTX 5080 desktop / 4K OLED")).toBeInTheDocument();
-    expect(screen.getByText("X-T4 / 18–55 + X100VI")).toBeInTheDocument();
-    expect(screen.getByText("Dusk / Daybreak / Zero:RED")).toBeInTheDocument();
+    expect(screen.getByText("Creekwood / RTX 5080")).toBeInTheDocument();
+    expect(screen.getByText("Bazzite / RX 9070 XT")).toBeInTheDocument();
+    expect(screen.getByText("Audeze LCD-X")).toBeInTheDocument();
+    expect(screen.getByText("Curated public layer")).toBeInTheDocument();
   });
 
   it.each([
-    ["/showcase", "Work", "work"],
+    ["/work", "Work", "work"],
     ["/projects", "Projects", "projects"],
     ["/systems", "Systems", "systems"],
-    ["/now", "Now", "now"],
+    ["/gear", "Gear", "gear"],
+    ["/blog", "Blog", "writeups"],
     ["/about", "About", "about"],
     ["/contact", "Contact", "contact"],
   ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
@@ -406,11 +428,102 @@ describe("Ayumad.me", () => {
     expect(renderedScene?.textContent?.length).toBeGreaterThan(1_000);
   });
 
+  it("links every home topic to a meaningful destination", () => {
+    renderAt("/");
+    expect(screen.getByRole("link", { name: /AI \+ Notes/i })).toHaveAttribute(
+      "href",
+      "/systems/knowledge",
+    );
+    expect(screen.getByRole("link", { name: /Homelab/i })).toHaveAttribute(
+      "href",
+      "/projects/homelab",
+    );
+    expect(screen.getByRole("link", { name: /Headphones/i })).toHaveAttribute(
+      "href",
+      "/systems/audio",
+    );
+    expect(screen.getByRole("link", { name: /Linux PCs/i })).toHaveAttribute(
+      "href",
+      "/systems/hardware",
+    );
+  });
+
+  it("renders project, system, and legacy blog handoff routes", () => {
+    const project = renderAt("/projects/hermes");
+    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The idea" })).toBeInTheDocument();
+    project.unmount();
+
+    const system = renderAt("/systems/audio");
+    expect(screen.getByRole("heading", { name: "Audio" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The stack" })).toBeInTheDocument();
+    system.unmount();
+
+    renderAt("/blog/hermes-on-mac-mini");
+    expect(
+      screen.getByRole("heading", {
+        name: "One Agent, Every Device: Why Hermes Lives on a Mac mini",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The problem was never the chat window" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Blog index/i })).toHaveAttribute("href", "/blog");
+  });
+
+  it("carries the current visual context into the public blog and knowledge base", () => {
+    document.documentElement.dataset.theme = "light";
+    document.documentElement.dataset.renderer = "particles";
+    renderAt("/projects/hermes");
+
+    expect(screen.getByRole("link", { name: /Why Hermes lives on a Mac mini/i })).toHaveAttribute(
+      "href",
+      "/blog/hermes-on-mac-mini",
+    );
+    expect(screen.getByRole("link", { name: "Knowledge ↗" })).toHaveAttribute(
+      "href",
+      "/knowledge",
+    );
+  });
+
+  it("keeps legacy bookmarks working", () => {
+    renderAt("/hermes");
+    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/projects/hermes");
+  });
+
+  it("publishes the resume from contact and the footer", () => {
+    renderAt("/contact");
+    const resumeLinks = screen.getAllByRole("link", { name: /Résumé/i });
+    expect(resumeLinks).toHaveLength(2);
+    for (const link of resumeLinks) {
+      expect(link).toHaveAttribute("href", "/ayush-madhukar-resume.pdf");
+    }
+  });
+
+  it("publishes current contact details and activity connections", async () => {
+    renderAt("/contact");
+
+    const emailLinks = screen.getAllByRole("link", { name: /Email/i });
+    expect(emailLinks).toHaveLength(2);
+    for (const link of emailLinks) {
+      expect(link).toHaveAttribute("href", "mailto:Ayumadbro123@gmail.com");
+    }
+    expect(screen.getByRole("link", { name: /LinkedIn/i })).toHaveAttribute(
+      "href",
+      "https://www.linkedin.com/in/ayush-madhukar-6021a0249/",
+    );
+    for (const service of ["Spotify", "IMDb", "MyAnimeList", "Steam", "Goodreads"]) {
+      expect(screen.getByRole("heading", { name: service })).toBeInTheDocument();
+    }
+    expect(
+      await screen.findByText(/secure Spotify connection is ready/i),
+    ).toBeInTheDocument();
+  });
+
   it("renders a useful not-found route", () => {
     renderAt("/missing-signal");
 
     expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#/");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
   });
 
   it("persists theme changes", () => {
@@ -421,34 +534,196 @@ describe("Ayumad.me", () => {
 
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(localStorage.getItem("ayumad-theme")).toBe("light");
+    expect(
+      within(screen.getByRole("navigation", { name: "Main navigation" }))
+        .getByRole("link", { name: /Knowledge/i }),
+    ).toHaveAttribute("href", "/knowledge");
   });
 
   it("applies and persists renderer modes across the complete shell", () => {
     renderAt("/systems");
-    const selector = screen.getByRole("combobox", { name: "Renderer" });
+    const selector = screen.getByRole("button", { name: "Renderer" });
     const scene = document.querySelector<HTMLPreElement>(
       '[data-ascii-scene="systems"]',
     );
 
-    expect(selector).toHaveValue("ascii");
-    expect(screen.getByRole("option", { name: "CRT+" })).toHaveValue("crt");
-    fireEvent.change(selector, { target: { value: "dither" } });
+    expect(selector).toHaveTextContent("ASCII");
+    expect(selector).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(selector);
+    expect(screen.getByRole("listbox", { name: "Visual renderer" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("option", { name: /Dither/i }));
 
     expect(document.documentElement.dataset.renderer).toBe("dither");
     expect(localStorage.getItem("ayumad-renderer")).toBe("dither");
+    expect(document.querySelector(".transition-mode.transition-dither")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "dither");
     expect(scene?.textContent).toMatch(/[░▒▓█]/);
 
-    fireEvent.change(selector, { target: { value: "particles" } });
+    fireEvent.click(selector);
+    fireEvent.click(screen.getByRole("option", { name: /Particles/i }));
     expect(document.documentElement.dataset.renderer).toBe("particles");
+    expect(document.querySelector(".transition-mode.transition-particles")).toBeInTheDocument();
     expect(scene).toHaveAttribute("data-render-mode", "particles");
     expect(scene?.textContent).toMatch(/[·•●]/);
+    expect(
+      within(screen.getByRole("navigation", { name: "Main navigation" }))
+        .getByRole("link", { name: /Blog/i }),
+    ).toHaveAttribute("href", "/blog");
 
-    for (const mode of ["glitch", "crt", "ascii"]) {
-      fireEvent.change(selector, { target: { value: mode } });
+    for (const [mode, label] of [
+      ["glitch", "Glitch"],
+      ["crt", "CRT+"],
+      ["ascii", "ASCII"],
+    ]) {
+      fireEvent.click(selector);
+      fireEvent.click(screen.getByRole("option", { name: new RegExp(label) }));
       expect(document.documentElement.dataset.renderer).toBe(mode);
       expect(localStorage.getItem("ayumad-renderer")).toBe(mode);
+      expect(
+        document.querySelector(`.transition-mode.transition-${mode}`),
+      ).toBeInTheDocument();
     }
+  });
+
+  it("operates the renderer menu by keyboard and restores focus", async () => {
+    renderAt("/");
+    const trigger = screen.getByRole("button", { name: "Renderer" });
+
+    fireEvent.keyDown(trigger, { key: "End" });
+    const crtOption = screen.getByRole("option", { name: /CRT\+/i });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(crtOption).toHaveFocus();
+
+    fireEvent.keyDown(crtOption, { key: "Enter" });
+    expect(document.documentElement.dataset.renderer).toBe("crt");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    fireEvent.click(trigger);
+    const selectedCrt = screen.getByRole("option", { name: /CRT\+/i });
+    expect(selectedCrt).toHaveAttribute("aria-selected", "true");
+    fireEvent.keyDown(selectedCrt, { key: "Home" });
+    expect(screen.getByRole("option", { name: /ASCII/i })).toHaveFocus();
+    fireEvent.keyDown(screen.getByRole("option", { name: /ASCII/i }), {
+      key: "Escape",
+    });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveFocus();
+
+    fireEvent.click(trigger);
+    fireEvent.pointerDown(document.body);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("shares live Spotify playback across Home and Contact without refetching", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "playing",
+        isPlaying: true,
+        title: "Test Signal",
+        artists: ["Test Artist"],
+        album: "Test Album",
+        artwork: "https://i.scdn.co/image/test-artwork",
+        url: "https://open.spotify.com/track/test",
+        progressMs: 45_000,
+        durationMs: 180_000,
+      }),
+    );
+    renderAt("/");
+
+    expect(await screen.findByText("Test Signal")).toBeInTheDocument();
+    expect(screen.getByText("Now listening")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Track progress" })).toHaveAttribute(
+      "aria-valuenow",
+      "25",
+    );
+    const fallbackImage = screen.getByRole("img", { name: "Album art for Test Album" });
+    expect(fallbackImage).toBeInTheDocument();
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "ascii",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    fireEvent.error(fallbackImage);
+    expect(
+      screen.getByRole("img", {
+        name: "Album artwork unavailable for Test Album",
+      }),
+    ).toBeInTheDocument();
+
+    const trigger = screen.getByRole("button", { name: "Renderer" });
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("option", { name: /Particles/i }));
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "particles",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    window.history.pushState({}, "", "/contact");
+    fireEvent(window, new PopStateEvent("popstate"));
+    expect(await screen.findByRole("heading", { name: "Contact" })).toBeInTheDocument();
+    expect(screen.getByText("Test Signal")).toBeInTheDocument();
+    expect(screen.getByText("Now listening")).toBeInTheDocument();
+    expect(document.querySelector(".spotify-artwork-renderer")).toHaveAttribute(
+      "data-art-mode",
+      "particles",
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the latest Spotify track visible as Last listened", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "recent",
+        isPlaying: false,
+        title: "Recent Signal",
+        artists: ["Recent Artist"],
+        album: "Recent Album",
+        artwork: null,
+        url: "https://open.spotify.com/track/recent",
+        playedAt: "2026-07-30T18:00:00.000Z",
+      }),
+    );
+    renderAt("/");
+
+    expect(await screen.findByText("Recent Signal")).toBeInTheDocument();
+    expect(screen.getByText("Last listened")).toBeInTheDocument();
+    expect(screen.getByText("Recent Artist")).toBeInTheDocument();
+  });
+
+  it("shows loading and idle Spotify states without inactive progress", async () => {
+    vi.mocked(fetch).mockImplementationOnce(() => new Promise(() => undefined));
+    renderAt("/");
+    expect(screen.getByText("Checking Spotify…")).toBeInTheDocument();
+
+    cleanup();
+    vi.mocked(fetch).mockResolvedValueOnce(
+      Response.json({
+        configured: true,
+        state: "idle",
+        isPlaying: false,
+      }),
+    );
+    renderAt("/contact");
+    expect(await screen.findByText("Nothing has played recently.")).toBeInTheDocument();
+    expect(screen.queryByRole("progressbar", { name: "Track progress" })).not.toBeInTheDocument();
+  });
+
+  it("uses the active visual mode for content-aware route transitions", () => {
+    renderAt("/");
+
+    window.history.pushState({}, "", "/projects");
+    fireEvent(window, new PopStateEvent("popstate"));
+
+    const frame = document.querySelector(".route-frame.route-ascii");
+    expect(frame).toBeInTheDocument();
+    expect(frame).toHaveAttribute("data-route-path", "/projects");
+    expect(frame?.querySelector(".route-transition-pattern")).toBeInTheDocument();
+    expect(document.querySelector(".transition-route")).not.toBeInTheDocument();
   });
 
   it("opens and closes the mobile navigation accessibly", () => {

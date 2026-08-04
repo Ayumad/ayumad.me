@@ -3,6 +3,65 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.ayumad.me"
+        }
+      ],
+      "destination": "https://ayumad.me/$1",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/_astro/(.*)",
+      "destination": "https://ayumad.github.io/_astro/$1"
+    },
+    {
+      "source": "/notes/(.*)",
+      "destination": "https://ayumad.github.io/notes/$1"
+    },
+    {
+      "source": "/explore",
+      "destination": "https://ayumad.github.io/explore/"
+    },
+    {
+      "source": "/timeline",
+      "destination": "https://ayumad.github.io/timeline/"
+    },
+    {
+      "source": "/interests",
+      "destination": "https://ayumad.github.io/interests/"
+    },
+    {
+      "source": "/library",
+      "destination": "https://ayumad.github.io/library/"
+    },
+    {
+      "source": "/knowledge/(.*)",
+      "destination": "https://ayumad.github.io/$1"
+    },
+    {
+      "source": "/search.json",
+      "destination": "https://ayumad.github.io/search.json"
+    },
+    {
+      "source": "/rss.xml",
+      "destination": "https://ayumad.github.io/rss.xml"
+    },
+    {
+      "source": "/sitemap-index.xml",
+      "destination": "https://ayumad.github.io/sitemap-index.xml"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

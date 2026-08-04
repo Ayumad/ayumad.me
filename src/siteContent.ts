@@ -4,6 +4,12 @@ export interface NavItem {
   label: string;
   path: string;
   index: string;
+  external?: boolean;
+}
+
+export interface HomeTopic {
+  label: string;
+  path: string;
 }
 
 export interface ShowcaseTopic {
@@ -13,24 +19,55 @@ export interface ShowcaseTopic {
   items: string[];
   ascii: string;
   tone: "lime" | "violet" | "cyan";
+  path: string;
+}
+
+export interface ContentSection {
+  heading: string;
+  paragraphs: string[];
+  bullets?: string[];
 }
 
 export interface Project {
   slug: string;
+  path: string;
   title: string;
   summary: string;
   story: string;
   stack: string[];
+  facts: { label: string; value: string }[];
+  sections: ContentSection[];
+  related: { label: string; path: string }[];
   status: ProjectStatus;
   year: string;
+  archived?: boolean;
 }
 
 export interface SystemLayer {
   index: string;
+  slug: string;
+  path: string;
   title: string;
   description: string;
   items: string[];
   signal: string;
+  sections: ContentSection[];
+  related: { label: string; path: string }[];
+}
+
+export interface SocialLink {
+  label: string;
+  href: string;
+  handle: string;
+  external?: boolean;
+  download?: boolean;
+}
+
+export interface ActivityConnection {
+  service: string;
+  signal: string;
+  description: string;
+  status: "planned";
 }
 
 export interface NowEntry {
@@ -41,37 +78,9 @@ export interface NowEntry {
   detail: string;
 }
 
-export interface SocialLink {
-  label: string;
-  href: string;
-  handle: string;
-  external?: boolean;
-}
-
-export interface HomeContent {
-  intro: string;
-  topics: string[];
-  current: {
-    title: string;
-    description: string;
-  };
-}
-
-export interface AboutContent {
-  intro: string;
-  story: string[];
-  education: {
-    school: string;
-    program: string;
-  }[];
-  skills: string[];
-  interests: string[];
-}
-
 export interface GearItem {
   name: string;
   role: string;
-  status: "active" | "archived" | "sold";
 }
 
 export interface GearCategory {
@@ -79,254 +88,453 @@ export interface GearCategory {
   items: GearItem[];
 }
 
-export interface Writeup {
+export interface BlogPostLink {
   slug: string;
   title: string;
   date: string;
   summary: string;
   tags: string[];
-}
-
-export interface HermesSection {
-  title: string;
-  description: string;
-  items: string[];
+  readingTime: string;
+  url: string;
 }
 
 export const navItems: NavItem[] = [
   { label: "Home", path: "/", index: "00" },
-  { label: "Work", path: "/showcase", index: "01" },
+  { label: "Work", path: "/work", index: "01" },
   { label: "Projects", path: "/projects", index: "02" },
   { label: "Systems", path: "/systems", index: "03" },
-  { label: "Hermes", path: "/hermes", index: "04" },
-  { label: "Gear", path: "/gear", index: "05" },
-  { label: "Writeups", path: "/writeups", index: "06" },
-  { label: "Now", path: "/now", index: "07" },
-  { label: "About", path: "/about", index: "08" },
-  { label: "Contact", path: "/contact", index: "09" },
+  { label: "Gear", path: "/gear", index: "04" },
+  { label: "Blog", path: "/blog", index: "05" },
+  { label: "About", path: "/about", index: "06" },
+  { label: "Contact", path: "/contact", index: "07" },
+  { label: "Knowledge", path: "/knowledge", index: "08" },
+  { label: "Chat", path: "/chat", index: "09" },
 ];
 
-export const homeContent: HomeContent = {
+export const legacyRedirects: Record<string, string> = {
+  "/showcase": "/work",
+  "/hermes": "/projects/hermes",
+  "/writeups": "/blog",
+  "/now": "/projects",
+};
+
+export const homeContent = {
   intro:
-    "I like finding out what hardware and software can do once the defaults get out of the way. Lately that means local AI, Proxmox, Linux, audio systems, and cameras.",
-  topics: ["AI + Notes", "Servers", "Audio", "Linux"],
+    "I build personal systems where hardware, software, and creative tools reinforce each other. Right now that means local AI, Linux machines, a carefully structured knowledge base, and headphone audio.",
+  topics: [
+    { label: "AI + Notes", path: "/systems/knowledge" },
+    { label: "Homelab", path: "/projects/homelab" },
+    { label: "Headphones", path: "/systems/audio" },
+    { label: "Linux PCs", path: "/systems/hardware" },
+  ] satisfies HomeTopic[],
   current: {
     title: "Hermes",
     description:
-      "Running an AI agent on a Mac mini — daily briefs, memory, cron automations, multi-model routing — all connected over Tailscale.",
+      "One personal AI agent running from a Mac mini, connected across my devices and grounded in a deliberately curated knowledge system.",
   },
 };
 
 export const showcaseTopics: ShowcaseTopic[] = [
   {
-    title: "AI + Notes",
+    title: "AI + Knowledge",
     eyebrow: "Tools",
     summary:
-      "Hermes runs on a headless Mac mini and connects from every device over Tailscale. It handles daily briefs, memory, cron automations, and multi-model routing — all from one backend.",
-    items: ["Hermes", "Tailscale", "Mnemosyne", "Obsidian", "OpenCode Go"],
-    ascii:
-      "  DESKTOP ───────┐\n  LAPTOP  ── VPN ├──> MAC MINI\n  IPAD    ───────┘       └── HERMES\n                                  └── MNEMOSYNE",
+      "Hermes gives my devices one shared agent backend while the vault supplies durable context. The interesting work is deciding what should be automated, remembered, or kept deliberately private.",
+    items: ["Hermes", "Obsidian", "Local retrieval", "Tailscale"],
+    ascii: "  NOTES ──> CONTEXT ──> HERMES\n                  ├── DESKTOP\n                  ├── LAPTOP\n                  └── MOBILE",
     tone: "lime",
+    path: "/systems/knowledge",
   },
   {
     title: "Homelab",
-    eyebrow: "Server",
+    eyebrow: "Infrastructure",
     summary:
-      "My ThinkStation P520 runs Proxmox. I use it for storage, local AI, media, and services, with the important parts separated from whatever I am testing that week.",
-    items: ["ThinkStation P520", "Proxmox + ZFS", "GPU passthrough", "Docker / LXC"],
-    ascii:
-      "  [ THINKSTATION P520 ]\n       ├── ZFS ────── 4 TB\n       ├── VM ─────── GPU\n       └── LXC ────── SERVICES",
+      "A ThinkStation P520 running Proxmox anchors storage, services, experiments, and local compute. Stable workloads stay separated from the things I am actively breaking.",
+    items: ["ThinkStation P520", "Proxmox", "ZFS", "Virtualization"],
+    ascii: "  [ P520 / PROXMOX ]\n       ├── STORAGE\n       ├── SERVICES\n       └── LAB VMS",
     tone: "violet",
+    path: "/projects/homelab",
   },
   {
-    title: "Audio",
+    title: "Headphone Audio",
     eyebrow: "Listening",
     summary:
-      "I keep separate desktop and living-room 2.1 systems, compare headphones and IEMs, and spend a lot of time getting placement, crossover, and EQ right. The oscilloscope above is how I see sound.",
-    items: ["WiiM Ultra + ZA3", "KEF Q150", "Kube 12b / SB-1000 Pro", "Dusk / Daybreak / Zero:RED"],
-    ascii:
-      "  DESK   : Q150 ── ZA3 ── WIIM\n                    └───── SB-1000 PRO\n  ROOM   : Q150 ── RX-V677 ── KUBE 12b",
+      "My desktop chain centers on the FiiO K13 R2R and a small rotation of headphones. I listen for stage, low-end texture, comfort, and how the complete chain changes the experience.",
+    items: ["FiiO K13 R2R", "Audeze LCD-X", "Edition XS", "HD 660S2"],
+    ascii: "  SOURCE ──> K13 R2R\n               ├── LCD-X\n               ├── EDITION XS\n               └── HD 660S2",
     tone: "cyan",
+    path: "/systems/audio",
+  },
+  {
+    title: "PCs + Linux",
+    eyebrow: "Hardware",
+    summary:
+      "Creekwood is the main desktop; two compact Radeon systems run Bazzite for a console-like Linux experience. Each machine has a clear role instead of being another generic PC.",
+    items: ["RTX 5080", "RX 9070 XT", "RX 9060 XT", "Bazzite"],
+    ascii: "  CREEKWOOD ──> MAIN DESK\n  SFF 5600  ──> 4K BAZZITE\n  SFF 3600  ──> SECONDARY",
+    tone: "violet",
+    path: "/systems/hardware",
   },
 ];
 
 export const projects: Project[] = [
   {
-    slug: "hermes-agent",
-    title: "Hermes Agent",
-    summary: "An autonomous AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing.",
+    slug: "hermes",
+    path: "/projects/hermes",
+    title: "Hermes",
+    summary: "A personal AI agent that turns scattered tools into one calm, connected operating layer.",
     story:
-      "Hermes handles morning briefs, interview prep, session journals, and cron automations across 13 scheduled jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The interesting problem was making it cheap — every token counts when you're running this many automations.",
-    stack: ["Hermes", "Mnemosyne", "Tailscale", "OpenCode Go", "Telegram"],
+      "Hermes began as a way to stop rebuilding the same AI setup on every device. A Mac mini now provides one always-available home for the agent while clients connect through a private mesh.",
+    stack: ["Agent workflows", "Mac mini", "Tailscale", "Obsidian"],
+    facts: [
+      { label: "Role", value: "Personal AI system" },
+      { label: "Home", value: "Mac mini M4" },
+      { label: "State", value: "Active" },
+    ],
+    sections: [
+      {
+        heading: "The idea",
+        paragraphs: [
+          "The useful part of an assistant is not a chat window. It is continuity: one place for recurring workflows, reusable context, and interfaces that can change without rebuilding the underlying system.",
+          "Hermes is that continuity layer. It stays available while the device in front of me changes.",
+        ],
+      },
+      {
+        heading: "A private-by-design memory boundary",
+        paragraphs: [
+          "The vault remains the source of truth, but the agent does not receive an unrestricted copy. Retrieval is deliberately scoped so useful context can move without turning the entire notebook into an API payload.",
+        ],
+        bullets: ["Curated context instead of bulk ingestion", "Local-first retrieval experiments", "Clear separation between private notes and public output"],
+      },
+      {
+        heading: "What I am refining",
+        paragraphs: [
+          "The current work is less about adding more prompts and more about reliability: predictable workflows, useful memory, legible failure states, and keeping the system inexpensive enough to run every day.",
+        ],
+      },
+    ],
+    related: [
+      { label: "AI system", path: "/systems/ai" },
+      { label: "Knowledge system", path: "/systems/knowledge" },
+      { label: "Why Hermes lives on a Mac mini", path: "/blog/hermes-on-mac-mini" },
+    ],
     status: "in-progress",
     year: "Now",
   },
   {
-    slug: "rag-assistant",
-    title: "RAG Assistant",
-    summary: "A retrieval-augmented assistant built on top of the Obsidian vault for question-answering over personal notes.",
+    slug: "personal-website",
+    path: "/projects/personal-website",
+    title: "Ayumad.me",
+    summary: "A public map of projects, systems, gear, writing, and the ideas connecting them.",
     story:
-      "The RAG assistant indexes the Obsidian vault and answers questions grounded in actual notes — build logs, device configs, project decisions. Deployment is pending, but the indexing pipeline is done. The goal is to let Hermes pull context from the vault without exposing private notes to the model.",
-    stack: ["Python", "RAG", "Obsidian", "Embeddings"],
+      "The site is intentionally broader than a portfolio. It is a public layer for a much larger private notebook and a place to make the relationships between projects visible.",
+    stack: ["React", "TypeScript", "Vite", "Vercel"],
+    facts: [
+      { label: "Format", value: "Living index" },
+      { label: "Source", value: "Curated vault snapshot" },
+      { label: "State", value: "Active" },
+    ],
+    sections: [
+      {
+        heading: "A map, not a résumé",
+        paragraphs: [
+          "A traditional portfolio hides the connective tissue. Ayumad.me keeps projects next to the systems and gear that produced them, so the site can explain how I work rather than only displaying finished outcomes.",
+        ],
+      },
+      {
+        heading: "Five visual languages",
+        paragraphs: [
+          "ASCII, dither, glitch, particles, and CRT modes reinterpret the same content. The modes are not skins pasted on top; motion, typography, texture, and page transitions respond to the selected visual system.",
+        ],
+      },
+      {
+        heading: "Publishing boundary",
+        paragraphs: [
+          "Content is copied into a public, reviewable layer. The deployed application never reads the local vault, which keeps private material and infrastructure details outside the build.",
+        ],
+      },
+    ],
+    related: [
+      { label: "Public layer article", path: "/blog/public-layer-private-vault" },
+      { label: "Knowledge system", path: "/systems/knowledge" },
+    ],
     status: "in-progress",
     year: "Now",
   },
   {
-    slug: "daily-brief",
-    title: "Daily Brief",
-    summary: "7 cron jobs that deliver a morning briefing — vault status, Notion tasks, email, calendar, and question prompts.",
+    slug: "homelab",
+    path: "/projects/homelab",
+    title: "Homelab",
+    summary: "A workstation-turned-server for durable services, storage, and experiments.",
     story:
-      "Every morning at 9:30, Hermes compiles a brief from the vault, Notion, email, and calendar. Throughout the day it sends question prompts and interview prep. At 10pm it logs the session journal. The whole system runs on cron with no manual intervention — fire and forget.",
-    stack: ["Hermes Cron", "Obsidian", "Notion", "Google Workspace"],
-    status: "completed",
+      "The homelab turns older workstation hardware into infrastructure I can understand and change. The main design principle is separation: experiments should be easy to replace without destabilizing the services I rely on.",
+    stack: ["Proxmox VE", "ZFS", "Virtual machines", "Containers"],
+    facts: [
+      { label: "Host", value: "ThinkStation P520" },
+      { label: "Focus", value: "Isolation + reuse" },
+      { label: "State", value: "Active" },
+    ],
+    sections: [
+      {
+        heading: "Why a workstation",
+        paragraphs: [
+          "The P520 offers the expansion, memory capacity, and serviceability of a real workstation without requiring purpose-built rack hardware. It is quiet enough to live nearby and flexible enough to keep changing roles.",
+        ],
+      },
+      {
+        heading: "Layered workloads",
+        paragraphs: [
+          "The host separates storage, long-running services, and short-lived experiments. That structure keeps recovery understandable and makes it easier to learn from a failed configuration.",
+        ],
+        bullets: ["ZFS-backed storage", "Virtualized compute", "Containerized services", "Private remote access"],
+      },
+      {
+        heading: "Next",
+        paragraphs: [
+          "The next phase is documenting service ownership and recovery paths clearly enough that the lab behaves like a maintained system instead of a collection of clever one-offs.",
+        ],
+      },
+    ],
+    related: [
+      { label: "Hardware system", path: "/systems/hardware" },
+      { label: "Hermes", path: "/projects/hermes" },
+    ],
+    status: "in-progress",
+    year: "Now",
+  },
+  {
+    slug: "obsidian-rag",
+    path: "/projects/obsidian-rag",
+    title: "Obsidian RAG",
+    summary: "A retrieval layer for asking useful questions without flattening a private vault into a public dataset.",
+    story:
+      "The project explores how an assistant can retrieve the right note fragments while respecting the vault's structure and visibility boundaries.",
+    stack: ["Python", "Obsidian", "Embeddings", "Retrieval"],
+    facts: [
+      { label: "Source", value: "Obsidian vault" },
+      { label: "Boundary", value: "Curated retrieval" },
+      { label: "State", value: "Active" },
+    ],
+    sections: [
+      {
+        heading: "The problem",
+        paragraphs: [
+          "A notebook is useful because it contains unfinished thinking, personal context, and operational detail. Those same qualities make indiscriminate indexing a poor default.",
+        ],
+      },
+      {
+        heading: "Retrieval as an interface",
+        paragraphs: [
+          "The system treats retrieval as a controlled interface: choose eligible sources, preserve enough structure for context, and return grounded passages rather than pretending the model knows the notebook.",
+        ],
+        bullets: ["Visibility-aware source selection", "Metadata-preserving chunks", "Grounded answers with traceable note context"],
+      },
+      {
+        heading: "Where it is going",
+        paragraphs: [
+          "The next step is a dependable bridge between the vault and Hermes that remains useful even when the model, embedding backend, or client changes.",
+        ],
+      },
+    ],
+    related: [
+      { label: "Knowledge system", path: "/systems/knowledge" },
+      { label: "Hermes", path: "/projects/hermes" },
+    ],
+    status: "in-progress",
     year: "Now",
   },
   {
     slug: "voice-assistant",
+    path: "/projects/voice-assistant",
     title: "Voice Assistant",
-    summary: "Research into building a voice-first interface for Hermes — wake word, speech-to-text, local inference.",
+    summary: "A local-first voice interface for the same Hermes backend used everywhere else.",
     story:
-      "The voice assistant is in research phase. The goal is a wake-word triggered interface that routes speech to a local STT model, runs through Hermes, and responds with TTS. The constraint is doing it cheaply — no cloud APIs for the core loop, everything local or self-hosted.",
-    stack: ["Python", "Whisper", "Piper TTS", "Wake word"],
+      "The goal is not a novelty speaker. It is a low-friction interface that reuses the agent, memory boundary, and tools already built for Hermes.",
+    stack: ["Speech-to-text", "Text-to-speech", "Wake word", "Local inference"],
+    facts: [
+      { label: "Interface", value: "Voice" },
+      { label: "Constraint", value: "Local-first core loop" },
+      { label: "State", value: "Research" },
+    ],
+    sections: [
+      {
+        heading: "Reuse the system",
+        paragraphs: [
+          "Voice should be another client, not another assistant. Keeping intelligence and tools in Hermes prevents a microphone endpoint from becoming a disconnected second stack.",
+        ],
+      },
+      {
+        heading: "Design constraints",
+        paragraphs: [
+          "Latency, interruption, and privacy matter more than a theatrical voice. The current research focuses on a fast local core loop with clear feedback when the system is listening or thinking.",
+        ],
+        bullets: ["Local speech recognition where practical", "Replaceable voice synthesis", "Visible and audible state feedback"],
+      },
+      {
+        heading: "Current state",
+        paragraphs: [
+          "This remains an exploration rather than a finished appliance. The architecture is being defined before hardware and wake-word choices are locked in.",
+        ],
+      },
+    ],
+    related: [
+      { label: "Hermes", path: "/projects/hermes" },
+      { label: "AI system", path: "/systems/ai" },
+    ],
     status: "planned",
-    year: "Planned",
-  },
-  {
-    slug: "homelab-build",
-    title: "Homelab Build",
-    summary: "A P520 running Proxmox for storage, local AI, media, and services.",
-    story:
-      "The ThinkStation P520 has a 4TB ZFS pool and a GPU-passthrough VM. I am separating core services from the Docker experiments so I can change one part without taking everything else down. RTX 3060 is passthrough for local inference.",
-    stack: ["Proxmox VE", "ZFS", "GPU passthrough", "Docker"],
-    status: "in-progress",
-    year: "Now",
+    year: "Research",
   },
   {
     slug: "owlbot",
+    path: "/projects/owlbot",
     title: "Owlbot",
-    summary: "An AI chatbot built to help Foothill College students find their way.",
-    story:
-      "Owlbot handles common questions about admissions, financial aid, course registration, and campus resources. The interesting problem was not only matching questions — it was translating a sprawling institutional knowledge base into answers students could actually use.",
-    stack: ["Python", "NLP", "FAQ matching"],
+    summary: "A chatbot built to help Foothill College students navigate common campus questions.",
+    story: "An early exercise in turning a sprawling institutional knowledge base into approachable answers.",
+    stack: ["Python", "NLP", "Information retrieval"],
+    facts: [],
+    sections: [],
+    related: [],
     status: "completed",
     year: "2023",
+    archived: true,
   },
   {
     slug: "delulubot",
+    path: "/projects/delulubot",
     title: "DeluluBot",
     summary: "An emotion-aware chatbot built during CalHacks 10.0.",
-    story:
-      "We built DeluluBot at CalHacks 10.0. It detects sentiment and changes its response style. It was a short hackathon build and an early test of how much tone changes the way a chatbot feels to use.",
+    story: "A compact hackathon experiment in how sentiment and response tone change an interaction.",
     stack: ["Python", "Sentiment analysis", "CalHacks"],
+    facts: [],
+    sections: [],
+    related: [],
     status: "completed",
     year: "2023",
+    archived: true,
   },
   {
     slug: "audio-visualization",
+    path: "/projects/audio-visualization",
     title: "Audio Visualization",
     summary: "Cymatics and machine learning turned into a visual study of sound.",
-    story:
-      "I combined Chladni-style pattern generation with machine learning to make audio visible. The project let me work on signal processing, computer vision, and music in the same place.",
+    story: "A project combining signal processing, computer vision, and music to make audio structure visible.",
     stack: ["Python", "TensorFlow", "Audio processing"],
+    facts: [],
+    sections: [],
+    related: [],
     status: "completed",
     year: "2024",
+    archived: true,
   },
 ];
 
 export const systemLayers: SystemLayer[] = [
   {
     index: "L1",
+    slug: "ai",
+    path: "/systems/ai",
     title: "AI",
-    description:
-      "One agent backend, several clients, and my own notes when they are useful.",
-    items: ["Hermes server", "Tailscale clients", "OpenCode Go + local models", "Obsidian retrieval"],
-    signal: "notes → tools → model → client",
+    description: "One agent backend, replaceable models, and interfaces that share the same tools and context.",
+    items: ["Hermes backend", "Client surfaces", "Model routing", "Scoped retrieval"],
+    signal: "intent → tools → model → useful output",
+    sections: [
+      {
+        heading: "One backend",
+        paragraphs: ["Hermes centralizes workflows so each device can be a client instead of a separate assistant installation."],
+      },
+      {
+        heading: "Replaceable intelligence",
+        paragraphs: ["Models are components, not the product. Routing can change without discarding the workflows, interfaces, or knowledge boundary around them."],
+      },
+      {
+        heading: "Reliability over spectacle",
+        paragraphs: ["The useful measure is whether a recurring workflow completes predictably, exposes failures clearly, and remains inexpensive enough to keep running."],
+      },
+    ],
+    related: [
+      { label: "Hermes project", path: "/projects/hermes" },
+      { label: "Obsidian RAG", path: "/projects/obsidian-rag" },
+    ],
   },
   {
     index: "L2",
+    slug: "hardware",
+    path: "/systems/hardware",
     title: "Hardware",
-    description:
-      "New and old machines, each set up for a specific job.",
-    items: [
-      "P520 / Proxmox",
-      "Mac mini / Hermes",
-      "RTX 5080 desktop / 4K OLED",
-      "Zephyrus G14 / RTX 5070 Ti",
-      "CF-SV1 / Arch + X220t / NixOS",
-      "X-T4 / 18–55 + X100VI",
+    description: "A collection of computers with deliberate roles, from a primary workstation to compact Linux consoles.",
+    items: ["Creekwood / RTX 5080", "Bazzite / RX 9070 XT", "Bazzite / RX 9060 XT", "P520 / Proxmox", "Mac mini / Hermes"],
+    signal: "machine → operating system → role",
+    sections: [
+      {
+        heading: "Creekwood",
+        paragraphs: ["The primary desktop pairs a Ryzen 7 5800X3D, RTX 5080, and 64 GB of memory with a mix of fast local storage and larger archive drives."],
+      },
+      {
+        heading: "Two Bazzite machines",
+        paragraphs: ["A Ryzen 5 5600 with RX 9070 XT handles the higher-end compact role; a Ryzen 5 3600 with RX 9060 XT 16 GB is the secondary system. Bazzite gives both a focused, controller-friendly Linux surface."],
+      },
+      {
+        heading: "Infrastructure machines",
+        paragraphs: ["The ThinkStation P520 handles virtualization and storage while the M4 Mac mini provides a quiet, efficient home for Hermes."],
+      },
     ],
-    signal: "machine → operating system → job",
+    related: [
+      { label: "Homelab", path: "/projects/homelab" },
+      { label: "Bazzite article", path: "/blog/two-bazzite-sff-pcs" },
+    ],
   },
   {
     index: "L3",
+    slug: "audio",
+    path: "/systems/audio",
     title: "Audio",
-    description:
-      "Two speaker systems plus the headphones and IEMs I compare between them.",
-    items: [
-      "Desktop: WiiM / ZA3 / Q150 / SB-1000 Pro",
-      "Living room: RX-V677 / Q150 / Kube 12b",
-      "FiiO K13 R2R",
-      "Dusk / Daybreak / Zero:RED",
+    description: "A desktop headphone system tuned by changing the transducer, not by collecting disconnected boxes.",
+    items: ["FiiO K13 R2R", "Audeze LCD-X", "HIFIMAN Edition XS", "Sennheiser HD 660S2", "Sennheiser HD 490 Pro"],
+    signal: "source → DAC/amp → headphone → session",
+    sections: [
+      {
+        heading: "The stack",
+        paragraphs: ["The FiiO K13 R2R is the primary wired station. It keeps the desk simple while supporting headphones with very different loads and presentations."],
+      },
+      {
+        heading: "The rotation",
+        paragraphs: ["LCD-X brings physical low end and density, Edition XS opens the stage, and HD 660S2 offers a more intimate presentation. HD 490 Pro and Focal Azurys fill practical monitoring and closed-back roles."],
+      },
+      {
+        heading: "What I listen for",
+        paragraphs: ["I tend toward warmth and deep sub-bass, but stage, detail, comfort, and chain synergy determine what stays in rotation."],
+      },
     ],
-    signal: "source → DAC → amp → room",
+    related: [
+      { label: "Headphone stack article", path: "/blog/desktop-headphone-stack" },
+      { label: "Gear index", path: "/gear" },
+    ],
   },
   {
     index: "L4",
+    slug: "knowledge",
+    path: "/systems/knowledge",
     title: "Knowledge",
-    description:
-      "Notes that turn one-off troubleshooting into something I can reuse.",
-    items: ["Obsidian vault", "Build plans", "Astro field notes", "Public writeups"],
-    signal: "question → test → note → reuse",
-  },
-];
-
-export const hermesSections: HermesSection[] = [
-  {
-    title: "What Hermes Does",
-    description:
-      "Hermes is a personal AI agent that handles daily operations — morning briefs, interview prep, session journals, and 13 cron automations. It runs on a headless Mac mini and connects from every device over Tailscale.",
-    items: [
-      "Morning brief at 9:30am — vault, Notion, email, calendar",
-      "Interview prep at 6pm — technical quizzes with follow-up pressure",
-      "Session journal at 10pm — log the day to the vault",
-      "Question prompts throughout the day",
-      "Kanban board dispatch, weekly review, monthly consolidation",
+    description: "A layered Obsidian vault that separates capture, active work, durable knowledge, and publishable material.",
+    items: ["Inbox + daily capture", "Projects + areas", "Resources + maps", "System governance", "Curated public layer"],
+    signal: "capture → connect → maintain → publish",
+    sections: [
+      {
+        heading: "The vault is canonical",
+        paragraphs: ["Obsidian is the durable source for project context, device records, decisions, and writing. Other tools can present or act on that information without silently becoming a second source of truth."],
+      },
+      {
+        heading: "Structure with intent",
+        paragraphs: ["The hierarchy separates active projects, ongoing areas, reusable resources, archive material, and system governance. Maps and metadata make relationships visible without forcing every note into one rigid taxonomy."],
+      },
+      {
+        heading: "A deliberate public layer",
+        paragraphs: ["Publishing is an editorial act. Approved facts are paraphrased into the repository; private notes, credentials, and operational runbooks never enter the browser bundle or deployment pipeline."],
+      },
     ],
-  },
-  {
-    title: "Memory System",
-    description:
-      "Mnemosyne handles persistent memory — facts, preferences, insights, and relationships that survive across sessions. It uses local embeddings for fast recall and a knowledge graph for connecting related memories.",
-    items: [
-      "Mnemosyne v3.14 with local embeddings (fastembed)",
-      "23 provider tools for recall, triples, graph queries",
-      "Persona facts injected into every system prompt",
-      "Session search over SQLite message store",
-      "Nightly consolidation of old working memories",
-    ],
-  },
-  {
-    title: "Multi-Model Routing",
-    description:
-      "Hermes routes between models based on task complexity and cost. Mimo V2.5 handles daily work, Kimi K3 tackles hard problems, DeepSeek V4 Flash handles cheap tool-heavy tasks.",
-    items: [
-      "Mimo V2.5 — daily driver, cost-effective",
-      "Kimi K3 — complex reasoning and code review",
-      "DeepSeek V4 Flash — cheap, tool-heavy tasks",
-      "OpenCode Go provider — $10/month vs OpenRouter",
-      "Automatic fallback chains for reliability",
-    ],
-  },
-  {
-    title: "Infrastructure",
-    description:
-      "13 cron jobs run on schedule — briefs, reviews, consolidation, health checks. Everything is fire-and-forget: test once, then let it run.",
-    items: [
-      "Cron scheduler with script-first, agent-second pattern",
-      "Telegram + WebUI + Discord connected surfaces",
-      "122-device loadout inventory with price tracking",
-      "LaunchAgent auto-start on Mac mini",
-      "Tailscale mesh for cross-device access",
+    related: [
+      { label: "Obsidian RAG", path: "/projects/obsidian-rag" },
+      { label: "Public layer article", path: "/blog/public-layer-private-vault" },
     ],
   },
 ];
@@ -335,198 +543,214 @@ export const gearCategories: GearCategory[] = [
   {
     category: "Computers",
     items: [
-      { name: "Mac mini", role: "Always-on Hermes server, Tailscale node", status: "active" },
-      { name: "ThinkStation P520", role: "Proxmox host, ZFS storage, GPU passthrough", status: "active" },
-      { name: "RTX 5080 Desktop", role: "Primary desktop, 4K OLED, gaming", status: "active" },
-      { name: "Zephyrus G14", role: "Portable, RTX 5070 Ti", status: "active" },
-      { name: "Panasonic CF-SV1", role: "Arch Linux + Hyprland daily driver", status: "active" },
-      { name: "Lenovo X220t", role: "NixOS learning machine", status: "active" },
+      { name: "Creekwood", role: "Ryzen 7 5800X3D, RTX 5080, 64 GB — primary desktop" },
+      { name: "SFF / RX 9070 XT", role: "Ryzen 5 5600, 32 GB, Bazzite — compact high-end system" },
+      { name: "SFF / RX 9060 XT", role: "Ryzen 5 3600, 16 GB, Bazzite — secondary console-like PC" },
+      { name: "Mac mini M4", role: "Quiet always-on home for Hermes" },
+      { name: "ThinkStation P520", role: "Proxmox host, storage, and lab workloads" },
+      { name: "MacBook Pro M4 Pro", role: "Primary mobile macOS workstation" },
+      { name: "MacBook Air M2", role: "Lightweight mobile computer" },
+      { name: "Framework Laptop 13", role: "Repairable modular laptop" },
+      { name: "ROG Flow Z13 (2025)", role: "Portable high-performance Windows system" },
+      { name: "Beelink SER8", role: "Compact Linux experimentation machine" },
     ],
   },
   {
-    category: "Audio — Desktop",
+    category: "Headphones + Audio",
     items: [
-      { name: "WiiM Ultra", role: "Network streamer / DAC", status: "active" },
-      { name: "Aiyima ZA3", role: "Desktop amplifier", status: "active" },
-      { name: "KEF Q150", role: "Desktop speakers (pair)", status: "active" },
-      { name: "SVS SB-1000 Pro", role: "Desktop subwoofer", status: "active" },
-      { name: "FiiO K13 R2R", role: "Headphone DAC/amp", status: "active" },
+      { name: "FiiO K13 R2R", role: "Primary desktop DAC and headphone amplifier" },
+      { name: "Audeze LCD-X", role: "Planar headphone — weight, impact, and detail" },
+      { name: "HIFIMAN Edition XS", role: "Planar headphone — open stage and scale" },
+      { name: "Sennheiser HD 660S2", role: "Dynamic headphone — intimate daily rotation" },
+      { name: "Sennheiser HD 490 Pro", role: "Open-back monitoring and long sessions" },
+      { name: "Focal Azurys", role: "Closed-back listening" },
+      { name: "AirPods Max", role: "Wireless Apple listening" },
+      { name: "Sennheiser Momentum 4", role: "Long-battery wireless listening" },
+      { name: "Astro A50 Gen 5", role: "Wireless gaming headset" },
+      { name: "Moondrop Dusk", role: "Reference-oriented IEM" },
     ],
   },
   {
-    category: "Audio — Living Room",
+    category: "Photography",
     items: [
-      { name: "Yamaha RX-V677", role: "AV receiver", status: "active" },
-      { name: "KEF Q150", role: "Living room speakers (pair)", status: "active" },
-      { name: "SVS Kube 12b", role: "Living room subwoofer", status: "active" },
+      { name: "Fujifilm X-T4", role: "Interchangeable-lens photo and video body" },
+      { name: "Fujinon XF 18–55mm", role: "Compact everyday zoom" },
+      { name: "Fujifilm X100VI", role: "Fixed-lens carry camera" },
+      { name: "Fujifilm X20", role: "Small older digital camera" },
+      { name: "Manfrotto carbon tripod", role: "Travel and long-exposure support" },
     ],
   },
   {
-    category: "Headphones & IEMs",
+    category: "Gaming + Spatial",
     items: [
-      { name: "Moondrop Dusk", role: "IEM — reference tuning", status: "active" },
-      { name: "Moondrop Daybreak", role: "IEM — comparison", status: "active" },
-      { name: "Truthear Zero:RED", role: "IEM — budget reference", status: "active" },
+      { name: "Steam Deck", role: "Portable PC library" },
+      { name: "ROG Ally", role: "Windows handheld experiments" },
+      { name: "Meta Quest", role: "Standalone VR" },
+      { name: "PlayStation 5", role: "Living-room console" },
+      { name: "Nintendo Switch", role: "Nintendo and portable play" },
     ],
   },
   {
-    category: "Cameras",
+    category: "Mobile + Peripherals",
     items: [
-      { name: "Fujifilm X-T4", role: "Primary camera, 18-55mm kit", status: "active" },
-      { name: "Fujifilm X100VI", role: "Compact carry camera", status: "active" },
-    ],
-  },
-  {
-    category: "Networking",
-    items: [
-      { name: "Tailscale", role: "Mesh VPN — all devices connected", status: "active" },
-      { name: "Ubiquiti", role: "Router / AP", status: "active" },
-    ],
-  },
-  {
-    category: "Software",
-    items: [
-      { name: "Obsidian", role: "Vault — 100% PARA compliant", status: "active" },
-      { name: "Proxmox VE", role: "Hypervisor on P520", status: "active" },
-      { name: "Arch Linux", role: "Daily driver on CF-SV1", status: "active" },
-      { name: "NixOS", role: "Learning on X220t", status: "active" },
-      { name: "Hermes Agent", role: "AI agent — daily ops", status: "active" },
+      { name: "iPhone", role: "Primary mobile device" },
+      { name: "iPad", role: "Reading, notes, and remote interfaces" },
+      { name: "Razer Viper V3 Pro", role: "Primary desktop mouse" },
+      { name: "8BitDo Wireless Keyboard", role: "Compact mechanical keyboard" },
+      { name: "Logitech MX Travel 3", role: "Portable productivity mouse" },
     ],
   },
 ];
 
-export const writeups: Writeup[] = [
-  {
-    slug: "gpu-passthrough-p520",
-    title: "GPU Passthrough on the P520",
-    date: "2026",
-    summary:
-      "How I got an RTX 3060 passed through to a Proxmox VM — IOMMU groups, kernel parameters, and the mistakes I made along the way.",
-    tags: ["Proxmox", "GPU passthrough", "Linux"],
-  },
-  {
-    slug: "hermes-on-mac-mini",
-    title: "Why I Moved Hermes to a Mac Mini",
-    date: "2026",
-    summary:
-      "Running one AI agent server instead of rebuilding on every device. The tradeoffs of headless macOS, Tailscale mesh, and always-on automation.",
-    tags: ["Hermes", "macOS", "Tailscale"],
-  },
-  {
-    slug: "building-a-2.1-system",
-    title: "Building a 2.1 System on a Budget",
-    date: "2025",
-    summary:
-      "Desktop and living-room speaker setups — crossover tuning, subwoofer placement, and why the WiiM Ultra changed my desktop chain.",
-    tags: ["Audio", "KEF", "SVS", "WiiM"],
-  },
-  {
-    slug: "arch-daily-driver",
-    title: "Running Arch as a Daily Driver",
-    date: "2025",
-    summary:
-      "What it actually takes to use Arch Linux day-to-day — Hyprland, rolling releases, and the things that break vs. the things that just work.",
-    tags: ["Arch Linux", "Hyprland", "Linux"],
-  },
-];
-
-export const futureIdeas = [
-  "Listening history from Jellyfin / Spotify",
-  "Film log with ratings and notes",
-  "Game activity from Steam",
-  "Reading log from Goodreads",
-  "Gear notes with maintenance history",
-];
-
-export const aboutContent: AboutContent = {
-  intro: "Computer Engineering student based in the Bay Area.",
+export const aboutContent = {
+  intro: "Computer Engineering student in Fremont building personal systems across AI, hardware, and creative technology.",
   story: [
-    "I got into technology through jailbreaking devices and running emulators. I liked seeing a device do something it was not supposed to do, and I still approach new hardware the same way — push it until it breaks, then figure out why.",
-    "That instinct led me from jailbroken iPhones to custom ROMs on Android, from emulators on a PSP to Arch Linux on a Panasonic Let's Note. Every device is a puzzle. The reward is not just making it work — it's understanding why the defaults were wrong in the first place.",
-    "Most of my projects start with a practical question. Can this old workstation become a useful server? Can one Mac mini run an AI agent for every device? Can I make an Arch install feel exactly how I want? I learn by setting it up, breaking something, and fixing it.",
-    "I study Computer Engineering at San José State and previously studied Computer Science at Foothill. Outside class, technology is still my main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I am trying to configure that week.",
+    "I got into technology by jailbreaking devices and running emulators. I liked seeing hardware do something outside its intended path, then tracing backward until I understood why it worked.",
+    "That instinct grew into Linux installations, self-hosted services, workstation builds, audio chains, and cameras. I am most interested in technology when it becomes a medium: something that can be arranged, tuned, and made personal rather than simply consumed.",
+    "Most of my projects start with a practical friction point. Hermes came from wanting one agent across every device. The homelab came from wanting infrastructure I could actually inspect. This site came from wanting a public map rather than another compressed résumé.",
+    "I study Computer Engineering at San José State University and participate in the ACM @ SJSU community after completing Computer Science coursework at Foothill College. Outside class, I keep learning through the systems I use every day.",
   ],
   education: [
-    { school: "San José State", program: "Computer Engineering" },
-    { school: "Foothill College", program: "Computer Science" },
+    { school: "San José State University", program: "B.S. Computer Engineering — in progress" },
+    { school: "Foothill College", program: "Computer Science studies" },
   ],
-  skills: [
-    "Python",
-    "C++",
-    "TypeScript",
-    "React",
-    "Linux",
-    "Proxmox",
-    "ZFS",
-    "Docker",
-    "Tailscale",
-  ],
-  interests: [
-    "Local AI",
-    "Self-hosting",
-    "Audio",
-    "Linux",
-    "Photography",
-    "Astrophotography",
-    "Retro Hardware",
-    "Handhelds",
-  ],
+  skills: ["Python", "C++", "TypeScript", "React", "Linux", "Proxmox", "ZFS", "Docker", "Tailscale", "AI systems"],
+  interests: ["Local AI", "Knowledge systems", "Self-hosting", "Headphone audio", "Film", "Anime", "Photography", "Gaming + VR"],
 };
 
 export const socialLinks: SocialLink[] = [
   {
     label: "Email",
-    href: "mailto:hello@ayumad.me",
-    handle: "hello@ayumad.me",
+    href: "mailto:Ayumadbro123@gmail.com",
+    handle: "Ayumadbro123@gmail.com",
   },
   {
-    label: "GitHub",
-    href: "https://github.com/ayumad",
-    handle: "@ayumad",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/ayush-madhukar-6021a0249/",
+    handle: "Ayush Madhukar",
     external: true,
+  },
+  { label: "GitHub", href: "https://github.com/ayumad", handle: "@ayumad", external: true },
+  {
+    label: "Résumé",
+    href: "/ayush-madhukar-resume.pdf",
+    handle: "View / download PDF",
+    external: true,
+    download: true,
+  },
+];
+
+export const activityConnections: ActivityConnection[] = [
+  {
+    service: "Spotify",
+    signal: "Now listening",
+    description: "Current track, artist, album, and recent listening.",
+    status: "planned",
+  },
+  {
+    service: "IMDb",
+    signal: "Now watching",
+    description: "Current films, series, ratings, and watchlist activity.",
+    status: "planned",
+  },
+  {
+    service: "MyAnimeList",
+    signal: "Anime progress",
+    description: "Currently watching, episode progress, and completed series.",
+    status: "planned",
+  },
+  {
+    service: "Steam",
+    signal: "Now playing",
+    description: "Current game, recent sessions, and playtime.",
+    status: "planned",
+  },
+  {
+    service: "Goodreads",
+    signal: "Now reading",
+    description: "Current book, reading progress, and recently finished titles.",
+    status: "planned",
+  },
+];
+
+export const blogPosts: BlogPostLink[] = [
+  {
+    slug: "hermes-on-mac-mini",
+    title: "One Agent, Every Device: Why Hermes Lives on a Mac mini",
+    date: "2026-07-30",
+    summary: "Centralizing a personal AI system made the clients simpler, the workflows more durable, and the boundaries easier to understand.",
+    tags: ["Hermes", "Local AI", "macOS", "Systems"],
+    readingTime: "6 min",
+    url: "https://ayumad.me/blog/hermes-on-mac-mini",
+  },
+  {
+    slug: "public-layer-private-vault",
+    title: "Designing Ayumad.me as a Public Layer for a Private Vault",
+    date: "2026-07-29",
+    summary: "A portfolio can be richer than a résumé without turning a private notebook into a public database.",
+    tags: ["Obsidian", "Knowledge systems", "Web design", "Privacy"],
+    readingTime: "7 min",
+    url: "https://ayumad.me/blog/public-layer-private-vault",
+  },
+  {
+    slug: "desktop-headphone-stack",
+    title: "My Desktop Headphone Stack: K13 R2R, LCD-X, Edition XS, and HD 660S2",
+    date: "2026-07-28",
+    summary: "One compact desktop source and three very different headphones make a more useful system than a pile of overlapping gear.",
+    tags: ["Audio", "Headphones", "FiiO", "Listening"],
+    readingTime: "6 min",
+    url: "https://ayumad.me/blog/desktop-headphone-stack",
+  },
+  {
+    slug: "two-bazzite-sff-pcs",
+    title: "Two Tiny Bazzite PCs and the Case for Console-Like Linux",
+    date: "2026-07-27",
+    summary: "Two compact Radeon systems show how a clear software role can make ordinary PC hardware feel purpose-built.",
+    tags: ["Bazzite", "Linux", "SFF", "PC hardware"],
+    readingTime: "6 min",
+    url: "https://ayumad.me/blog/two-bazzite-sff-pcs",
   },
 ];
 
 export const pageMeta: Record<string, { title: string; description: string }> = {
   "/": {
     title: "Ayumad.me — Ayush Madhukar",
-    description:
-      "Ayush Madhukar's projects and notes on local AI, Linux, audio, cameras, and self-hosted systems.",
+    description: "Projects, systems, gear, and notes from Ayush Madhukar.",
   },
-  "/showcase": {
+  "/work": {
     title: "Work — Ayumad.me",
-    description: "Current work across Hermes, homelab infrastructure, and audio.",
+    description: "Current work across AI, infrastructure, audio, and Linux hardware.",
   },
   "/projects": {
     title: "Projects — Ayumad.me",
-    description: "Selected projects by Ayush Madhukar — from AI agents to local infrastructure.",
+    description: "Current projects and selected experiments by Ayush Madhukar.",
   },
   "/systems": {
     title: "Systems — Ayumad.me",
-    description: "The actual AI, hardware, audio, and note systems Ayush uses.",
-  },
-  "/hermes": {
-    title: "Hermes — Ayumad.me",
-    description: "Inside Hermes — an autonomous AI agent for daily operations.",
+    description: "The AI, hardware, audio, and knowledge systems Ayush uses.",
   },
   "/gear": {
     title: "Gear — Ayumad.me",
-    description: "The 100+ devices, speakers, cameras, and tools Ayush uses.",
+    description: "A curated snapshot of the computers, audio, cameras, and tools Ayush uses.",
   },
-  "/writeups": {
-    title: "Writeups — Ayumad.me",
-    description: "Field notes on building, configuring, and breaking things.",
+  "/blog": {
+    title: "Blog — Ayumad.me",
+    description: "Finished essays about local AI, knowledge systems, audio, and Linux hardware.",
   },
-  "/now": {
-    title: "Now — Ayumad.me",
-    description: "What Ayush is currently building, learning, tuning, and designing.",
+  "/knowledge": {
+    title: "Knowledge — Ayumad.me",
+    description: "A public index connecting Ayush Madhukar’s essays, projects, systems, and notes.",
   },
   "/about": {
     title: "About — Ayumad.me",
-    description: "About Ayush Madhukar, a Computer Engineering student and lifelong technologist.",
+    description: "About Ayush Madhukar, a Computer Engineering student and systems builder.",
+  },
+  "/chat": {
+    title: "Chat with Hermes — Ayumad.me",
+    description: "Connect to Hermes, a personal AI agent running from a Mac mini.",
   },
   "/contact": {
     title: "Contact — Ayumad.me",
-    description: "Contact Ayush Madhukar by email or find his work on GitHub.",
+    description: "Email Ayush Madhukar, connect on LinkedIn or GitHub, and explore planned activity feeds.",
   },
 };
