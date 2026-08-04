@@ -95,19 +95,19 @@ describe("Ayumad.me", () => {
     expect(navigation).toBeInTheDocument();
     expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
       "href",
-      "#/work",
+      "/work",
     );
     expect(within(navigation).getByRole("link", { name: /Contact/i })).toHaveAttribute(
       "href",
-      "#/contact",
+      "/contact",
     );
     expect(within(navigation).getByRole("link", { name: /Knowledge/i })).toHaveAttribute(
       "href",
-      "https://ayumad.github.io/?theme=dark&renderer=ascii",
+      "/knowledge",
     );
     expect(within(navigation).getByRole("link", { name: /Blog/i })).toHaveAttribute(
       "href",
-      "https://ayumad.github.io/blog/?theme=dark&renderer=ascii",
+      "/blog",
     );
   });
 
@@ -415,7 +415,7 @@ describe("Ayumad.me", () => {
     ["/projects", "Projects", "projects"],
     ["/systems", "Systems", "systems"],
     ["/gear", "Gear", "gear"],
-    ["/blog", "Blog → Knowledge", "writeups"],
+    ["/blog", "Blog", "writeups"],
     ["/about", "About", "about"],
     ["/contact", "Contact", "contact"],
   ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
@@ -432,19 +432,19 @@ describe("Ayumad.me", () => {
     renderAt("/");
     expect(screen.getByRole("link", { name: /AI \+ Notes/i })).toHaveAttribute(
       "href",
-      "#/systems/knowledge",
+      "/systems/knowledge",
     );
     expect(screen.getByRole("link", { name: /Homelab/i })).toHaveAttribute(
       "href",
-      "#/projects/homelab",
+      "/projects/homelab",
     );
     expect(screen.getByRole("link", { name: /Headphones/i })).toHaveAttribute(
       "href",
-      "#/systems/audio",
+      "/systems/audio",
     );
     expect(screen.getByRole("link", { name: /Linux PCs/i })).toHaveAttribute(
       "href",
-      "#/systems/hardware",
+      "/systems/hardware",
     );
   });
 
@@ -465,10 +465,8 @@ describe("Ayumad.me", () => {
         name: "One Agent, Every Device: Why Hermes Lives on a Mac mini",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Read the complete essay/i })).toHaveAttribute(
-      "href",
-      "https://ayumad.github.io/blog/hermes-on-mac-mini/?theme=dark&renderer=ascii",
-    );
+    expect(screen.getByRole("heading", { name: "The problem was never the chat window" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Blog index/i })).toHaveAttribute("href", "/blog");
   });
 
   it("carries the current visual context into the public blog and knowledge base", () => {
@@ -478,18 +476,18 @@ describe("Ayumad.me", () => {
 
     expect(screen.getByRole("link", { name: /Why Hermes lives on a Mac mini/i })).toHaveAttribute(
       "href",
-      "https://ayumad.github.io/blog/hermes-on-mac-mini/?theme=light&renderer=particles",
+      "/blog/hermes-on-mac-mini",
     );
     expect(screen.getByRole("link", { name: "Knowledge ↗" })).toHaveAttribute(
       "href",
-      "https://ayumad.github.io/?theme=light&renderer=particles",
+      "/knowledge",
     );
   });
 
   it("keeps legacy bookmarks working", () => {
     renderAt("/hermes");
     expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
-    expect(window.location.hash).toBe("#/projects/hermes");
+    expect(window.location.pathname).toBe("/projects/hermes");
   });
 
   it("publishes the resume from contact and the footer", () => {
@@ -525,7 +523,7 @@ describe("Ayumad.me", () => {
     renderAt("/missing-signal");
 
     expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#/");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
   });
 
   it("persists theme changes", () => {
@@ -539,7 +537,7 @@ describe("Ayumad.me", () => {
     expect(
       within(screen.getByRole("navigation", { name: "Main navigation" }))
         .getByRole("link", { name: /Knowledge/i }),
-    ).toHaveAttribute("href", "https://ayumad.github.io/?theme=light&renderer=ascii");
+    ).toHaveAttribute("href", "/knowledge");
   });
 
   it("applies and persists renderer modes across the complete shell", () => {
@@ -570,7 +568,7 @@ describe("Ayumad.me", () => {
     expect(
       within(screen.getByRole("navigation", { name: "Main navigation" }))
         .getByRole("link", { name: /Blog/i }),
-    ).toHaveAttribute("href", "https://ayumad.github.io/blog/?theme=dark&renderer=particles");
+    ).toHaveAttribute("href", "/blog");
 
     for (const [mode, label] of [
       ["glitch", "Glitch"],
@@ -664,8 +662,8 @@ describe("Ayumad.me", () => {
     );
     expect(fetch).toHaveBeenCalledTimes(1);
 
-    window.location.hash = "#/contact";
-    fireEvent(window, new HashChangeEvent("hashchange"));
+    window.history.pushState({}, "", "/contact");
+    fireEvent(window, new PopStateEvent("popstate"));
     expect(await screen.findByRole("heading", { name: "Contact" })).toBeInTheDocument();
     expect(screen.getByText("Test Signal")).toBeInTheDocument();
     expect(screen.getByText("Now listening")).toBeInTheDocument();
@@ -718,8 +716,8 @@ describe("Ayumad.me", () => {
   it("uses the active visual mode for content-aware route transitions", () => {
     renderAt("/");
 
-    window.location.hash = "#/projects";
-    fireEvent(window, new HashChangeEvent("hashchange"));
+    window.history.pushState({}, "", "/projects");
+    fireEvent(window, new PopStateEvent("popstate"));
 
     const frame = document.querySelector(".route-frame.route-ascii");
     expect(frame).toBeInTheDocument();

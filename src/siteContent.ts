@@ -104,10 +104,11 @@ export const navItems: NavItem[] = [
   { label: "Projects", path: "/projects", index: "02" },
   { label: "Systems", path: "/systems", index: "03" },
   { label: "Gear", path: "/gear", index: "04" },
-  { label: "Blog", path: "https://ayumad.github.io/blog/", index: "05", external: true },
+  { label: "Blog", path: "/blog", index: "05" },
   { label: "About", path: "/about", index: "06" },
   { label: "Contact", path: "/contact", index: "07" },
-  { label: "Knowledge", path: "https://ayumad.github.io/", index: "08", external: true },
+  { label: "Knowledge", path: "/knowledge", index: "08" },
+  { label: "Chat", path: "/chat", index: "09" },
 ];
 
 export const legacyRedirects: Record<string, string> = {
@@ -215,7 +216,7 @@ export const projects: Project[] = [
     related: [
       { label: "AI system", path: "/systems/ai" },
       { label: "Knowledge system", path: "/systems/knowledge" },
-      { label: "Why Hermes lives on a Mac mini", path: "https://ayumad.github.io/blog/hermes-on-mac-mini/" },
+      { label: "Why Hermes lives on a Mac mini", path: "/blog/hermes-on-mac-mini" },
     ],
     status: "in-progress",
     year: "Now",
@@ -254,7 +255,7 @@ export const projects: Project[] = [
       },
     ],
     related: [
-      { label: "Public layer article", path: "https://ayumad.github.io/blog/public-layer-private-vault/" },
+      { label: "Public layer article", path: "/blog/public-layer-private-vault" },
       { label: "Knowledge system", path: "/systems/knowledge" },
     ],
     status: "in-progress",
@@ -479,7 +480,7 @@ export const systemLayers: SystemLayer[] = [
     ],
     related: [
       { label: "Homelab", path: "/projects/homelab" },
-      { label: "Bazzite article", path: "https://ayumad.github.io/blog/two-bazzite-sff-pcs/" },
+      { label: "Bazzite article", path: "/blog/two-bazzite-sff-pcs" },
     ],
   },
   {
@@ -505,7 +506,7 @@ export const systemLayers: SystemLayer[] = [
       },
     ],
     related: [
-      { label: "Headphone stack article", path: "https://ayumad.github.io/blog/desktop-headphone-stack/" },
+      { label: "Headphone stack article", path: "/blog/desktop-headphone-stack" },
       { label: "Gear index", path: "/gear" },
     ],
   },
@@ -533,7 +534,7 @@ export const systemLayers: SystemLayer[] = [
     ],
     related: [
       { label: "Obsidian RAG", path: "/projects/obsidian-rag" },
-      { label: "Public layer article", path: "https://ayumad.github.io/blog/public-layer-private-vault/" },
+      { label: "Public layer article", path: "/blog/public-layer-private-vault" },
     ],
   },
 ];
@@ -680,7 +681,7 @@ export const blogPosts: BlogPostLink[] = [
     summary: "Centralizing a personal AI system made the clients simpler, the workflows more durable, and the boundaries easier to understand.",
     tags: ["Hermes", "Local AI", "macOS", "Systems"],
     readingTime: "6 min",
-    url: "https://ayumad.github.io/blog/hermes-on-mac-mini/",
+    url: "https://ayumad.me/blog/hermes-on-mac-mini",
   },
   {
     slug: "public-layer-private-vault",
@@ -689,7 +690,7 @@ export const blogPosts: BlogPostLink[] = [
     summary: "A portfolio can be richer than a résumé without turning a private notebook into a public database.",
     tags: ["Obsidian", "Knowledge systems", "Web design", "Privacy"],
     readingTime: "7 min",
-    url: "https://ayumad.github.io/blog/public-layer-private-vault/",
+    url: "https://ayumad.me/blog/public-layer-private-vault",
   },
   {
     slug: "desktop-headphone-stack",
@@ -698,7 +699,7 @@ export const blogPosts: BlogPostLink[] = [
     summary: "One compact desktop source and three very different headphones make a more useful system than a pile of overlapping gear.",
     tags: ["Audio", "Headphones", "FiiO", "Listening"],
     readingTime: "6 min",
-    url: "https://ayumad.github.io/blog/desktop-headphone-stack/",
+    url: "https://ayumad.me/blog/desktop-headphone-stack",
   },
   {
     slug: "two-bazzite-sff-pcs",
@@ -707,7 +708,7 @@ export const blogPosts: BlogPostLink[] = [
     summary: "Two compact Radeon systems show how a clear software role can make ordinary PC hardware feel purpose-built.",
     tags: ["Bazzite", "Linux", "SFF", "PC hardware"],
     readingTime: "6 min",
-    url: "https://ayumad.github.io/blog/two-bazzite-sff-pcs/",
+    url: "https://ayumad.me/blog/two-bazzite-sff-pcs",
   },
 ];
 
@@ -733,12 +734,20 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
     description: "A curated snapshot of the computers, audio, cameras, and tools Ayush uses.",
   },
   "/blog": {
-    title: "Blog moved to Ayush’s Knowledge",
-    description: "Continue to the canonical public blog and knowledge base at ayumad.github.io.",
+    title: "Blog — Ayumad.me",
+    description: "Finished essays about local AI, knowledge systems, audio, and Linux hardware.",
+  },
+  "/knowledge": {
+    title: "Knowledge — Ayumad.me",
+    description: "A public index connecting Ayush Madhukar’s essays, projects, systems, and notes.",
   },
   "/about": {
     title: "About — Ayumad.me",
     description: "About Ayush Madhukar, a Computer Engineering student and systems builder.",
+  },
+  "/chat": {
+    title: "Chat with Hermes — Ayumad.me",
+    description: "Connect to Hermes, a personal AI agent running from a Mac mini.",
   },
   "/contact": {
     title: "Contact — Ayumad.me",

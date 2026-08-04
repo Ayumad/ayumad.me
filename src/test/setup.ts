@@ -14,7 +14,7 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
   document.documentElement.dataset.theme = "dark";
-  window.location.hash = "#/";
+  window.history.replaceState({}, "", "/");
   spotifyFetchMock.mockReset();
   spotifyFetchMock.mockImplementation(async () =>
     Response.json({

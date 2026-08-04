@@ -195,17 +195,19 @@ mode are CSS post-processes rather than falsely presented WebGL simulations.
 
 ## 4. Global structure
 
-The site is a React single-page application using hash routes:
+The site is a React single-page application using clean path routes:
 
 | Index | Label | Route |
 | --- | --- | --- |
-| 00 | Home | `#/` |
-| 01 | Work | `#/showcase` |
-| 02 | Projects | `#/projects` |
-| 03 | Systems | `#/systems` |
-| 04 | Now | `#/now` |
-| 05 | About | `#/about` |
-| 06 | Contact | `#/contact` |
+| 00 | Home | `/` |
+| 01 | Work | `/work` |
+| 02 | Projects | `/projects` |
+| 03 | Systems | `/systems` |
+| 04 | Gear | `/gear` |
+| 05 | Blog | `/blog` |
+| 06 | About | `/about` |
+| 07 | Contact | `/contact` |
+| 08 | Knowledge | `/knowledge` |
 
 Every route uses the same shell:
 
@@ -782,8 +784,8 @@ Requirements:
 
 ## 16. SEO and document metadata
 
-- Per-route title and description are updated when the hash route changes.
-- Canonical URL is updated to `https://ayumad.me/#/route`.
+- Per-route title and description are updated when the path changes.
+- Canonical URL is updated to `https://ayumad.me/route`.
 - Base HTML includes author, theme color, Open Graph, and X/Twitter metadata.
 - Local `favicon.png` and `og.png`; no hotlinked artwork.
 - The 128×128 favicon uses a near-black field, cyan pixel `A`, sparse
@@ -791,7 +793,7 @@ Requirements:
   recognizable when reduced to 16×16 and should be cache-busted when replaced.
 - `robots.txt` allows crawling.
 - `sitemap.xml` lists the canonical root.
-- A styled 404 exists for unknown hash routes.
+- A styled 404 exists for unknown paths.
 - Vercel adds immutable caching for hashed assets plus `nosniff` and strict
   referrer headers.
 
@@ -810,8 +812,9 @@ Stack:
 - Web Audio API
 - Canvas 2D
 
-There is no router dependency. A small hash-path hook listens for
-`hashchange`, and a local link component emits `#/path` URLs.
+There is no router dependency. A small path hook listens for `popstate`, and a
+local link component emits clean `/path` URLs while preserving client-side
+transitions.
 
 File map:
 
@@ -953,7 +956,8 @@ Build a production-ready personal website for Ayush Madhukar using React 19,
 Vite, TypeScript, Motion, and custom CSS. Use this document as the only source
 of truth.
 
-Create hash routes for Home, Work, Projects, Systems, Now, About, and Contact,
+Create clean path routes for Home, Work, Projects, Systems, Gear, Blog,
+Knowledge, About, and Contact,
 plus a styled not-found route. Implement a shared sticky indexed navigation,
 icon-based persistent dark/light theme, a persistent native global renderer
 selector, accessible mobile menu, skip link, footer, route metadata, error

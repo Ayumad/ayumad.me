@@ -2,6 +2,7 @@ import {
   type AnchorHTMLAttributes,
   Component,
   type ErrorInfo,
+  type MouseEvent as ReactMouseEvent,
   type PropsWithChildren,
   useEffect,
   useRef,
@@ -26,6 +27,7 @@ import {
 import { SpotifyArtwork } from "./SpotifyArtwork";
 import { SpotifyPlaybackProvider } from "./SpotifyPlaybackProvider";
 import { useSpotifyPlayback } from "./useSpotifyPlayback";
+import { blogArticleBySlug, type BlogBlock } from "./blogContent";
 import {
   activityConnections,
   aboutContent,
@@ -56,27 +58,41 @@ const contactField = String.raw`
 ++==--::..                    ..::--==++**###
 `;
 
-function currentPath() {
-  const hashPath = window.location.hash.slice(1);
-  const path = hashPath.startsWith("/") ? hashPath : "/";
-  return legacyRedirects[path] ?? path;
+function normalizePath(value: string) {
+  const withoutQuery = value.split("?", 1)[0] || "/";
+  const withLeadingSlash = withoutQuery.startsWith("/") ? withoutQuery : `/${withoutQuery}`;
+  const withoutTrailingSlash = withLeadingSlash.length > 1
+    ? withLeadingSlash.replace(/\/$/, "")
+    : withLeadingSlash;
+  return legacyRedirects[withoutTrailingSlash] ?? withoutTrailingSlash;
 }
 
-function useHashPath() {
+function currentPath() {
+  const hashPath = window.location.hash.slice(1);
+  const rawPath = hashPath.startsWith("/") ? hashPath : window.location.pathname || "/";
+  const path = normalizePath(rawPath);
+
+  if (hashPath || path !== rawPath) {
+    window.history.replaceState({}, "", `${path}${window.location.search}`);
+  }
+
+  return path;
+}
+
+function useSitePath() {
   const [path, setPath] = useState(currentPath);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const rawPath = window.location.hash.slice(1);
-      const nextPath = currentPath();
-      if (rawPath && rawPath !== nextPath && legacyRedirects[rawPath]) {
-        window.history.replaceState(null, "", `#${nextPath}`);
-      }
-      setPath(nextPath);
+    const handleNavigation = () => {
+      setPath(currentPath());
     };
-    window.addEventListener("hashchange", handleHashChange);
-    handleHashChange();
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    window.addEventListener("popstate", handleNavigation);
+    window.addEventListener("hashchange", handleNavigation);
+    handleNavigation();
+    return () => {
+      window.removeEventListener("popstate", handleNavigation);
+      window.removeEventListener("hashchange", handleNavigation);
+    };
   }, []);
 
   return path;
@@ -86,9 +102,24 @@ type SiteLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
   to: string;
 };
 
-function Link({ to, children, ...props }: SiteLinkProps) {
+function Link({ to, children, onClick, ...props }: SiteLinkProps) {
+  const handleClick = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    onClick?.(event);
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) return;
+    event.preventDefault();
+    window.history.pushState({}, "", normalizePath(to));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  };
+
   return (
-    <a href={`#${to}`} {...props}>
+    <a href={normalizePath(to)} onClick={handleClick} {...props}>
       {children}
     </a>
   );
@@ -205,9 +236,13 @@ function RouteEffects({ path }: { path: string }) {
     };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
-    const canonical = post?.url ??
-      (path === "/blog" ? "https://ayumad.github.io/blog/" : `https://ayumad.me/#${path}`);
+    const canonical = post?.url ?? `https://ayumad.me${path === "/" ? "/" : path}`;
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonical);
+    document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonical);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", meta.description);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [path]);
 
@@ -960,8 +995,8 @@ function BlogPage() {
       <SectionHeading
         index="05"
         label="Blog"
-        title="Blog → Knowledge"
-        description="The Blog now lives inside the public knowledge base, where finished essays can connect directly to the projects, systems, and notes behind them."
+        title="Blog"
+        description="Finished essays about local AI, knowledge systems, audio, and Linux hardware."
         scene="writeups"
       />
 
@@ -983,9 +1018,9 @@ function BlogPage() {
               </ul>
             </div>
             <div className="writeup-main">
-              <h2><ExternalLink href={post.url}>{post.title}</ExternalLink></h2>
+              <h2><Link to={`/blog/${post.slug}`}>{post.title}</Link></h2>
               <p>{post.summary}</p>
-              <ExternalLink className="text-link" href={post.url}>Read in Knowledge <span aria-hidden="true">↗</span></ExternalLink>
+              <Link className="text-link" to={`/blog/${post.slug}`}>Read essay <span aria-hidden="true">↗</span></Link>
             </div>
           </motion.article>
         ))}
@@ -993,22 +1028,33 @@ function BlogPage() {
 
       <aside className="plain-note">
         <p className="label">One public writing layer</p>
-        <p>Essays and public notes now share one searchable home. Private context and operational material remain outside both deployed sites.</p>
-        <ExternalLink className="text-link" href="https://ayumad.github.io/blog/">Open the Blog <span aria-hidden="true">↗</span></ExternalLink>
+        <p>Essays and public notes share one navigable home. Private context and operational material remain outside the deployed site.</p>
+        <Link className="text-link" to="/knowledge">Explore the knowledge index <span aria-hidden="true">↗</span></Link>
       </aside>
     </section>
   );
 }
 
+function BlogBlockView({ block, index }: { block: BlogBlock; index: number }) {
+  if (block.type === "heading") return <h2 key={index}>{block.text}</h2>;
+  if (block.type === "quote") return <blockquote key={index}>{block.text}</blockquote>;
+  if (block.type === "list") {
+    const List = block.ordered ? "ol" : "ul";
+    return <List key={index}>{block.items.map((item) => <li key={item}>{item}</li>)}</List>;
+  }
+  return <p key={index}>{block.text}</p>;
+}
+
 function BlogPostPage({ slug }: { slug: string }) {
   const post = blogPosts.find((item) => item.slug === slug);
-  if (!post) return <NotFoundPage />;
+  const article = blogArticleBySlug.get(slug);
+  if (!post || !article) return <NotFoundPage />;
 
   return (
     <article className="section-shell article-page">
       <header className="article-header">
-        <ExternalLink className="text-link" href="https://ayumad.github.io/blog/">← Public Blog</ExternalLink>
-        <p className="label">Essay / {post.readingTime} / Canonical copy</p>
+        <Link className="text-link" to="/blog">← Blog index</Link>
+        <p className="label">Essay / {post.readingTime}</p>
         <h1>{post.title}</h1>
         <p>{post.summary}</p>
         <div>
@@ -1016,18 +1062,57 @@ function BlogPostPage({ slug }: { slug: string }) {
           <ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
         </div>
       </header>
-      <div className="article-body article-handoff">
-        <p>This article has moved into Ayush’s public knowledge base so its references, related systems, and future updates live together.</p>
-        <ExternalLink className="button primary" href={post.url}>Read the complete essay <span aria-hidden="true">↗</span></ExternalLink>
+      <div className="article-body">
+        {article.blocks.map((block, index) => <BlogBlockView block={block} index={index} key={`${block.type}-${index}`} />)}
       </div>
-      <aside className="related-links" aria-label="Continue to the public knowledge base">
-        <p className="label">Continue exploring</p>
+      <aside className="related-links" aria-label="Continue exploring">
+        <p className="label">Continue through the map</p>
         <div>
-          <ExternalLink href="https://ayumad.github.io/blog/">All essays<span aria-hidden="true">↗</span></ExternalLink>
-          <ExternalLink href="https://ayumad.github.io/">Public knowledge<span aria-hidden="true">↗</span></ExternalLink>
+          <Link to="/blog">All essays<span aria-hidden="true">↗</span></Link>
+          <Link to="/knowledge">Knowledge index<span aria-hidden="true">↗</span></Link>
         </div>
       </aside>
     </article>
+  );
+}
+
+function KnowledgePage() {
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading
+        index="08"
+        label="Knowledge"
+        title="Public knowledge"
+        description="A deliberate public layer connecting essays, projects, systems, and the edited snapshots behind them."
+        scene="writeups"
+      />
+      <div className="knowledge-grid">
+        <article className="knowledge-card">
+          <p className="label">Writing</p>
+          <h2>Blog essays</h2>
+          <p>Long-form notes on the systems, hardware, and ideas behind the site.</p>
+          <Link className="text-link" to="/blog">Open the blog <span aria-hidden="true">↗</span></Link>
+        </article>
+        <article className="knowledge-card">
+          <p className="label">Systems</p>
+          <h2>Connected systems</h2>
+          <p>AI, infrastructure, audio, and Linux hardware with a clear role in the larger map.</p>
+          <Link className="text-link" to="/systems">Open systems <span aria-hidden="true">↗</span></Link>
+        </article>
+        <article className="knowledge-card">
+          <p className="label">Projects</p>
+          <h2>Current work</h2>
+          <p>Projects and experiments that turn the ideas into working tools.</p>
+          <Link className="text-link" to="/projects">Open projects <span aria-hidden="true">↗</span></Link>
+        </article>
+        <article className="knowledge-card">
+          <p className="label">Snapshot</p>
+          <h2>Edited, not exported</h2>
+          <p>The public site is reviewed material. Private notes and operational details stay outside the deployment.</p>
+          <Link className="text-link" to="/about">Read the boundary <span aria-hidden="true">↗</span></Link>
+        </article>
+      </div>
+    </section>
   );
 }
 
@@ -1085,6 +1170,112 @@ function AboutPage() {
             {aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}
           </ul>
         </section>
+      </div>
+    </section>
+  );
+}
+
+const WEBUI_URL = "http://100.113.252.86:8787";
+
+function useTailscaleProbe() {
+  const [status, setStatus] = useState<"checking" | "reachable" | "unreachable">("checking");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => {
+      setStatus("unreachable");
+      controller.abort();
+    }, 4000);
+
+    fetch(WEBUI_URL, { mode: "no-cors", signal: controller.signal })
+      .then(() => {
+        clearTimeout(timeout);
+        setStatus("reachable");
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+        setStatus("unreachable");
+      });
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
+  return status;
+}
+
+function ChatPage() {
+  const tailscale = useTailscaleProbe();
+
+  return (
+    <section className="section-shell page-section chat-page">
+      <SectionHeading
+        index="09"
+        label="Chat"
+        title="Chat with Hermes"
+        description="A personal AI agent running from a Mac mini, connected across devices and grounded in a curated knowledge system."
+        scene="contact"
+      />
+
+      <div className="chat-status-card">
+        <div className="chat-status-header">
+          <span className="chat-signal" aria-hidden="true">◈</span>
+          <div>
+            <h2>Hermes WebUI</h2>
+            <p>Full-featured chat interface with session history, workspace browsing, and tool access.</p>
+          </div>
+        </div>
+
+        {tailscale === "checking" ? (
+          <div className="chat-probe">
+            <span className="chat-probe-dot" aria-hidden="true" />
+            <p>Detecting network…</p>
+          </div>
+        ) : tailscale === "reachable" ? (
+          <div className="chat-probe chat-probe-ok">
+            <span className="chat-probe-dot" aria-hidden="true" />
+            <p>Tailscale connection detected.</p>
+            <a
+              className="button primary"
+              href={WEBUI_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open Hermes WebUI ↗
+            </a>
+          </div>
+        ) : (
+          <div className="chat-probe chat-probe-fail">
+            <span className="chat-probe-dot" aria-hidden="true" />
+            <p>Hermes WebUI is on a private Tailscale network and is not reachable from this connection.</p>
+            <div className="chat-instructions">
+              <h3>How to connect</h3>
+              <ol>
+                <li>Install <a href="https://tailscale.com/" target="_blank" rel="noreferrer">Tailscale</a> on your device.</li>
+                <li>Join the <code>ayumad</code> tailnet.</li>
+                <li>Open <a href={WEBUI_URL} target="_blank" rel="noreferrer">{WEBUI_URL}</a>.</li>
+              </ol>
+              <p className="chat-note">The Hermex iOS app also connects to the same endpoint.</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="chat-about">
+        <h3>About Hermes</h3>
+        <p>
+          Hermes is a personal AI agent that retains context across sessions, runs
+          scheduled workflows, and shares one backend across every device. It uses
+          curated retrieval from an Obsidian knowledge base instead of unrestricted
+          ingestion, keeping the boundary between private notes and public output
+          explicit.
+        </p>
+        <div className="chat-about-links">
+          <Link className="button" to="/projects/hermes">Hermes project ↗</Link>
+          <Link className="button" to="/systems/knowledge">Knowledge system ↗</Link>
+        </div>
       </div>
     </section>
   );
@@ -1257,8 +1448,8 @@ function Footer() {
         <p>AYUMAD.ME <span>/ PUBLIC INDEX</span></p>
         <p>2026</p>
         <div>
-          <ExternalLink href="https://ayumad.github.io/blog/">Blog ↗</ExternalLink>
-          <ExternalLink href="https://ayumad.github.io/">Knowledge ↗</ExternalLink>
+          <Link to="/blog">Blog ↗</Link>
+          <Link to="/knowledge">Knowledge ↗</Link>
           <a href="/ayush-madhukar-resume.pdf" target="_blank" rel="noreferrer">Résumé ↗</a>
           <a href="mailto:Ayumadbro123@gmail.com">Email ↗</a>
         </div>
@@ -1277,13 +1468,15 @@ function resolvePage(path: string) {
   if (path === "/gear") return <GearPage />;
   if (path === "/blog") return <BlogPage />;
   if (path.startsWith("/blog/")) return <BlogPostPage slug={path.slice("/blog/".length)} />;
+  if (path === "/knowledge") return <KnowledgePage />;
   if (path === "/about") return <AboutPage />;
+  if (path === "/chat") return <ChatPage />;
   if (path === "/contact") return <ContactPage />;
   return <NotFoundPage />;
 }
 
 export default function App() {
-  const path = useHashPath();
+  const path = useSitePath();
   const { renderMode, setRenderMode } = useRenderer();
   const page = resolvePage(path);
 

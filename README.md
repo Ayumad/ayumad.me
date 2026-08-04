@@ -60,8 +60,9 @@ Most site copy and structured content lives in:
 - `renderer-plan.md` — copy-paste blueprint for rebuilding the homepage
   renderer as a dedicated audiovisual tool
 
-The site uses hash routes so every section can be opened directly without
-server-side routing configuration.
+The site uses clean path routes such as `/blog` and `/projects/hermes`.
+Vercel rewrites unknown paths to the Vite entry point so every section can be
+opened directly and refreshed without losing the route.
 
 The Obsidian vault and Google Drive are editorial sources only. Neither is
 read during local builds or Vercel deployments; public material must be
