@@ -9,6 +9,10 @@
       "destination": "https://ayumad.github.io/ayumad.vault/"
     },
     {
+      "source": "/vault/",
+      "destination": "https://ayumad.github.io/ayumad.vault/"
+    },
+    {
       "source": "/vault/:path*",
       "destination": "https://ayumad.github.io/ayumad.vault/:path*"
     }
