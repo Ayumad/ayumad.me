@@ -3,7 +3,6 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "trailingSlash": true,
   "rewrites": [
     {
       "source": "/vault",
@@ -12,6 +11,10 @@
     {
       "source": "/vault/",
       "destination": "https://ayumad.github.io/ayumad.vault/"
+    },
+    {
+      "source": "/vault/:path*/",
+      "destination": "https://ayumad.github.io/ayumad.vault/:path*/"
     },
     {
       "source": "/vault/:path*",
