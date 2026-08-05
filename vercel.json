@@ -3,6 +3,16 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/vault",
+      "destination": "https://ayumad.github.io/ayumad.vault/"
+    },
+    {
+      "source": "/vault/:path*",
+      "destination": "https://ayumad.github.io/ayumad.vault/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
