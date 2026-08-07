@@ -118,12 +118,12 @@ export const navItems: NavItem[] = [
 
 export const homeContent: HomeContent = {
   intro:
-    "I like finding out what hardware and software can do once the defaults get out of the way. Lately that means local AI, Proxmox, Linux, audio systems, and cameras.",
+    "I break hardware and software until I understand it. Lately that's been local AI, Proxmox, Linux, audio systems, and cameras.",
   topics: ["AI + Notes", "Servers", "Audio", "Linux"],
   current: {
     title: "Hermes",
     description:
-      "Running an AI agent on a Mac mini — daily briefs, memory, cron automations, multi-model routing — all connected over Tailscale.",
+      "An AI agent running on a Mac mini. Daily briefs, memory, cron automations, multi-model routing — all connected over Tailscale.",
   },
 };
 
@@ -166,7 +166,7 @@ export const projects: Project[] = [
     title: "Hermes Agent",
     summary: "An autonomous AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing.",
     story:
-      "Hermes handles morning briefs, interview prep, session journals, and cron automations across 13 scheduled jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The interesting problem was making it cheap — every token counts when you're running this many automations.",
+      "Hermes handles morning briefs, interview prep, session journals, and 13 scheduled cron jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The hard part was making it cheap — every token counts when you're running this many automations.",
     stack: ["Hermes", "Mnemosyne", "Tailscale", "OpenCode Go", "Telegram"],
     status: "in-progress",
     year: "Now",
@@ -174,9 +174,9 @@ export const projects: Project[] = [
   {
     slug: "rag-assistant",
     title: "RAG Assistant",
-    summary: "A retrieval-augmented assistant built on top of the Obsidian vault for question-answering over personal notes.",
+    summary: "A retrieval-augmented assistant that answers questions from my Obsidian vault.",
     story:
-      "The RAG assistant indexes the Obsidian vault and answers questions grounded in actual notes — build logs, device configs, project decisions. Deployment is pending, but the indexing pipeline is done. The goal is to let Hermes pull context from the vault without exposing private notes to the model.",
+      "The RAG assistant indexes the Obsidian vault and answers questions grounded in actual notes — build logs, device configs, project decisions. The indexing pipeline is done; deployment is pending. The point is letting Hermes pull context from my notes without exposing the private parts of the vault to a model.",
     stack: ["Python", "RAG", "Obsidian", "Embeddings"],
     status: "in-progress",
     year: "Now",
@@ -186,7 +186,7 @@ export const projects: Project[] = [
     title: "Daily Brief",
     summary: "7 cron jobs that deliver a morning briefing — vault status, Notion tasks, email, calendar, and question prompts.",
     story:
-      "Every morning at 9:30, Hermes compiles a brief from the vault, Notion, email, and calendar. Throughout the day it sends question prompts and interview prep. At 10pm it logs the session journal. The whole system runs on cron with no manual intervention — fire and forget.",
+      "Every morning at 9:30, Hermes compiles a brief from the vault, Notion, email, and calendar. Question prompts run through the day, interview prep hits at 6pm, and at 10pm it logs the session journal. It's all cron, no manual intervention. Set it up once and let it run.",
     stack: ["Hermes Cron", "Obsidian", "Notion", "Google Workspace"],
     status: "completed",
     year: "Now",
@@ -194,9 +194,9 @@ export const projects: Project[] = [
   {
     slug: "voice-assistant",
     title: "Voice Assistant",
-    summary: "Research into building a voice-first interface for Hermes — wake word, speech-to-text, local inference.",
+    summary: "Research into a voice-first interface for Hermes — wake word, speech-to-text, local inference.",
     story:
-      "The voice assistant is in research phase. The goal is a wake-word triggered interface that routes speech to a local STT model, runs through Hermes, and responds with TTS. The constraint is doing it cheaply — no cloud APIs for the core loop, everything local or self-hosted.",
+      "The voice assistant is still in research. The idea is a wake-word interface that routes speech to local STT, runs through Hermes, and answers with TTS. The constraint is cost — no cloud APIs for the core loop, everything local or self-hosted.",
     stack: ["Python", "Whisper", "Piper TTS", "Wake word"],
     status: "planned",
     year: "Planned",
@@ -206,7 +206,7 @@ export const projects: Project[] = [
     title: "Homelab Build",
     summary: "A P520 running Proxmox for storage, local AI, media, and services.",
     story:
-      "The ThinkStation P520 has a 4TB ZFS pool and a GPU-passthrough VM. I am separating core services from the Docker experiments so I can change one part without taking everything else down. RTX 3060 is passthrough for local inference.",
+      "The ThinkStation P520 has a 4TB ZFS pool and a GPU-passthrough VM. I'm keeping core services separate from the Docker experiments so I can break one thing without taking everything else down. The RTX 3060 passes through for local inference.",
     stack: ["Proxmox VE", "ZFS", "GPU passthrough", "Docker"],
     status: "in-progress",
     year: "Now",
@@ -216,7 +216,7 @@ export const projects: Project[] = [
     title: "Owlbot",
     summary: "An AI chatbot built to help Foothill College students find their way.",
     story:
-      "Owlbot handles common questions about admissions, financial aid, course registration, and campus resources. The interesting problem was not only matching questions — it was translating a sprawling institutional knowledge base into answers students could actually use.",
+      "Owlbot answers questions about admissions, financial aid, registration, and campus resources. The hard part wasn't matching questions — it was turning a sprawling institutional knowledge base into answers students could actually use. Built for the Data Science & AI club.",
     stack: ["Python", "NLP", "FAQ matching"],
     status: "completed",
     year: "2023",
@@ -226,7 +226,7 @@ export const projects: Project[] = [
     title: "DeluluBot",
     summary: "An emotion-aware chatbot built during CalHacks 10.0.",
     story:
-      "We built DeluluBot at CalHacks 10.0. It detects sentiment and changes its response style. It was a short hackathon build and an early test of how much tone changes the way a chatbot feels to use.",
+      "Built DeluluBot at CalHacks 10.0 with the club. It detects sentiment and changes how it responds. Short hackathon build, and a decent first test of how much tone changes the way a chatbot feels to use.",
     stack: ["Python", "Sentiment analysis", "CalHacks"],
     status: "completed",
     year: "2023",
@@ -236,7 +236,7 @@ export const projects: Project[] = [
     title: "Audio Visualization",
     summary: "Cymatics and machine learning turned into a visual study of sound.",
     story:
-      "I combined Chladni-style pattern generation with machine learning to make audio visible. The project let me work on signal processing, computer vision, and music in the same place.",
+      "I combined Chladni-style pattern generation with machine learning to make audio visible. Signal processing, computer vision, and music in one project. This is also what got me started with the Principia STEM Magazine writing.",
     stack: ["Python", "TensorFlow", "Audio processing"],
     status: "completed",
     year: "2024",
@@ -294,7 +294,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "What Hermes Does",
     description:
-      "Hermes is a personal AI agent that handles daily operations — morning briefs, interview prep, session journals, and 13 cron automations. It runs on a headless Mac mini and connects from every device over Tailscale.",
+      "Hermes is my personal AI agent. It runs the daily operations — morning briefs, interview prep, session journals, 13 cron automations — from a headless Mac mini, and connects from every device over Tailscale.",
     items: [
       "Morning brief at 9:30am — vault, Notion, email, calendar",
       "Interview prep at 6pm — technical quizzes with follow-up pressure",
@@ -306,7 +306,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Memory System",
     description:
-      "Mnemosyne handles persistent memory — facts, preferences, insights, and relationships that survive across sessions. It uses local embeddings for fast recall and a knowledge graph for connecting related memories.",
+      "Mnemosyne holds the persistent memory — facts, preferences, insights, and relationships that survive across sessions. Local embeddings keep recall fast, and a knowledge graph connects related memories.",
     items: [
       "Mnemosyne v3.14 with local embeddings (fastembed)",
       "23 provider tools for recall, triples, graph queries",
@@ -318,7 +318,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Multi-Model Routing",
     description:
-      "Hermes routes between models based on task complexity and cost. Mimo V2.5 handles daily work, Kimi K3 tackles hard problems, DeepSeek V4 Flash handles cheap tool-heavy tasks.",
+      "Hermes routes between models based on task complexity and cost. Mimo V2.5 handles the daily work, Kimi K3 tackles the hard problems, DeepSeek V4 Flash handles the cheap tool-heavy tasks.",
     items: [
       "Mimo V2.5 — daily driver, cost-effective",
       "Kimi K3 — complex reasoning and code review",
@@ -542,9 +542,9 @@ export const aboutContent: AboutContent = {
   intro: "Computer Engineering student based in the Bay Area.",
   story: [
     "I got into technology through jailbreaking devices and running emulators. I liked seeing a device do something it was not supposed to do, and I still approach new hardware the same way — push it until it breaks, then figure out why.",
-    "That instinct led me from jailbroken iPhones to custom ROMs on Android, from emulators on a PSP to Arch Linux on a Panasonic Let's Note. Every device is a puzzle. The reward is not just making it work — it's understanding why the defaults were wrong in the first place.",
+    "That instinct came from being the kid who moved from India to the US young and had to figure out the culture on his own. I found it through media and books, and eventually through computers. Every device was a puzzle, and the reward wasn't just making it work — it was understanding why the defaults were wrong in the first place.",
     "Most of my projects start with a practical question. Can this old workstation become a useful server? Can one Mac mini run an AI agent for every device? Can I make an Arch install feel exactly how I want? I learn by setting it up, breaking something, and fixing it.",
-    "I study Computer Engineering at San José State and previously studied Computer Science at Foothill. Outside class, technology is still my main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I am trying to configure that week.",
+    "I study Computer Engineering at San José State and studied Computer Science at Foothill before that, where I also ran the Data Science & AI club and founded the Principia STEM Magazine. Outside class, technology is still the main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I am trying to configure that week.",
   ],
   education: [
     { school: "San José State", program: "Computer Engineering" },
@@ -607,11 +607,11 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   },
   "/hermes": {
     title: "Hermes — Ayumad.me",
-    description: "Inside Hermes — an autonomous AI agent for daily operations.",
+    description: "Inside Hermes — the AI agent that runs Ayush's daily operations.",
   },
   "/gear": {
     title: "Gear — Ayumad.me",
-    description: "The 100+ devices, speakers, cameras, and tools Ayush uses.",
+    description: "The devices, speakers, cameras, and tools Ayush uses and tracks.",
   },
   "/writeups": {
     title: "Writeups — Ayumad.me",
