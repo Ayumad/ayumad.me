@@ -411,21 +411,21 @@ export const writeups: Writeup[] = [
     title: "Rating My Desktop Fleet",
     date: "2026",
     summary:
-      "Five machines, five jobs — the honest breakdown of every desktop I own, what it's actually good at, and what I'd change if I was smarter with my money.",
+      "I have five desktop PCs. Here's what each one is for, how good it actually is, and what I'd change.",
     tags: ["Hardware", "Desktops", "Gaming"],
     body: [
       {
         paragraphs: [
-          "I own five desktop PCs. That sounds like a hoarding problem until you look at what each one actually does. One is a 4K gaming rig. One is a Steam machine that lives under the TV. One is a server that never turns off. Two are currently living at a friend's house. None of them do the same job, and that's the point — I didn't buy five computers, I bought five different answers to five different questions.",
-          "This is the honest breakdown: what each machine is for, how well it's actually built, and — the part nobody writes — how important each one really is to me.",
+          "I own five desktop PCs. That sounds like a lot, but they all do different things, and honestly I've stopped trying to justify it.",
+          "One is the machine I actually use every day. One lives under the TV as a Steam machine. One is a server that never turns off. Two are at a friend's house right now. Here's what each one is for, how good it actually is, and what I'd change.",
         ],
       },
       {
-        heading: "The one that matters",
+        heading: "The main one",
         paragraphs: [
-          "Creekwood is the main system, and it's the one I'd keep if I could only keep one. A Ryzen 7 5800X3D paired with an RTX 5080 Founders Edition, 64 GB of DDR4, and a storage layout that's genuinely good — two 2 TB NVMe drives, a 4 TB SATA SSD, and 8 TB of spinning disks for the stuff that doesn't need to be fast.",
-          "It games on a Samsung Odyssey OLED G8: 4K, 240 Hz, OLED. That panel pushes the 5080 hard — this is the machine where a flagship GPU actually earns its keep. Most games run great with DLSS on. Path tracing in Cyberpunk is where it starts to hiccup, but that's not a build problem. That's just what 4K path tracing costs on any GPU right now; DLSS Quality plus dialing back the path-trace samples fixes most of it.",
-          "The CPU is the only real ceiling here. The 5800X3D is AM4's best, but it's AM4 — no DDR5, no PCIe 5.0. At 4K it doesn't matter much, which is why I'm not rushing to AM5. This machine is an 8/10 with the CPU as the thing keeping it from a 9.",
+          "Creekwood is the machine I'd keep if I could only keep one. Ryzen 7 5800X3D, RTX 5080 Founders Edition, 64 GB of DDR4. Storage is good: two 2 TB NVMe drives, a 4 TB SATA SSD, and 8 TB of HDD for stuff that doesn't need to be fast.",
+          "It's hooked up to a Samsung Odyssey OLED G8 — 4K, 240 Hz. That pushes the 5080 pretty hard. Most games run well with DLSS on. Path tracing in Cyberpunk is where it starts hiccuping, but that's just what 4K path tracing costs on any GPU right now. DLSS Quality plus lowering the path trace samples fixes most of it.",
+          "The CPU is the only real ceiling. The 5800X3D is the best AM4 has, but AM4 is old — no DDR5, no PCIe 5.0. At 4K it barely matters, so I'm not rushing to AM5.",
         ],
       },
       {
@@ -439,22 +439,22 @@ export const writeups: Writeup[] = [
       {
         heading: "The one under the TV",
         paragraphs: [
-          "The living-room machine is a Ryzen 5 5600 and a PowerColor RX 9070 XT Reaper stuffed into a KXRORS S300 mini-ITX case, running Bazzite. It's a console that happens to be a PC — Steam Big Picture on boot, controller in hand, sitting under the TV.",
-          "The GPU choice was deliberate: the 9070 XT was the most powerful card that fit the case without paying Founders Edition 5080/5090 money. That's the whole philosophy of the build — maximum capability within a hard size and budget constraint. The 5600 is the weak link; it genuinely limits the 9070 XT in CPU-heavy games. That's why the first upgrade on my list is a drop-in 5700X3D, which is a weirdly cheap way to unlock most of what this machine left on the table.",
+          "The SFF under the TV is a Ryzen 5 5600 with a PowerColor RX 9070 XT Reaper in a KXRORS S300 case, running Bazzite. It's basically a console. Steam on boot, controller, done.",
+          "I picked the 9070 XT because it was the most powerful card that fit the case without costing FE 5080/5090 money. That was the whole point — max GPU within the size limit. The 5600 is the weak link though. It holds the 9070 XT back in CPU-heavy games, which is why my first upgrade is a drop-in 5700X3D. Cheap and easy.",
         ],
       },
       {
         heading: "The one that never turns off",
         paragraphs: [
-          "The P520 is a ThinkStation workstation — Xeon W-2135, 64 GB of ECC RAM, and about 16.5 TB of raw storage across NVMe, SSD, and a three-drive ZFS pool. It runs Proxmox and everything self-hosted: the NAS, the media stack, the VMs.",
-          "The RTX 3060 in it is the most cost-effective part of my whole fleet. Twelve gigs of VRAM, CUDA, and cheap — it's the always-on AI card, the thing that will run the local RAG assistant over my notes. As a gaming desktop this machine would be terrible. As a server it's exactly right. It's the only always-on infrastructure I have, which makes it more important to me than any of the gaming rigs.",
+          "The P520 is a ThinkStation workstation: Xeon W-2135, 64 GB of ECC RAM, about 16.5 TB of raw storage in a ZFS pool. It runs Proxmox and everything self-hosted — NAS, media, VMs.",
+          "The RTX 3060 in it is the best value part I own. 12 GB of VRAM, CUDA, and cheap. It's the always-on AI card and it'll run the RAG assistant over my notes. As a gaming machine it'd be terrible. As a server it's exactly right, and it's the only always-on infrastructure I have, so it matters more than any of the gaming rigs.",
         ],
       },
       {
         heading: "The two I don't see",
         paragraphs: [
-          "The Gigabyte prebuilt — an i9-12900K with a Gigabyte RTX 4080 and 32 GB of DDR5 — is the most powerful CPU I own, sitting at a friend's house. It's my only DDR5 system, and when it comes back it's either a second high-end rig or a strong candidate to sell while the combo still holds value. Creekwood already covers that tier, so keeping both is redundant in a way I'm not sure I want to pay for.",
-          "The other loaner is the budget SFF: a Ryzen 5 3600 with a Gigabyte RX 9060 XT 16 GB that I got for $282.91 during an Amazon resale event. That GPU is the steal of the century — modern RDNA 4 with 16 GB of VRAM for less than most 8 GB cards go for used. The rest of the build (old CPU, 16 GB of RAM) is the weak half, but as a 1080p Bazzite box it's perfect. It's the right machine to lend out: capable, and not sentimental.",
+          "The Gigabyte prebuilt — i9-12900K, RTX 4080, 32 GB DDR5 — is my only DDR5 system and the most powerful CPU I own, and it's lent out. When it comes back it's either a second high-end rig or I sell it while it still holds value. Creekwood already does that job.",
+          "The other loaner is the budget SFF: Ryzen 5 3600 with a Gigabyte RX 9060 XT 16 GB that I got for $282.91 during an Amazon resale event. That GPU is a steal — RDNA 4 with 16 GB of VRAM for less than most 8 GB cards go for used. The rest of the build is the weak half, but as a 1080p Bazzite box it's perfect. It's the right machine to lend out.",
         ],
       },
       {
@@ -478,20 +478,20 @@ export const writeups: Writeup[] = [
       {
         heading: "What I'd actually change",
         paragraphs: [
-          "The honest take: I have three genuinely high-end gaming machines and two of them are idle. That's redundancy I'm paying storage space for. If I were smarter with my money, the moves are pretty clear:",
+          "Honestly? I have three high-end gaming machines and two of them are just sitting at a friend's house. That's redundant. If I was smarter with my money:",
         ],
         list: [
-          "**Drop a 5700X3D into the living-room SFF** — best gaming uplift per dollar in the whole fleet, and it's a 15-minute swap.",
-          "**Do the same to the budget SFF when it returns**, plus bump it to 32 GB of RAM. Both weak points gone for about $250.",
-          "**Sell the 12900K prebuilt when it comes back** — the resale window is now-ish, and Creekwood already does everything it does.",
-          "**Keep the P520 exactly as it is** — it's the one machine I wouldn't touch.",
+          "**5700X3D in the living room SFF.** Best upgrade per dollar I can do, and it takes 15 minutes.",
+          "**Same for the budget SFF when it comes back**, plus 32 GB of RAM. Fixes both weak points for about $250.",
+          "**Sell the 12900K prebuilt when it returns.** The resale window is now, and Creekwood already covers that tier.",
+          "**Leave the P520 alone.** It's fine.",
         ],
       },
       {
         heading: "Bottom line",
         paragraphs: [
-          "The fleet works because every machine has a job and no two share one. The main rig games at 4K. The SFF is the console under the TV. The P520 keeps everything running. The two loaners are earning their keep as goodwill and backup plans.",
-          "If I could do it over, I'd own fewer machines — but the ones I'd keep are the ones doing the most important work, and that's a pretty good place to be.",
+          "Every machine has a job and none of them overlap. The main rig games at 4K. The SFF is the console under the TV. The P520 keeps everything running. The two loaners are backups and goodwill.",
+          "I'd own fewer if I could do it over, but the ones I'd keep are the ones doing the most important work.",
         ],
       },
     ],
