@@ -420,9 +420,14 @@ describe("Ayumad.me", () => {
     expect(
       screen.getByRole("heading", { name: "Rating My Desktop Fleet" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("The fleet at a glance")).toBeInTheDocument();
-    expect(screen.getByText("Creekwood")).toBeInTheDocument();
-    expect(screen.getByText("P520", { exact: true })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "The one that matters" }),
+    ).toBeInTheDocument();
+    const asciiBlocks = document.querySelectorAll(".article-ascii");
+    expect(asciiBlocks.length).toBeGreaterThanOrEqual(2);
+    const asciiText = Array.from(asciiBlocks).map((el) => el.textContent).join("\n");
+    expect(asciiText).toContain("Creekwood");
+    expect(asciiText).toContain("P520");
     expect(screen.getByRole("link", { name: "← All writeups" })).toHaveAttribute(
       "href",
       "#/writeups",
