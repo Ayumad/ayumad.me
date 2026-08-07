@@ -24,7 +24,7 @@
  },
  {
   "date": "2026-08-04",
-  "summary": "2026-08-04",
+  "summary": "Workdesk TODO Additions — Added center channel speaker, standing desk, oscilloscope, CRT, monitors, EE supplies, and general workdesk items to TODO Ma",
   "highlights": [
    "Loadout vault chain fully updated (Minisforum V3 + X1 Lite trade, all files synced)",
    "Workdesk planning complete with prioritized item list and budget estimate",
@@ -33,7 +33,7 @@
  },
  {
   "date": "2026-08-03",
-  "summary": "2026-08-03",
+  "summary": "Daily Brief (9:30 AM) — Morning brief. No calendar events. Top tasks: Burlingame study reply, Ayumad.me visual overhaul, Google Tasks API auth.",
   "highlights": [
    "All 13+ cron jobs ran successfully, no errors",
    "Ayumad.me confirmed stable — no changes since Jul 30",
@@ -42,7 +42,7 @@
  },
  {
   "date": "2026-08-02",
-  "summary": "2026-08-02",
+  "summary": "Daily Brief (9:30 AM) — Morning brief delivered: vault status, Notion tasks, no calendar events, no urgent email",
   "highlights": [
    "All 10 cron jobs ran successfully today (9:30 AM – 8:06 PM)",
    "Ayumad.me confirmed stable — no changes since Jul 30 overhaul",
@@ -51,7 +51,7 @@
  },
  {
   "date": "2026-08-01",
-  "summary": "2026-08-01",
+  "summary": "Question Prompt (20:01) — Read Questions Dashboard, picked a reflective question for Ayush",
   "highlights": [
    "Notion progress checker now runs as standalone Python script (works in cron without approval)",
    "Interview prep surfaced Hardware/Systems as next category — 8 untested topics",
@@ -60,12 +60,12 @@
  },
  {
   "date": "2026-07-31",
-  "summary": "2026-07-31",
+  "summary": "TODO Audit — Cleaned 48→30 tasks. Created Completed Tasks.md. Discord bot → Backburner.",
   "highlights": []
  },
  {
   "date": "2026-07-30",
-  "summary": "2026-07-30",
+  "summary": "Daily Brief (09:31) — Morning brief covering vault state, email, calendar",
   "highlights": [
    "Ayumad.me site overhaul fully captured in vault — Spotify integration partially live, Gear page with 35 items added",
    "Interview Prep Knowledge Map path fixed (moved to 90 Operations/)",
@@ -74,7 +74,7 @@
  },
  {
   "date": "2026-07-29",
-  "summary": "2026-07-29",
+  "summary": "Hermes Setup & Plugins — Installed hermes-lcm, agent-browser, code-review-graph. OpenCode Go + Mnemosyne researched.",
   "highlights": [
    "3 kanban tasks completed (runbook, monitoring, voice research)",
    "Full Hermes plugin stack installed (lcm, agent-browser, code-review-graph)",
