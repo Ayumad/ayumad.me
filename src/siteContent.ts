@@ -163,11 +163,21 @@ export const showcaseTopics: ShowcaseTopic[] = [
 
 export const projects: Project[] = [
   {
+    slug: "vault-refactor",
+    title: "Vault Refactor",
+    summary: "Refactoring my Obsidian vault into a lean, git-backed, self-managing knowledge base.",
+    story:
+      "My vault was 1,281 notes and 72% of it was archives. The plugins were missing, there was no git, and the whole thing was held together by iCloud placeholders. I rewired it: 376 notes, everything committed to a private GitHub repo, archives living in git history instead of the note tree, and the structure defined by agent files so any future agent knows exactly how it works. The interesting part is that the vault now runs itself — skills, cron jobs, and agent instructions all agree on the current layout.",
+    stack: ["Obsidian", "Git", "GitHub", "Hermes"],
+    status: "in-progress",
+    year: "Now",
+  },
+  {
     slug: "hermes-agent",
     title: "Hermes Agent",
     summary: "An AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing.",
     story:
-      "Hermes handles morning briefs, interview prep, session journals, and 13 scheduled cron jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The hard part was making it cheap — every token counts when you're running this many automations.",
+      "Hermes handles morning briefs, interview prep, session journals, and 15 scheduled cron jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The hard part was making it cheap — every token counts when you're running this many automations.",
     stack: ["Hermes", "Mnemosyne", "Tailscale", "OpenCode Go", "Telegram"],
     status: "in-progress",
     year: "Now",
@@ -185,10 +195,10 @@ export const projects: Project[] = [
   {
     slug: "daily-brief",
     title: "Daily Brief",
-    summary: "7 cron jobs that deliver a morning briefing — vault status, Notion tasks, email, calendar, and question prompts.",
+    summary: "15 cron jobs that deliver a morning briefing — vault status, tasks, email, calendar, and question prompts.",
     story:
-      "Every morning at 9:30, Hermes compiles a brief from the vault, Notion, email, and calendar. Question prompts run through the day, interview prep hits at 6pm, and at 10pm it logs the session journal. It's all cron, no manual intervention. Set it up once and let it run.",
-    stack: ["Hermes Cron", "Obsidian", "Notion", "Google Workspace"],
+      "Every morning at 9:30, Hermes compiles a brief from the vault, Google Tasks, email, and calendar. Question prompts run through the day, interview prep hits at 6pm, and at 10pm it logs the session journal. It's all cron, no manual intervention. Set it up once and let it run.",
+    stack: ["Hermes Cron", "Obsidian", "Google Tasks", "Google Workspace"],
     status: "completed",
     year: "Now",
   },
@@ -285,8 +295,8 @@ export const systemLayers: SystemLayer[] = [
     index: "L4",
     title: "Knowledge",
     description:
-      "Notes that turn one-off troubleshooting into something I can reuse.",
-    items: ["Obsidian vault", "Build plans", "Astro field notes", "Public writeups"],
+      "A 376-note vault that manages itself — git-backed, archive-free, and structured by agent files.",
+    items: ["Obsidian vault (git + GitHub)", "Agent-defined structure", "Derived views (Bases)", "Public writeups"],
     signal: "question → test → note → reuse",
   },
 ];
@@ -295,9 +305,9 @@ export const hermesSections: HermesSection[] = [
   {
     title: "What Hermes Does",
     description:
-      "Hermes is my personal AI agent. It runs the daily operations — morning briefs, interview prep, session journals, 13 cron automations — from a headless Mac mini, and connects from every device over Tailscale.",
+      "Hermes is my personal AI agent. It runs the daily operations — morning briefs, interview prep, session journals, 15 cron automations — from a headless Mac mini, and connects from every device over Tailscale.",
     items: [
-      "Morning brief at 9:30am — vault, Notion, email, calendar",
+      "Morning brief at 9:30am — vault, Google Tasks, email, calendar",
       "Interview prep at 6pm — technical quizzes with follow-up pressure",
       "Session journal at 10pm — log the day to the vault",
       "Question prompts throughout the day",
@@ -331,11 +341,11 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Infrastructure",
     description:
-      "13 cron jobs run on schedule — briefs, reviews, consolidation, health checks. Test once, then let it run.",
+      "15 cron jobs run on schedule — briefs, reviews, consolidation, health checks. Test once, then let it run.",
     items: [
       "Cron scheduler with script-first, agent-second pattern",
-      "Telegram + WebUI + Discord connected surfaces",
-      "122-device loadout inventory with price tracking",
+      "Telegram + WebUI connected surfaces",
+      "125-product loadout inventory with price tracking",
       "LaunchAgent auto-start on Mac mini",
       "Tailscale mesh for cross-device access",
     ],
@@ -397,7 +407,7 @@ export const gearCategories: GearCategory[] = [
   {
     category: "Software",
     items: [
-      { name: "Obsidian", role: "Vault — 100% PARA compliant", status: "active" },
+      { name: "Obsidian", role: "Vault — 376 notes, git-backed, self-managing", status: "active" },
       { name: "Proxmox VE", role: "Hypervisor on P520", status: "active" },
       { name: "Arch Linux", role: "Daily driver on CF-SV1", status: "active" },
       { name: "NixOS", role: "Learning on X220t", status: "active" },
