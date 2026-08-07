@@ -6,17 +6,17 @@ export const nowEntries: NowEntry[] = [
   {
     label: "Refactoring",
     marker: "01",
-    title: "The Vault",
+    title: "My Obsidian Vault",
     description:
-      "Rebuilding my Obsidian vault as a system that manages itself. Went from 1,281 notes (72% archives) to 376 — plugins restored, wired to a private GitHub repo, archives living in git history instead of the note tree. The structure is defined by agent files so Hermes always knows the current layout.",
-    detail: "Obsidian · Git · GitHub · Hermes",
+      "Audited the whole vault and found the plugin stack missing, 72% of it sitting in archives, and stale skill paths. Now treating the vault itself as a project — plugins restored, wired to a private git repo, recovery zips verified, and the goal is a vault with no archives at all because git history is the backup.",
+    detail: "Obsidian · Git · 1,281 notes · self-managing",
   },
   {
     label: "Building",
     marker: "02",
     title: "Hermes Agent",
     description:
-      "Running Hermes from a headless Mac mini with 15 cron jobs — morning briefs, interview prep, session journals, question prompts. Multi-model routing between Mimo V2.5, Kimi K3, and DeepSeek depending on how hard the task is.",
+      "Running Hermes from a headless Mac mini with 15 cron jobs — morning briefs, interview prep, session journals, question prompts, and a two-way Apple Reminders ↔ Google Tasks sync. Multi-model routing between Mimo V2.5, Kimi K3, and DeepSeek depending on how hard the task is.",
     detail: "Mac mini · Mnemosyne · Tailscale · OpenCode Go",
   },
   {
@@ -32,8 +32,8 @@ export const nowEntries: NowEntry[] = [
     marker: "04",
     title: "Custom Linux",
     description:
-      "Building my own Arch and Hyprland setup on a Panasonic Let's Note, then using the X220t to learn NixOS. The distros have different philosophies, but the habit's the same — push the defaults until they break.",
-    detail: "Arch · Hyprland · NixOS · old ThinkPads",
+      "Running Omarchy on the Panasonic Let's Note — an Arch + Hyprland setup I've tuned until it feels right — and using the X220t to learn NixOS rebuilds. Different philosophies, same habit: push the defaults until they break.",
+    detail: "Omarchy · Arch · NixOS · Let's Note",
   },
   {
     label: "Tuning",
@@ -48,7 +48,7 @@ export const nowEntries: NowEntry[] = [
     marker: "06",
     title: "Ayumad.me",
     description:
-      "Turning this site into an accurate index of what I use, what I build, and what I'm learning. This iteration adds field notes, a gear inventory, and a Hermes deep-dive.",
+      "Turning this site into an accurate index of what I use, what I build, and what I'm learning — gear sourced from the vault loadout, a nightly journal page, and this iteration's vault refactor writeup on the way.",
     detail: "TypeScript · motion · dither · ASCII",
   },
   {

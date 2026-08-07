@@ -167,7 +167,7 @@ export const projects: Project[] = [
     title: "Vault Refactor",
     summary: "Refactoring my Obsidian vault into a lean, git-backed, self-managing knowledge base.",
     story:
-      "My vault was 1,281 notes and 72% of it was archives. The plugins were missing, there was no git, and the whole thing was held together by iCloud placeholders. I rewired it: 376 notes, everything committed to a private GitHub repo, archives living in git history instead of the note tree, and the structure defined by agent files so any future agent knows exactly how it works. The interesting part is that the vault now runs itself — skills, cron jobs, and agent instructions all agree on the current layout.",
+      "My vault was 1,281 notes and 72% of it was archives. The plugins were missing, there was no git, and the whole thing was held together by iCloud placeholders. I rewired it: plugins restored, everything committed to a private GitHub repo, recovery zips verified, and the structure defined by agent files so any future agent knows exactly how it works. The archives are next — git history becomes the backup, and the note tree only holds live knowledge. The interesting part is that the vault now runs itself — skills, cron jobs, and agent instructions all agree on the current layout.",
     stack: ["Obsidian", "Git", "GitHub", "Hermes"],
     status: "in-progress",
     year: "Now",
@@ -195,9 +195,9 @@ export const projects: Project[] = [
   {
     slug: "daily-brief",
     title: "Daily Brief",
-    summary: "15 cron jobs that deliver a morning briefing — vault status, tasks, email, calendar, and question prompts.",
+    summary: "Cron jobs that deliver a morning briefing — vault status, Google Tasks, email, calendar, and question prompts.",
     story:
-      "Every morning at 9:30, Hermes compiles a brief from the vault, Google Tasks, email, and calendar. Question prompts run through the day, interview prep hits at 6pm, and at 10pm it logs the session journal. It's all cron, no manual intervention. Set it up once and let it run.",
+      "Every morning at 9:30, Hermes compiles a brief from the vault, Google Tasks, email, and calendar. Question prompts run through the day, interview prep hits at 6pm, and at 10pm it logs the session journal. It's part of the 15-job cron set, no manual intervention. Set it up once and let it run.",
     stack: ["Hermes Cron", "Obsidian", "Google Tasks", "Google Workspace"],
     status: "completed",
     year: "Now",
@@ -273,7 +273,7 @@ export const systemLayers: SystemLayer[] = [
       "Mac mini / Hermes",
       "RTX 5080 desktop / 4K OLED",
       "Zephyrus G14 / RTX 5070 Ti",
-      "CF-SV1 / Arch + X220t / NixOS",
+      "CF-SV1 / Omarchy + X220t / NixOS",
       "X-T4 / 18–55 + X100VI",
     ],
     signal: "machine → operating system → job",
@@ -295,7 +295,7 @@ export const systemLayers: SystemLayer[] = [
     index: "L4",
     title: "Knowledge",
     description:
-      "A 376-note vault that manages itself — git-backed, archive-free, and structured by agent files.",
+      "A 1,281-note vault, git-backed and structured by agent files, with archives on the way out.",
     items: ["Obsidian vault (git + GitHub)", "Agent-defined structure", "Derived views (Bases)", "Public writeups"],
     signal: "question → test → note → reuse",
   },
@@ -407,7 +407,7 @@ export const gearCategories: GearCategory[] = [
   {
     category: "Software",
     items: [
-      { name: "Obsidian", role: "Vault — 376 notes, git-backed, self-managing", status: "active" },
+      { name: "Obsidian", role: "Vault — 1,281 notes, git-backed, self-managing", status: "active" },
       { name: "Proxmox VE", role: "Hypervisor on P520", status: "active" },
       { name: "Arch Linux", role: "Daily driver on CF-SV1", status: "active" },
       { name: "NixOS", role: "Learning on X220t", status: "active" },
