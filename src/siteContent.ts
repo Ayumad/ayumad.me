@@ -142,7 +142,7 @@ export const showcaseTopics: ShowcaseTopic[] = [
     title: "Homelab",
     eyebrow: "Server",
     summary:
-      "My ThinkStation P520 runs Proxmox. I use it for storage, local AI, media, and services, with the important parts separated from whatever I am testing that week.",
+      "My ThinkStation P520 runs Proxmox. I use it for storage, local AI, media, and services, with the important parts separated from whatever I'm testing that week.",
     items: ["ThinkStation P520", "Proxmox + ZFS", "GPU passthrough", "Docker / LXC"],
     ascii:
       "  [ THINKSTATION P520 ]\n       ├── ZFS ────── 4 TB\n       ├── VM ─────── GPU\n       └── LXC ────── SERVICES",
@@ -164,7 +164,7 @@ export const projects: Project[] = [
   {
     slug: "hermes-agent",
     title: "Hermes Agent",
-    summary: "An autonomous AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing.",
+    summary: "An AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing.",
     story:
       "Hermes handles morning briefs, interview prep, session journals, and 13 scheduled cron jobs. It runs on a headless Mac mini with Mnemosyne for persistent memory, connects to Telegram and the WebUI, and routes between Mimo V2.5, Kimi K3, and DeepSeek depending on the task. The hard part was making it cheap — every token counts when you're running this many automations.",
     stack: ["Hermes", "Mnemosyne", "Tailscale", "OpenCode Go", "Telegram"],
@@ -544,7 +544,7 @@ export const aboutContent: AboutContent = {
     "I got into technology through jailbreaking devices and running emulators. I liked seeing a device do something it was not supposed to do, and I still approach new hardware the same way — push it until it breaks, then figure out why.",
     "That instinct came from being the kid who moved from India to the US young and had to figure out the culture on his own. I found it through media and books, and eventually through computers. Every device was a puzzle, and the reward wasn't just making it work — it was understanding why the defaults were wrong in the first place.",
     "Most of my projects start with a practical question. Can this old workstation become a useful server? Can one Mac mini run an AI agent for every device? Can I make an Arch install feel exactly how I want? I learn by setting it up, breaking something, and fixing it.",
-    "I study Computer Engineering at San José State and studied Computer Science at Foothill before that, where I also ran the Data Science & AI club and founded the Principia STEM Magazine. Outside class, technology is still the main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I am trying to configure that week.",
+    "I study Computer Engineering at San José State and studied Computer Science at Foothill before that, where I also ran the Data Science & AI club and founded the Principia STEM Magazine. Outside class, technology is still the main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I'm trying to configure that week.",
   ],
   education: [
     { school: "San José State", program: "Computer Engineering" },

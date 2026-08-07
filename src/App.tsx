@@ -323,10 +323,10 @@ function HomePage() {
     "Hermes, servers, notes, and audio.",
     "Selected builds and experiments.",
     "The tools and systems I use.",
-    "Inside the autonomous agent.",
-    "The 100+ devices I use daily.",
+    "Inside the agent that runs my days.",
+    "The gear I use and track.",
     "Field notes on building things.",
-    "What I am working on now.",
+    "What I'm working on now.",
     "Background, education, and interests.",
     "Email and GitHub.",
   ];
@@ -589,7 +589,7 @@ function HermesPage() {
         index="04"
         label="Hermes"
         title="Hermes"
-        description="An autonomous AI agent that runs daily operations — briefs, memory, cron jobs, multi-model routing."
+        description="The AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing."
         scene="systems"
       />
 
@@ -597,7 +597,7 @@ function HermesPage() {
         <p>
           Hermes started as a way to stop rebuilding AI tooling on every device.
           One server on a Mac mini, connected from everywhere over Tailscale.
-          It handles morning briefs, interview prep, session journals, and 13 cron automations — all fire and forget.
+          It handles morning briefs, interview prep, session journals, and 13 cron automations — set it up once and let it run.
         </p>
       </div>
 
