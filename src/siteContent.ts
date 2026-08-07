@@ -330,7 +330,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Infrastructure",
     description:
-      "13 cron jobs run on schedule — briefs, reviews, consolidation, health checks. Everything is fire-and-forget: test once, then let it run.",
+      "13 cron jobs run on schedule — briefs, reviews, consolidation, health checks. Test once, then let it run.",
     items: [
       "Cron scheduler with script-first, agent-second pattern",
       "Telegram + WebUI + Discord connected surfaces",
