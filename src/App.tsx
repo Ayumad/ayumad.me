@@ -451,7 +451,7 @@ function ProjectsPage() {
         index="02"
         label="Projects"
         title="Projects"
-        description="Current work, completed builds, and experiments."
+        description="Current work, builds, and experiments."
         scene="projects"
       />
 
@@ -653,7 +653,7 @@ function GearPage() {
         index="05"
         label="Gear"
         title="Gear"
-        description="The devices, speakers, cameras, and tools I use daily. Updated from the vault loadout."
+        description="The devices, speakers, cameras, and tools I use. Updated from the vault loadout."
         scene="about"
       />
 
@@ -802,7 +802,7 @@ function NowPage() {
         index="07"
         label="Now"
         title="Now"
-        description="What I am working on and learning."
+        description="What I'm working on and learning."
         scene="now"
       />
 
