@@ -1,0 +1,269 @@
+[
+ {
+  "date": "2026-08-07",
+  "summary": "Marketplace G7 eval (skip), TODO triage (NixOS dropped, Hermex port, acquisitions→wishlist), Apple Reminders↔Google Tasks sync built + first live sync, journal-calendar skill started.",
+  "highlights": [
+   "Google Tasks authorization (open TODO since June) finally done, and the sync went zero → 42 synced items in one session",
+   "Real TODO triage: 3 sections deleted, 5 items → backburner, acquisitions properly folded into wishlist instead of masquerading as tasks",
+   "The marketplace skill caught its own loadout-search error mid-run and corrected the verdict — vault-first evaluation works"
+  ]
+ },
+ {
+  "date": "2026-08-06",
+  "summary": "Session journal for 2026-08-06: marketplace deal evaluations, DEG1 eGPU dock research, Hermes introduction, and cron status.",
+  "highlights": [
+   "Vault CRT research used effectively to evaluate marketplace deals — criteria cross-referencing worked well",
+   "DEG1 eGPU dock research: $59 refurb price identified as worth trying with X1 Lite",
+   "4 automated cron jobs ran successfully throughout the day"
+  ]
+ },
+ {
+  "date": "2026-08-05",
+  "summary": "Vault-wide navigation, plugin, dashboard, and Kanban cleanup session.",
+  "highlights": []
+ },
+ {
+  "date": "2026-08-04",
+  "summary": "2026-08-04",
+  "highlights": [
+   "Loadout vault chain fully updated (Minisforum V3 + X1 Lite trade, all files synced)",
+   "Workdesk planning complete with prioritized item list and budget estimate",
+   "Hermes extensions installed (LCM, code-review-graph, agent-browser) — take effect next session"
+  ]
+ },
+ {
+  "date": "2026-08-03",
+  "summary": "2026-08-03",
+  "highlights": [
+   "All 13+ cron jobs ran successfully, no errors",
+   "Ayumad.me confirmed stable — no changes since Jul 30",
+   "Quiet day — no user-initiated sessions; all automated ops"
+  ]
+ },
+ {
+  "date": "2026-08-02",
+  "summary": "2026-08-02",
+  "highlights": [
+   "All 10 cron jobs ran successfully today (9:30 AM – 8:06 PM)",
+   "Ayumad.me confirmed stable — no changes since Jul 30 overhaul",
+   "Notion progress check script rebuilt with Python workaround (skills not found)"
+  ]
+ },
+ {
+  "date": "2026-08-01",
+  "summary": "2026-08-01",
+  "highlights": [
+   "Notion progress checker now runs as standalone Python script (works in cron without approval)",
+   "Interview prep surfaced Hardware/Systems as next category — 8 untested topics",
+   "All 8 Notion tasks and 6 projects stable — no blockers"
+  ]
+ },
+ {
+  "date": "2026-07-31",
+  "summary": "2026-07-31",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-30",
+  "summary": "2026-07-30",
+  "highlights": [
+   "Ayumad.me site overhaul fully captured in vault — Spotify integration partially live, Gear page with 35 items added",
+   "Interview Prep Knowledge Map path fixed (moved to 90 Operations/)",
+   "Two Notion check runs confirmed no drift; cron job stable"
+  ]
+ },
+ {
+  "date": "2026-07-29",
+  "summary": "2026-07-29",
+  "highlights": [
+   "3 kanban tasks completed (runbook, monitoring, voice research)",
+   "Full Hermes plugin stack installed (lcm, agent-browser, code-review-graph)",
+   "ayumad.me site audited — all 10 pages verified live"
+  ]
+ },
+ {
+  "date": "2026-07-28",
+  "summary": "Session journal for 2026-07-28: Full migration Beelink → Mac mini + Hermex setup..",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-27",
+  "summary": "Session journal for 2026-07-27: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-26",
+  "summary": "Session journal for 2026-07-26: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-25",
+  "summary": "Session journal for 2026-07-25: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-24",
+  "summary": "Session journal for 2026-07-24: Mac mini Hermes migration..",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-23",
+  "summary": "Session journal for 2026-07-23: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-22",
+  "summary": "Session journal for 2026-07-22: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-21",
+  "summary": "Session journal for 2026-07-21: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-20",
+  "summary": "Session journal for 2026-07-20: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-19",
+  "summary": "Session journal for 2026-07-19: 2 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-18",
+  "summary": "Session journal for 2026-07-18: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-17",
+  "summary": "Session journal for 2026-07-17: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-16",
+  "summary": "Session journal for 2026-07-16: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-15",
+  "summary": "Session journal for 2026-07-15: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-14",
+  "summary": "Session journal for 2026-07-14: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-13",
+  "summary": "Session journal for 2026-07-13: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-12",
+  "summary": "Session journal for 2026-07-12: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-11",
+  "summary": "Session journal for 2026-07-11: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-10",
+  "summary": "Session journal for 2026-07-10: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-09",
+  "summary": "Session journal for 2026-07-09: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-08",
+  "summary": "Session journal for 2026-07-08: OpenRouter credit monitor moved to a systemd timer.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-07",
+  "summary": "Session journal for 2026-07-07: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-06",
+  "summary": "Session journal for 2026-07-06: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-05",
+  "summary": "Session journal for 2026-07-05: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-04",
+  "summary": "Session journal for 2026-07-04: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-03",
+  "summary": "Session journal for 2026-07-03: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-02",
+  "summary": "Session journal for 2026-07-02: 3 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-01",
+  "summary": "Session journal for 2026-07-01: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-30",
+  "summary": "Session journal for 2026-06-30: 2 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-29",
+  "summary": "Session journal for 2026-06-29: Notion rebuild from Obsidian..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-28",
+  "summary": "Session journal for 2026-06-28: Obsidian and Notion workflow integration (Telegram, 780 msgs)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-27",
+  "summary": "Session journal for 2026-06-27: NixOS todo list check (Telegram, 381 msgs)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-26",
+  "summary": "Session journal for 2026-06-26: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-25",
+  "summary": "Session journal for 2026-06-25: Pokemon ROM Hacks & game tracking (Telegram)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-24",
+  "summary": "Session journal for 2026-06-24: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-23",
+  "summary": "Session journal for 2026-06-23: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-22",
+  "summary": "Session journal for 2026-06-22: Session 1 — Hermes setup day (CLI + Telegram)..",
+  "highlights": []
+ }
+]

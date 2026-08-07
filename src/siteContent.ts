@@ -114,6 +114,7 @@ export const navItems: NavItem[] = [
   { label: "Now", path: "/now", index: "07" },
   { label: "About", path: "/about", index: "08" },
   { label: "Contact", path: "/contact", index: "09" },
+  { label: "Journal", path: "/journal", index: "10" },
 ];
 
 export const homeContent: HomeContent = {
@@ -633,5 +634,9 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   "/contact": {
     title: "Contact — Ayumad.me",
     description: "Contact Ayush Madhukar by email or find his work on GitHub.",
+  },
+  "/journal": {
+    title: "Journal — Ayumad.me",
+    description: "A day-by-day log of what Ayush is building, generated nightly from Hermes session records.",
   },
 };

@@ -3193,3 +3193,118 @@ main {
     animation: none;
   }
 }
+
+/* Journal page */
+.journal-ascii {
+  color: var(--secondary);
+  margin: 2rem 0 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  user-select: none;
+  overflow-x: auto;
+}
+
+.journal-month {
+  margin: 2.5rem 0 1rem;
+}
+
+.journal-month h2 {
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: var(--secondary);
+}
+
+.journal-grid {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 660px;
+  table-layout: fixed;
+}
+
+.journal-grid th {
+  text-align: center;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.5;
+  padding: 0.3rem 0;
+  font-weight: 400;
+}
+
+.journal-grid td {
+  text-align: center;
+  border: 1px solid var(--fine);
+  padding: 0;
+  height: 2.5rem;
+}
+
+.journal-day {
+  font-size: 0.85rem;
+  opacity: 0.55;
+}
+
+.journal-day.empty {
+  border-color: transparent;
+}
+
+.journal-day.has-entry a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--secondary);
+  font-weight: 600;
+  text-decoration: none;
+  background: color-mix(in srgb, var(--secondary) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--secondary) 35%, transparent);
+}
+
+.journal-day.has-entry a:hover {
+  background: color-mix(in srgb, var(--secondary) 20%, transparent);
+}
+
+.journal-list {
+  margin-top: 3rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 1.5rem;
+}
+
+.journal-entry {
+  padding: 1.25rem 0;
+  border-bottom: 1px dashed var(--fine);
+  scroll-margin-top: calc(var(--header) + 1rem);
+}
+
+.journal-entry h3 {
+  font-size: 1rem;
+  margin: 0 0 0.4rem;
+  color: var(--secondary);
+}
+
+.journal-entry p {
+  margin: 0 0 0.4rem;
+  opacity: 0.85;
+  max-width: 62ch;
+}
+
+.journal-entry ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.15rem;
+  opacity: 0.72;
+  font-size: 0.9rem;
+}
+
+.journal-entry li {
+  margin: 0.15rem 0;
+  max-width: 62ch;
+}
+
+.journal-note {
+  margin-top: 2rem;
+  opacity: 0.5;
+  font-size: 0.85rem;
+  max-width: 62ch;
+}
