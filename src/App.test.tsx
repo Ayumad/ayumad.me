@@ -421,7 +421,7 @@ describe("Ayumad.me", () => {
       screen.getByRole("heading", { name: "Rating My Desktop Fleet" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "The one that matters" }),
+      screen.getByRole("heading", { name: "The main one" }),
     ).toBeInTheDocument();
     const asciiBlocks = document.querySelectorAll(".article-ascii");
     expect(asciiBlocks.length).toBeGreaterThanOrEqual(2);
