@@ -840,6 +840,147 @@ function NowPage() {
   );
 }
 
+type JournalEntry = { date: string; summary: string; highlights: string[] };
+
+const JOURNAL_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function JournalPage() {
+  const [entries, setEntries] = useState<JournalEntry[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    fetch("/journal.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(setEntries)
+      .catch(() => setFailed(true));
+  }, []);
+
+  const heading = (
+    <SectionHeading
+      index="10"
+      label="Journal"
+      title="Journal"
+      description="A day-by-day log of what I've been building — generated nightly from my Hermes session records."
+      scene="systems"
+    />
+  );
+
+  if (failed) {
+    return (
+      <section className="section-shell page-section">
+        {heading}
+        <p className="journal-note">Journal data couldn't load right now.</p>
+      </section>
+    );
+  }
+  if (!entries) {
+    return (
+      <section className="section-shell page-section">
+        {heading}
+        <p className="journal-note">Loading…</p>
+      </section>
+    );
+  }
+
+  const byMonth = new Map<string, JournalEntry[]>();
+  for (const e of entries) {
+    const key = e.date.slice(0, 7);
+    if (!byMonth.has(key)) byMonth.set(key, []);
+    byMonth.get(key)!.push(e);
+  }
+  const months = [...byMonth.keys()].sort().reverse();
+
+  return (
+    <section className="section-shell page-section">
+      {heading}
+
+      <pre className="journal-ascii" aria-hidden="true">{String.raw`
+   __ __            _
+  / // /__  ___ ___ (_)__ _
+ / _  / _ \(_-</_ -<_/  ' \
+/_//_/\___/___/___/_/_/_/_/   EVERY DAY
+`}</pre>
+
+      {months.map((month) => {
+        const [year, m] = month.split("-").map(Number);
+        const days = byMonth.get(month)!;
+        const daySummary = new Map(days.map((d) => [Number(d.date.slice(8, 10)), d.summary]));
+        const start = (new Date(year, m - 1, 1).getDay() + 6) % 7; // Mon-first
+        const total = new Date(year, m, 0).getDate();
+        const cells: (number | null)[] = [
+          ...Array.from({ length: start }, () => null),
+          ...Array.from({ length: total }, (_, i) => i + 1),
+        ];
+        while (cells.length % 7 !== 0) cells.push(null);
+        const weeks = [];
+        for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+        const monthLabel = new Date(year, m - 1, 1).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        });
+
+        return (
+          <div className="journal-month" key={month}>
+            <h2>{monthLabel}</h2>
+            <table className="journal-grid">
+              <thead>
+                <tr>{JOURNAL_WEEKDAYS.map((d) => <th key={d}>{d}</th>)}</tr>
+              </thead>
+              <tbody>
+                {weeks.map((week, wi) => (
+                  <tr key={wi}>
+                    {week.map((day, di) => {
+                      if (day === null) return <td key={di} className="journal-day empty" />;
+                      const dateStr = `${month}-${String(day).padStart(2, "0")}`;
+                      const has = daySummary.has(day);
+                      return has ? (
+                        <td key={di} className="journal-day has-entry">
+                          <a href={`#journal-${dateStr}`} aria-label={daySummary.get(day)}>
+                            {day}
+                          </a>
+                        </td>
+                      ) : (
+                        <td key={di} className="journal-day">{day}</td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
+
+      <div className="journal-list">
+        {entries.map((entry) => (
+          <article className="journal-entry" id={`journal-${entry.date}`} key={entry.date}>
+            <h3>
+              {new Date(`${entry.date}T00:00:00`).toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </h3>
+            <p>{entry.summary}</p>
+            {entry.highlights.length > 0 && (
+              <ul>{entry.highlights.map((h, i) => <li key={i}>{h}</li>)}</ul>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <p className="journal-note">
+        Auto-generated every night from Hermes session records — transcripts, cron runs, and vault
+        changes. Most days have no entry; the quiet ones are just quiet.
+      </p>
+    </section>
+  );
+}
+
 function AboutPage() {
   return (
     <section className="section-shell page-section">
@@ -976,6 +1117,7 @@ export default function App() {
       path === "/writeups" ? <WriteupsPage /> :
       path === "/now" ? <NowPage /> :
       path === "/about" ? <AboutPage /> :
+      path === "/journal" ? <JournalPage /> :
       path === "/contact" ? <ContactPage /> :
       <NotFoundPage />;
   }
