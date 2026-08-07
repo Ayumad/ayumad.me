@@ -377,7 +377,8 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
-    expect(screen.getAllByText("Completed")).toHaveLength(3);
+    // 4 completed project badges + the "Completed" section heading
+    expect(screen.getAllByText("Completed")).toHaveLength(5);
   });
 
   it("shows concrete systems from the editable content layer", () => {
@@ -411,6 +412,38 @@ describe("Ayumad.me", () => {
 
     expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#/");
+  });
+
+  it("renders writeup articles with full body content", () => {
+    renderAt("/writeups/desktop-fleet-review");
+
+    expect(
+      screen.getByRole("heading", { name: "Rating My Desktop Fleet" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("The fleet at a glance")).toBeInTheDocument();
+    expect(screen.getByText("Creekwood")).toBeInTheDocument();
+    expect(screen.getByText("P520", { exact: true })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "← All writeups" })).toHaveAttribute(
+      "href",
+      "#/writeups",
+    );
+  });
+
+  it("links writeup cards with bodies to their article pages", () => {
+    renderAt("/writeups");
+
+    expect(
+      screen.getByRole("link", { name: "Read Rating My Desktop Fleet" }),
+    ).toHaveAttribute("href", "#/writeups/desktop-fleet-review");
+    expect(
+      screen.queryByRole("link", { name: /Read GPU Passthrough on the P520/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders not-found for unknown writeup slugs", () => {
+    renderAt("/writeups/not-a-real-post");
+
+    expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
   });
 
   it("persists theme changes", () => {

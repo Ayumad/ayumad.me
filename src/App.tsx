@@ -3,6 +3,7 @@ import {
   Component,
   type ErrorInfo,
   type PropsWithChildren,
+  type ReactNode,
   useEffect,
   useState,
 } from "react";
@@ -30,6 +31,8 @@ import {
   systemLayers,
   writeups,
   type ProjectStatus,
+  type Writeup,
+  type WriteupBlock,
 } from "./siteContent";
 
 type Theme = "light" | "dark";
@@ -191,7 +194,9 @@ function Header({
           aria-label="Main navigation"
         >
           {navItems.map((item) => {
-            const isActive = path === item.path;
+            const isActive =
+              path === item.path ||
+              (item.path === "/writeups" && path.startsWith("/writeups/"));
             return (
               <Link
                 key={item.path}
@@ -691,33 +696,100 @@ function WriteupsPage() {
       />
 
       <div className="writeup-list">
-        {writeups.map((post, index) => (
-          <motion.article
-            className="writeup-row"
-            key={post.slug}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: index * 0.04 }}
-          >
-            <div className="writeup-meta">
-              <time dateTime={post.date}>{post.date}</time>
-              <ul className="tag-list">
-                {post.tags.map((tag) => <li key={tag}>{tag}</li>)}
-              </ul>
-            </div>
-            <div className="writeup-main">
-              <h2>{post.title}</h2>
-              <p>{post.summary}</p>
-            </div>
-          </motion.article>
-        ))}
+        {writeups.map((post, index) => {
+          const row = (
+            <>
+              <div className="writeup-meta">
+                <time dateTime={post.date}>{post.date}</time>
+                <ul className="tag-list">
+                  {post.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                </ul>
+              </div>
+              <div className="writeup-main">
+                <h2>{post.title}</h2>
+                <p>{post.summary}</p>
+              </div>
+            </>
+          );
+          return (
+            <motion.article
+              className="writeup-row"
+              key={post.slug}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ delay: index * 0.04 }}
+            >
+              {post.body ? (
+                <Link
+                  className="writeup-link"
+                  to={`/writeups/${post.slug}`}
+                  aria-label={`Read ${post.title}`}
+                >
+                  {row}
+                </Link>
+              ) : row}
+            </motion.article>
+          );
+        })}
       </div>
 
       <aside className="plain-note">
         <p className="label">More</p>
         <p>Writing longer-form notes on GPU passthrough, Arch daily driving, audio system tuning, and the Hermes build process.</p>
       </aside>
+    </section>
+  );
+}
+
+function WriteupBlockView({ block }: { block: WriteupBlock }) {
+  return (
+    <div className="article-block">
+      {block.heading ? <h2>{block.heading}</h2> : null}
+      {block.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      {block.list ? (
+        <ul>
+          {block.list.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      ) : null}
+      {block.table ? (
+        <div className="article-table-wrap">
+          <table className="article-table">
+            <thead>
+              <tr>{block.table.headers.map((header) => <th key={header}>{header}</th>)}</tr>
+            </thead>
+            <tbody>
+              {block.table.rows.map((row) => (
+                <tr key={row.join("·")}>
+                  {row.map((cell) => <td key={cell}>{cell}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+      {block.callout ? <p className="article-callout">{block.callout}</p> : null}
+    </div>
+  );
+}
+
+function WriteupArticlePage({ writeup }: { writeup: Writeup }) {
+  return (
+    <section className="section-shell page-section article-page">
+      <Link className="article-back" to="/writeups">← All writeups</Link>
+      <header className="article-header">
+        <p className="label">{writeup.date}</p>
+        <h1>{writeup.title}</h1>
+        <p className="article-summary">{writeup.summary}</p>
+        <ul className="tag-list">
+          {writeup.tags.map((tag) => <li key={tag}>{tag}</li>)}
+        </ul>
+      </header>
+      <div className="article-body">
+        {writeup.body?.map((block, index) => (
+          <WriteupBlockView key={index} block={block} />
+        ))}
+      </div>
     </section>
   );
 }
@@ -886,18 +958,26 @@ function Footer() {
 export default function App() {
   const path = useHashPath();
   const { renderMode, setRenderMode } = useRenderer();
-  const page =
-    path === "/" ? <HomePage /> :
-    path === "/showcase" ? <ShowcasePage /> :
-    path === "/projects" ? <ProjectsPage /> :
-    path === "/systems" ? <SystemsPage /> :
-    path === "/hermes" ? <HermesPage /> :
-    path === "/gear" ? <GearPage /> :
-    path === "/writeups" ? <WriteupsPage /> :
-    path === "/now" ? <NowPage /> :
-    path === "/about" ? <AboutPage /> :
-    path === "/contact" ? <ContactPage /> :
-    <NotFoundPage />;
+
+  let page: ReactNode;
+  if (path.startsWith("/writeups/")) {
+    const slug = path.slice("/writeups/".length);
+    const writeup = writeups.find((post) => post.slug === slug);
+    page = writeup ? <WriteupArticlePage writeup={writeup} /> : <NotFoundPage />;
+  } else {
+    page =
+      path === "/" ? <HomePage /> :
+      path === "/showcase" ? <ShowcasePage /> :
+      path === "/projects" ? <ProjectsPage /> :
+      path === "/systems" ? <SystemsPage /> :
+      path === "/hermes" ? <HermesPage /> :
+      path === "/gear" ? <GearPage /> :
+      path === "/writeups" ? <WriteupsPage /> :
+      path === "/now" ? <NowPage /> :
+      path === "/about" ? <AboutPage /> :
+      path === "/contact" ? <ContactPage /> :
+      <NotFoundPage />;
+  }
 
   return (
     <RenderModeContext.Provider value={renderMode}>
