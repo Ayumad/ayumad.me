@@ -768,6 +768,7 @@ function WriteupBlockView({ block }: { block: WriteupBlock }) {
           </table>
         </div>
       ) : null}
+      {block.ascii ? <pre className="article-ascii">{block.ascii}</pre> : null}
       {block.callout ? <p className="article-callout">{block.callout}</p> : null}
     </div>
   );

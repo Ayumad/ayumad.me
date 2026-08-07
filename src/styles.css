@@ -2101,6 +2101,17 @@ main {
   background: color-mix(in srgb, var(--lime) 6%, var(--surface));
 }
 
+.article-ascii {
+  margin: 8px 0;
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  overflow-x: auto;
+  font: 400 0.78rem/1.45 var(--mono);
+  color: var(--soft);
+  white-space: pre;
+}
+
 /* Systems */
 
 .systems-list {
