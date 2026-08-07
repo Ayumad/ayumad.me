@@ -85,6 +85,15 @@ export interface Writeup {
   date: string;
   summary: string;
   tags: string[];
+  body?: WriteupBlock[];
+}
+
+export interface WriteupBlock {
+  heading?: string;
+  paragraphs?: string[];
+  list?: string[];
+  table?: { headers: string[]; rows: string[][] };
+  callout?: string;
 }
 
 export interface HermesSection {
@@ -397,6 +406,100 @@ export const gearCategories: GearCategory[] = [
 
 export const writeups: Writeup[] = [
   {
+    slug: "desktop-fleet-review",
+    title: "Rating My Desktop Fleet",
+    date: "2026",
+    summary:
+      "Six desktops, one honest scorecard — what each machine is actually for, how well it's built, how important it is, and what I'd change.",
+    tags: ["Hardware", "Desktops", "Gaming"],
+    body: [
+      {
+        paragraphs: [
+          "I own six desktop PCs. That sounds excessive until you look at what each one does — a main 4K gaming rig, a homelab server, two living-room SFF machines, a high-end spare, and one orphan. This is my attempt to be honest about all of them: what they're for, how well they're built, and where I'd put money next.",
+        ],
+      },
+      {
+        heading: "The fleet at a glance",
+        table: {
+          headers: ["Machine", "CPU / GPU", "RAM", "Role", "Build", "Importance"],
+          rows: [
+            ["Creekwood", "5800X3D / RTX 5080 FE", "64 GB DDR4", "Main system, 4K OLED gaming", "8/10", "9/10"],
+            ["Gigabyte prebuilt", "i9-12900K / RTX 4080", "32 GB DDR5", "High-end spare (lent out)", "8/10", "6/10 now"],
+            ["SFF 9070 XT", "Ryzen 5 5600 / 9070 XT Reaper", "32 GB DDR4", "Living-room Steam machine", "7/10", "8/10"],
+            ["SFF 9060 XT", "Ryzen 5 3600 / 9060 XT 16 GB", "16 GB DDR4", "Second SFF (lent out)", "6/10", "5/10"],
+            ["P520", "Xeon W-2135 / RTX 3060", "64 GB ECC", "Proxmox server + NAS", "8/10 as server", "9/10"],
+            ["9700K desktop", "i7-9700K / GPU missing", "16 GB DDR4", "Unknown / spare", "3/10", "2/10"],
+          ],
+        },
+      },
+      {
+        heading: "Creekwood — the flagship",
+        paragraphs: [
+          "Ryzen 7 5800X3D paired with an RTX 5080 Founders Edition, 64 GB of DDR4, and a storage layout that's genuinely good: two 2 TB NVMe drives, a 4 TB SATA SSD, and 8 TB of HDD. At 4K the GPU is the bottleneck, so the AM4 CPU's age doesn't bite the way it would at 1080p. It games on a Samsung Odyssey OLED G8 — 4K, 240 Hz, OLED — which pushes the 5080 hard.",
+          "The path-tracing hiccups in Cyberpunk aren't a build problem. That's just what 4K path tracing costs on a 5080; it's one of the two heaviest settings in the game. DLSS Quality plus a reduced path-trace sample count fixes most of it.",
+        ],
+      },
+      {
+        heading: "Gigabyte prebuilt (12900K / RTX 4080)",
+        paragraphs: [
+          "My only DDR5 system and, ironically, the most powerful CPU I own — the 12900K beats the 5800X3D in multicore and trades blows in gaming. The 4080 is a generation behind the 5080 but still a 4K-capable card. Right now it's lent out.",
+          "When it comes back it's a legit second high-end rig — or a strong candidate to sell while the 12900K / 4080 combo still holds value, since Creekwood already covers that tier.",
+        ],
+      },
+      {
+        heading: "SFF 9070 XT — the living-room Steam machine",
+        paragraphs: [
+          "A Ryzen 5 5600 and a PowerColor RX 9070 XT Reaper in a KXRORS S300 mini-ITX case, running Bazzite under the TV. The 9070 XT was the most powerful GPU that fit the case without Founders Edition 5080/5090 pricing — a deliberate, sensible choice for a living-room console-style machine.",
+          "Build rating is capped by the CPU: a 5600 genuinely limits the 9070 XT in CPU-heavy titles, even at TV distances.",
+        ],
+      },
+      {
+        heading: "SFF 9060 XT — the loaner",
+        paragraphs: [
+          "The $282.91 Gigabyte 9060 XT 16 GB I grabbed during an Amazon resale event is a steal and the highlight of this build — modern RDNA 4, 16 GB of VRAM, for less than the used price of most 8 GB cards. The 3600 and 16 GB system RAM are its weak points.",
+          "It's the right machine to lend out: low sentimental value, still a capable 1080p / light-1440p Bazzite box. But it's the weakest of my two SFFs.",
+        ],
+      },
+      {
+        heading: "P520 — the homelab workhorse",
+        paragraphs: [
+          "A Xeon W-2135 with 64 GB of ECC memory, a boot NVMe, a 4 TB workload SSD, and a three-drive ZFS RAIDZ pool — roughly 16.5 TB raw. The RTX 3060 makes it the always-on AI box: 12 GB of VRAM, CUDA, cheap. It's where the Obsidian RAG assistant will live.",
+          "As a server this is an excellent machine. As a gaming desktop it would be terrible — but that's not its job. It's the only always-on infrastructure I have, which makes it more important to me than any of the gaming rigs.",
+        ],
+      },
+      {
+        heading: "The 9700K orphan",
+        paragraphs: [
+          "An i7-9700K with no GPU and no clear purpose. It's the one genuinely dead system in the fleet — a 3/10 that's either a sell (~$175–250 as-is) or a cheap-GPU side project.",
+        ],
+      },
+      {
+        heading: "What I'd actually change",
+        paragraphs: [
+          "The honest fleet-level take: I have three high-end gaming machines (Creekwood, the 4080 prebuilt, the 9070 XT SFF) and two of them are idle or lent out. That's redundancy I'm paying storage space for. The 9700K is the one to resolve first — GPU-less and unneeded.",
+        ],
+        table: {
+          headers: ["Priority", "Action", "Why"],
+          rows: [
+            ["Cheap win", "SFF 9070 XT → 5700X3D (drop-in AM4, ~$200 used)", "Best uplift per dollar in the fleet; unshackles the 9070 XT"],
+            ["Cheap win", "SFF 9060 XT → 5700X3D + 32 GB RAM when it returns", "Fixes both weak points for ~$250 total"],
+            ["Decision", "Sell the 9700K as-is, or drop in a cheap GPU", "It's dead weight; either makes money or becomes usable"],
+            ["Decision", "Sell vs. keep the 12900K/4080 prebuilt when it returns", "Best resale window is now-ish; Creekwood already covers this tier"],
+            ["Config fix", "Cyberpunk: DLSS Quality + lower path-trace samples", "Kills the hiccups on the 5080 for free"],
+            ["Later", "Creekwood CPU: 5800X3D → AM5 (9800X3D)", "Not urgent at 4K; only when the itch is real"],
+          ],
+        },
+      },
+      {
+        heading: "Bottom line",
+        paragraphs: [
+          "Creekwood is an 8/10 with the CPU as its only ceiling. The 4080 prebuilt is an 8/10. The living-room SFF is a 7/10, the loaner a 6/10, the P520 an 8/10 as a server, and the 9700K a 3/10.",
+          "The two highest-leverage moves are a 5700X3D swap in the living-room SFF — the best gaming uplift per dollar I can do — and making a decision on the 9700K. Everything else is already in a good place.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "gpu-passthrough-p520",
     title: "GPU Passthrough on the P520",
     date: "2026",
@@ -516,6 +619,11 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   "/writeups": {
     title: "Writeups — Ayumad.me",
     description: "Field notes on building, configuring, and breaking things.",
+  },
+  "/writeups/desktop-fleet-review": {
+    title: "Rating My Desktop Fleet — Ayumad.me",
+    description:
+      "Six desktops, one honest scorecard — how well each machine is built, how important it is, and what I'd change.",
   },
   "/now": {
     title: "Now — Ayumad.me",
