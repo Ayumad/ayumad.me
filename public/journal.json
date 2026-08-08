@@ -1,7 +1,7 @@
 [
  {
   "date": "2026-08-07",
-  "summary": "Marketplace G7 eval (skip), TODO triage (NixOS dropped, Hermex port, acquisitions→wishlist), Apple Reminders↔Google Tasks sync built + first live sync, journal-calendar skill started.",
+  "summary": "Vault refactor Phases 0–2 (1281→376 notes), site updated + deployed, sync built, TODO triage, MCP/Sentinel/cron fixes, site voice audit, writeup articles skill.",
   "highlights": [
    "Google Tasks authorization (open TODO since June) finally done, and the sync went zero → 42 synced items in one session",
    "Real TODO triage: 3 sections deleted, 5 items → backburner, acquisitions properly folded into wishlist instead of masquerading as tasks",
