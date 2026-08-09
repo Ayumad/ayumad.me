@@ -441,8 +441,20 @@ describe("Ayumad.me", () => {
       screen.getByRole("link", { name: "Read Rating My Desktop Fleet" }),
     ).toHaveAttribute("href", "#/writeups/desktop-fleet-review");
     expect(
-      screen.queryByRole("link", { name: /Read GPU Passthrough on the P520/i }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("link", { name: "Read Retiring the Jailbreak" }),
+    ).toHaveAttribute("href", "#/writeups/retiring-the-jailbreak");
+    expect(
+      screen.getByRole("link", { name: "Read GPU Passthrough on the P520" }),
+    ).toHaveAttribute("href", "#/writeups/gpu-passthrough-p520");
+    expect(
+      screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini" }),
+    ).toHaveAttribute("href", "#/writeups/hermes-on-mac-mini");
+    expect(
+      screen.getByRole("link", { name: "Read Building a 2.1 System on a Budget" }),
+    ).toHaveAttribute("href", "#/writeups/building-a-2.1-system");
+    expect(
+      screen.getByRole("link", { name: "Read Running Arch as a Daily Driver" }),
+    ).toHaveAttribute("href", "#/writeups/arch-daily-driver");
   });
 
   it("renders not-found for unknown writeup slugs", () => {

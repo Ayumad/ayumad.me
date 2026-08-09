@@ -540,6 +540,30 @@ export const writeups: Writeup[] = [
       {
         paragraphs: [
           "I just completely reset my phone to delete all dependencies and am now updating to iOS 17. Considering the recent landscape of jailbreaking and how scarce they seem to be these days, this is almost certainly my last time jailbreaking my phone. I still have an iPad Air gen 4 I bought on marketplace which came with iOS 14.5.1 and is currently on unc0ver but I'm considering just updating that as well.",
+        ],
+      },
+      {
+        heading: "What I'll miss",
+        paragraphs: [
+          "The icon themes were one of my favorite things even at the end. I found the pack Thine Glitch v2 and it looked amazing with my setup. I loved how my old setups looked — it just got harder and harder to keep doing it as the years went on.",
+        ],
+      },
+      {
+        heading: "The community",
+        paragraphs: [
+          "The scarcity of jailbreaks nowadays makes it so hard to justify staying on software you're not satisfied with. Especially with all the drama during Xina's development — it seemed like the community was falling apart. We just don't have as many devs anymore who see the benefit of committing hundreds of hours for work they barely get recognition or appreciation for.",
+        ],
+      },
+      {
+        heading: "Why not Android",
+        paragraphs: [
+          "I considered switching, but not for a main phone. There's too much good in the Apple ecosystem, especially the social side of iMessage and FaceTime. I also picked up an M2 MacBook Air to replace my old laptop, so my entire mobile setup is Apple now. I don't necessarily agree with how the landscape has played out, but the products are good enough.",
+          "I did get a Fire tablet for around $40 a few months back and a Nextbit Robin off marketplace — my first Android devices. Both old and underpowered, but it was still fun customizing them the way I liked. It really reminded me of earlier jailbreaking.",
+          "For customization I'll grab a secondary phone. I've been considering a secondhand iPhone X just to mess around with — if I can find one under $100 I'll pull the trigger, but it'll only ever be a backup.",
+        ],
+      },
+      {
+        paragraphs: [
           "It was great messing around with stuff and seeing what was possible but I think it's time to leave the sinking ship for me.",
         ],
       },
@@ -552,6 +576,66 @@ export const writeups: Writeup[] = [
     summary:
       "How I got an RTX 3060 passed through to a Proxmox VM — IOMMU groups, kernel parameters, and the mistakes I made along the way.",
     tags: ["Proxmox", "GPU passthrough", "Linux"],
+    body: [
+      {
+        paragraphs: [
+          "The P520 is a ThinkStation workstation with a Xeon W-2135, 64 GB of ECC RAM, and a ZFS pool, running Proxmox VE 9.2.3. The RTX 3060 12 GB in it is the best value part I own — 12 GB of VRAM, CUDA, and cheap. The whole point of it is local AI, which means the GPU had to get through to a VM.",
+          "That took longer than it should have. Most of the time went into things I didn't know to check upfront.",
+        ],
+      },
+      {
+        heading: "The hardware",
+        paragraphs: [
+          "The card sits at PCI 0000:65:00.0 with its audio function at 65:00.1 — the HDMI/DP audio device. Both have to go to the VM. Miss the audio function and you lose display audio, which you don't notice until you plug something into it.",
+        ],
+        table: {
+          headers: ["Component", "Spec"],
+          rows: [
+            ["Machine", "Lenovo ThinkStation P520"],
+            ["CPU", "Xeon W-2135, 6C/12T"],
+            ["RAM", "64 GB DDR4 ECC"],
+            ["GPU", "RTX 3060 12 GB @ 0000:65:00.0"],
+            ["Boot", "512 GB NVMe"],
+            ["VM storage", "4 TB SATA SSD thin pool"],
+            ["NAS", "3× 4 TB HDD ZFS RAIDZ (~8 TB)"],
+            ["Host", "Proxmox VE 9.2.3 (pve-p520)"],
+          ],
+        },
+      },
+      {
+        heading: "Host setup",
+        paragraphs: [
+          "IOMMU first. On Intel that's intel_iommu=on in GRUB, update-grub, reboot. Then the VFIO modules: vfio, vfio_iommu_type1, vfio_pci, vfio_virqfd. Then bind the card to VFIO at boot with its vendor:device IDs — 10de:2503 for the GPU, 10de:228e for the audio. Then blacklist nouveau, because it grabs the card otherwise.",
+          "The order matters. If you skip verifying IOMMU groups after reboot, you'll chase ghosts later.",
+        ],
+      },
+      {
+        heading: "The VM",
+        paragraphs: [
+          "The ai-vm is a Debian VM with 16 GB of RAM, 4 cores, 32 GB raw on the tank pool. Machine type q35 — that's required for PCIe passthrough, and it's the mistake that cost me the most time.",
+        ],
+        list: [
+          "**q35 is not optional.** pcie=1 and x-vga=1 need q35. With the default machine type, QEMU exits with code 1 and the VM won't start. It's one setting, but it looks like the GPU is the problem when it's actually the machine type.",
+          "**LVM thin pools only take raw disks.** I tried qcow2 first; Proxmox rejected it. format=raw or use ZFS/dir storage.",
+          "**Full PCI address.** 0000:65:00.0, not 65:00.0. The API is picky.",
+          "**Guest agent on.** agent: 1, so you can query the VM's IP after boot.",
+        ],
+      },
+      {
+        heading: "Driver install",
+        paragraphs: [
+          "Debian install via the Proxmox console, then build-essential, dkms, linux-headers, the non-free repos, and nvidia-driver. Reboot, and nvidia-smi shows the real card: 12288 MiB, driver 550.120, CUDA 12.4.",
+          "A torch check confirms it's the actual hardware, not a software emulation: CUDA available, tensor lands on cuda:0, matmul runs. If nvidia-smi shows a serial number, the card really passed through.",
+        ],
+      },
+      {
+        heading: "What I'd do differently",
+        paragraphs: [
+          "Get the host on Tailscale first. The P520 isn't on the mesh — everything goes through Omarchy as a jump host: Mac mini → Tailscale → Omarchy → SSH → P520. It works, but direct access would've made the whole thing simpler.",
+          "Also: the Proxmox API has no shell execution endpoint. I kept trying to run commands through it. There isn't a handler for that. Use the console or bootstrap through a VM.",
+        ],
+      },
+    ],
   },
   {
     slug: "hermes-on-mac-mini",
@@ -560,6 +644,45 @@ export const writeups: Writeup[] = [
     summary:
       "Running one AI agent server instead of rebuilding on every device. The tradeoffs of headless macOS, Tailscale mesh, and always-on automation.",
     tags: ["Hermes", "macOS", "Tailscale"],
+    body: [
+      {
+        paragraphs: [
+          "Hermes used to live wherever I was working. Then I moved it to a Mac mini that never turns off, and everything got simpler.",
+          "The pitch was one always-on agent server instead of rebuilding context and skills on every machine. One home for the memory, the cron jobs, the tools.",
+        ],
+      },
+      {
+        heading: "The setup",
+        paragraphs: [
+          "A Mac mini on my desk at home, headless, joined to the Tailscale mesh at 100.113.252.86. The WebUI listens on 0.0.0.0:8787, launched by launchd so it survives reboots. I reach it from my phone through the Hermex app, same URL, same agent, same memory.",
+          "It runs the daily loop: morning brief, interview prep, session journal, kanban dispatch, memory consolidation. All of that used to be split across whatever machine was on at the time.",
+        ],
+      },
+      {
+        heading: "Why headless macOS",
+        paragraphs: [
+          "macOS as the base means everything just works — no driver fights, sane power management, and it's a Unix under the hood so the tooling is familiar. Headless means I never think about a screen on it. SSH in, or use the WebUI.",
+          "The tradeoff is that it's another always-on box. It draws power, it needs updates, and if it dies, the whole daily loop goes with it. That's the cost of centralizing.",
+        ],
+      },
+      {
+        heading: "What it runs",
+        list: [
+          "**WebUI on port 8787** — the chat surface, launchd-managed.",
+          "**13 cron jobs** — briefs, prompts, interview prep, journal, kanban.",
+          "**Mnemosyne** — local memory store with its own SQLite database and embeddings.",
+          "**Task sync** — Google Tasks and Apple Reminders stay in lockstep via a snapshot script.",
+          "**Hermex** — my phone client, hitting the same WebUI over Tailscale.",
+        ],
+      },
+      {
+        heading: "The tradeoffs",
+        paragraphs: [
+          "Centralizing means one place to maintain instead of five. If I add a skill or change a cron job, it's one edit, and it's everywhere. The downside is single point of failure — no redundancy, and if the mesh is down, I'm down.",
+          "For a one-person setup, that trade is worth it. The Mac mini is quiet, small, and draws less than the alternative of running agents on every device I own.",
+        ],
+      },
+    ],
   },
   {
     slug: "building-a-2.1-system",
@@ -568,6 +691,48 @@ export const writeups: Writeup[] = [
     summary:
       "Desktop and living-room speaker setups — crossover tuning, subwoofer placement, and why the WiiM Ultra changed my desktop chain.",
     tags: ["Audio", "KEF", "SVS", "WiiM"],
+    body: [
+      {
+        paragraphs: [
+          "My desk setup is 2.1: KEF Q150s, an SVS SB1000 Pro, a WiiM Ultra, and a Fosi ZA3. The whole thing, including the sub, came to about $1000 — mostly because of a marketplace deal on the sub and general deal hunting on Amazon.",
+          "The goal was simple: proper stereo with real sub-bass that doesn't cost what a store-bought 2.1 system would.",
+        ],
+      },
+      {
+        heading: "The chain",
+        paragraphs: [
+          "WiiM Ultra → Fosi ZA3 → Q150s, with the SB1000 Pro handling everything below the crossover. The WiiM Ultra is the source and the brain — it streams, does the room EQ, and handles the sub crossover in one box.",
+          "The room EQ especially has been extremely beneficial. The desk is in a corner, which normally means bass problems, and the auto-EQ fixed most of it without any manual fiddling.",
+        ],
+      },
+      {
+        heading: "Why the WiiM Ultra changed things",
+        paragraphs: [
+          "It replaced what would've been a stack of boxes: a streamer, a DAC, and a DSP unit. The app is actually usable, which is rare. And because the crossover and EQ live in the WiiM, upgrading the amp or speakers later doesn't mean redoing the setup.",
+          "The flexibility is the point. It allows for future upgrades without ripping out the chain.",
+        ],
+      },
+      {
+        heading: "The amp",
+        paragraphs: [
+          "The Fosi ZA3 is a small class-D amp, and it is more than enough to drive the Q150s. People overbuy amps for bookshelf speakers — these are easy loads. If you want a bit more headroom or balanced inputs, a pair of Fosi V3 monos does the same job in stereo.",
+        ],
+      },
+      {
+        heading: "Crossover and placement",
+        paragraphs: [
+          "The SB1000 Pro crosses over around 80 Hz, which takes the bass load off the Q150s and lets them play cleaner in the mids. Sub placement matters more than people think — I tried a few spots before it sounded right, and the room EQ handled the rest.",
+          "General rule: put the sub where it sounds best in the listening position, then run the EQ. Room EQ can fix a lot, but it can't fix a sub that's in the wrong place entirely.",
+        ],
+      },
+      {
+        heading: "What I'd change",
+        paragraphs: [
+          "Not much. If I had to do it again I'd still buy the same chain. The next upgrade is probably the amp — the ZA3 is fine, but a stereo amp with more inputs would clean up the desk.",
+          "Total for the system: about $1000 after deals. The sub was the biggest single line item, and it's the one that makes everything else sound expensive.",
+        ],
+      },
+    ],
   },
   {
     slug: "arch-daily-driver",
@@ -576,6 +741,42 @@ export const writeups: Writeup[] = [
     summary:
       "What it actually takes to use Arch Linux day-to-day — Hyprland, rolling releases, and the things that break vs. the things that just work.",
     tags: ["Arch Linux", "Hyprland", "Linux"],
+    body: [
+      {
+        paragraphs: [
+          "I run Arch-based systems on four machines now: a Framework 13, a Beelink SER8, a ThinkPad T480, and a Let's Note SV1. It started as a tinkering thing and turned into the default.",
+          "The distro is Omarchy — DHH's opinionated Arch-based setup with Hyprland on top. It's Arch under the hood with a good default config, which means I spend less time ricing and more time using.",
+        ],
+      },
+      {
+        heading: "Why Arch, why Hyprland",
+        paragraphs: [
+          "Rolling releases mean I always have current packages, which matters when the hardware is new. The Framework 13 and the SER8 both have recent GPUs and kernel features that need a current kernel, and Arch has it the day it ships.",
+          "Hyprland is the tiling compositor. It's fast, configurable, and the defaults in Omarchy are sensible — workspaces, keybinds, a bar — without needing to be a hobby itself.",
+        ],
+      },
+      {
+        heading: "What breaks",
+        paragraphs: [
+          "The honest answer: things break occasionally, and it's almost always a partial upgrade or a kernel update that needs a rebuild. The fix is usually pacman -Syu and a reboot.",
+          "The known pain points: DKMS modules after a kernel bump, Hyprland config changes between versions, and the occasional AUR package that needs a manual intervention. None of it is fatal. It's just not zero-maintenance.",
+        ],
+      },
+      {
+        heading: "What just works",
+        paragraphs: [
+          "The daily stuff is boring in the good way. The compositor starts, windows tile, the bar works, suspend and resume work, and the battery life on the Framework is fine.",
+          "The SER8 runs as an always-on box with Docker and a monitoring script on a 15-minute cron. It's been up for months. The T480 is the travel laptop, and the Let's Note is the small one — all the same config, which is the whole point of using the same distro everywhere.",
+        ],
+      },
+      {
+        heading: "The daily driver test",
+        paragraphs: [
+          "The real test is whether I reach for it when I don't have to. I do. Arch as a daily driver means accepting that occasionally you'll spend an evening fixing something — and deciding that's a fair trade for a system that's exactly how I want it.",
+          "If you want the same without the opinions, Omarchy is a good starting point. If you want zero maintenance, stay on something else. Both are legitimate.",
+        ],
+      },
+    ],
   },
 ];
 
@@ -675,6 +876,26 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
     title: "Retiring the Jailbreak — Ayumad.me",
     description:
       "From 9.3.3 to Xina to Dopamine — seven years of jailbreaking, and why Ayush finally reset his phone to stock iOS.",
+  },
+  "/writeups/gpu-passthrough-p520": {
+    title: "GPU Passthrough on the P520 — Ayumad.me",
+    description:
+      "How Ayush got an RTX 3060 passed through to a Proxmox VM — IOMMU groups, kernel parameters, and the mistakes he made along the way.",
+  },
+  "/writeups/hermes-on-mac-mini": {
+    title: "Why I Moved Hermes to a Mac Mini — Ayumad.me",
+    description:
+      "Running one AI agent server instead of rebuilding on every device — the tradeoffs of headless macOS, Tailscale mesh, and always-on automation.",
+  },
+  "/writeups/building-a-2.1-system": {
+    title: "Building a 2.1 System on a Budget — Ayumad.me",
+    description:
+      "Ayush's KEF Q150 + SVS SB1000 Pro + WiiM Ultra desk setup — crossover tuning, subwoofer placement, and why the WiiM Ultra changed the chain.",
+  },
+  "/writeups/arch-daily-driver": {
+    title: "Running Arch as a Daily Driver — Ayumad.me",
+    description:
+      "What it takes to use Arch Linux day-to-day — Hyprland, rolling releases, and the things that break vs. the things that just work.",
   },
   "/now": {
     title: "Now — Ayumad.me",
