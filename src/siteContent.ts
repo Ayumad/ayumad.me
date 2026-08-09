@@ -492,10 +492,10 @@ export const writeups: Writeup[] = [
           "Honestly? I have three high-end gaming machines and two of them are just sitting at a friend's house. That's redundant. If I was smarter with my money:",
         ],
         list: [
-          "**5700X3D in the living room SFF.** Best upgrade per dollar I can do, and it takes 15 minutes.",
-          "**Same for the budget SFF when it comes back**, plus 32 GB of RAM. Fixes both weak points for about $250.",
-          "**Sell the 12900K prebuilt when it returns.** The resale window is now, and Creekwood already covers that tier.",
-          "**Leave the P520 alone.** It's fine.",
+          "5700X3D in the living room SFF. Best upgrade per dollar I can do, and it takes 15 minutes.",
+          "Same for the budget SFF when it comes back, plus 32 GB of RAM. Fixes both weak points for about $250.",
+          "Sell the 12900K prebuilt when it returns. The resale window is now, and Creekwood already covers that tier.",
+          "Leave the P520 alone. It's fine.",
         ],
       },
       {
@@ -615,10 +615,10 @@ export const writeups: Writeup[] = [
           "The ai-vm is a Debian VM with 16 GB of RAM, 4 cores, 32 GB raw on the tank pool. Machine type q35 — that's required for PCIe passthrough, and it's the mistake that cost me the most time.",
         ],
         list: [
-          "**q35 is not optional.** pcie=1 and x-vga=1 need q35. With the default machine type, QEMU exits with code 1 and the VM won't start. It's one setting, but it looks like the GPU is the problem when it's actually the machine type.",
-          "**LVM thin pools only take raw disks.** I tried qcow2 first; Proxmox rejected it. format=raw or use ZFS/dir storage.",
-          "**Full PCI address.** 0000:65:00.0, not 65:00.0. The API is picky.",
-          "**Guest agent on.** agent: 1, so you can query the VM's IP after boot.",
+          "q35 is not optional. pcie=1 and x-vga=1 need q35. With the default machine type, QEMU exits with code 1 and the VM won't start. It's one setting, but it looks like the GPU is the problem when it's actually the machine type.",
+          "LVM thin pools only take raw disks. I tried qcow2 first; Proxmox rejected it. format=raw or use ZFS/dir storage.",
+          "Full PCI address. 0000:65:00.0, not 65:00.0. The API is picky.",
+          "Guest agent on. agent: 1, so you can query the VM's IP after boot.",
         ],
       },
       {
@@ -668,11 +668,11 @@ export const writeups: Writeup[] = [
       {
         heading: "What it runs",
         list: [
-          "**WebUI on port 8787** — the chat surface, launchd-managed.",
-          "**13 cron jobs** — briefs, prompts, interview prep, journal, kanban.",
-          "**Mnemosyne** — local memory store with its own SQLite database and embeddings.",
-          "**Task sync** — Google Tasks and Apple Reminders stay in lockstep via a snapshot script.",
-          "**Hermex** — my phone client, hitting the same WebUI over Tailscale.",
+          "WebUI on port 8787 — the chat surface, launchd-managed.",
+          "13 cron jobs — briefs, prompts, interview prep, journal, kanban.",
+          "Mnemosyne — local memory store with its own SQLite database and embeddings.",
+          "Task sync — Google Tasks and Apple Reminders stay in lockstep via a snapshot script.",
+          "Hermex — my phone client, hitting the same WebUI over Tailscale.",
         ],
       },
       {
