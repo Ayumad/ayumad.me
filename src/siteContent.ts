@@ -517,14 +517,8 @@ export const writeups: Writeup[] = [
     body: [
       {
         paragraphs: [
-          "It was a tough decision, but I'm finally retiring the jailbreak. I've been jailbroken since 9.3.3, through every phone I've owned, and I just reset my phone to stock iOS 17.",
-          "This is the story of why, and the stuff I'll actually miss.",
-        ],
-      },
-      {
-        heading: "How it started",
-        paragraphs: [
-          "I joined the scene back with 9.3.3 and loved spending hours messing around with tweaks, building an original setup that was mine. Back then emulators were huge, and having the option to download IPAs directly was amazing. That's what hooked me — not the themes, but the phone doing things Apple never shipped.",
+          "It was a tough decision, but I'm finally retiring the jailbreak. I joined the scene back with 9.3.3 and loved spending hours messing around with tweaks and making an original setup that I loved. Back then emulators were also huge, and especially having the option to download IPAs, it was amazing. I continued to be jailbroken through each phone I had for as long as possible.",
+          "I got a 13 mini which was my first new phone ever, and I stayed on 15.1.1 for about a year before Xina came out and was so happy when it finally got jailbroken. I instantly got it once it released but found that the most I could do at that point was aesthetic changes, and technically I could access things with tools like Filza, but overall it was just not as magical as I thought it would be. Being able to sideload with AltStore and later TrollStore replaced a lot of what I thought I needed out of a jailbroken phone.",
         ],
       },
       {
@@ -538,39 +532,15 @@ export const writeups: Writeup[] = [
   iOS 17       stock again. sideloading stays`,
       },
       {
-        heading: "The 13 mini, and waiting",
         paragraphs: [
-          "I got a 13 mini — my first new phone ever — and stayed on 15.1.1 for about a year before Xina came out. When it finally dropped, I was so happy. I installed it the day it released.",
-          "Only it wasn't as magical as I thought it would be. The most I could do was aesthetic changes. I could technically dig into the filesystem with tools like Filza, but the things that actually made a jailbreak feel necessary were already getting replaced — AltStore and later TrollStore covered sideloading, which was most of what I used it for.",
+          "Recently though, a lot of factors made it harder and harder for me to justify jailbreaking. I loved how it looked but the functionality was just less useful than what Apple was releasing. Especially with the purchase of the AirPods Pro 2s, they feel so limited by the software which is extremely annoying. Xina also became more and more unstable, with almost daily restarts or crashes and even an entire day of my phone being a complete brick, screen on but not able to be interacted with or even force shutdown. I ended up having to wait around 5 hours for the battery to completely drain before being able to use my phone again.",
+          "One of the main factors as well which annoyed me was just that bypass tweaks just tended to not work. I tried every one I could possibly think of but nothing other than Lintui on the Xina app itself would let me use Pokémon Go. As a last ditch effort I tried moving to Dopamine and seeing if there was any more value there but it was even worse in my experience.",
         ],
       },
       {
-        heading: "When it stopped being worth it",
         paragraphs: [
-          "A few things pushed it over the edge. The AirPods Pro 2 were the biggest one — I loved them, but they felt so limited by the software that it was extremely annoying. Xina also got more and more unstable. Almost daily restarts or crashes. One day my phone was a complete brick: screen on, but not interactable. Not even force shutdown worked. I waited about five hours for the battery to drain before I could use my phone again.",
-          "And the bypass tweaks just kept failing. I tried every one I could think of; only Lintui, built into Xina itself, would let me open Pokémon Go.",
-          "As a last-ditch effort I moved to Dopamine. It was even worse in my experience.",
-        ],
-      },
-      {
-        heading: "The reset",
-        paragraphs: [
-          "So I completely reset my phone to delete all the dependencies, and updated to iOS 17. Given how scarce jailbreaks are these days, this is almost certainly my last one.",
-          "I still have an iPad Air gen 4 I bought off Marketplace, which came on iOS 14.5.1 and is still on unc0ver. I keep going back and forth on updating it too.",
-        ],
-      },
-      {
-        heading: "Why the scene is shrinking",
-        paragraphs: [
-          "Jailbreaks take longer and longer to come out, and every year Apple ships more of the features that used to be the point. The community had its own problems — the Xina release period had a lot of drama, and there just aren't as many devs anymore who see a reason to commit hundreds of hours for work they barely get recognized for.",
-          "From Apple's standpoint it makes no sense to support any of this. Their whole thing is security and ease of use. I get it. It just means the window for this hobby keeps closing.",
-        ],
-      },
-      {
-        heading: "Bottom line",
-        paragraphs: [
-          "It was great messing around with stuff and seeing what was possible. I don't regret the years.",
-          "But when the setup starts breaking more than it gives you, and the stock phone does almost everything you actually needed, it's time to go. I think it's time for me to leave the sinking ship.",
+          "I just completely reset my phone to delete all dependencies and am now updating to iOS 17. Considering the recent landscape of jailbreaking and how scarce they seem to be these days, this is almost certainly my last time jailbreaking my phone. I still have an iPad Air gen 4 I bought on marketplace which came with iOS 14.5.1 and is currently on unc0ver but I'm considering just updating that as well.",
+          "It was great messing around with stuff and seeing what was possible but I think it's time to leave the sinking ship for me.",
         ],
       },
     ],
