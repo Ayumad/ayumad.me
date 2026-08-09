@@ -508,6 +508,74 @@ export const writeups: Writeup[] = [
     ],
   },
   {
+    slug: "retiring-the-jailbreak",
+    title: "Retiring the Jailbreak",
+    date: "2026",
+    summary:
+      "From 9.3.3 to Xina to Dopamine — seven years of jailbreaking, and why I finally reset my phone to stock iOS.",
+    tags: ["iOS", "Jailbreaking", "Apple"],
+    body: [
+      {
+        paragraphs: [
+          "It was a tough decision, but I'm finally retiring the jailbreak. I've been jailbroken since 9.3.3, through every phone I've owned, and I just reset my phone to stock iOS 17.",
+          "This is the story of why, and the stuff I'll actually miss.",
+        ],
+      },
+      {
+        heading: "How it started",
+        paragraphs: [
+          "I joined the scene back with 9.3.3 and loved spending hours messing around with tweaks, building an original setup that was mine. Back then emulators were huge, and having the option to download IPAs directly was amazing. That's what hooked me — not the themes, but the phone doing things Apple never shipped.",
+        ],
+      },
+      {
+        heading: "The journey",
+        ascii: `  JAILBREAK TIMELINE
+  ─────────────────────────────────────
+  9.3.3        first jailbreak. tweaks & emulators
+  15.1.1       13 mini, waiting out the year
+  XinaA15      back in. mostly looks
+  Dopamine     worse. the last attempt
+  iOS 17       stock again. sideloading stays`,
+      },
+      {
+        heading: "The 13 mini, and waiting",
+        paragraphs: [
+          "I got a 13 mini — my first new phone ever — and stayed on 15.1.1 for about a year before Xina came out. When it finally dropped, I was so happy. I installed it the day it released.",
+          "Only it wasn't as magical as I thought it would be. The most I could do was aesthetic changes. I could technically dig into the filesystem with tools like Filza, but the things that actually made a jailbreak feel necessary were already getting replaced — AltStore and later TrollStore covered sideloading, which was most of what I used it for.",
+        ],
+      },
+      {
+        heading: "When it stopped being worth it",
+        paragraphs: [
+          "A few things pushed it over the edge. The AirPods Pro 2 were the biggest one — I loved them, but they felt so limited by the software that it was extremely annoying. Xina also got more and more unstable. Almost daily restarts or crashes. One day my phone was a complete brick: screen on, but not interactable. Not even force shutdown worked. I waited about five hours for the battery to drain before I could use my phone again.",
+          "And the bypass tweaks just kept failing. I tried every one I could think of; only Lintui, built into Xina itself, would let me open Pokémon Go.",
+          "As a last-ditch effort I moved to Dopamine. It was even worse in my experience.",
+        ],
+      },
+      {
+        heading: "The reset",
+        paragraphs: [
+          "So I completely reset my phone to delete all the dependencies, and updated to iOS 17. Given how scarce jailbreaks are these days, this is almost certainly my last one.",
+          "I still have an iPad Air gen 4 I bought off Marketplace, which came on iOS 14.5.1 and is still on unc0ver. I keep going back and forth on updating it too.",
+        ],
+      },
+      {
+        heading: "Why the scene is shrinking",
+        paragraphs: [
+          "Jailbreaks take longer and longer to come out, and every year Apple ships more of the features that used to be the point. The community had its own problems — the Xina release period had a lot of drama, and there just aren't as many devs anymore who see a reason to commit hundreds of hours for work they barely get recognized for.",
+          "From Apple's standpoint it makes no sense to support any of this. Their whole thing is security and ease of use. I get it. It just means the window for this hobby keeps closing.",
+        ],
+      },
+      {
+        heading: "Bottom line",
+        paragraphs: [
+          "It was great messing around with stuff and seeing what was possible. I don't regret the years.",
+          "But when the setup starts breaking more than it gives you, and the stock phone does almost everything you actually needed, it's time to go. I think it's time for me to leave the sinking ship.",
+        ],
+      },
+    ],
+  },
+  {
     slug: "gpu-passthrough-p520",
     title: "GPU Passthrough on the P520",
     date: "2026",
@@ -632,6 +700,11 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
     title: "Rating My Desktop Fleet — Ayumad.me",
     description:
       "Five machines, five jobs — the honest breakdown of every desktop Ayush owns, what it's good at, and what he'd change.",
+  },
+  "/writeups/retiring-the-jailbreak": {
+    title: "Retiring the Jailbreak — Ayumad.me",
+    description:
+      "From 9.3.3 to Xina to Dopamine — seven years of jailbreaking, and why Ayush finally reset his phone to stock iOS.",
   },
   "/now": {
     title: "Now — Ayumad.me",
