@@ -510,7 +510,7 @@ export const writeups: Writeup[] = [
   {
     slug: "retiring-the-jailbreak",
     title: "Retiring the Jailbreak",
-    date: "2026",
+    date: "September 2023",
     summary:
       "From 9.3.3 to Xina to Dopamine — seven years of jailbreaking, and why I finally reset my phone to stock iOS.",
     tags: ["iOS", "Jailbreaking", "Apple"],
@@ -572,7 +572,7 @@ export const writeups: Writeup[] = [
   {
     slug: "gpu-passthrough-p520",
     title: "GPU Passthrough on the P520",
-    date: "2026",
+    date: "June 2026",
     summary:
       "How I got an RTX 3060 passed through to a Proxmox VM — IOMMU groups, kernel parameters, and the mistakes I made along the way.",
     tags: ["Proxmox", "GPU passthrough", "Linux"],
@@ -640,7 +640,7 @@ export const writeups: Writeup[] = [
   {
     slug: "hermes-on-mac-mini",
     title: "Why I Moved Hermes to a Mac Mini",
-    date: "2026",
+    date: "July 2026",
     summary:
       "Running one AI agent server instead of rebuilding on every device. The tradeoffs of headless macOS, Tailscale mesh, and always-on automation.",
     tags: ["Hermes", "macOS", "Tailscale"],
@@ -687,7 +687,7 @@ export const writeups: Writeup[] = [
   {
     slug: "building-a-2.1-system",
     title: "Building a 2.1 System on a Budget",
-    date: "2025",
+    date: "February 2026",
     summary:
       "Desktop and living-room speaker setups — crossover tuning, subwoofer placement, and why the WiiM Ultra changed my desktop chain.",
     tags: ["Audio", "KEF", "SVS", "WiiM"],
@@ -789,12 +789,13 @@ export const futureIdeas = [
 ];
 
 export const aboutContent: AboutContent = {
-  intro: "Computer Engineering student based in the Bay Area.",
+  intro: "I break hardware and software until I understand it. I'm a Computer Engineering student at San José State who runs his own everything — homelab, AI agent, knowledge base — and writes about what breaks.",
   story: [
     "I got into technology through jailbreaking devices and running emulators. I liked seeing a device do something it was not supposed to do, and I still approach new hardware the same way — push it until it breaks, then figure out why.",
     "That instinct came from being the kid who moved from India to the US young and had to figure out the culture on his own. I found it through media and books, and eventually through computers. Every device was a puzzle, and the reward wasn't just making it work — it was understanding why the defaults were wrong in the first place.",
-    "Most of my projects start with a practical question. Can this old workstation become a useful server? Can one Mac mini run an AI agent for every device? Can I make an Arch install feel exactly how I want? I learn by setting it up, breaking something, and fixing it.",
-    "I study Computer Engineering at San José State and studied Computer Science at Foothill before that, where I also ran the Data Science & AI club and founded the Principia STEM Magazine. Outside class, technology is still the main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I'm trying to configure that week.",
+    "Most of my projects start with a practical question. Can an old ThinkStation be a real server? Yes — it's a Proxmox host now, 16 TB of ZFS and an RTX 3060 passed through to a VM for local AI. Can one Mac mini run an AI agent for everything I do? Also yes — it handles my daily briefs, memory, and 15 scheduled automations, routing between cheap models so the whole thing costs less than a streaming subscription. I learn by setting it up, breaking something, and fixing it.",
+    "I study Computer Engineering at San José State, after Computer Science at Foothill, where I ran the Data Science & AI club and founded Principia STEM Magazine. I've shipped a chatbot for Foothill students, an emotion-aware bot at CalHacks, and an audio-visualization project that became a magazine article. Everything I learn gets documented in a git-backed Obsidian vault, so the knowledge compounds instead of disappearing.",
+    "Outside class, technology is still the main hobby: Linux, audio, cameras, old hardware, game streaming, and whatever I'm trying to configure that week. TLDR: I build, break, and run my own systems, and I write down what happens.",
   ],
   education: [
     { school: "San José State", program: "Computer Engineering" },
@@ -810,9 +811,13 @@ export const aboutContent: AboutContent = {
     "ZFS",
     "Docker",
     "Tailscale",
+    "Git",
+    "SQL",
+    "LLM + RAG tooling",
   ],
   interests: [
     "Local AI",
+    "AI Agents",
     "Self-hosting",
     "Audio",
     "Linux",
@@ -820,6 +825,7 @@ export const aboutContent: AboutContent = {
     "Astrophotography",
     "Retro Hardware",
     "Handhelds",
+    "Keyboards",
   ],
 };
 
