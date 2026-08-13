@@ -290,6 +290,16 @@ interface SpotifyTopArtistsResponse {
   }>;
 }
 
+/** Single-artist catalog response (same fields, followers nested). */
+interface SpotifyArtistResponse {
+  id?: string;
+  name?: string;
+  genres?: string[];
+  popularity?: number;
+  followers?: { total?: number };
+  images?: SpotifyImage[];
+}
+
 export async function getRecentlyPlayedDetailed(
   config: SpotifyConfig,
   limit = 50,
@@ -360,7 +370,9 @@ export async function getTopArtists(
 
 /**
  * Fetch artist metadata (incl. genres) by id from the public catalog
- * endpoint. No special OAuth scope required. Batches up to 50 ids.
+ * endpoint. No special OAuth scope required. NOTE: the batch form
+ * `/v1/artists?ids=` returns 403 Forbidden for this app — use single
+ * lookups instead (small concurrency to stay inside rate limits).
  */
 export async function getArtistsByIds(
   config: SpotifyConfig,
@@ -370,18 +382,23 @@ export async function getArtistsByIds(
   if (ids.length === 0) return [];
   const accessToken = await getAccessToken(config, fetchImpl);
   const artists: SpotifyArtistFull[] = [];
-  for (let offset = 0; offset < ids.length; offset += 50) {
-    const chunk = ids.slice(offset, offset + 50);
-    const response = await spotifyFetch(
-      `https://api.spotify.com/v1/artists?ids=${encodeURIComponent(chunk.join(","))}`,
-      accessToken,
-      fetchImpl,
+  const batchSize = 5;
+  for (let offset = 0; offset < ids.length; offset += batchSize) {
+    const chunk = ids.slice(offset, offset + batchSize);
+    const results = await Promise.all(
+      chunk.map(async (id) => {
+        const response = await spotifyFetch(
+          `https://api.spotify.com/v1/artists/${encodeURIComponent(id)}`,
+          accessToken,
+          fetchImpl,
+        );
+        if (!response.ok) {
+          throw new Error(`Spotify artist request failed (${response.status})`);
+        }
+        return (await response.json()) as SpotifyArtistResponse;
+      }),
     );
-    if (!response.ok) {
-      throw new Error(`Spotify artists request failed (${response.status})`);
-    }
-    const payload = (await response.json()) as SpotifyTopArtistsResponse;
-    for (const artist of payload.items ?? []) {
+    for (const artist of results) {
       if (!artist.id) continue;
       artists.push({
         id: artist.id,

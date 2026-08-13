@@ -3,6 +3,7 @@ import {
   getRecentlyPlayedDetailed,
   readSpotifyConfig,
 } from "../server/spotify.js";
+import { genresForArtist } from "../server/genres.js";
 
 const jsonHeaders = {
   "Content-Type": "application/json; charset=utf-8",
@@ -29,16 +30,25 @@ export async function GET() {
       }
     }
 
-    // Fetch genre metadata for those artists from the public catalog.
-    const artists = await getArtistsByIds(config, Array.from(playCounts.keys()));
+    // Fetch genre metadata for the top artists from the public catalog
+    // (single lookups — the batch endpoint 403s for this app).
+    const topIds = Array.from(playCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 25)
+      .map(([id]) => id);
+    const artists = await getArtistsByIds(config, topIds);
     const byId = new Map(artists.map((artist) => [artist.id, artist]));
 
-    // Aggregate genres weighted by actual plays.
+    // Aggregate genres weighted by actual plays. Spotify's dev tier strips
+    // genres from catalog responses, so merge curated genres by name.
     const genreCounts = new Map<string, number>();
     for (const [artistId, plays] of Array.from(playCounts)) {
       const artist = byId.get(artistId);
-      if (!artist) continue;
-      for (const genre of artist.genres) {
+      const genres =
+        artist && artist.genres.length > 0
+          ? artist.genres
+          : genresForArtist(artist?.name ?? artistId);
+      for (const genre of genres) {
         genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + plays);
       }
     }
@@ -55,11 +65,13 @@ export async function GET() {
     const topArtists = Array.from(playCounts.entries())
       .map(([artistId, plays]) => {
         const artist = byId.get(artistId);
+        const apiGenres = artist?.genres ?? [];
+        const curated = genresForArtist(artist?.name ?? artistId);
         return {
           id: artistId,
           name: artist?.name ?? artistId,
           plays,
-          genres: artist?.genres ?? [],
+          genres: apiGenres.length > 0 ? apiGenres : curated,
           popularity: artist?.popularity ?? 0,
           artwork: artist?.images?.find((image) => image.url)?.url ?? null,
         };
