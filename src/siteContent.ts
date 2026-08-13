@@ -830,6 +830,46 @@ export const aboutContent: AboutContent = {
   ],
 };
 
+export interface ActivityConnection {
+  service: string;
+  signal: string;
+  description: string;
+  status: "planned";
+}
+
+export const activityConnections: ActivityConnection[] = [
+  {
+    service: "Spotify",
+    signal: "Now listening",
+    description: "Current track, artist, album, and recent listening.",
+    status: "planned",
+  },
+  {
+    service: "IMDb",
+    signal: "Now watching",
+    description: "Current films, series, ratings, and watchlist activity.",
+    status: "planned",
+  },
+  {
+    service: "MyAnimeList",
+    signal: "Anime progress",
+    description: "Currently watching, episode progress, and completed series.",
+    status: "planned",
+  },
+  {
+    service: "Steam",
+    signal: "Now playing",
+    description: "Current game, recent sessions, and playtime.",
+    status: "planned",
+  },
+  {
+    service: "Goodreads",
+    signal: "Now reading",
+    description: "Current book, reading progress, and recently finished titles.",
+    status: "planned",
+  },
+];
+
 export const socialLinks: SocialLink[] = [
   {
     label: "Email",

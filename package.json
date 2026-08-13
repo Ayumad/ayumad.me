@@ -13,7 +13,9 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc -b --pretty false",
-    "validate": "npm run typecheck && npm run lint && npm test && npm run build"
+    "validate": "npm run typecheck && npm run lint && npm test && npm run build",
+    "spotify:auth": "node scripts/spotify-auth.mjs",
+    "spotify:push-env": "node scripts/spotify-push-env.mjs"
   },
   "dependencies": {
     "motion": "^12.43.0",

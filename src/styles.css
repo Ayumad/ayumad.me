@@ -14,6 +14,7 @@
   --ink: #020606;
   --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
   --sans: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --display: var(--sans);
   --max: 1460px;
   --header: 72px;
 }
@@ -3307,4 +3308,593 @@ main {
   opacity: 0.5;
   font-size: 0.85rem;
   max-width: 62ch;
+}
+
+/* ===== Spotify listening widget (ported 2026-08-12) ===== */
+
+.spotify-home-signal {
+  position: relative;
+  display: grid;
+  width: min(100%, 520px);
+  min-width: 0;
+  min-height: 92px;
+  margin-top: 26px;
+  padding: 8px 42px 8px 8px;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--cyan) 6%, transparent), transparent 52%),
+    var(--surface);
+  color: var(--text);
+  gap: 14px;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.spotify-home-signal.is-linked:hover {
+  border-color: color-mix(in srgb, var(--cyan) 72%, var(--line));
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--cyan) 16%, transparent);
+}
+
+.spotify-home-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.spotify-home-meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--cyan);
+  font: 700 0.49rem/1 var(--mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  gap: 10px;
+}
+
+.spotify-home-meta i {
+  padding: 4px 5px;
+  border: 1px solid var(--fine);
+  color: var(--muted);
+  font-style: normal;
+}
+
+.spotify-home-copy > strong,
+.spotify-home-copy > small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-home-copy > strong {
+  font: 720 0.92rem/1.18 var(--display);
+}
+
+.spotify-home-copy > small {
+  color: var(--soft);
+  font: 600 0.62rem/1.2 var(--mono);
+}
+
+.spotify-home-fallback {
+  display: grid;
+  width: 76px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--line);
+  color: var(--cyan);
+  font: 700 1.8rem/1 var(--display);
+}
+
+.spotify-home-progress {
+  position: absolute;
+  right: 42px;
+  bottom: 6px;
+  left: 98px;
+  height: 2px;
+  overflow: hidden;
+  background: var(--fine);
+}
+
+.spotify-home-progress i {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+}
+
+.spotify-home-arrow {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  color: var(--cyan);
+  font: 700 0.75rem/1 var(--mono);
+  transform: translateY(-50%);
+}
+
+.activity-connections {
+  margin-top: clamp(42px, 7vw, 92px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+}
+
+.activity-connections > header {
+  display: grid;
+  padding: clamp(28px, 5vw, 60px);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
+  border-bottom: 1px solid var(--line);
+  gap: 18px 48px;
+}
+
+.activity-connections > header .label {
+  grid-column: 1 / -1;
+}
+
+.activity-connections > header h2 {
+  max-width: 14ch;
+  margin: 0;
+  font: 800 clamp(2rem, 5vw, 5rem)/0.94 var(--display);
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.activity-connections > header > p:last-child {
+  max-width: 54ch;
+  margin: 0;
+  align-self: end;
+  color: var(--soft);
+  line-height: 1.65;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.activity-grid article {
+  min-width: 0;
+  min-height: 220px;
+  padding: clamp(20px, 2.5vw, 34px);
+  border-right: 1px solid var(--line);
+}
+
+.activity-grid article:last-child {
+  border-right: 0;
+}
+
+.activity-grid article > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activity-grid article span,
+.activity-grid article i {
+  font: 700 0.56rem/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.activity-grid article span {
+  color: var(--cyan);
+}
+
+.activity-grid article i {
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-style: normal;
+}
+
+.activity-grid h3 {
+  margin: 50px 0 12px;
+  font: 800 clamp(1.25rem, 2.1vw, 2.1rem)/1 var(--display);
+  letter-spacing: -0.04em;
+}
+
+.activity-grid p {
+  margin: 0;
+  color: var(--soft);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.activity-grid .spotify-card {
+  position: relative;
+  grid-column: span 2;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 16%, color-mix(in srgb, var(--cyan) 14%, transparent) 0 1px, transparent 2px),
+    linear-gradient(135deg, color-mix(in srgb, var(--cyan) 5%, transparent), transparent 54%);
+  background-size: 20px 20px, auto;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.spotify-card > a {
+  display: block;
+  min-height: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+.activity-grid .spotify-card .activity-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spotify-card.is-linked:hover {
+  background-color: color-mix(in srgb, var(--cyan) 5%, transparent);
+}
+
+.spotify-playback {
+  display: grid;
+  margin-top: 30px;
+  grid-template-columns: minmax(76px, 112px) minmax(0, 1fr);
+  align-items: end;
+  gap: 18px;
+}
+
+.spotify-artwork-renderer {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  isolation: isolate;
+}
+
+.spotify-artwork-renderer.is-compact {
+  width: 76px;
+}
+
+.spotify-artwork-image,
+.spotify-artwork-canvas,
+.spotify-artwork-effect {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.spotify-artwork-image {
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.72) contrast(1.12);
+  opacity: 0.88;
+  transition:
+    filter 180ms ease,
+    opacity 180ms ease;
+}
+
+.spotify-artwork-image-fallback {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--cyan) 12%, transparent), transparent),
+    var(--surface);
+  color: var(--cyan);
+  font: 700 2rem/1 var(--display);
+}
+
+.spotify-artwork-canvas {
+  z-index: 1;
+  display: block;
+  opacity: 0;
+  image-rendering: pixelated;
+  transition: opacity 180ms ease;
+}
+
+.spotify-artwork-renderer.is-ready .spotify-artwork-canvas {
+  opacity: 1;
+}
+
+.spotify-artwork-renderer.is-ready .spotify-artwork-image {
+  opacity: 0.12;
+}
+
+.spotify-artwork-effect {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.spotify-artwork-fallback {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--line);
+  color: var(--cyan);
+  font: 700 2rem/1 var(--display);
+}
+
+.activity-grid .spotify-copy h3 {
+  margin: 0 0 14px;
+}
+
+.spotify-copy strong,
+.spotify-copy small {
+  display: block;
+}
+
+.spotify-copy strong {
+  overflow: hidden;
+  font: 700 0.92rem/1.25 var(--display);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-grid .spotify-copy p {
+  overflow: hidden;
+  margin-top: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-copy small {
+  margin-top: 9px;
+  color: var(--muted);
+  font: 600 0.58rem/1.2 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.spotify-progress {
+  position: absolute;
+  right: clamp(20px, 2.5vw, 34px);
+  bottom: 20px;
+  left: clamp(20px, 2.5vw, 34px);
+  height: 2px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.spotify-progress span {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+}
+
+:root[data-renderer="ascii"] :is(
+  .spotify-home-signal,
+  .activity-grid .spotify-card
+) {
+  background:
+    linear-gradient(90deg, transparent 49.6%, color-mix(in srgb, var(--cyan) 7%, transparent) 50%, transparent 50.4%)
+      0 0 / 24px 24px,
+    linear-gradient(0deg, transparent 49.6%, color-mix(in srgb, var(--cyan) 7%, transparent) 50%, transparent 50.4%)
+      0 0 / 24px 24px,
+    linear-gradient(120deg, color-mix(in srgb, var(--cyan) 7%, var(--surface)), var(--bg));
+}
+
+:root[data-renderer="ascii"] .spotify-artwork-effect {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 5px, color-mix(in srgb, var(--cyan) 14%, transparent) 5px 6px);
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  animation: spotify-art-scan 4.8s linear infinite;
+}
+
+:root[data-renderer="dither"] :is(
+  .spotify-home-signal,
+  .activity-grid .spotify-card
+) {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 28%, transparent) 0 0.7px, transparent 0.9px)
+      0 0 / 4px 4px,
+    linear-gradient(132deg, color-mix(in srgb, var(--cyan) 13%, var(--surface)) 0 33%, transparent 33% 66%, color-mix(in srgb, var(--violet) 9%, var(--bg)) 66%);
+}
+
+:root[data-renderer="dither"] .spotify-artwork-effect {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--text) 26%, transparent) 0 0.7px, transparent 0.9px)
+      0 0 / 4px 4px;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+:root[data-renderer="glitch"] :is(
+  .spotify-home-signal,
+  .activity-grid .spotify-card
+) {
+  border-color: color-mix(in srgb, var(--cyan) 70%, var(--line));
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--cyan) 8%, transparent) 0 7%,
+      transparent 7% 21%,
+      color-mix(in srgb, var(--violet) 8%, transparent) 21% 24%,
+      transparent 24% 47%
+    ),
+    var(--surface);
+  box-shadow:
+    inset 3px 0 color-mix(in srgb, var(--cyan) 32%, transparent),
+    inset -3px 0 color-mix(in srgb, var(--violet) 28%, transparent);
+}
+
+:root[data-renderer="glitch"] .spotify-artwork-effect {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 17%,
+      color-mix(in srgb, var(--cyan) 22%, transparent) 17% 20%,
+      transparent 20% 49%,
+      color-mix(in srgb, var(--violet) 24%, transparent) 49% 53%,
+      transparent 53% 100%
+    );
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  animation: spotify-glitch-slices 3.8s steps(1, end) infinite;
+}
+
+:root[data-renderer="particles"] :is(
+  .spotify-home-signal,
+  .activity-grid .spotify-card
+) {
+  background:
+    radial-gradient(circle at 14% 24%, color-mix(in srgb, var(--cyan) 42%, transparent) 0 1px, transparent 1.5px)
+      0 0 / 19px 19px,
+    radial-gradient(circle at 68% 72%, color-mix(in srgb, var(--violet) 34%, transparent) 0 1px, transparent 1.5px)
+      6px 9px / 27px 27px,
+    radial-gradient(ellipse at 18% 50%, color-mix(in srgb, var(--cyan) 15%, transparent), transparent 58%),
+    color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+:root[data-renderer="particles"] .spotify-artwork-effect {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 70%, transparent) 0 1px, transparent 1.5px)
+      0 0 / 17px 17px,
+    radial-gradient(circle, color-mix(in srgb, var(--violet) 58%, transparent) 0 0.8px, transparent 1.3px)
+      8px 11px / 29px 29px;
+  mix-blend-mode: screen;
+  opacity: 0.34;
+  animation: spotify-particle-breathe 5.2s ease-in-out infinite;
+}
+
+:root[data-renderer="crt"] :is(
+  .spotify-home-signal,
+  .activity-grid .spotify-card
+) {
+  background:
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--ink) 13%, transparent) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 44% 46%, color-mix(in srgb, var(--cyan) 12%, var(--surface)), var(--bg) 74%);
+  box-shadow:
+    inset 0 0 24px color-mix(in srgb, var(--cyan) 10%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--cyan) 16%, transparent);
+}
+
+:root[data-renderer="crt"] .spotify-artwork-renderer {
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--cyan) 32%, transparent),
+    inset 0 0 16px color-mix(in srgb, var(--ink) 48%, transparent);
+}
+
+:root[data-renderer="crt"] .spotify-artwork-effect {
+  background:
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--ink) 20%, transparent) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse, transparent 52%, color-mix(in srgb, var(--ink) 62%, transparent));
+  mix-blend-mode: multiply;
+  opacity: 0.75;
+  animation: spotify-crt-beam 6s linear infinite;
+}
+
+@keyframes spotify-art-scan {
+  0% { transform: translateY(-12%); }
+  100% { transform: translateY(12%); }
+}
+
+@keyframes spotify-glitch-slices {
+  0%, 76%, 100% { clip-path: inset(0); transform: translateX(0); }
+  77% { clip-path: inset(16% 0 66%); transform: translateX(5px); }
+  79% { clip-path: inset(58% 0 22%); transform: translateX(-4px); }
+  81% { clip-path: inset(0); transform: translateX(0); }
+}
+
+@keyframes spotify-particle-breathe {
+  0%, 100% { opacity: 0.24; transform: scale(0.98); }
+  50% { opacity: 0.48; transform: scale(1.025); }
+}
+
+@keyframes spotify-crt-beam {
+  0% { background-position: 0 0, 0 -140px; }
+  100% { background-position: 0 0, 0 140px; }
+}
+
+@media (max-width: 900px) {
+  .activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-grid article {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .activity-grid article:nth-child(even) {
+    border-right: 0;
+  }
+
+  .activity-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .activity-grid .spotify-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 650px) {
+  .spotify-home-signal {
+    width: 100%;
+    min-height: 88px;
+    padding-right: 36px;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 11px;
+  }
+
+  .spotify-artwork-renderer.is-compact,
+  .spotify-home-fallback {
+    width: 70px;
+  }
+
+  .spotify-home-progress {
+    right: 36px;
+    left: 89px;
+  }
+
+  .spotify-home-arrow {
+    right: 12px;
+  }
+
+  .activity-connections > header {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-grid article {
+    min-height: 170px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .activity-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .activity-grid h3 {
+    margin-top: 34px;
+  }
+
+  .activity-grid .spotify-card {
+    grid-column: auto;
+  }
+
+  .spotify-playback {
+    grid-template-columns: 88px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotify-home-signal,
+  .activity-grid .spotify-card {
+    animation: none;
+  }
+
+  .spotify-artwork-effect {
+    animation: none !important;
+  }
 }
