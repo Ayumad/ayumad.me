@@ -115,6 +115,7 @@ export const navItems: NavItem[] = [
   { label: "About", path: "/about", index: "08" },
   { label: "Contact", path: "/contact", index: "09" },
   { label: "Journal", path: "/journal", index: "10" },
+  { label: "Taste", path: "/taste", index: "11" },
 ];
 
 export const homeContent: HomeContent = {

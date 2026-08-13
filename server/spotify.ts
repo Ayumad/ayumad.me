@@ -231,3 +231,129 @@ export async function getSpotifyPlayback(
     return unavailablePlayback();
   }
 }
+
+// ─── Taste / history extensions ────────────────────────────────────────────
+
+export interface SpotifyTrackFull {
+  id: string;
+  name: string;
+  artists: Array<{ id: string; name: string }>;
+  album: {
+    id: string;
+    name: string;
+    totalTracks: number;
+    releaseDate: string | null;
+    images?: SpotifyImage[];
+  };
+  durationMs: number;
+  playedAt: string;
+  url: string | null;
+}
+
+export interface SpotifyArtistFull {
+  id: string;
+  name: string;
+  genres: string[];
+  popularity: number;
+  followers: number;
+  images?: SpotifyImage[];
+}
+
+interface SpotifyRecentlyPlayedFullResponse {
+  items?: Array<{
+    played_at?: string;
+    track?: {
+      id?: string;
+      name?: string;
+      duration_ms?: number;
+      external_urls?: { spotify?: string };
+      artists?: Array<{ id?: string; name?: string }>;
+      album?: {
+        id?: string;
+        name?: string;
+        total_tracks?: number;
+        release_date?: string;
+        images?: SpotifyImage[];
+      };
+    };
+  }>;
+}
+
+interface SpotifyTopArtistsResponse {
+  items?: Array<{
+    id?: string;
+    name?: string;
+    genres?: string[];
+    popularity?: number;
+    followers?: { total?: number };
+    images?: SpotifyImage[];
+  }>;
+}
+
+export async function getRecentlyPlayedDetailed(
+  config: SpotifyConfig,
+  limit = 50,
+  fetchImpl: typeof fetch = fetch,
+): Promise<SpotifyTrackFull[]> {
+  const accessToken = await getAccessToken(config, fetchImpl);
+  const response = await spotifyFetch(
+    `https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`,
+    accessToken,
+    fetchImpl,
+  );
+  if (!response.ok) {
+    throw new Error(`Spotify recently-played request failed (${response.status})`);
+  }
+  const payload = (await response.json()) as SpotifyRecentlyPlayedFullResponse;
+  return (payload.items ?? [])
+    .filter((item) => item.track?.id)
+    .map((item) => {
+      const track = item.track!;
+      return {
+        id: track.id!,
+        name: track.name?.trim() || "Unknown track",
+        artists:
+          track.artists
+            ?.filter((artist) => artist.id && artist.name)
+            .map((artist) => ({ id: artist.id!, name: artist.name!.trim() })) ?? [],
+        album: {
+          id: track.album?.id ?? "unknown",
+          name: track.album?.name?.trim() || "Unknown album",
+          totalTracks: track.album?.total_tracks ?? 0,
+          releaseDate: track.album?.release_date ?? null,
+          images: track.album?.images,
+        },
+        durationMs: track.duration_ms ?? 0,
+        playedAt: item.played_at ?? new Date().toISOString(),
+        url: track.external_urls?.spotify ?? null,
+      };
+    });
+}
+
+export async function getTopArtists(
+  config: SpotifyConfig,
+  timeRange: "short_term" | "medium_term" | "long_term" = "medium_term",
+  limit = 20,
+  fetchImpl: typeof fetch = fetch,
+): Promise<SpotifyArtistFull[]> {
+  const accessToken = await getAccessToken(config, fetchImpl);
+  const response = await spotifyFetch(
+    `https://api.spotify.com/v1/me/top/artists?time_range=${timeRange}&limit=${limit}`,
+    accessToken,
+    fetchImpl,
+  );
+  if (!response.ok) {
+    throw new Error(`Spotify top-artists request failed (${response.status})`);
+  }
+  const payload = (await response.json()) as SpotifyTopArtistsResponse;
+  return (payload.items ?? [])
+    .filter((artist) => artist.id)
+    .map((artist) => ({
+      id: artist.id!,
+      name: artist.name?.trim() || "Unknown artist",
+      genres: artist.genres ?? [],
+      popularity: artist.popularity ?? 0,
+      followers: artist.followers?.total ?? 0,
+      images: artist.images,
+    }));
+}

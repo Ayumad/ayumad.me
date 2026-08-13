@@ -25,6 +25,7 @@ import {
 import { SpotifyArtwork } from "./SpotifyArtwork";
 import { SpotifyPlaybackProvider } from "./SpotifyPlaybackProvider";
 import { useSpotifyPlayback } from "./useSpotifyPlayback";
+import TastePage from "./TastePage";
 import {
   aboutContent,
   activityConnections,
@@ -1334,6 +1335,7 @@ export default function App() {
       path === "/now" ? <NowPage /> :
       path === "/about" ? <AboutPage /> :
       path === "/journal" ? <JournalPage /> :
+      path === "/taste" ? <TastePage /> :
       path === "/contact" ? <ContactPage /> :
       <NotFoundPage />;
   }
