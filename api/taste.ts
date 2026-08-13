@@ -1,6 +1,6 @@
 import {
+  getArtistsByIds,
   getRecentlyPlayedDetailed,
-  getTopArtists,
   readSpotifyConfig,
 } from "../server/spotify.js";
 
@@ -19,36 +19,54 @@ export async function GET() {
   }
 
   try {
-    const [recent, topArtists] = await Promise.all([
-      getRecentlyPlayedDetailed(config, 50),
-      getTopArtists(config, "medium_term", 20),
-    ]);
+    const recent = await getRecentlyPlayedDetailed(config, 50);
 
-    // Aggregate genres from top artists, weighted by list position.
-    const genreCounts = new Map<string, number>();
-    topArtists.forEach((artist, index) => {
-      const weight = Math.max(1, topArtists.length - index);
-      for (const genre of artist.genres) {
-        genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + weight);
+    // Count plays per artist across the window.
+    const playCounts = new Map<string, number>();
+    for (const track of recent) {
+      for (const artist of track.artists) {
+        playCounts.set(artist.id, (playCounts.get(artist.id) ?? 0) + 1);
       }
-    });
+    }
+
+    // Fetch genre metadata for those artists from the public catalog.
+    const artists = await getArtistsByIds(config, Array.from(playCounts.keys()));
+    const byId = new Map(artists.map((artist) => [artist.id, artist]));
+
+    // Aggregate genres weighted by actual plays.
+    const genreCounts = new Map<string, number>();
+    for (const [artistId, plays] of Array.from(playCounts)) {
+      const artist = byId.get(artistId);
+      if (!artist) continue;
+      for (const genre of artist.genres) {
+        genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + plays);
+      }
+    }
     const totalWeight = Array.from(genreCounts.values()).reduce((a, b) => a + b, 0);
     const genres = Array.from(genreCounts.entries())
-      .map(([genre, count]) => ({
+      .map(([genre, weight]) => ({
         genre,
-        weight: count,
-        share: Math.round((count / totalWeight) * 1000) / 10,
+        weight,
+        share: totalWeight > 0 ? Math.round((weight / totalWeight) * 1000) / 10 : 0,
       }))
       .sort((a, b) => b.weight - a.weight)
       .slice(0, 15);
 
-    const artists = topArtists.map((artist) => ({
-      id: artist.id,
-      name: artist.name,
-      genres: artist.genres,
-      popularity: artist.popularity,
-      artwork: artist.images?.find((image) => image.url)?.url ?? null,
-    }));
+    const topArtists = Array.from(playCounts.entries())
+      .map(([artistId, plays]) => {
+        const artist = byId.get(artistId);
+        return {
+          id: artistId,
+          name: artist?.name ?? artistId,
+          plays,
+          genres: artist?.genres ?? [],
+          popularity: artist?.popularity ?? 0,
+          artwork: artist?.images?.find((image) => image.url)?.url ?? null,
+        };
+      })
+      .filter((artist) => artist.name !== artist.id)
+      .sort((a, b) => b.plays - a.plays)
+      .slice(0, 20);
 
     const recentAlbums = recent.map((track) => ({
       id: track.album.id,
@@ -65,7 +83,7 @@ export async function GET() {
         configured: true,
         generatedAt: new Date().toISOString(),
         genres,
-        topArtists: artists,
+        topArtists,
         recentAlbums,
       },
       {

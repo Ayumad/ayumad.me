@@ -357,3 +357,41 @@ export async function getTopArtists(
       images: artist.images,
     }));
 }
+
+/**
+ * Fetch artist metadata (incl. genres) by id from the public catalog
+ * endpoint. No special OAuth scope required. Batches up to 50 ids.
+ */
+export async function getArtistsByIds(
+  config: SpotifyConfig,
+  ids: string[],
+  fetchImpl: typeof fetch = fetch,
+): Promise<SpotifyArtistFull[]> {
+  if (ids.length === 0) return [];
+  const accessToken = await getAccessToken(config, fetchImpl);
+  const artists: SpotifyArtistFull[] = [];
+  for (let offset = 0; offset < ids.length; offset += 50) {
+    const chunk = ids.slice(offset, offset + 50);
+    const response = await spotifyFetch(
+      `https://api.spotify.com/v1/artists?ids=${encodeURIComponent(chunk.join(","))}`,
+      accessToken,
+      fetchImpl,
+    );
+    if (!response.ok) {
+      throw new Error(`Spotify artists request failed (${response.status})`);
+    }
+    const payload = (await response.json()) as SpotifyTopArtistsResponse;
+    for (const artist of payload.items ?? []) {
+      if (!artist.id) continue;
+      artists.push({
+        id: artist.id,
+        name: artist.name?.trim() || "Unknown artist",
+        genres: artist.genres ?? [],
+        popularity: artist.popularity ?? 0,
+        followers: artist.followers?.total ?? 0,
+        images: artist.images,
+      });
+    }
+  }
+  return artists;
+}

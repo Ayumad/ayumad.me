@@ -1,4 +1,4 @@
-import eloJson from "../data/elo.json";
+import eloJson from "../data/elo.json" with { type: "json" };
 import { type EloEntry } from "../server/elo.js";
 
 const eloEntries = eloJson as EloEntry[];
