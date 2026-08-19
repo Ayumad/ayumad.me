@@ -12,8 +12,8 @@
   --secondary: var(--cyan);
   --violet: #777fc4;
   --ink: #020606;
-  --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
-  --sans: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "SFMono-Regular", "Cascadia Mono", "Roboto Mono", "Courier New", monospace;
+  --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --display: var(--sans);
   --max: 1460px;
   --header: 72px;
@@ -128,7 +128,7 @@ button {
 
 .dither-wash {
   position: fixed;
-  z-index: 70;
+  z-index: 0;
   top: -18vh;
   right: -16vw;
   width: min(75vw, 1100px);
@@ -142,7 +142,7 @@ button {
 
 .render-overlay {
   position: fixed;
-  z-index: 180;
+  z-index: 0;
   inset: 0;
   overflow: hidden;
   background:
@@ -690,6 +690,8 @@ button {
 }
 
 main {
+  position: relative;
+  z-index: 1;
   min-height: calc(100vh - var(--header));
 }
 
@@ -2507,6 +2509,8 @@ main {
 }
 
 .site-footer {
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--line);
   background: var(--surface);
 }
@@ -4430,5 +4434,220 @@ main {
     margin-inline: -10px;
     border-right: 0;
     border-left: 0;
+  }
+}
+
+/* ─── Typography and layout safeguards ──────────────────────────────────── */
+
+body {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+main :is(h1, h2, h3, h4, h5, h6) {
+  max-width: 100%;
+  min-width: 0;
+  font-family: var(--display) !important;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  letter-spacing: 0 !important;
+  line-height: 1.08 !important;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+main :is(p, li, dt, dd, a, button, summary, code, time, label) {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
+  .project-main, .project-detail, .system-row, .system-row > div,
+  .system-row > ul, .now-row, .future-panel, .future-panel > *,
+  .about-layout, .about-layout > *, .about-data, .about-data > *,
+  .about-contact, .about-contact > *, .about-taste-heading,
+  .about-taste-heading > *, .taste-panels, .taste-panels > *,
+  .writeup-link, .writeup-link > *, .article-page) {
+  min-width: 0;
+}
+
+.hero h1,
+.section-title h2,
+.current h2,
+.page-heading h1,
+.showcase-copy h2,
+.project-main h2,
+.future-panel h2,
+.writeup-main h2,
+.article-header h1,
+.article-block h2,
+.article-markdown h2,
+.system-row h2,
+.now-row h2,
+.about-profile > p,
+.about-contact h2,
+.about-taste-copy h2,
+.not-found h1,
+.error-screen h1 {
+  font-family: var(--display);
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+
+.hero h1 span:last-child {
+  -webkit-text-stroke-width: 1px;
+}
+
+.current-art {
+  letter-spacing: 0.02em;
+  line-height: 0.86;
+  opacity: 0.65;
+}
+
+.project-index i {
+  max-width: 100%;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+  line-height: 0.82;
+  opacity: 0.7;
+}
+
+.now-row code {
+  font-family: var(--mono);
+  font-size: clamp(0.78rem, 1.4vw, 1.1rem);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.contact-links strong {
+  font-family: var(--display);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+.system-band {
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  min-width: 0;
+  text-align: center;
+}
+
+.future-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.future-panel > .project-list {
+  padding: 0;
+  border-right: 0;
+}
+
+.future-panel > ul,
+.project-list,
+.systems-list,
+.now-list,
+.writeup-list {
+  min-width: 0;
+}
+
+.project-main h2,
+.system-row h2,
+.now-row h2,
+.future-panel h2,
+.about-contact h2 {
+  overflow-wrap: anywhere;
+}
+
+.contact-field {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  font-size: clamp(0.55rem, 1.1vw, 0.95rem);
+}
+
+.ascii-monogram {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ascii-monogram pre {
+  width: 100%;
+  max-width: 100%;
+  font-size: clamp(0.46rem, 0.9vw, 0.78rem);
+  letter-spacing: 0;
+  transform: none;
+}
+
+@media (max-width: 650px) {
+  .future-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .future-panel > div {
+    border-right: 0;
+  }
+
+  .future-panel > ul {
+    border-top: 1px solid var(--line);
+  }
+
+  .about-taste-copy h2 {
+    max-width: none;
+  }
+}
+
+@media (min-width: 821px) {
+  .future-panel .project-row {
+    grid-template-columns: 64px minmax(0, 1fr) minmax(0, 0.85fr);
+    min-height: 250px;
+  }
+
+  .future-panel .project-index {
+    padding-inline: 14px;
+  }
+
+  .future-panel .project-main,
+  .future-panel .project-detail {
+    padding: 28px 20px;
+  }
+
+  .future-panel .project-main h2 {
+    margin-top: 28px;
+    font-size: clamp(1.5rem, 2.4vw, 2.6rem);
+  }
+}
+
+@media (min-width: 651px) {
+  .scope-controls {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .scope-stage {
+    bottom: 260px;
+  }
+}
+
+.scope-control {
+  gap: 5px;
+}
+
+.scope-control > span,
+.scope-control output {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.scope-control output {
+  font-size: 0.44rem;
+}
+
+@media (max-width: 650px) {
+  .scope-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scope-stage {
+    bottom: 390px;
   }
 }
