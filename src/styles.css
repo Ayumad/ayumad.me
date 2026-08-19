@@ -4569,6 +4569,23 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   line-height: 0.98;
 }
 
+.page-heading h1 {
+  font-size: clamp(3.6rem, 8.5vw, 8rem);
+}
+
+.future-panel h2 {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+}
+
+.system-row h2 {
+  font-size: clamp(2rem, 3.6vw, 4rem);
+}
+
+.about-taste-copy h2 {
+  max-width: 100%;
+  font-size: clamp(2.8rem, 4.8vw, 5.2rem);
+}
+
 .contact-field {
   min-width: 0;
   max-width: 100%;
@@ -4612,6 +4629,19 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   .projects-context .section-title h2,
   .systems-embedded .section-title h2 {
     font-size: clamp(2.4rem, 11vw, 4.2rem);
+  }
+
+  .page-heading h1 {
+    font-size: clamp(3rem, 16vw, 5.2rem);
+  }
+
+  .future-panel h2,
+  .system-row h2 {
+    font-size: clamp(2rem, 10vw, 3.6rem);
+  }
+
+  .about-taste-copy h2 {
+    font-size: clamp(2.4rem, 11vw, 4.6rem);
   }
 }
 
