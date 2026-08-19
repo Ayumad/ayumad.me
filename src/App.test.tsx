@@ -15,7 +15,7 @@ describe("Ayumad.me", () => {
     window.history.replaceState({}, "", "/");
   });
 
-  it("renders the homepage instrument and the six-section navigation", () => {
+  it("renders the homepage instrument and the five-section navigation", () => {
     renderAt("/");
 
     expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
@@ -23,9 +23,10 @@ describe("Ayumad.me", () => {
     expect(document.querySelector(".oscilloscope-grid")?.textContent?.length).toBeGreaterThan(1_000);
 
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
-    expect(within(navigation).getAllByRole("link")).toHaveLength(6);
+    expect(within(navigation).getAllByRole("link")).toHaveLength(5);
     expect(within(navigation).getByRole("link", { name: /Projects/i })).toHaveAttribute("href", "/projects");
     expect(within(navigation).getByRole("link", { name: /About/i })).toHaveAttribute("href", "/about");
+    expect(within(navigation).queryByRole("link", { name: /Taste/i })).not.toBeInTheDocument();
     expect(within(navigation).queryByRole("link", { name: /Work/i })).not.toBeInTheDocument();
     expect(within(navigation).queryByRole("link", { name: /Contact/i })).not.toBeInTheDocument();
   });
@@ -80,6 +81,17 @@ describe("Ayumad.me", () => {
     expect(screen.getByText(/moving from India to the US/i)).toBeInTheDocument();
     expect(document.querySelector(".contact-field")?.textContent).toMatch(/AYUMAD\.ME/);
     expect(screen.getByRole("link", { name: /Emailhello@ayumad\.me/ })).toHaveAttribute("href", "mailto:hello@ayumad.me");
+    expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Genre mix" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Album Elo board" })).toBeInTheDocument();
+  });
+
+  it("redirects the old Taste page into the About section", async () => {
+    renderAt("/taste");
+
+    await waitFor(() => expect(window.location.pathname).toBe("/about"));
+    expect(window.location.hash).toBe("#taste");
+    expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
   });
 
   it("renders only curated Journal articles and full article content", () => {

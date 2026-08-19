@@ -89,8 +89,7 @@ export const navItems: NavItem[] = [
   { label: "Projects", path: "/projects", index: "01" },
   { label: "Gear", path: "/gear", index: "02" },
   { label: "Journal", path: "/journal", index: "03" },
-  { label: "Taste", path: "/taste", index: "04" },
-  { label: "About", path: "/about", index: "05" },
+  { label: "About", path: "/about", index: "04" },
 ];
 
 export const homeContent: HomeContent = {
@@ -448,12 +447,8 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
     title: "Journal — Ayumad.me",
     description: "Curated field notes on building, configuring, and understanding things.",
   },
-  "/taste": {
-    title: "Taste — Ayumad.me",
-    description: "Listening history, artists, genres, and album rankings.",
-  },
   "/about": {
     title: "About — Ayumad.me",
-    description: "About Ayush Madhukar, a Computer Engineering student and lifelong technologist.",
+    description: "About Ayush Madhukar, his interests, listening habits, and contact details.",
   },
 };

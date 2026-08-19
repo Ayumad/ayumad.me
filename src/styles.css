@@ -3902,6 +3902,61 @@ main {
 
 /* ─── Taste page ─────────────────────────────────────────────────────────── */
 
+.about-taste {
+  margin-top: clamp(68px, 9vw, 132px);
+  scroll-margin-top: calc(var(--header) + 24px);
+}
+
+.about-taste-heading {
+  display: grid;
+  min-height: 320px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+  border: 1px solid var(--line);
+}
+
+.about-taste-copy {
+  display: flex;
+  padding: clamp(28px, 5vw, 64px);
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.about-taste-copy h2 {
+  max-width: 8ch;
+  margin: 36px 0 0;
+  font: 900 clamp(3.7rem, 8vw, 8rem)/0.72 var(--mono);
+  letter-spacing: -0.12em;
+  text-transform: uppercase;
+}
+
+.about-taste-copy .page-intro {
+  margin-top: 38px;
+}
+
+.about-taste-art {
+  min-height: 320px;
+}
+
+.taste-panels {
+  display: grid;
+  margin-top: 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.taste-panel {
+  min-width: 0;
+  padding: clamp(24px, 4vw, 48px);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+}
+
+.taste-panel-wide {
+  grid-column: 1 / -1;
+}
+
 .taste-note {
   color: var(--muted);
   font-family: var(--mono);
@@ -4058,6 +4113,24 @@ main {
 }
 
 @media (max-width: 650px) {
+  .about-taste-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .about-taste-art {
+    min-height: 230px;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .taste-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .taste-panel-wide {
+    grid-column: auto;
+  }
+
   .taste-genre-row {
     grid-template-columns: minmax(90px, 1fr) 3rem;
   }

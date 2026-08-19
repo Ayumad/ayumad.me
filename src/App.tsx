@@ -20,7 +20,7 @@ import { marked } from "marked";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
-import TastePage from "./TastePage";
+import TasteSection from "./TastePage";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
   isRenderMode,
@@ -310,8 +310,7 @@ function HomePage() {
     "Current work, systems, and experiments.",
     "The devices and tools I use.",
     "Curated field notes and essays.",
-    "Listening history and album rankings.",
-    "Background, interests, and contact.",
+    "Background, interests, taste, and contact.",
   ];
   const homeNav = navItems.slice(1).filter((item) => item.path !== "/journal" || journalPosts.length > 0);
 
@@ -456,7 +455,7 @@ function JournalArticlePage({ post }: { post: JournalPost }) {
 function AboutPage() {
   return (
     <section className="section-shell page-section">
-      <SectionHeading index="05" label="About" title="About" description={aboutContent.intro} scene="about" />
+      <SectionHeading index="04" label="About" title="About" description={aboutContent.intro} scene="about" />
       <div className="about-layout">
         <article className="about-story">{aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</article>
         <aside className="about-profile">
@@ -479,6 +478,7 @@ function AboutPage() {
         <pre className="contact-field" aria-hidden="true">{contactField}</pre>
         <div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div>
       </section>
+      <TasteSection />
     </section>
   );
 }
@@ -510,7 +510,7 @@ function RoutedSite() {
   const location = useLocation();
   const { renderMode, setRenderMode } = useRenderer();
   const path = location.pathname;
-  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<TastePage />} /><Route path="/about" element={<AboutPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
 }
 
 function JournalArticleRoute() {

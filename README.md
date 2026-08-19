@@ -4,7 +4,8 @@ Projects and notes by Ayush Madhukar across AI, audio, hardware, notes,
 servers, Linux, and self-hosted systems.
 
 The site is intentionally more notebook than résumé. Its public sections are
-Home, Projects, Gear, Journal, Taste, and About. Its visual system uses
+Home, Projects, Gear, Journal, and About. Taste is part of About, with its live
+listening data still available at the section anchor. Its visual system uses
 hand-built character fields, density ramps, ordered dither, hard grid lines,
 oversized monospace type, and restrained motion.
 

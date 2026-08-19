@@ -48,7 +48,7 @@ function formatWhen(iso: string | undefined): string {
   });
 }
 
-export function TastePage() {
+export function TasteSection() {
   const [taste, setTaste] = useState<TasteData | null>(null);
   const [elo, setElo] = useState<EloData | null>(null);
   const [tasteError, setTasteError] = useState(false);
@@ -83,23 +83,24 @@ export function TastePage() {
       : 1;
 
   return (
-    <>
-      <header className="page-heading">
-        <div className="heading-copy">
+    <section className="about-taste" id="taste" aria-labelledby="taste-title">
+      <header className="about-taste-heading">
+        <div className="about-taste-copy">
           <p className="label">
             <span>04</span>
             Taste
           </p>
-          <h1>Listening, ranked.</h1>
+          <h2 id="taste-title">Listening, ranked.</h2>
           <p className="page-intro">
             Genre breakdown, top artists, and the album Elo board — updated
             from my actual Spotify history.
           </p>
         </div>
-        <AsciiScene className="heading-field art-now" scene="now" />
+        <AsciiScene className="heading-field art-now about-taste-art" scene="now" />
       </header>
 
-      <section className="section-shell page-section" aria-labelledby="taste-genres">
+      <div className="taste-panels">
+      <section className="taste-panel" aria-labelledby="taste-genres">
         <h2 id="taste-genres">Genre mix</h2>
         {tasteError ? (
           <p className="taste-note">Couldn&apos;t reach the taste endpoint.</p>
@@ -134,7 +135,7 @@ export function TastePage() {
         )}
       </section>
 
-      <section className="section-shell page-section" aria-labelledby="taste-artists">
+      <section className="taste-panel" aria-labelledby="taste-artists">
         <h2 id="taste-artists">Top artists</h2>
         {tasteError ? (
           <p className="taste-note">Couldn&apos;t reach the taste endpoint.</p>
@@ -157,7 +158,7 @@ export function TastePage() {
         )}
       </section>
 
-      <section className="section-shell page-section" aria-labelledby="taste-elo">
+      <section className="taste-panel taste-panel-wide" aria-labelledby="taste-elo">
         <h2 id="taste-elo">Album Elo board</h2>
         {eloError ? (
           <p className="taste-note">Couldn&apos;t reach the Elo endpoint.</p>
@@ -200,8 +201,9 @@ export function TastePage() {
           </>
         )}
       </section>
-    </>
+      </div>
+    </section>
   );
 }
 
-export default TastePage;
+export default TasteSection;
