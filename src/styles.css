@@ -1158,6 +1158,7 @@ main {
   position: relative;
   z-index: 3;
   display: flex;
+  container-type: inline-size;
   grid-column: 7 / -1;
   grid-row: 1;
   padding: clamp(32px, 5vw, 74px);
@@ -1180,13 +1181,16 @@ main {
 
 .hero h1 {
   margin: 28px 0 0;
-  font: 900 clamp(3.1rem, 5.4vw, 6.2rem)/0.79 var(--mono);
+  max-width: 100%;
+  font: 900 clamp(2.7rem, 10cqw, 6.2rem)/0.98 var(--mono);
   letter-spacing: -0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .hero h1 span {
   display: block;
+  white-space: nowrap;
 }
 
 .hero h1 span:last-child {
@@ -4452,8 +4456,8 @@ main :is(h1, h2, h3, h4, h5, h6) {
   font-variant-ligatures: none;
   letter-spacing: 0 !important;
   line-height: 1.08 !important;
-  overflow-wrap: break-word;
-  text-wrap: balance;
+  overflow-wrap: normal;
+  text-wrap: pretty;
 }
 
 main :is(p, li, dt, dd, a, button, summary, code, time, label) {
@@ -4554,7 +4558,15 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
 .now-row h2,
 .future-panel h2,
 .about-contact h2 {
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.project-current .section-title h2,
+.projects-context .section-title h2,
+.systems-embedded .section-title h2 {
+  font-size: clamp(2.4rem, 4.5vw, 4.9rem);
+  line-height: 0.98;
 }
 
 .contact-field {
@@ -4594,6 +4606,12 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
 
   .about-taste-copy h2 {
     max-width: none;
+  }
+
+  .project-current .section-title h2,
+  .projects-context .section-title h2,
+  .systems-embedded .section-title h2 {
+    font-size: clamp(2.4rem, 11vw, 4.2rem);
   }
 }
 
