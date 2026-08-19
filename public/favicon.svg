@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Ayumad.me</title>
+  <desc id="desc">A cyan terminal-style A on a dark CRT grid.</desc>
+  <rect width="128" height="128" fill="#040707"/>
+
+  <g fill="none" stroke="#294441" stroke-width="4" stroke-linecap="square">
+    <path d="M12 34V12h22M94 12h22v22M12 94v22h22M94 116h22V94"/>
+    <path d="M12 64h10M106 64h10M64 12v10M64 106v10" stroke-width="2"/>
+  </g>
+
+  <g fill="none" stroke="#48efd0" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M32 98 64 25l32 73M44 71h40" stroke-width="9"/>
+    <path d="M50 57h28M57 42h14" stroke-width="3"/>
+  </g>
+
+  <g fill="#48efd0">
+    <rect x="18" y="48" width="4" height="4"/>
+    <rect x="106" y="76" width="4" height="4"/>
+    <rect x="92" y="40" width="7" height="7"/>
+  </g>
+
+  <path d="M20 104h18M90 104h18" stroke="#006f68" stroke-width="2"/>
+</svg>
