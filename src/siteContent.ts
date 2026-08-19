@@ -399,6 +399,18 @@ export const gearCategories: GearCategory[] = [
   },
 ];
 
+export function gearSlug(category: string, name: string) {
+  return `${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+export function findGearItem(slug: string) {
+  for (const category of gearCategories) {
+    const item = category.items.find((candidate) => gearSlug(category.category, candidate.name) === slug);
+    if (item) return { category: category.category, item };
+  }
+  return undefined;
+}
+
 export const aboutContent: AboutContent = {
   intro:
     "I break hardware and software until I understand it. I'm a Computer Engineering student at San José State and I run my own everything — homelab, AI agent, knowledge base — because letting someone else do it sounds boring.",
@@ -423,6 +435,7 @@ export const aboutContent: AboutContent = {
 
 export const socialLinks: SocialLink[] = [
   { label: "Email", href: "mailto:hello@ayumad.me", handle: "hello@ayumad.me" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ayush-madhukar-6021a0249/", handle: "in/ayush-madhukar", external: true },
   { label: "GitHub", href: "https://github.com/ayumad", handle: "@ayumad", external: true },
 ];
 

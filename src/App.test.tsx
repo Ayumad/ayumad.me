@@ -74,13 +74,20 @@ describe("Ayumad.me", () => {
     renderAt("/gear");
     expect(screen.getByRole("heading", { name: "Gear" })).toBeInTheDocument();
     expect(screen.getByText("Mac mini")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open Mac mini gear page" })).toHaveAttribute("href", "/gear/computers-mac-mini");
+
+    renderAt("/gear/computers-mac-mini");
+    expect(screen.getByRole("heading", { name: "Mac mini" })).toBeInTheDocument();
+    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Always-on Hermes server, Tailscale node");
+    expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes");
 
     renderAt("/about");
     expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Want to talk?" })).toBeInTheDocument();
     expect(screen.getByText(/moving from India to the US/i)).toBeInTheDocument();
-    expect(document.querySelector(".contact-field")?.textContent).toMatch(/AYUMAD\.ME/);
+    expect(document.querySelector(".contact-stack")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Emailhello@ayumad\.me/ })).toHaveAttribute("href", "mailto:hello@ayumad.me");
+    expect(screen.getByRole("link", { name: /LinkedInin\/ayush-madhukar/ })).toHaveAttribute("href", "https://www.linkedin.com/in/ayush-madhukar-6021a0249/");
     expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Genre mix" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Album Elo board" })).toBeInTheDocument();

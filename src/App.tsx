@@ -36,6 +36,8 @@ import { findJournalPost, journalPosts, type JournalPost } from "./journalConten
 import {
   aboutContent,
   gearCategories,
+  findGearItem,
+  gearSlug,
   hermesSections,
   homeContent,
   navItems,
@@ -52,7 +54,7 @@ const contactField = String.raw`
   ┌─────────────────────────────────────────────┐
   │                                             │
   │    EMAIL  ────────────────┐                │
-  │                           ├── AYUMAD.ME    │
+  │                           ├── AYUMAD       │
   │    GITHUB ────────────────┘                │
   │                                             │
   └─────────────────────────────────────────────┘`;
@@ -152,8 +154,13 @@ function RouteEffects() {
   const post = location.pathname.startsWith("/journal/")
     ? findJournalPost(location.pathname.slice("/journal/".length))
     : undefined;
+  const gear = location.pathname.startsWith("/gear/")
+    ? findGearItem(location.pathname.slice("/gear/".length))
+    : undefined;
   const meta = post
     ? { title: `${post.title} — Ayumad.me`, description: post.summary }
+    : gear
+      ? { title: `${gear.item.name} — Gear — Ayumad.me`, description: `${gear.item.name}: ${gear.item.role}.` }
     : pageMeta[location.pathname] ?? {
         title: "Not found — Ayumad.me",
         description: "The requested page could not be found.",
@@ -440,7 +447,22 @@ function HermesPage() {
 }
 
 function GearPage() {
-  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description="The devices, speakers, cameras, and tools I use." scene="about" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><h2>{category.category}</h2><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={item.name}><span className="gear-name">{item.name}</span><span className="gear-role">{item.role}</span><span className={`gear-status gear-status-${item.status}`}>{item.status}</span></div>)}</div></motion.section>)}</div></section>;
+  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description="The devices, speakers, cameras, and tools I use." scene="about" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><h2>{category.category}</h2><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={`${category.category}-${item.name}`}><Link className="gear-name" to={`/gear/${gearSlug(category.category, item.name)}`} aria-label={`Open ${item.name} gear page`}>{item.name}</Link><span className="gear-role">{item.role}</span><span className={`gear-status gear-status-${item.status}`}>{item.status}</span></div>)}</div></motion.section>)}</div></section>;
+}
+
+const relatedGearPages: Record<string, { label: string; to: string }[]> = {
+  [gearSlug("Computers", "Mac mini")]: [{ label: "Read the Hermes case study", to: "/projects/hermes" }],
+  [gearSlug("Computers", "ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
+  [gearSlug("Computers", "Panasonic CF-SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
+  [gearSlug("Software", "Hermes Agent")]: [{ label: "Open the Hermes case study", to: "/projects/hermes" }],
+};
+
+function GearDetailPage() {
+  const { slug } = useParams();
+  const gear = slug ? findGearItem(slug) : undefined;
+  if (!gear) return <NotFoundPage />;
+  const related = relatedGearPages[gearSlug(gear.category, gear.item.name)] ?? [];
+  return <section className="section-shell page-section gear-detail-page"><Link className="article-back" to="/gear">← All gear</Link><SectionHeading index="02 / GEAR" label={gear.category} title={gear.item.name} description={gear.item.role} scene="about" /><div className="gear-detail-grid"><div><p className="label">Status</p><p className={`gear-detail-status gear-status-${gear.item.status}`}>{gear.item.status}</p></div><div><p className="label">Category</p><p>{gear.category}</p></div><div><p className="label">Related pages</p>{related.length ? <ul className="gear-related-links">{related.map((link) => <li key={link.to}><Link className="text-link" to={link.to}>{link.label} ↗</Link></li>)}</ul> : <p className="gear-detail-muted">No dedicated notes yet.</p>}</div></div><Link className="button" to="/gear">Back to Gear</Link></section>;
 }
 
 function JournalPage() {
@@ -474,9 +496,11 @@ function AboutPage() {
         <section><p className="label">Interests</p><ul className="interest-list">{aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}</ul></section>
       </div>
       <section className="about-contact" id="contact" aria-labelledby="about-contact-title">
-        <div><p className="label">Contact</p><h2 id="about-contact-title">Want to talk?</h2><p>Email and GitHub are the best ways to reach me.</p></div>
-        <pre className="contact-field" aria-hidden="true">{contactField}</pre>
-        <div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div>
+        <div className="contact-intro"><p className="label">Contact</p><h2 id="about-contact-title">Want to talk?</h2><p>For project questions, collaborations, or a good hardware rabbit hole.</p></div>
+        <div className="contact-stack">
+          <pre className="contact-field" aria-hidden="true">{contactField}</pre>
+          <div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div>
+        </div>
       </section>
       <TasteSection />
     </section>
@@ -510,7 +534,7 @@ function RoutedSite() {
   const location = useLocation();
   const { renderMode, setRenderMode } = useRenderer();
   const path = location.pathname;
-  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
 }
 
 function JournalArticleRoute() {
