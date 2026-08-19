@@ -6,33 +6,39 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/desktop-fleet-review</loc>
+    <loc>https://ayumad.me/projects</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/retiring-the-jailbreak</loc>
+    <loc>https://ayumad.me/projects/hermes</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/gpu-passthrough-p520</loc>
+    <loc>https://ayumad.me/gear</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/hermes-on-mac-mini</loc>
+    <loc>https://ayumad.me/journal</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/building-a-2.1-system</loc>
+    <loc>https://ayumad.me/taste</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://ayumad.me/#/writeups/arch-daily-driver</loc>
+    <loc>https://ayumad.me/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url><loc>https://ayumad.me/journal/desktop-fleet-review</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/journal/retiring-the-jailbreak</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/journal/gpu-passthrough-p520</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/journal/hermes-on-mac-mini</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/journal/building-a-2.1-system</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/journal/arch-daily-driver</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

@@ -3,14 +3,24 @@ import {
   Component,
   type ErrorInfo,
   type PropsWithChildren,
-  type ReactNode,
   useEffect,
   useState,
 } from "react";
+import {
+  BrowserRouter,
+  Link as RouterLink,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
+import { marked } from "marked";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
+import TastePage from "./TastePage";
 import { nowEntries, nowUpdated } from "./nowData";
 import {
   isRenderMode,
@@ -18,30 +28,23 @@ import {
   renderModes,
   type RenderMode,
 } from "./renderMode";
-import {
-  formatPlaybackTime,
-  playbackProgress,
-} from "./spotify";
+import { playbackProgress } from "./spotify";
 import { SpotifyArtwork } from "./SpotifyArtwork";
 import { SpotifyPlaybackProvider } from "./SpotifyPlaybackProvider";
 import { useSpotifyPlayback } from "./useSpotifyPlayback";
-import TastePage from "./TastePage";
+import { findJournalPost, journalPosts, type JournalPost } from "./journalContent";
 import {
   aboutContent,
-  activityConnections,
   gearCategories,
   hermesSections,
   homeContent,
   navItems,
   pageMeta,
   projects,
-  showcaseTopics,
   socialLinks,
   systemLayers,
-  writeups,
+  type Project,
   type ProjectStatus,
-  type Writeup,
-  type WriteupBlock,
 } from "./siteContent";
 
 type Theme = "light" | "dark";
@@ -50,40 +53,15 @@ interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-const contactField = String.raw`
-@@%%##**++==--::..        ..::--==++**##%%@@
-%%##**++==--::..   EMAIL   ..::--==++**##%%@
-##**++==--::..              ..::--==++**##%%
-**++==--::..  GITHUB · MAIL  ..::--==++**##%
-++==--::..                    ..::--==++**###
-`;
-
-function currentPath() {
-  const hashPath = window.location.hash.slice(1);
-  return hashPath.startsWith("/") ? hashPath : "/";
-}
-
-function useHashPath() {
-  const [path, setPath] = useState(currentPath);
-
-  useEffect(() => {
-    const handleHashChange = () => setPath(currentPath());
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  return path;
-}
-
 type SiteLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> & {
   to: string;
 };
 
 function Link({ to, children, ...props }: SiteLinkProps) {
   return (
-    <a href={`#${to}`} {...props}>
+    <RouterLink to={to} {...props}>
       {children}
-    </a>
+    </RouterLink>
   );
 }
 
@@ -110,16 +88,14 @@ export class SiteErrorBoundary extends Component<PropsWithChildren, ErrorBoundar
         </main>
       );
     }
-
     return this.props.children;
   }
 }
 
 function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const current = document.documentElement.dataset.theme;
-    return current === "light" ? "light" : "dark";
-  });
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.dataset.theme === "light" ? "light" : "dark",
+  );
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -146,21 +122,43 @@ function useRenderer() {
   return { renderMode, setRenderMode };
 }
 
-function RouteEffects({ path }: { path: string }) {
+function migrateLegacyHash() {
+  const hash = window.location.hash;
+  if (!hash.startsWith("#/")) return;
+
+  const oldPath = hash.slice(1).split("#")[0];
+  let nextPath = oldPath;
+  if (["/showcase", "/systems", "/now"].includes(oldPath)) nextPath = "/projects";
+  if (oldPath === "/hermes") nextPath = "/projects/hermes";
+  if (oldPath === "/contact") nextPath = "/about#contact";
+  if (oldPath === "/writeups" || oldPath === "/blog") nextPath = "/journal";
+  if (oldPath.startsWith("/writeups/")) nextPath = oldPath.replace("/writeups/", "/journal/");
+
+  window.history.replaceState({}, "", nextPath);
+}
+
+function RouteEffects() {
+  const location = useLocation();
+  const post = location.pathname.startsWith("/journal/")
+    ? findJournalPost(location.pathname.slice("/journal/".length))
+    : undefined;
+  const meta = post
+    ? { title: `${post.title} — Ayumad.me`, description: post.summary }
+    : pageMeta[location.pathname] ?? {
+        title: "Not found — Ayumad.me",
+        description: "The requested page could not be found.",
+      };
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const meta = pageMeta[path] ?? {
-      title: "Not found — Ayumad.me",
-      description: "The requested page could not be found.",
-    };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
-    document
-      .querySelector('link[rel="canonical"]')
-      ?.setAttribute("href", `https://ayumad.me/#${path}`);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute("content", `https://ayumad.me${location.pathname}`);
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", `https://ayumad.me${location.pathname}`);
     window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-  }, [path, reducedMotion]);
+  }, [location.pathname, meta.description, meta.title, reducedMotion]);
 
   return null;
 }
@@ -176,6 +174,7 @@ function Header({
 }) {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const visibleNav = navItems.filter((item) => item.path !== "/journal" || journalPosts.length > 0);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -188,24 +187,14 @@ function Header({
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link
-          className="wordmark"
-          to="/"
-          aria-label="Ayumad.me home"
-          onClick={() => setMenuOpen(false)}
-        >
+        <Link className="wordmark" to="/" aria-label="Ayumad.me home" onClick={() => setMenuOpen(false)}>
           AYUMAD.ME
         </Link>
-
-        <nav
-          className={`site-nav ${menuOpen ? "is-open" : ""}`}
-          id="site-navigation"
-          aria-label="Main navigation"
-        >
-          {navItems.map((item) => {
-            const isActive =
-              path === item.path ||
-              (item.path === "/writeups" && path.startsWith("/writeups/"));
+        <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} id="site-navigation" aria-label="Main navigation">
+          {visibleNav.map((item) => {
+            const isActive = item.path === "/"
+              ? path === "/"
+              : path === item.path || path.startsWith(`${item.path}/`);
             return (
               <Link
                 key={item.path}
@@ -214,13 +203,11 @@ function Header({
                 onClick={() => setMenuOpen(false)}
                 aria-current={isActive ? "page" : undefined}
               >
-                <span>{item.index}</span>
-                {item.label}
+                <span>{item.index}</span>{item.label}
               </Link>
             );
           })}
         </nav>
-
         <div className="header-actions">
           <label className="render-control">
             <span className="sr-only">Renderer</span>
@@ -229,16 +216,10 @@ function Header({
               aria-label="Renderer"
               value={renderMode}
               onChange={(event) => {
-                if (isRenderMode(event.target.value)) {
-                  setRenderMode(event.target.value);
-                }
+                if (isRenderMode(event.target.value)) setRenderMode(event.target.value);
               }}
             >
-              {renderModes.map((mode) => (
-                <option key={mode.value} value={mode.value}>
-                  {mode.label}
-                </option>
-              ))}
+              {renderModes.map((mode) => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
             </select>
           </label>
           <button
@@ -269,7 +250,6 @@ function Header({
 
 function PageTransition({ children, path }: PropsWithChildren<{ path: string }>) {
   const reducedMotion = useReducedMotion();
-
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -302,146 +282,64 @@ function SectionHeading({
   return (
     <header className="page-heading">
       <div className="heading-copy">
-        <p className="label">
-          <span>{index}</span>
-          {label}
-        </p>
+        <p className="label"><span>{index}</span>{label}</p>
         <h1>{title}</h1>
         <p className="page-intro">{description}</p>
       </div>
-      <AsciiScene
-        className={`heading-field art-${scene}`}
-        scene={scene}
-      />
+      <AsciiScene className={`heading-field art-${scene}`} scene={scene} />
     </header>
   );
 }
 
 function AsciiDivider() {
-  return (
-    <div className="ascii-divider" aria-hidden="true">
-      <span> . : - = + * # % @ </span>
-      <i />
-      <span> @ % # * + = - : . </span>
-    </div>
-  );
+  return <div className="ascii-divider" aria-hidden="true"><span> . : - = + * # % @ </span><i /><span> @ % # * + = - : . </span></div>;
 }
 
 function HomePage() {
   const descriptions = [
-    "Hermes, servers, notes, and audio.",
-    "Selected builds and experiments.",
-    "The tools and systems I use.",
-    "Inside the agent that runs my days.",
-    "The gear I use and track.",
-    "Field notes on building things.",
-    "What I'm working on now.",
-    "Background, education, and interests.",
-    "Email and GitHub.",
+    "Current work, systems, and experiments.",
+    "The devices and tools I use.",
+    "Curated field notes and essays.",
+    "Listening history and album rankings.",
+    "Background, interests, and contact.",
   ];
+  const homeNav = navItems.slice(1).filter((item) => item.path !== "/journal" || journalPosts.length > 0);
 
   return (
     <>
       <section className="hero section-shell">
         <AsciiOscilloscope />
-
         <div className="hero-copy">
           <p className="label">Computer Engineering</p>
-          <h1 aria-label="Ayush Madhukar">
-            <span>Ayush</span>
-            <span>Madhukar</span>
-          </h1>
+          <h1 aria-label="Ayush Madhukar"><span>Ayush</span><span>Madhukar</span></h1>
           <p className="hero-deck">{homeContent.intro}</p>
-          <div className="hero-actions">
-            <Link className="button primary" to="/projects">Projects</Link>
-            <Link className="button" to="/about">About</Link>
-          </div>
+          <div className="hero-actions"><Link className="button primary" to="/projects">Projects</Link><Link className="button" to="/about">About</Link></div>
           <SpotifyHomeSignal />
         </div>
-
         <aside className="hero-index" aria-label="Primary interests">
           <p className="label">Topics</p>
-          <ol>
-            {homeContent.topics.map((topic, index) => (
-              <li key={topic}><span>0{index + 1}</span>{topic}</li>
-            ))}
-          </ol>
+          <ol>{homeContent.topics.map((topic, index) => <li key={topic}><span>0{index + 1}</span>{topic}</li>)}</ol>
           <p>Bay Area, California</p>
         </aside>
       </section>
-
       <section className="home-index section-shell" aria-labelledby="index-title">
         <AsciiDivider />
-        <div className="section-title">
-          <p className="label">Navigation</p>
-          <h2 id="index-title">Index</h2>
-        </div>
+        <div className="section-title"><p className="label">Navigation</p><h2 id="index-title">Index</h2></div>
         <div className="index-list">
-          {navItems.slice(1).map((item, index) => (
+          {homeNav.map((item, index) => (
             <motion.div key={item.path} whileHover={{ x: 6 }} transition={{ duration: 0.14 }}>
-              <Link to={item.path} className="index-row">
-                <span>{item.index}</span>
-                <h3>{item.label}</h3>
-                <p>{descriptions[index]}</p>
-                <i aria-hidden="true">↗</i>
-              </Link>
+              <Link to={item.path} className="index-row"><span>{item.index}</span><h3>{item.label}</h3><p>{descriptions[index]}</p><i aria-hidden="true">↗</i></Link>
             </motion.div>
           ))}
         </div>
       </section>
-
       <section className="current section-shell">
-        <div className="current-art" aria-hidden="true">
-          <span>░░▒▒▓▓████</span>
-          <span>░▒▓█▓▒░</span>
-          <span>████▓▓▒▒░░</span>
-        </div>
-        <div>
-          <p className="label">Current</p>
-          <h2>{homeContent.current.title}</h2>
-        </div>
+        <div className="current-art" aria-hidden="true"><span>░░▒▒▓▓████</span><span>░▒▓█▓▒░</span><span>████▓▓▒▒░░</span></div>
+        <div><p className="label">Current</p><h2>{homeContent.current.title}</h2></div>
         <p>{homeContent.current.description}</p>
-        <Link className="text-link" to="/hermes">Hermes <span aria-hidden="true">↗</span></Link>
+        <Link className="text-link" to="/projects/hermes">Hermes <span aria-hidden="true">↗</span></Link>
       </section>
     </>
-  );
-}
-
-function ShowcasePage() {
-  return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="01"
-        label="Work"
-        title="Work"
-        description="The three areas I keep coming back to."
-        scene="work"
-      />
-
-      <div className="showcase-list">
-        {showcaseTopics.map((topic, index) => (
-          <motion.article
-            className={`showcase-row tone-${topic.tone}`}
-            key={topic.title}
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span className="row-number">0{index + 1}</span>
-            <div className="showcase-copy">
-              <p className="label">{topic.eyebrow}</p>
-              <h2>{topic.title}</h2>
-              <p>{topic.summary}</p>
-              <ul className="tag-list" aria-label={`${topic.title} topics`}>
-                {topic.items.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            </div>
-            <pre className="topic-ascii" aria-hidden="true">{topic.ascii}</pre>
-          </motion.article>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -451,143 +349,39 @@ function statusLabel(status: ProjectStatus) {
   return "Completed";
 }
 
-function ProjectsPage() {
-  const active = projects.filter((p) => p.status === "in-progress" || p.status === "planned");
-  const completed = projects.filter((p) => p.status === "completed");
-
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="02"
-        label="Projects"
-        title="Projects"
-        description="Current work, builds, and experiments."
-        scene="projects"
-      />
-
-      <div className="project-list">
-        {active.map((project, index) => (
-          <motion.article
-            className="project-row"
-            key={project.slug}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: index * 0.04 }}
-          >
-            <div className="project-index" aria-hidden="true">
-              <span>0{index + 1}</span>
-              <i>░▒▓█</i>
-            </div>
-            <div className="project-main">
-              <div className="project-meta">
-                <span className={`status status-${project.status}`}>
-                  {statusLabel(project.status)}
-                </span>
-                <span>{project.year}</span>
-              </div>
-              <h2>{project.title}</h2>
-              <p>{project.summary}</p>
-            </div>
-            <div className="project-detail">
-              <ul className="tag-list">
-                {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
-              </ul>
-              <details>
-                <summary>Details <span aria-hidden="true">+</span></summary>
-                <p>{project.story}</p>
-              </details>
-            </div>
-          </motion.article>
-        ))}
+    <motion.article className={`project-row ${project.featured ? "project-row-featured" : ""}`} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
+      <div className="project-index" aria-hidden="true"><span>0{index + 1}</span><i>░▒▓█</i></div>
+      <div className="project-main">
+        <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span><span>{project.year}</span></div>
+        <h2>{project.title}</h2><p>{project.summary}</p>
       </div>
-
-      <div className="future-panel">
-        <div>
-          <p className="label">Archive</p>
-          <h2>Completed</h2>
-          <p>Past builds and experiments.</p>
-        </div>
-        <div className="project-list">
-          {completed.map((project, index) => (
-            <motion.article
-              className="project-row"
-              key={project.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ delay: index * 0.04 }}
-            >
-              <div className="project-index" aria-hidden="true">
-                <span>0{index + 1}</span>
-                <i>░▒▓█</i>
-              </div>
-              <div className="project-main">
-                <div className="project-meta">
-                  <span className={`status status-${project.status}`}>
-                    {statusLabel(project.status)}
-                  </span>
-                  <span>{project.year}</span>
-                </div>
-                <h2>{project.title}</h2>
-                <p>{project.summary}</p>
-              </div>
-              <div className="project-detail">
-                <ul className="tag-list">
-                  {project.stack.map((tool) => <li key={tool}>{tool}</li>)}
-                </ul>
-                <details>
-                  <summary>Details <span aria-hidden="true">+</span></summary>
-                  <p>{project.story}</p>
-                </details>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+      <div className="project-detail">
+        <ul className="tag-list">{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
+        {project.slug === "hermes-agent" ? <Link className="text-link project-case-link" to="/projects/hermes">Open Hermes case study ↗</Link> : null}
+        <details><summary>Details <span aria-hidden="true">+</span></summary><p>{project.story}</p></details>
       </div>
-    </section>
+    </motion.article>
   );
 }
 
-function SystemsPage() {
+function ProjectsPage() {
+  const active = projects.filter((project) => project.status !== "completed");
+  const completed = projects.filter((project) => project.status === "completed");
   return (
     <section className="section-shell page-section">
-      <SectionHeading
-        index="03"
-        label="Systems"
-        title="Systems"
-        description="The machines, software, and audio systems I actually use."
-        scene="systems"
-      />
-
-      <div className="systems-list">
-        {systemLayers.map((layer, index) => (
-          <motion.article
-            className="system-row"
-            key={layer.title}
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span className="row-number">{layer.index}</span>
-            <div>
-              <h2>{layer.title}</h2>
-              <p>{layer.description}</p>
-              <small>Flow</small>
-              <code>{layer.signal}</code>
-            </div>
-            <ul>
-              {layer.items.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </motion.article>
-        ))}
-      </div>
-
-      <div className="system-band" aria-label="Four connected areas">
-        <span>Knowledge</span><i>·</i><span>AI</span><i>·</i>
-        <span>Hardware</span><i>·</i><span>Audio</span>
-      </div>
+      <SectionHeading index="01" label="Projects" title="Projects" description="Current work, systems, and experiments in one place." scene="projects" />
+      <section className="project-current" aria-labelledby="current-focus-title">
+        <div className="section-title"><p className="label">Current focus</p><h2 id="current-focus-title">What I am working on</h2><p>Updated {nowUpdated}.</p></div>
+        <div className="now-list">{nowEntries.slice(0, 5).map((entry, index) => <motion.article className="now-row" key={entry.title} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><code>{entry.detail}</code></motion.article>)}</div>
+      </section>
+      <div className="project-list">{active.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div>
+      <section className="systems-embedded" aria-labelledby="systems-title">
+        <div className="section-title"><p className="label">Systems</p><h2 id="systems-title">The layers underneath</h2><p>Projects are easier to understand when the machines and systems around them are visible.</p></div>
+        <div className="systems-list">{systemLayers.map((layer, index) => <motion.article className="system-row" key={layer.title} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span className="row-number">{layer.index}</span><div><h3>{layer.title}</h3><p>{layer.description}</p><small>Flow</small><code>{layer.signal}</code></div><ul>{layer.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
+      </section>
+      <div className="future-panel"><div><p className="label">Archive</p><h2>Completed</h2><p>Past builds and experiments.</p></div><div className="project-list">{completed.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></div>
     </section>
   );
 }
@@ -595,771 +389,87 @@ function SystemsPage() {
 function HermesPage() {
   return (
     <section className="section-shell page-section">
-      <SectionHeading
-        index="04"
-        label="Hermes"
-        title="Hermes"
-        description="The AI agent that runs my daily operations — briefs, memory, cron jobs, multi-model routing."
-        scene="systems"
-      />
-
-      <div className="hermes-intro">
-        <p>
-          Hermes started as a way to stop rebuilding AI tooling on every device.
-          One server on a Mac mini, connected from everywhere over Tailscale.
-          It handles morning briefs, interview prep, session journals, and 13 cron automations — set it up once and let it run.
-        </p>
-      </div>
-
-      <div className="hermes-sections">
-        {hermesSections.map((section, index) => (
-          <motion.article
-            className="system-row"
-            key={section.title}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span className="row-number">0{index + 1}</span>
-            <div>
-              <h2>{section.title}</h2>
-              <p>{section.description}</p>
-            </div>
-            <ul>
-              {section.items.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </motion.article>
-        ))}
-      </div>
-
-      <div className="hermes-architecture">
-        <pre className="topic-ascii" aria-hidden="true">{String.raw`
+      <Link className="article-back" to="/projects">← All projects</Link>
+      <SectionHeading index="01 / 01" label="Featured project" title="Hermes" description="The AI agent that runs my daily operations — briefs, memory, scheduled work, and model routing." scene="systems" />
+      <div className="hermes-intro"><p>Hermes started as a way to stop rebuilding AI tooling on every device. One server on a Mac mini, connected from everywhere over a private mesh network. It handles the routine work so I can spend more time on the things that need a person.</p></div>
+      <div className="hermes-sections">{hermesSections.map((section, index) => <motion.article className="system-row" key={section.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.05 }}><span className="row-number">0{index + 1}</span><div><h2>{section.title}</h2><p>{section.description}</p></div><ul>{section.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
+      <div className="hermes-architecture"><pre className="topic-ascii" aria-hidden="true">{String.raw`
   ┌─────────────────────────────────────────┐
   │              HERMES AGENT               │
   ├─────────┬───────────┬───────────────────┤
-  │ BRIEF   │ CRON      │ MEMORY            │
-  │ 9:30am  │ 13 jobs   │ Mnemosyne v3.14   │
-  │ 6:00pm  │ fire+     │ local embeddings  │
-  │ 10:00pm │ forget    │ knowledge graph   │
+  │ BRIEF   │ SCHEDULE  │ MEMORY            │
+  │ TASKS   │ ROUTINES  │ MNEMOSYNE         │
+  │ NOTES   │ FALLBACK  │ LOCAL RECALL      │
   ├─────────┴───────────┴───────────────────┤
   │         MODEL ROUTING                   │
-  │  Mimo V2.5 → Kimi K3 → DeepSeek V4     │
-  │         OpenCode Go ($10/mo)            │
+  │       simple → complex → fallback       │
   ├─────────────────────────────────────────┤
   │         SURFACES                        │
-  │  Telegram · WebUI · Discord · Cron      │
-  │         Tailscale Mesh                  │
-  └─────────────────────────────────────────┘`}</pre>
-      </div>
+  │  Telegram · WebUI · Clients · Vault     │
+  └─────────────────────────────────────────┘`}</pre></div>
     </section>
   );
 }
 
 function GearPage() {
-  return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="05"
-        label="Gear"
-        title="Gear"
-        description="The devices, speakers, cameras, and tools I use. Updated from the vault loadout."
-        scene="about"
-      />
-
-      <div className="gear-categories">
-        {gearCategories.map((cat, catIndex) => (
-          <motion.section
-            className="gear-category"
-            key={cat.category}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ delay: catIndex * 0.04 }}
-          >
-            <h2>{cat.category}</h2>
-            <div className="gear-table">
-              {cat.items.map((item) => (
-                <div className="gear-row" key={item.name}>
-                  <span className="gear-name">{item.name}</span>
-                  <span className="gear-role">{item.role}</span>
-                  <span className={`gear-status gear-status-${item.status}`}>{item.status}</span>
-                </div>
-              ))}
-            </div>
-          </motion.section>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description="The devices, speakers, cameras, and tools I use." scene="about" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><h2>{category.category}</h2><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={item.name}><span className="gear-name">{item.name}</span><span className="gear-role">{item.role}</span><span className={`gear-status gear-status-${item.status}`}>{item.status}</span></div>)}</div></motion.section>)}</div></section>;
 }
-
-function WriteupsPage() {
-  return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="06"
-        label="Writeups"
-        title="Writeups"
-        description="Field notes on building, configuring, and breaking things."
-        scene="projects"
-      />
-
-      <div className="writeup-list">
-        {writeups.map((post, index) => {
-          const row = (
-            <>
-              <div className="writeup-meta">
-                <time dateTime={post.date}>{post.date}</time>
-                <ul className="tag-list">
-                  {post.tags.map((tag) => <li key={tag}>{tag}</li>)}
-                </ul>
-              </div>
-              <div className="writeup-main">
-                <h2>{post.title}</h2>
-                <p>{post.summary}</p>
-              </div>
-            </>
-          );
-          return (
-            <motion.article
-              className="writeup-row"
-              key={post.slug}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ delay: index * 0.04 }}
-            >
-              {post.body ? (
-                <Link
-                  className="writeup-link"
-                  to={`/writeups/${post.slug}`}
-                  aria-label={`Read ${post.title}`}
-                >
-                  {row}
-                </Link>
-              ) : row}
-            </motion.article>
-          );
-        })}
-      </div>
-
-      <aside className="plain-note">
-        <p className="label">More</p>
-        <p>Writing longer-form notes on GPU passthrough, Arch daily driving, audio system tuning, and the Hermes build process.</p>
-      </aside>
-    </section>
-  );
-}
-
-function WriteupBlockView({ block }: { block: WriteupBlock }) {
-  return (
-    <div className="article-block">
-      {block.heading ? <h2>{block.heading}</h2> : null}
-      {block.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-      {block.list ? (
-        <ul>
-          {block.list.map((item) => <li key={item}>{item}</li>)}
-        </ul>
-      ) : null}
-      {block.table ? (
-        <div className="article-table-wrap">
-          <table className="article-table">
-            <thead>
-              <tr>{block.table.headers.map((header) => <th key={header}>{header}</th>)}</tr>
-            </thead>
-            <tbody>
-              {block.table.rows.map((row) => (
-                <tr key={row.join("·")}>
-                  {row.map((cell) => <td key={cell}>{cell}</td>)}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
-      {block.ascii ? <pre className="article-ascii">{block.ascii}</pre> : null}
-      {block.callout ? <p className="article-callout">{block.callout}</p> : null}
-    </div>
-  );
-}
-
-function WriteupArticlePage({ writeup }: { writeup: Writeup }) {
-  return (
-    <section className="section-shell page-section article-page">
-      <Link className="article-back" to="/writeups">← All writeups</Link>
-      <header className="article-header">
-        <p className="label">{writeup.date}</p>
-        <h1>{writeup.title}</h1>
-        <p className="article-summary">{writeup.summary}</p>
-        <ul className="tag-list">
-          {writeup.tags.map((tag) => <li key={tag}>{tag}</li>)}
-        </ul>
-      </header>
-      <div className="article-body">
-        {writeup.body?.map((block, index) => (
-          <WriteupBlockView key={index} block={block} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function NowPage() {
-  return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="07"
-        label="Now"
-        title="Now"
-        description="What I'm working on and learning."
-        scene="now"
-      />
-
-      <div className="now-meta">
-        <span>Updated</span>
-        <time dateTime="2026-07-29">{nowUpdated}</time>
-      </div>
-
-      <div className="now-list">
-        {nowEntries.map((entry, index) => (
-          <motion.article
-            className="now-row"
-            key={entry.label}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <span>{entry.marker}</span>
-            <div>
-              <p className="label">{entry.label}</p>
-              <h2>{entry.title}</h2>
-            </div>
-            <p>{entry.description}</p>
-            <code>{entry.detail}</code>
-          </motion.article>
-        ))}
-      </div>
-
-      <p className="now-footnote">
-        Based on <a href="https://nownownow.com/about" target="_blank" rel="noreferrer">Now pages</a>.
-        Updated manually.
-      </p>
-    </section>
-  );
-}
-
-type JournalEntry = { date: string; summary: string; highlights: string[] };
-
-const JOURNAL_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function JournalPage() {
-  const [entries, setEntries] = useState<JournalEntry[] | null>(null);
-  const [failed, setFailed] = useState(false);
+  return <section className="section-shell page-section"><SectionHeading index="03" label="Journal" title="Journal" description="Curated field notes on building, configuring, and understanding things." scene="systems" /><div className="journal-intro"><p>These are the pieces that made it through the edit. Short notes and longer articles live together here; the automated private session log does not.</p></div><div className="journal-list">{journalPosts.map((post, index) => <motion.article className="writeup-row" key={post.slug} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}><Link className="writeup-link" to={`/journal/${post.slug}`} aria-label={`Read ${post.title}`}><div className="writeup-meta"><time dateTime={post.date}>{post.date}</time><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div><div className="writeup-main"><h2>{post.title}</h2><p>{post.summary}</p></div><span className="writeup-arrow" aria-hidden="true">↗</span></Link></motion.article>)}</div></section>;
+}
 
-  useEffect(() => {
-    fetch("/journal.json")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(setEntries)
-      .catch(() => setFailed(true));
-  }, []);
-
-  const heading = (
-    <SectionHeading
-      index="10"
-      label="Journal"
-      title="Journal"
-      description="A day-by-day log of what I've been building — generated nightly from my Hermes session records."
-      scene="systems"
-    />
-  );
-
-  if (failed) {
-    return (
-      <section className="section-shell page-section">
-        {heading}
-        <p className="journal-note">Journal data couldn't load right now.</p>
-      </section>
-    );
-  }
-  if (!entries) {
-    return (
-      <section className="section-shell page-section">
-        {heading}
-        <p className="journal-note">Loading…</p>
-      </section>
-    );
-  }
-
-  const byMonth = new Map<string, JournalEntry[]>();
-  for (const e of entries) {
-    const key = e.date.slice(0, 7);
-    if (!byMonth.has(key)) byMonth.set(key, []);
-    byMonth.get(key)!.push(e);
-  }
-  const months = [...byMonth.keys()].sort().reverse();
-
-  return (
-    <section className="section-shell page-section">
-      {heading}
-
-      <pre className="journal-ascii" aria-hidden="true">{String.raw`
-   __ __            _
-  / // /__  ___ ___ (_)__ _
- / _  / _ \(_-</_ -<_/  ' \
-/_//_/\___/___/___/_/_/_/_/   EVERY DAY
-`}</pre>
-
-      {months.map((month) => {
-        const [year, m] = month.split("-").map(Number);
-        const days = byMonth.get(month)!;
-        const daySummary = new Map(days.map((d) => [Number(d.date.slice(8, 10)), d.summary]));
-        const start = (new Date(year, m - 1, 1).getDay() + 6) % 7; // Mon-first
-        const total = new Date(year, m, 0).getDate();
-        const cells: (number | null)[] = [
-          ...Array.from({ length: start }, () => null),
-          ...Array.from({ length: total }, (_, i) => i + 1),
-        ];
-        while (cells.length % 7 !== 0) cells.push(null);
-        const weeks = [];
-        for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
-        const monthLabel = new Date(year, m - 1, 1).toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        });
-
-        return (
-          <div className="journal-month" key={month}>
-            <h2>{monthLabel}</h2>
-            <table className="journal-grid">
-              <thead>
-                <tr>{JOURNAL_WEEKDAYS.map((d) => <th key={d}>{d}</th>)}</tr>
-              </thead>
-              <tbody>
-                {weeks.map((week, wi) => (
-                  <tr key={wi}>
-                    {week.map((day, di) => {
-                      if (day === null) return <td key={di} className="journal-day empty" />;
-                      const dateStr = `${month}-${String(day).padStart(2, "0")}`;
-                      const has = daySummary.has(day);
-                      return has ? (
-                        <td key={di} className="journal-day has-entry">
-                          <a href={`#journal-${dateStr}`} aria-label={daySummary.get(day)}>
-                            {day}
-                          </a>
-                        </td>
-                      ) : (
-                        <td key={di} className="journal-day">{day}</td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-      })}
-
-      <div className="journal-list">
-        {entries.map((entry) => (
-          <article className="journal-entry" id={`journal-${entry.date}`} key={entry.date}>
-            <h3>
-              {new Date(`${entry.date}T00:00:00`).toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </h3>
-            <p>{entry.summary}</p>
-            {entry.highlights.length > 0 && (
-              <ul>{entry.highlights.map((h, i) => <li key={i}>{h}</li>)}</ul>
-            )}
-          </article>
-        ))}
-      </div>
-
-      <p className="journal-note">
-        Auto-generated every night from Hermes session records — transcripts, cron runs, and vault
-        changes. Most days have no entry; the quiet ones are just quiet.
-      </p>
-    </section>
-  );
+function JournalArticlePage({ post }: { post: JournalPost }) {
+  const html = marked.parse(post.body, { gfm: true, breaks: false });
+  return <section className="section-shell page-section article-page"><Link className="article-back" to="/journal">← All journal entries</Link><header className="article-header"><p className="label">{post.date}</p><h1>{post.title}</h1><p className="article-summary">{post.summary}</p><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></header><article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} /></section>;
 }
 
 function AboutPage() {
-  return (
-    <section className="section-shell page-section">
-      <SectionHeading
-        index="08"
-        label="About"
-        title="About"
-        description={aboutContent.intro}
-        scene="about"
-      />
-
-      <div className="about-layout">
-        <article className="about-story">
-          {aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-        </article>
-
-        <aside className="about-profile">
-          <div className="ascii-monogram" aria-hidden="true">
-            <pre>{String.raw` █████╗ ███╗   ███╗
+  return <section className="section-shell page-section"><SectionHeading index="05" label="About" title="About" description={aboutContent.intro} scene="about" /><div className="about-layout"><article className="about-story">{aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</article><aside className="about-profile"><div className="ascii-monogram" aria-hidden="true"><pre>{String.raw` █████╗ ███╗   ███╗
 ██╔══██╗████╗ ████║
 ███████║██╔████╔██║
 ██╔══██║██║╚██╔╝██║
 ██║  ██║██║ ╚═╝ ██║
-╚═╝  ╚═╝╚═╝     ╚═╝`}</pre>
-          </div>
-          <p>Ayush Madhukar</p>
-          <span>Bay Area, California</span>
-        </aside>
-      </div>
-
-      <div className="about-data">
-        <section>
-          <p className="label">Education</p>
-          <dl>
-            {aboutContent.education.map((entry) => (
-              <div key={entry.school}>
-                <dt>{entry.school}</dt>
-                <dd>{entry.program}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-        <section>
-          <p className="label">Skills</p>
-          <ul className="large-tags">
-            {aboutContent.skills.map((skill) => <li key={skill}>{skill}</li>)}
-          </ul>
-        </section>
-        <section>
-          <p className="label">Interests</p>
-          <ul className="interest-list">
-            {aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}
-          </ul>
-        </section>
-      </div>
-    </section>
-  );
-}
-
-function ContactPage() {
-  return (
-    <section className="section-shell page-section contact-page">
-      <SectionHeading
-        index="09"
-        label="Contact"
-        title="Contact"
-        description="Email and GitHub are the best ways to reach me."
-        scene="contact"
-      />
-
-      <pre className="contact-field" aria-hidden="true">{contactField}</pre>
-
-      <div className="contact-links">
-        {socialLinks.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            target={link.external ? "_blank" : undefined}
-            rel={link.external ? "noreferrer" : undefined}
-          >
-            <span>{link.label}</span>
-            <strong>{link.handle}</strong>
-            <i aria-hidden="true">↗</i>
-          </a>
-        ))}
-      </div>
-
-      <section className="activity-connections" aria-labelledby="activity-connections-title">
-        <header>
-          <p className="label">Live + planned connections</p>
-          <h2 id="activity-connections-title">A live view of what I am into.</h2>
-          <p>
-            Spotify brings listening activity into the site directly. Watching,
-            playing, and reading connections will follow without mixing those feeds
-            into the primary contact links.
-          </p>
-        </header>
-        <div className="activity-grid">
-          {activityConnections.map((connection) =>
-            connection.service === "Spotify" ? (
-              <SpotifyActivityCard key={connection.service} />
-            ) : (
-              <article key={connection.service}>
-                <div>
-                  <span>{connection.signal}</span>
-                  <i>{connection.status}</i>
-                </div>
-                <h3>{connection.service}</h3>
-                <p>{connection.description}</p>
-              </article>
-            ),
-          )}
-        </div>
-      </section>
-    </section>
-  );
+╚═╝  ╚═╝╚═╝     ╚═╝`}</pre></div><p>Ayush Madhukar</p><span>Bay Area, California</span></aside></div><div className="about-data"><section><p className="label">Education</p><dl>{aboutContent.education.map((entry) => <div key={entry.school}><dt>{entry.school}</dt><dd>{entry.program}</dd></div>)}</dl></section><section><p className="label">Skills</p><ul className="large-tags">{aboutContent.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></section><section><p className="label">Interests</p><ul className="interest-list">{aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}</ul></section></div><section className="about-contact" id="contact" aria-labelledby="about-contact-title"><div><p className="label">Contact</p><h2 id="about-contact-title">Want to talk?</h2><p>Email and GitHub are the best ways to reach me.</p></div><div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div></section></section>;
 }
 
 function SpotifyHomeSignal() {
   const { playback, requestFailed } = useSpotifyPlayback();
-  const hasTrack = Boolean(playback?.configured && playback.title);
-  const progress = playback ? playbackProgress(playback) : null;
-  const signal = playback?.isPlaying
-    ? "Now listening"
-    : playback?.state === "recent"
-      ? "Last listened"
-      : "Audio signal";
-  const status = requestFailed
-    ? "offline"
-    : playback?.state === "playing"
-      ? "live"
-      : playback?.state === "recent"
-        ? "recent"
-        : "standby";
-  const fallback = requestFailed
-    ? "Listening activity is temporarily unavailable."
-    : playback === null
-      ? "Checking Spotify…"
-      : !playback.configured
-        ? "Spotify is not connected."
-        : playback.state === "idle"
-          ? "Nothing has played recently."
-          : "Listening activity is temporarily unavailable.";
-
-  const content = (
-    <>
-      {hasTrack && playback?.artwork ? (
-        <SpotifyArtwork
-          artwork={playback.artwork}
-          album={playback.album}
-          compact
-        />
-      ) : (
-        <span className="spotify-home-fallback" aria-hidden="true">♪</span>
-      )}
-      <span className="spotify-home-copy">
-        <span className="spotify-home-meta">
-          <span>{signal}</span>
-          <i>{status}</i>
-        </span>
-        {hasTrack ? (
-          <>
-            <strong>{playback?.title}</strong>
-            <small>
-              {playback?.artists?.join(", ") || playback?.album || "Spotify"}
-            </small>
-          </>
-        ) : (
-          <>
-            <strong>Spotify</strong>
-            <small>{fallback}</small>
-          </>
-        )}
-      </span>
-      {progress !== null ? (
-        <span
-          className="spotify-home-progress"
-          role="progressbar"
-          aria-label="Track progress"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress)}
-        >
-          <i style={{ width: `${progress}%` }} />
-        </span>
-      ) : null}
-      <span className="spotify-home-arrow" aria-hidden="true">↗</span>
-    </>
-  );
-
-  return playback?.url ? (
-    <a
-      className="spotify-home-signal is-linked"
-      href={playback.url}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`Open ${playback.title ?? "track"} on Spotify`}
-      aria-live="polite"
-    >
-      {content}
-    </a>
-  ) : (
-    <div className="spotify-home-signal" aria-live="polite">
-      {content}
-    </div>
-  );
-}
-
-function SpotifyActivityCard() {
-  const { playback, requestFailed } = useSpotifyPlayback();
-
   const progress = playback ? playbackProgress(playback) : null;
   const hasTrack = Boolean(playback?.configured && playback.title);
-  const status = requestFailed
-    ? "offline"
-    : playback?.state === "playing"
-    ? "live"
-    : playback?.state === "recent"
-      ? "recent"
-      : "standby";
-  const detail = requestFailed
-    ? "Listening activity is temporarily unavailable."
-    : playback === null
-      ? "Checking the current signal…"
-      : !playback.configured
-        ? "The secure Spotify connection is ready for account authorization."
-        : playback.state === "idle"
-          ? "Nothing has played recently."
-          : playback.state === "unavailable"
-            ? "Listening activity is temporarily unavailable."
-            : null;
-
-  const content = (
-    <>
-      <div className="activity-card-header">
-        <span>
-          {playback?.isPlaying
-            ? "Now listening"
-            : playback?.state === "recent"
-              ? "Last listened"
-              : "Listening signal"}
-        </span>
-        <i>{status}</i>
-      </div>
-      {hasTrack ? (
-        <div className="spotify-playback">
-          {playback?.artwork ? (
-            <SpotifyArtwork
-              artwork={playback.artwork}
-              album={playback.album}
-            />
-          ) : (
-            <div className="spotify-artwork spotify-artwork-fallback" aria-hidden="true">
-              ♪
-            </div>
-          )}
-          <div className="spotify-copy">
-            <h3>Spotify</h3>
-            <strong>{playback?.title}</strong>
-            <p>{playback?.artists?.join(", ") || playback?.album}</p>
-            {!playback?.isPlaying && playback?.playedAt ? (
-              <small>{formatPlaybackTime(playback.playedAt)}</small>
-            ) : null}
-          </div>
-        </div>
-      ) : (
-        <>
-          <h3>Spotify</h3>
-          <p>{detail}</p>
-        </>
-      )}
-      {progress !== null ? (
-        <div
-          className="spotify-progress"
-          role="progressbar"
-          aria-label="Track progress"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress)}
-        >
-          <span style={{ width: `${progress}%` }} />
-        </div>
-      ) : null}
-    </>
-  );
-
-  return playback?.url ? (
-    <article className="spotify-card is-linked">
-      <a href={playback.url} target="_blank" rel="noreferrer" aria-label={`Open ${playback.title ?? "track"} on Spotify`}>
-        {content}
-      </a>
-    </article>
-  ) : (
-    <article className="spotify-card">{content}</article>
-  );
+  const status = requestFailed ? "offline" : playback?.state === "playing" ? "live" : playback?.state === "recent" ? "recent" : "standby";
+  const fallback = requestFailed ? "Listening activity is temporarily unavailable." : playback === null ? "Checking Spotify…" : !playback.configured ? "Spotify is not connected." : playback.state === "idle" ? "Nothing has played recently." : "Listening activity is temporarily unavailable.";
+  const content = <><span className="spotify-home-fallback" aria-hidden="true">{playback?.artwork ? <SpotifyArtwork artwork={playback.artwork} album={playback.album} compact /> : "♪"}</span><span className="spotify-home-copy"><span className="spotify-home-meta"><span>{playback?.isPlaying ? "Now listening" : playback?.state === "recent" ? "Last listened" : "Audio signal"}</span><i>{status}</i></span>{hasTrack ? <><strong>{playback?.title}</strong><small>{playback?.artists?.join(", ") || playback?.album || "Spotify"}</small></> : <><strong>Spotify</strong><small>{fallback}</small></>}</span>{progress !== null ? <span className="spotify-home-progress" role="progressbar" aria-label="Track progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></span> : null}<span className="spotify-home-arrow" aria-hidden="true">↗</span></>;
+  return playback?.url ? <a className="spotify-home-signal is-linked" href={playback.url} target="_blank" rel="noreferrer" aria-label={`Open ${playback.title ?? "track"} on Spotify`} aria-live="polite">{content}</a> : <div className="spotify-home-signal" aria-live="polite">{content}</div>;
 }
 
 function NotFoundPage() {
-  return (
-    <section className="section-shell not-found">
-      <p className="label">404</p>
-      <h1>Not found</h1>
-      <p>The requested page does not exist.</p>
-      <Link className="button primary" to="/">Home</Link>
-    </section>
-  );
+  return <section className="section-shell not-found"><p className="label">404</p><h1>Not found</h1><p>The requested page does not exist.</p><Link className="button primary" to="/">Home</Link></section>;
 }
 
 function Footer() {
-  return (
-    <footer className="site-footer">
-      <div className="footer-texture" aria-hidden="true">
-        ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░
-      </div>
-      <div className="section-shell footer-inner">
-        <p>AYUMAD.ME</p>
-        <p>2026</p>
-        <a href="mailto:hello@ayumad.me">Email ↗</a>
-      </div>
-    </footer>
-  );
+  return <footer className="site-footer"><div className="footer-texture" aria-hidden="true">░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░</div><div className="section-shell footer-inner"><p>AYUMAD.ME</p><p>2026</p><a href="mailto:hello@ayumad.me">Email ↗</a></div></footer>;
+}
+
+function LegacyWriteupRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={slug ? `/journal/${slug}` : "/journal"} replace />;
+}
+
+function RoutedSite() {
+  const location = useLocation();
+  const { renderMode, setRenderMode } = useRenderer();
+  const path = location.pathname;
+  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<TastePage />} /><Route path="/about" element={<AboutPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+}
+
+function JournalArticleRoute() {
+  const { slug } = useParams();
+  const post = slug ? findJournalPost(slug) : undefined;
+  return post ? <JournalArticlePage post={post} /> : <NotFoundPage />;
 }
 
 export default function App() {
-  const path = useHashPath();
-  const { renderMode, setRenderMode } = useRenderer();
-
-  let page: ReactNode;
-  if (path.startsWith("/writeups/")) {
-    const slug = path.slice("/writeups/".length);
-    const writeup = writeups.find((post) => post.slug === slug);
-    page = writeup ? <WriteupArticlePage writeup={writeup} /> : <NotFoundPage />;
-  } else {
-    page =
-      path === "/" ? <HomePage /> :
-      path === "/showcase" ? <ShowcasePage /> :
-      path === "/projects" ? <ProjectsPage /> :
-      path === "/systems" ? <SystemsPage /> :
-      path === "/hermes" ? <HermesPage /> :
-      path === "/gear" ? <GearPage /> :
-      path === "/writeups" ? <WriteupsPage /> :
-      path === "/now" ? <NowPage /> :
-      path === "/about" ? <AboutPage /> :
-      path === "/journal" ? <JournalPage /> :
-      path === "/taste" ? <TastePage /> :
-      path === "/contact" ? <ContactPage /> :
-      <NotFoundPage />;
-  }
-
-  return (
-    <SpotifyPlaybackProvider>
-      <RenderModeContext.Provider value={renderMode}>
-        <MotionConfig reducedMotion="user">
-          <RouteEffects path={path} />
-          <ParticleField />
-          <div className="dither-wash" aria-hidden="true" />
-          <div className="render-overlay" aria-hidden="true" />
-          <a className="skip-link" href="#main-content">Skip to content</a>
-          <Header
-            path={path}
-            renderMode={renderMode}
-            setRenderMode={setRenderMode}
-          />
-          <main id="main-content">
-            <PageTransition path={path}>{page}</PageTransition>
-          </main>
-          <Footer />
-        </MotionConfig>
-      </RenderModeContext.Provider>
-    </SpotifyPlaybackProvider>
-  );
+  migrateLegacyHash();
+  return <BrowserRouter><RoutedSite /></BrowserRouter>;
 }

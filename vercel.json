@@ -19,6 +19,10 @@
     {
       "source": "/vault/:path*",
       "destination": "https://ayumad.github.io/ayumad.vault/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [

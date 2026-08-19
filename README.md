@@ -3,7 +3,8 @@
 Projects and notes by Ayush Madhukar across AI, audio, hardware, notes,
 servers, Linux, and self-hosted systems.
 
-The site is intentionally more notebook than résumé. Its visual system uses
+The site is intentionally more notebook than résumé. Its public sections are
+Home, Projects, Gear, Journal, Taste, and About. Its visual system uses
 hand-built character fields, density ramps, ordered dither, hard grid lines,
 oversized monospace type, and restrained motion.
 
@@ -39,16 +40,18 @@ The development site runs at `http://localhost:3000`.
 
 Most site copy and structured content lives in:
 
-- `src/siteContent.ts` — navigation, projects, showcase topics, systems, and links
-- `src/nowData.ts` — the hand-maintained Now page
-- `src/App.tsx` — page composition and shared interface behavior
+- `src/siteContent.ts` — navigation, projects, systems, gear, about, and links
+- `src/nowData.ts` — the current-focus content embedded in Projects
+- `src/content/journal/*.md` — curated public articles with validated frontmatter
+- `src/App.tsx` — route composition and shared interface behavior
 - `src/styles.css` — themes, responsive layout, and visual system
 - `resources.md` — complete design, content, architecture, and rebuild specification
 - `renderer-plan.md` — copy-paste blueprint for rebuilding the homepage
   renderer as a dedicated audiovisual tool
 
-The site uses hash routes so every section can be opened directly without
-server-side routing configuration.
+The site uses clean browser routes. Vercel rewrites unknown frontend paths to
+the Vite entry point while preserving the existing `/api/*` endpoints and
+legacy hash links are migrated on load.
 
 ## Standalone renderer blueprint
 
@@ -67,7 +70,8 @@ No environment variables are required for Phase 1.
 
 ## Project status
 
-Phase 1 is a static personal site. Spotify, Jellyfin, Steam, Goodreads, AI-ush,
-the gear journal, and other live integrations are intentionally deferred.
+Phase 1 is a static personal site with a small set of live Taste/Spotify
+endpoints. The public Journal is curated at build time; private session logs
+and unpublished drafts are not exported.
 
 Copyright remains with Ayush Madhukar. No open-source license is granted.

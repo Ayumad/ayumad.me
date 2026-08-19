@@ -33,7 +33,7 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
   document.documentElement.dataset.theme = "dark";
-  window.location.hash = "#/";
+  window.history.replaceState({}, "", "/");
 });
 
 Object.defineProperty(window, "matchMedia", {

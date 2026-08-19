@@ -87,7 +87,7 @@ export function TastePage() {
       <header className="page-heading">
         <div className="heading-copy">
           <p className="label">
-            <span>11</span>
+            <span>04</span>
             Taste
           </p>
           <h1>Listening, ranked.</h1>

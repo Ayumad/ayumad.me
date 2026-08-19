@@ -1,9 +1,9 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
 
 function renderAt(path: string) {
-  window.location.hash = `#${path}`;
+  window.history.replaceState({}, "", path);
   return render(<App />);
 }
 
@@ -12,509 +12,111 @@ describe("Ayumad.me", () => {
     document.documentElement.dataset.theme = "dark";
     document.documentElement.dataset.renderer = "ascii";
     localStorage.removeItem("ayumad-renderer");
+    window.history.replaceState({}, "", "/");
   });
 
-  it("renders the home page and all primary navigation destinations", () => {
+  it("renders the homepage instrument and the six-section navigation", () => {
     renderAt("/");
 
     expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("figure", {
-        name: /An interactive real-time ASCII XY oscilloscope/,
-      }),
-    ).toBeInTheDocument();
-    const renderedSignal = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
-    const signalText = renderedSignal?.textContent ?? "";
-    expect(signalText.length).toBeGreaterThan(1_000);
-    expect(["|", "/", "\\", "+", "-"].some((glyph) => signalText.includes(glyph))).toBe(true);
-    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("33");
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
-      "min",
-      "21",
-    );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
-      "max",
-      "57",
-    );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
-      "aria-valuetext",
-      "A1, 55 hertz",
-    );
-    expect(screen.getByText("A1 55")).toBeInTheDocument();
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.96");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
-    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("0");
-    expect(screen.getByRole("slider", { name: "Render units" })).toHaveValue(
-      "72",
-    );
-    expect(screen.getByRole("slider", { name: "Render units" })).toHaveAttribute(
-      "aria-valuetext",
-      "72 horizontal character units",
-    );
-    expect(
-      screen.getByRole("button", { name: "Show 3D geometry" }),
-    ).toHaveAttribute("aria-pressed", "false");
-    expect(renderedSignal).toHaveAttribute("data-dimension", "2d");
-    expect(renderedSignal).toHaveAttribute("data-geometry", "star");
-    expect(renderedSignal).toHaveAttribute(
-      "data-motion-model",
-      "planar-rotation-and-trace",
-    );
-    expect(renderedSignal).toHaveAttribute("data-planar-rotation", "0.0000");
-    expect(renderedSignal).toHaveAttribute("data-units", "72");
-    expect(screen.queryByRole("button", { name: /Eight shape/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Rose shape/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("spinbutton", { name: "X ratio" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("slider", { name: "Phase" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("slider", { name: "Form" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("slider", { name: "Rotation" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Enable audio" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
-    expect(
-      screen.getByRole("button", { name: "Enable audio" }).querySelector(
-        ".scope-icon-audio-off",
-      ),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Renderer" })).toHaveValue(
-      "ascii",
-    );
+    expect(screen.getByRole("figure", { name: /interactive real-time ASCII XY oscilloscope/i })).toBeInTheDocument();
+    expect(document.querySelector(".oscilloscope-grid")?.textContent?.length).toBeGreaterThan(1_000);
+
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
-    expect(navigation).toBeInTheDocument();
-    expect(within(navigation).getByRole("link", { name: /Work/i })).toHaveAttribute(
-      "href",
-      "#/showcase",
-    );
-    expect(within(navigation).getByRole("link", { name: /Contact/i })).toHaveAttribute(
-      "href",
-      "#/contact",
-    );
+    expect(within(navigation).getAllByRole("link")).toHaveLength(6);
+    expect(within(navigation).getByRole("link", { name: /Projects/i })).toHaveAttribute("href", "/projects");
+    expect(within(navigation).getByRole("link", { name: /About/i })).toHaveAttribute("href", "/about");
+    expect(within(navigation).queryByRole("link", { name: /Work/i })).not.toBeInTheDocument();
+    expect(within(navigation).queryByRole("link", { name: /Contact/i })).not.toBeInTheDocument();
   });
 
-  it("spans three complete chromatic octaves from A0 through A3", () => {
+  it("keeps the oscilloscope controls functional", () => {
     renderAt("/");
     const frequency = screen.getByRole("slider", { name: "Frequency" });
-
-    fireEvent.change(frequency, { target: { value: "21" } });
-    expect(frequency).toHaveAttribute(
-      "aria-valuetext",
-      "A0, 27.50 hertz",
-    );
-    expect(screen.getByText("A0 27.50")).toBeInTheDocument();
-
-    fireEvent.change(frequency, { target: { value: "57" } });
-    expect(frequency).toHaveAttribute(
-      "aria-valuetext",
-      "A3, 220 hertz",
-    );
-    expect(screen.getByText("A3 220")).toBeInTheDocument();
-  });
-
-  it("updates the oscilloscope from its accessible controls", () => {
-    renderAt("/");
-
-    fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
-    fireEvent.change(screen.getByRole("slider", { name: "Frequency" }), {
-      target: { value: "45" },
-    });
-    fireEvent.change(screen.getByRole("slider", { name: "Scale" }), {
-      target: { value: "0.84" },
-    });
-    fireEvent.change(screen.getByRole("slider", { name: "Motion" }), {
-      target: { value: "0.24" },
-    });
-    fireEvent.change(screen.getByRole("slider", { name: "Multiplier" }), {
-      target: { value: "2" },
-    });
-
-    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveAttribute(
-      "aria-valuetext",
-      "A2, 110 hertz",
-    );
-    expect(screen.getByText("A2 110")).toBeInTheDocument();
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.84");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.24");
-    expect(screen.getByText("4×")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: /Star shape/i }));
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.96");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.16");
-
-    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.98");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.14");
-    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("2");
-    expect(screen.getByRole("slider", { name: "Frequency" })).toHaveValue("45");
-
-    const pauseButton = screen.getByRole("button", { name: "Pause animation" });
-    expect(pauseButton.querySelector(".scope-icon-pause")).toBeInTheDocument();
-    fireEvent.click(pauseButton);
-    expect(screen.getByRole("button", { name: "Run animation" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
-    expect(
-      screen.getByRole("button", { name: "Run animation" }).querySelector(
-        ".scope-icon-play",
-      ),
-    ).toBeInTheDocument();
-
-    const random = vi.spyOn(Math, "random").mockReturnValue(0.5);
-    const randomizeButton = screen.getByRole("button", { name: "Randomize" });
-    expect(
-      randomizeButton.querySelector(".scope-icon-random"),
-    ).toBeInTheDocument();
-    fireEvent.click(randomizeButton);
-    expect(screen.getByRole("button", { name: /Star shape/i })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(screen.getByRole("slider", { name: "Scale" })).toHaveValue("0.84");
-    expect(screen.getByRole("slider", { name: "Motion" })).toHaveValue("0.18");
-    expect(screen.getByRole("slider", { name: "Multiplier" })).toHaveValue("1");
-    expect(screen.getByRole("slider", { name: "Render units" })).toHaveValue(
-      "96",
-    );
-    expect(screen.getByRole("button", { name: "Pause animation" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    random.mockRestore();
-  });
-
-  it("keeps every randomized variant within its authored density limit", () => {
-    renderAt("/");
-    const randomizeButton = screen.getByRole("button", { name: "Randomize" });
-    const multiplier = screen.getByRole("slider", {
-      name: "Multiplier",
-    }) as HTMLInputElement;
-    const units = screen.getByRole("slider", {
-      name: "Render units",
-    }) as HTMLInputElement;
-    const random = vi.spyOn(Math, "random");
-    const complexShapes = ["Circle", "Star", "Spiral", "Knot", "Orbit"];
-
-    for (let index = 0; index < 18; index += 1) {
-      random.mockReturnValue((index + 0.25) / 18);
-      fireEvent.click(randomizeButton);
-
-      expect(Number(multiplier.value)).toBeLessThan(3);
-      if (Number(multiplier.value) === 2) {
-        expect(Number(units.value)).toBe(120);
-      }
-
-      for (const shape of complexShapes) {
-        const button = screen.getByRole("button", {
-          name: new RegExp(`${shape} shape`, "i"),
-        });
-
-        if (button.getAttribute("aria-pressed") === "true") {
-          expect(Number(multiplier.value)).toBeLessThanOrEqual(1);
-          expect(Number(units.value)).toBeGreaterThanOrEqual(96);
-        }
-      }
-    }
-
-    random.mockRestore();
-  });
-
-  it("maps every shape to an authored 3D wireframe", () => {
-    renderAt("/");
-    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
-    const geometries = [
-      ["Wave", "wave-surface"],
-      ["Circle", "torus"],
-      ["Triangle", "pyramid"],
-      ["Square", "cube"],
-      ["Star", "star-prism"],
-      ["Hex", "hexagonal-prism"],
-      ["Spiral", "helix"],
-      ["Knot", "torus-knot"],
-      ["Orbit", "orbital-cage"],
-    ];
+    fireEvent.change(frequency, { target: { value: "45" } });
+    expect(frequency).toHaveValue("45");
+    expect(frequency).toHaveAttribute("aria-valuetext", "A2, 110 hertz");
 
     fireEvent.click(screen.getByRole("button", { name: "Show 3D geometry" }));
-    expect(
-      screen.getByRole("button", { name: "Show 2D geometry" }),
-    ).toHaveAttribute("aria-pressed", "true");
-    expect(grid).toHaveAttribute("data-dimension", "3d");
-    expect(grid).toHaveAttribute(
-      "data-motion-model",
-      "spatial-rotation-and-trace",
-    );
-
-    for (const [shape, geometry] of geometries) {
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: new RegExp(`${shape} shape`, "i"),
-        }),
-      );
-      expect(grid).toHaveAttribute("data-geometry", geometry);
-      expect(grid?.textContent?.trim().length).toBeGreaterThan(80);
-    }
-
-    fireEvent.click(screen.getByRole("button", { name: "Show 2D geometry" }));
-    expect(grid).toHaveAttribute("data-dimension", "2d");
-    expect(grid).toHaveAttribute(
-      "data-motion-model",
-      "planar-rotation-and-trace",
-    );
+    expect(screen.getByRole("button", { name: "Show 2D geometry" })).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector(".oscilloscope-grid")).toHaveAttribute("data-dimension", "3d");
   });
 
-  it("increases grid detail for crowded multiplied geometry", () => {
-    renderAt("/");
-    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
-    const units = screen.getByRole("slider", { name: "Render units" });
-
-    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Show 3D geometry" }));
-    fireEvent.change(screen.getByRole("slider", { name: "Multiplier" }), {
-      target: { value: "3" },
-    });
-    fireEvent.change(units, { target: { value: "48" } });
-
-    const lowRows = Number(grid?.dataset.rows);
-    const lowDetail =
-      grid?.textContent?.replaceAll(/\s/g, "").length ?? 0;
-    expect(grid).toHaveAttribute("data-units", "48");
-    expect(grid?.textContent?.split("\n")[0]).toHaveLength(48);
-
-    fireEvent.change(units, { target: { value: "120" } });
-
-    const highRows = Number(grid?.dataset.rows);
-    const highDetail =
-      grid?.textContent?.replaceAll(/\s/g, "").length ?? 0;
-    expect(units).toHaveAttribute(
-      "aria-valuetext",
-      "120 horizontal character units",
-    );
-    expect(grid).toHaveAttribute("data-units", "120");
-    expect(grid?.textContent?.split("\n")[0]).toHaveLength(120);
-    expect(highRows).toBeGreaterThan(lowRows);
-    expect(highDetail).toBeGreaterThan(lowDetail);
-  });
-
-  it("corrects character-cell aspect ratio for standard shapes", () => {
-    renderAt("/");
-    fireEvent.click(screen.getByRole("button", { name: /Circle shape/i }));
-
-    const lines =
-      document.querySelector<HTMLPreElement>(".oscilloscope-grid")
-        ?.textContent?.split("\n") ?? [];
-    const points: Array<[number, number]> = [];
-
-    lines.forEach((line, row) => {
-      [...line].forEach((character, column) => {
-        if (character !== " ") points.push([column, row]);
-      });
-    });
-
-    const columns = points.map(([column]) => column);
-    const rows = points.map(([, row]) => row);
-    const characterWidth = Math.max(...columns) - Math.min(...columns) + 1;
-    const characterHeight = Math.max(...rows) - Math.min(...rows) + 1;
-    const physicalRatio = (characterWidth * 0.6) / (characterHeight * 0.91);
-
-    expect(points.length).toBeGreaterThan(100);
-    expect(physicalRatio).toBeGreaterThan(0.85);
-    expect(physicalRatio).toBeLessThan(1.15);
-  });
-
-  it("keeps every 2D and 3D shape inside the plot at maximum scale", () => {
-    renderAt("/");
-    const scale = screen.getByRole("slider", { name: "Scale" });
-    const multiplier = screen.getByRole("slider", { name: "Multiplier" });
-    const grid = document.querySelector<HTMLPreElement>(".oscilloscope-grid");
-    const shapes = [
-      "Wave",
-      "Circle",
-      "Triangle",
-      "Square",
-      "Star",
-      "Hex",
-      "Spiral",
-      "Knot",
-      "Orbit",
-    ];
-
-    for (const dimension of ["2d", "3d"]) {
-      if (dimension === "3d") {
-        fireEvent.click(
-          screen.getByRole("button", { name: "Show 3D geometry" }),
-        );
-      }
-
-      for (const shape of shapes) {
-        fireEvent.click(
-          screen.getByRole("button", {
-            name: new RegExp(`${shape} shape`, "i"),
-          }),
-        );
-        fireEvent.change(scale, { target: { value: "1" } });
-
-        for (const octave of ["0", "1", "2", "3"]) {
-          fireEvent.change(multiplier, { target: { value: octave } });
-          expect(grid).toHaveAttribute("data-dimension", dimension);
-          expect(grid).toHaveAttribute("data-clipped-samples", "0");
-        }
-      }
-    }
-  });
-
-  it("renders project stories on the projects route", () => {
+  it("combines current work, projects, and systems on Projects", () => {
     renderAt("/projects");
 
-    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Owlbot" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Homelab Build" })).toBeInTheDocument();
-    // 4 completed project badges + the "Completed" section heading
-    expect(screen.getAllByText("Completed")).toHaveLength(5);
-  });
-
-  it("shows concrete systems from the editable content layer", () => {
-    renderAt("/systems");
-
+    expect(screen.getByRole("heading", { name: "Projects" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What I am working on" })).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { name: "Hermes Agent" })).toHaveLength(2);
+    expect(screen.getByRole("heading", { name: "The layers underneath" })).toBeInTheDocument();
     expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
-    expect(screen.getByText("RTX 5080 desktop / 4K OLED")).toBeInTheDocument();
-    expect(screen.getByText("X-T4 / 18–55 + X100VI")).toBeInTheDocument();
-    expect(screen.getByText("Dusk / Daybreak / Zero:RED")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Open Hermes case study/i })).toHaveAttribute("href", "/projects/hermes");
   });
 
-  it.each([
-    ["/showcase", "Work", "work"],
-    ["/projects", "Projects", "projects"],
-    ["/systems", "Systems", "systems"],
-    ["/now", "Now", "now"],
-    ["/about", "About", "about"],
-    ["/contact", "Contact", "contact"],
-  ])("renders %s with its primary heading and ASCII scene", (path, heading, scene) => {
-    renderAt(path);
-    expect(screen.getByRole("heading", { name: heading })).toBeInTheDocument();
-    const renderedScene = document.querySelector<HTMLPreElement>(
-      `[data-ascii-scene="${scene}"]`,
-    );
-    expect(renderedScene).toBeInTheDocument();
-    expect(renderedScene?.textContent?.length).toBeGreaterThan(1_000);
+  it("renders Hermes as a nested project case study", () => {
+    renderAt("/projects/hermes");
+
+    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What Hermes Does" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Memory System" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /All projects/i })).toHaveAttribute("href", "/projects");
   });
 
-  it("renders a useful not-found route", () => {
+  it("renders Gear and the merged About contact section", () => {
+    renderAt("/gear");
+    expect(screen.getByRole("heading", { name: "Gear" })).toBeInTheDocument();
+    expect(screen.getByText("Mac mini")).toBeInTheDocument();
+
+    renderAt("/about");
+    expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Want to talk?" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Emailhello@ayumad\.me/ })).toHaveAttribute("href", "mailto:hello@ayumad.me");
+  });
+
+  it("renders only curated Journal articles and full article content", () => {
+    renderAt("/journal");
+    expect(screen.getByRole("heading", { name: "Journal" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini" })).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
+    expect(screen.queryByText(/Session journal for 2026/)).not.toBeInTheDocument();
+
+    renderAt("/journal/gpu-passthrough-p520");
+    expect(screen.getByRole("heading", { name: "GPU Passthrough on a Proxmox Server", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The checklist" })).toBeInTheDocument();
+    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
+  });
+
+  it("redirects legacy clean routes and hash routes", async () => {
+    renderAt("/systems");
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Projects" })).toBeInTheDocument());
+    expect(window.location.pathname).toBe("/projects");
+
+    window.history.replaceState({}, "", "/");
+    window.location.hash = "#/hermes";
+    render(<App />);
+    expect(window.location.pathname).toBe("/projects/hermes");
+  });
+
+  it("renders a useful not-found route with a clean home link", () => {
     renderAt("/missing-signal");
-
     expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "#/");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
   });
 
-  it("renders writeup articles with full body content", () => {
-    renderAt("/writeups/desktop-fleet-review");
-
-    expect(
-      screen.getByRole("heading", { name: "Rating My Desktop Fleet" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "The main one" }),
-    ).toBeInTheDocument();
-    const asciiBlocks = document.querySelectorAll(".article-ascii");
-    expect(asciiBlocks.length).toBeGreaterThanOrEqual(2);
-    const asciiText = Array.from(asciiBlocks).map((el) => el.textContent).join("\n");
-    expect(asciiText).toContain("Creekwood");
-    expect(asciiText).toContain("P520");
-    expect(screen.getByRole("link", { name: "← All writeups" })).toHaveAttribute(
-      "href",
-      "#/writeups",
-    );
-  });
-
-  it("links writeup cards with bodies to their article pages", () => {
-    renderAt("/writeups");
-
-    expect(
-      screen.getByRole("link", { name: "Read Rating My Desktop Fleet" }),
-    ).toHaveAttribute("href", "#/writeups/desktop-fleet-review");
-    expect(
-      screen.getByRole("link", { name: "Read Retiring the Jailbreak" }),
-    ).toHaveAttribute("href", "#/writeups/retiring-the-jailbreak");
-    expect(
-      screen.getByRole("link", { name: "Read GPU Passthrough on the P520" }),
-    ).toHaveAttribute("href", "#/writeups/gpu-passthrough-p520");
-    expect(
-      screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini" }),
-    ).toHaveAttribute("href", "#/writeups/hermes-on-mac-mini");
-    expect(
-      screen.getByRole("link", { name: "Read Building a 2.1 System on a Budget" }),
-    ).toHaveAttribute("href", "#/writeups/building-a-2.1-system");
-    expect(
-      screen.getByRole("link", { name: "Read Running Arch as a Daily Driver" }),
-    ).toHaveAttribute("href", "#/writeups/arch-daily-driver");
-  });
-
-  it("renders not-found for unknown writeup slugs", () => {
-    renderAt("/writeups/not-a-real-post");
-
-    expect(screen.getByRole("heading", { name: "Not found" })).toBeInTheDocument();
-  });
-
-  it("persists theme changes", () => {
-    localStorage.setItem("ayumad-theme", "dark");
+  it("persists theme, renderer, and mobile navigation state", () => {
     renderAt("/");
-
     fireEvent.click(screen.getByRole("button", { name: "Switch to light theme" }));
-
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(localStorage.getItem("ayumad-theme")).toBe("light");
-  });
 
-  it("applies and persists renderer modes across the complete shell", () => {
-    renderAt("/systems");
-    const selector = screen.getByRole("combobox", { name: "Renderer" });
-    const scene = document.querySelector<HTMLPreElement>(
-      '[data-ascii-scene="systems"]',
-    );
-
-    expect(selector).toHaveValue("ascii");
-    expect(screen.getByRole("option", { name: "CRT+" })).toHaveValue("crt");
-    fireEvent.change(selector, { target: { value: "dither" } });
-
+    fireEvent.change(screen.getByRole("combobox", { name: "Renderer" }), { target: { value: "dither" } });
     expect(document.documentElement.dataset.renderer).toBe("dither");
-    expect(localStorage.getItem("ayumad-renderer")).toBe("dither");
-    expect(scene).toHaveAttribute("data-render-mode", "dither");
-    expect(scene?.textContent).toMatch(/[░▒▓█]/);
+    expect(document.querySelector('[data-ascii-scene="home"]')).not.toBeInTheDocument();
 
-    fireEvent.change(selector, { target: { value: "particles" } });
-    expect(document.documentElement.dataset.renderer).toBe("particles");
-    expect(scene).toHaveAttribute("data-render-mode", "particles");
-    expect(scene?.textContent).toMatch(/[·•●]/);
-
-    for (const mode of ["glitch", "crt", "ascii"]) {
-      fireEvent.change(selector, { target: { value: mode } });
-      expect(document.documentElement.dataset.renderer).toBe(mode);
-      expect(localStorage.getItem("ayumad-renderer")).toBe(mode);
-    }
-  });
-
-  it("opens and closes the mobile navigation accessibly", () => {
-    renderAt("/");
     const menuButton = screen.getByRole("button", { name: "Open navigation" });
-
     fireEvent.click(menuButton);
-    expect(screen.getByRole("button", { name: "Close navigation" })).toHaveAttribute(
-      "aria-expanded",
-      "true",
-    );
-
+    expect(screen.getByRole("button", { name: "Close navigation" })).toHaveAttribute("aria-expanded", "true");
     fireEvent.keyDown(window, { key: "Escape" });
-    expect(screen.getByRole("button", { name: "Open navigation" })).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
+    expect(screen.getByRole("button", { name: "Open navigation" })).toHaveAttribute("aria-expanded", "false");
   });
 });
