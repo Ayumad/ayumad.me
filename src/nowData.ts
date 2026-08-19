@@ -20,8 +20,17 @@ export const nowEntries: NowEntry[] = [
     detail: "Mac mini · Mnemosyne · Tailscale · OpenCode Go",
   },
   {
-    label: "Deploying",
+    label: "Building",
     marker: "03",
+    title: "CRT Lab",
+    description:
+      "Building a local-first signal workstation for CRT displays, oscilloscope views, media playback, and interactive test patterns.",
+    detail: "Signal processing · browser media · EmulatorJS · local-first",
+    link: { label: "Open CRT Lab live site", href: "https://crt-lab-xi.vercel.app/" },
+  },
+  {
+    label: "Deploying",
+    marker: "04",
     title: "RAG Assistant",
     description:
       "Indexing the Obsidian vault so Hermes can answer questions from my own notes without exposing private material.",
@@ -29,7 +38,7 @@ export const nowEntries: NowEntry[] = [
   },
   {
     label: "Learning",
-    marker: "04",
+    marker: "05",
     title: "Custom Linux",
     description:
       "Tuning an Arch-based setup for daily use while learning a more declarative approach on a second machine.",
@@ -37,7 +46,7 @@ export const nowEntries: NowEntry[] = [
   },
   {
     label: "Tuning",
-    marker: "05",
+    marker: "06",
     title: "Two 2.1 Systems",
     description:
       "Working on speaker placement, crossover, and room correction at my desk and in the living room.",
@@ -45,7 +54,7 @@ export const nowEntries: NowEntry[] = [
   },
   {
     label: "Designing",
-    marker: "06",
+    marker: "07",
     title: "Ayumad.me",
     description:
       "Turning the site into an accurate index of what I use, what I build, and what I am learning.",
@@ -53,7 +62,7 @@ export const nowEntries: NowEntry[] = [
   },
   {
     label: "Researching",
-    marker: "07",
+    marker: "08",
     title: "Voice Assistant",
     description:
       "Exploring wake-word detection, local speech-to-text, and text-to-speech for a future Hermes interface.",

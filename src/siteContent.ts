@@ -74,6 +74,7 @@ export interface NowEntry {
   title: string;
   description: string;
   detail: string;
+  link?: { label: string; href: string };
 }
 
 export interface AboutContent {
