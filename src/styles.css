@@ -932,7 +932,7 @@ main {
   border-bottom: 1px solid var(--fine);
 }
 
-.scope-controls > :nth-child(6) {
+.scope-controls > :nth-child(5) {
   border-right: 0;
 }
 
@@ -940,37 +940,9 @@ main {
   border-bottom: 0;
 }
 
-.scope-shapes {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  border-right: 0;
-}
-
-.scope-shapes button {
+.scope-shape-select select {
   min-width: 0;
-  min-height: 42px;
-  padding: 0 4px;
-  border: 0;
-  border-right: 1px solid var(--fine);
-  background: var(--bg);
-  color: var(--muted);
-  cursor: pointer;
-  font: 800 0.47rem/1 var(--mono);
-  letter-spacing: 0.04em;
-}
-
-.scope-shapes button:last-child {
-  border-right: 0;
-}
-
-.scope-shapes button:hover {
-  color: var(--cyan);
-}
-
-.scope-shapes button[aria-pressed="true"] {
-  background: var(--cyan);
-  color: var(--ink);
+  font-size: 0.52rem;
 }
 
 .scope-control > span {
@@ -2948,17 +2920,12 @@ main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .scope-shapes {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .scope-controls > .scope-control,
   .scope-controls > .scope-actions {
     border-right: 1px solid var(--fine);
   }
 
-  .scope-controls > :nth-child(3),
-  .scope-controls > :nth-child(5),
+  .scope-controls > :nth-child(even),
   .scope-controls > .scope-actions {
     border-right: 0;
   }

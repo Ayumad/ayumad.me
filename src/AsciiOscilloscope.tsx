@@ -9,16 +9,22 @@ type PresetId =
   | "square"
   | "star"
   | "hex"
+  | "figure8"
   | "spiral"
   | "knot"
-  | "orbit";
+  | "orbit"
+  | "rose"
+  | "octahedron"
+  | "icosahedron"
+  | "mobius";
 type GeneratorId =
   | "wave"
   | "lissajous"
   | "spiral"
   | "star"
   | "polygon"
-  | "orbit";
+  | "orbit"
+  | "rose";
 type DimensionMode = "2d" | "3d";
 
 interface SignalSettings {
@@ -95,80 +101,26 @@ interface MusicalNote {
 }
 
 const presets: Preset[] = [
-  {
-    id: "star",
-    label: "STAR",
-    generator: "star",
-    xRatio: 5,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 0.86,
-    rotationDegrees: 0,
-    scale: 0.5,
-    motion: 0.16,
-  },
-  {
-    id: "hex",
-    label: "HEX",
-    generator: "polygon",
-    xRatio: 6,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 1,
-    rotationDegrees: 0,
-    scale: 0.5,
-    motion: 0.12,
-  },
-  {
-    id: "square",
-    label: "SQUARE",
-    generator: "polygon",
-    xRatio: 4,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 1,
-    rotationDegrees: 45,
-    scale: 0.5,
-    motion: 0.12,
-  },
-  {
-    id: "circle",
-    label: "CIRCLE",
-    generator: "lissajous",
-    xRatio: 1,
-    yRatio: 1,
-    phaseDegrees: 90,
-    form: 0,
-    rotationDegrees: 0,
-    scale: 0.5,
-    motion: 0.14,
-  },
-  {
-    id: "triangle",
-    label: "TRIANGLE",
-    generator: "polygon",
-    xRatio: 3,
-    yRatio: 1,
-    phaseDegrees: 0,
-    form: 1,
-    rotationDegrees: 0,
-    scale: 0.5,
-    motion: 0.12,
-  },
+  { id: "star", label: "STAR", generator: "star", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.86, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
+  { id: "hex", label: "HEX", generator: "polygon", xRatio: 6, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.12 },
+  { id: "square", label: "SQUARE", generator: "polygon", xRatio: 4, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 45, scale: 0.5, motion: 0.12 },
+  { id: "circle", label: "CIRCLE", generator: "lissajous", xRatio: 1, yRatio: 1, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.14 },
+  { id: "triangle", label: "TRIANGLE", generator: "polygon", xRatio: 3, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.12 },
+  { id: "figure8", label: "FIGURE 8", generator: "lissajous", xRatio: 2, yRatio: 1, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
+  { id: "spiral", label: "SPIRAL", generator: "spiral", xRatio: 3, yRatio: 1, phaseDegrees: 0, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "knot", label: "TORUS KNOT", generator: "lissajous", xRatio: 3, yRatio: 2, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.2 },
+  { id: "orbit", label: "ORBIT", generator: "orbit", xRatio: 5, yRatio: 3, phaseDegrees: 0, form: 0.93, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "rose", label: "ROSE", generator: "rose", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.92, rotationDegrees: 0, scale: 0.5, motion: 0.15 },
+  { id: "octahedron", label: "OCTAHEDRON", generator: "polygon", xRatio: 4, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.13 },
+  { id: "icosahedron", label: "ICOSAHEDRON", generator: "star", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.94, rotationDegrees: 0, scale: 0.5, motion: 0.14 },
+  { id: "mobius", label: "MOBIUS", generator: "lissajous", xRatio: 1, yRatio: 2, phaseDegrees: 90, form: 0.18, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "wave", label: "WAVE SURFACE", generator: "wave", xRatio: 2, yRatio: 1, phaseDegrees: 0, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
 ];
 
-const randomVariants: RandomVariant[] = [
-  { preset: "star", scale: 0.5, motion: 0.16, octave: 1, units: 96 },
-  { preset: "star", scale: 0.82, motion: 0.2, octave: 2, units: 120 },
-  { preset: "hex", scale: 0.5, motion: 0.12, octave: 1, units: 96 },
-  { preset: "hex", scale: 0.78, motion: 0.18, octave: 2, units: 120 },
-  { preset: "square", scale: 0.5, motion: 0.12, octave: 1, units: 96 },
-  { preset: "square", scale: 0.8, motion: 0.18, octave: 2, units: 120 },
-  { preset: "circle", scale: 0.5, motion: 0.14, octave: 1, units: 96 },
-  { preset: "circle", scale: 0.76, motion: 0.2, octave: 2, units: 120 },
-  { preset: "triangle", scale: 0.5, motion: 0.12, octave: 1, units: 96 },
-  { preset: "triangle", scale: 0.78, motion: 0.18, octave: 2, units: 120 },
-];
+const randomVariants: RandomVariant[] = presets.flatMap<RandomVariant>((preset) => [
+  { preset: preset.id, scale: 0.5, motion: preset.motion, octave: 1, units: 96 },
+  { preset: preset.id, scale: 0.78, motion: Math.min(0.24, preset.motion + 0.06), octave: 2, units: 120 },
+]);
 
 const defaultPreset =
   presets.find((preset) => preset.id === "star") ?? presets[0];
@@ -426,6 +378,67 @@ function pyramidScene(): Curve3D[] {
   ];
 }
 
+function octahedronScene(): Curve3D[] {
+  const top = { x: 0, y: 0.72, z: 0 };
+  const bottom = { x: 0, y: -0.72, z: 0 };
+  const ring = [
+    { x: 0.62, y: 0, z: 0 },
+    { x: 0, y: 0, z: 0.62 },
+    { x: -0.62, y: 0, z: 0 },
+    { x: 0, y: 0, z: -0.62 },
+  ];
+
+  return [
+    { points: [...ring, ring[0]] },
+    ...ring.flatMap((point) => [
+      { points: [top, point] },
+      { points: [bottom, point] },
+    ]),
+  ];
+}
+
+function icosahedronScene(): Curve3D[] {
+  const phi = (1 + Math.sqrt(5)) / 2;
+  const rawVertices: Point3D[] = [
+    [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+    [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+    [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1],
+  ].map(([x, y, z]) => ({ x: x * 0.38, y: y * 0.38, z: z * 0.38 }));
+  const edgeLength = Math.hypot(
+    rawVertices[0].x - rawVertices[1].x,
+    rawVertices[0].y - rawVertices[1].y,
+    rawVertices[0].z - rawVertices[1].z,
+  );
+
+  return rawVertices.flatMap((from, index) =>
+    rawVertices.slice(index + 1).flatMap((to) =>
+      Math.abs(Math.hypot(from.x - to.x, from.y - to.y, from.z - to.z) - edgeLength) < 0.001
+        ? [{ points: [from, to] }]
+        : [],
+    ),
+  );
+}
+
+function mobiusScene(): Curve3D[] {
+  const stripPoint = (amount: number, width: number): Point3D => {
+    const theta = amount * Math.PI * 2;
+    const offset = width * 0.26;
+    return {
+      x: (0.5 + offset * Math.cos(theta / 2)) * Math.cos(theta),
+      y: offset * Math.sin(theta / 2),
+      z: (0.5 + offset * Math.cos(theta / 2)) * Math.sin(theta),
+    };
+  };
+
+  return [
+    ...[-1, 0, 1].map((width) => sampledCurve3D(96, (amount) => stripPoint(amount, width))),
+    ...Array.from({ length: 17 }, (_, index) => {
+      const amount = index / 16;
+      return { points: [stripPoint(amount, -1), stripPoint(amount, 1)] };
+    }),
+  ];
+}
+
 function knotScene(): Curve3D[] {
   return [-0.035, 0, 0.035].map((offset) =>
     sampledCurve3D(108, (amount) => {
@@ -519,9 +532,14 @@ const spatialScenes: Record<PresetId, Curve3D[]> = {
   square: prismScene(4, 0.68, 0.48),
   star: prismScene(5, 0.7, 0.25, 0.31),
   hex: prismScene(6, 0.7, 0.3),
+  figure8: knotScene(),
   spiral: helixScene(),
   knot: knotScene(),
   orbit: orbitScene(),
+  rose: prismScene(5, 0.7, 0.2, 0.34),
+  octahedron: octahedronScene(),
+  icosahedron: icosahedronScene(),
+  mobius: mobiusScene(),
 };
 
 const spatialGeometryNames: Record<PresetId, string> = {
@@ -531,9 +549,14 @@ const spatialGeometryNames: Record<PresetId, string> = {
   square: "cube",
   star: "star-prism",
   hex: "hexagonal-prism",
+  figure8: "figure-eight-knot",
   spiral: "helix",
   knot: "torus-knot",
   orbit: "orbital-cage",
+  rose: "rose-prism",
+  octahedron: "octahedron",
+  icosahedron: "icosahedron",
+  mobius: "mobius-strip",
 };
 
 const spatialViews: Record<PresetId, SpatialView> = {
@@ -543,9 +566,14 @@ const spatialViews: Record<PresetId, SpatialView> = {
   square: { yaw: 0.7, pitch: -0.5, yawRate: 0.78, pitchRate: 0.31 },
   star: { yaw: 0.58, pitch: -0.54, yawRate: 0.72, pitchRate: 0.28 },
   hex: { yaw: 0.68, pitch: -0.48, yawRate: 0.76, pitchRate: 0.3 },
+  figure8: { yaw: 0.52, pitch: -0.34, yawRate: 0.84, pitchRate: 0.27 },
   spiral: { yaw: 0.46, pitch: -0.26, yawRate: 0.88, pitchRate: 0.24 },
   knot: { yaw: 0.52, pitch: -0.34, yawRate: 0.84, pitchRate: 0.27 },
   orbit: { yaw: 0.44, pitch: -0.28, yawRate: 0.7, pitchRate: 0.4 },
+  rose: { yaw: 0.58, pitch: -0.5, yawRate: 0.68, pitchRate: 0.3 },
+  octahedron: { yaw: 0.7, pitch: -0.48, yawRate: 0.76, pitchRate: 0.32 },
+  icosahedron: { yaw: 0.64, pitch: -0.42, yawRate: 0.62, pitchRate: 0.38 },
+  mobius: { yaw: 0.5, pitch: -0.35, yawRate: 0.7, pitchRate: 0.26 },
 };
 
 function copyLayout(index: number, count: number) {
@@ -626,6 +654,13 @@ function signalPoint(
       settings.xRatio,
       settings.form,
     );
+  } else if (settings.generator === "rose") {
+    const petals = Math.max(2, Math.round(settings.xRatio));
+    const radius = Math.cos(petals * localTheta + livePhase);
+    point = {
+      x: Math.cos(localTheta) * radius,
+      y: Math.sin(localTheta) * radius,
+    };
   } else if (settings.generator === "orbit") {
     const outer = Math.max(2, settings.xRatio);
     const inner = Math.min(Math.max(1, settings.yRatio), outer - 1);
@@ -1348,19 +1383,16 @@ export default function AsciiOscilloscope() {
       </div>
 
       <div className="scope-controls">
-        <div className="scope-shapes" role="group" aria-label="Shape">
-          {presets.map((item) => (
-            <button
-              type="button"
-              key={item.id}
-              aria-label={`${item.label} shape`}
-              aria-pressed={presetId === item.id}
-              onClick={() => applyPreset(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
+        <label className="scope-control scope-shape-select">
+          <span>Shape</span>
+          <select
+            aria-label="Shape"
+            value={presetId}
+            onChange={(event) => applyPreset(event.target.value as PresetId)}
+          >
+            {presets.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+          </select>
+        </label>
 
         <label className="scope-control">
           <span>Hz</span>
