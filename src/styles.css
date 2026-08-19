@@ -17,6 +17,7 @@
   --display: var(--sans);
   --max: 1460px;
   --header: 72px;
+  --page-top-space: clamp(32px, 3vw, 48px);
 }
 
 :root[data-theme="light"] {
@@ -756,7 +757,7 @@ main {
 .hero {
   display: grid;
   min-height: calc(100vh - var(--header));
-  padding-block: 5vw 38px;
+  padding-block: var(--page-top-space) 38px;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: minmax(680px, 1fr) auto;
   align-items: stretch;
@@ -1395,7 +1396,7 @@ main {
 /* Shared page heading */
 
 .page-section {
-  padding-block: clamp(52px, 5vw, 80px) clamp(70px, 9vw, 140px);
+  padding-block: var(--page-top-space) clamp(70px, 9vw, 140px);
 }
 
 .page-heading {
@@ -2725,6 +2726,7 @@ main {
 @media (max-width: 900px) {
   :root {
     --header: 62px;
+    --page-top-space: 28px;
   }
 
   .section-shell,
