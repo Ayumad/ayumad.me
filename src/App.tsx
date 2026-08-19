@@ -41,11 +41,21 @@ import {
   navItems,
   pageMeta,
   projects,
+  showcaseTopics,
   socialLinks,
   systemLayers,
   type Project,
   type ProjectStatus,
 } from "./siteContent";
+
+const contactField = String.raw`
+  ┌─────────────────────────────────────────────┐
+  │                                             │
+  │    EMAIL  ────────────────┐                │
+  │                           ├── AYUMAD.ME    │
+  │    GITHUB ────────────────┘                │
+  │                                             │
+  └─────────────────────────────────────────────┘`;
 
 type Theme = "light" | "dark";
 
@@ -360,6 +370,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       <div className="project-detail">
         <ul className="tag-list">{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
         {project.slug === "hermes-agent" ? <Link className="text-link project-case-link" to="/projects/hermes">Open Hermes case study ↗</Link> : null}
+        {project.liveUrl ? <a className="text-link project-case-link" href={project.liveUrl} target="_blank" rel="noreferrer" aria-label={`Open ${project.title} live app`}>Open live app ↗</a> : null}
         <details><summary>Details <span aria-hidden="true">+</span></summary><p>{project.story}</p></details>
       </div>
     </motion.article>
@@ -374,12 +385,30 @@ function ProjectsPage() {
       <SectionHeading index="01" label="Projects" title="Projects" description="Current work, systems, and experiments in one place." scene="projects" />
       <section className="project-current" aria-labelledby="current-focus-title">
         <div className="section-title"><p className="label">Current focus</p><h2 id="current-focus-title">What I am working on</h2><p>Updated {nowUpdated}.</p></div>
-        <div className="now-list">{nowEntries.slice(0, 5).map((entry, index) => <motion.article className="now-row" key={entry.title} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><code>{entry.detail}</code></motion.article>)}</div>
+        <div className="now-list">{nowEntries.map((entry, index) => <motion.article className="now-row" key={entry.title} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><code>{entry.detail}</code></motion.article>)}</div>
+      </section>
+      <section className="projects-context" aria-labelledby="projects-context-title">
+        <div className="section-title"><p className="label">Context</p><h2 id="projects-context-title">The areas underneath</h2><p>The old Work page belonged here all along: the projects make more sense when the surrounding systems stay visible.</p></div>
+        <div className="showcase-list">
+          {showcaseTopics.map((topic, index) => (
+            <motion.article className={`showcase-row tone-${topic.tone}`} key={topic.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.05 }}>
+              <span className="row-number">0{index + 1}</span>
+              <div className="showcase-copy">
+                <p className="label">{topic.eyebrow}</p>
+                <h2>{topic.title}</h2>
+                <p>{topic.summary}</p>
+                <ul className="tag-list" aria-label={`${topic.title} topics`}>{topic.items.map((item) => <li key={item}>{item}</li>)}</ul>
+              </div>
+              <pre className="topic-ascii" aria-hidden="true">{topic.ascii}</pre>
+            </motion.article>
+          ))}
+        </div>
       </section>
       <div className="project-list">{active.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div>
       <section className="systems-embedded" aria-labelledby="systems-title">
         <div className="section-title"><p className="label">Systems</p><h2 id="systems-title">The layers underneath</h2><p>Projects are easier to understand when the machines and systems around them are visible.</p></div>
         <div className="systems-list">{systemLayers.map((layer, index) => <motion.article className="system-row" key={layer.title} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span className="row-number">{layer.index}</span><div><h3>{layer.title}</h3><p>{layer.description}</p><small>Flow</small><code>{layer.signal}</code></div><ul>{layer.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
+        <div className="system-band" aria-label="Four connected areas"><span>Knowledge</span><i>·</i><span>AI</span><i>·</i><span>Hardware</span><i>·</i><span>Audio</span></div>
       </section>
       <div className="future-panel"><div><p className="label">Archive</p><h2>Completed</h2><p>Past builds and experiments.</p></div><div className="project-list">{completed.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></div>
     </section>
@@ -391,18 +420,18 @@ function HermesPage() {
     <section className="section-shell page-section">
       <Link className="article-back" to="/projects">← All projects</Link>
       <SectionHeading index="01 / 01" label="Featured project" title="Hermes" description="The AI agent that runs my daily operations — briefs, memory, scheduled work, and model routing." scene="systems" />
-      <div className="hermes-intro"><p>Hermes started as a way to stop rebuilding AI tooling on every device. One server on a Mac mini, connected from everywhere over a private mesh network. It handles the routine work so I can spend more time on the things that need a person.</p></div>
+      <div className="hermes-intro"><p>Hermes started as a way to stop rebuilding AI tooling on every device. One server on a Mac mini, connected from everywhere over a private mesh network. It handles morning briefs, interview prep, session journals, and scheduled automations so I can spend more time on the things that need a person.</p></div>
       <div className="hermes-sections">{hermesSections.map((section, index) => <motion.article className="system-row" key={section.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.05 }}><span className="row-number">0{index + 1}</span><div><h2>{section.title}</h2><p>{section.description}</p></div><ul>{section.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
       <div className="hermes-architecture"><pre className="topic-ascii" aria-hidden="true">{String.raw`
   ┌─────────────────────────────────────────┐
   │              HERMES AGENT               │
   ├─────────┬───────────┬───────────────────┤
-  │ BRIEF   │ SCHEDULE  │ MEMORY            │
-  │ TASKS   │ ROUTINES  │ MNEMOSYNE         │
-  │ NOTES   │ FALLBACK  │ LOCAL RECALL      │
+  │ BRIEFS  │ ROUTINES  │ MEMORY            │
+  │ PROMPTS │ REVIEWS   │ MNEMOSYNE         │
+  │ TASKS   │ FALLBACK  │ LOCAL RECALL      │
   ├─────────┴───────────┴───────────────────┤
   │         MODEL ROUTING                   │
-  │       simple → complex → fallback       │
+  │       routine → complex → fallback      │
   ├─────────────────────────────────────────┤
   │         SURFACES                        │
   │  Telegram · WebUI · Clients · Vault     │
@@ -425,12 +454,33 @@ function JournalArticlePage({ post }: { post: JournalPost }) {
 }
 
 function AboutPage() {
-  return <section className="section-shell page-section"><SectionHeading index="05" label="About" title="About" description={aboutContent.intro} scene="about" /><div className="about-layout"><article className="about-story">{aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</article><aside className="about-profile"><div className="ascii-monogram" aria-hidden="true"><pre>{String.raw` █████╗ ███╗   ███╗
+  return (
+    <section className="section-shell page-section">
+      <SectionHeading index="05" label="About" title="About" description={aboutContent.intro} scene="about" />
+      <div className="about-layout">
+        <article className="about-story">{aboutContent.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</article>
+        <aside className="about-profile">
+          <div className="ascii-monogram" aria-hidden="true"><pre>{String.raw` █████╗ ███╗   ███╗
 ██╔══██╗████╗ ████║
 ███████║██╔████╔██║
 ██╔══██║██║╚██╔╝██║
 ██║  ██║██║ ╚═╝ ██║
-╚═╝  ╚═╝╚═╝     ╚═╝`}</pre></div><p>Ayush Madhukar</p><span>Bay Area, California</span></aside></div><div className="about-data"><section><p className="label">Education</p><dl>{aboutContent.education.map((entry) => <div key={entry.school}><dt>{entry.school}</dt><dd>{entry.program}</dd></div>)}</dl></section><section><p className="label">Skills</p><ul className="large-tags">{aboutContent.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></section><section><p className="label">Interests</p><ul className="interest-list">{aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}</ul></section></div><section className="about-contact" id="contact" aria-labelledby="about-contact-title"><div><p className="label">Contact</p><h2 id="about-contact-title">Want to talk?</h2><p>Email and GitHub are the best ways to reach me.</p></div><div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div></section></section>;
+╚═╝  ╚═╝╚═╝     ╚═╝`}</pre></div>
+          <p>Ayush Madhukar</p><span>Bay Area, California</span>
+        </aside>
+      </div>
+      <div className="about-data">
+        <section><p className="label">Education</p><dl>{aboutContent.education.map((entry) => <div key={entry.school}><dt>{entry.school}</dt><dd>{entry.program}</dd></div>)}</dl></section>
+        <section><p className="label">Skills</p><ul className="large-tags">{aboutContent.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></section>
+        <section><p className="label">Interests</p><ul className="interest-list">{aboutContent.interests.map((interest) => <li key={interest}>{interest}</li>)}</ul></section>
+      </div>
+      <section className="about-contact" id="contact" aria-labelledby="about-contact-title">
+        <div><p className="label">Contact</p><h2 id="about-contact-title">Want to talk?</h2><p>Email and GitHub are the best ways to reach me.</p></div>
+        <pre className="contact-field" aria-hidden="true">{contactField}</pre>
+        <div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div>
+      </section>
+    </section>
+  );
 }
 
 function SpotifyHomeSignal() {

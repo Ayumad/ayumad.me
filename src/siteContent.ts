@@ -6,6 +6,15 @@ export interface NavItem {
   index: string;
 }
 
+export interface ShowcaseTopic {
+  title: string;
+  eyebrow: string;
+  summary: string;
+  items: string[];
+  ascii: string;
+  tone: "lime" | "violet" | "cyan";
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -15,6 +24,7 @@ export interface Project {
   status: ProjectStatus;
   year: string;
   featured?: boolean;
+  liveUrl?: string;
 }
 
 export interface SystemLayer {
@@ -94,7 +104,52 @@ export const homeContent: HomeContent = {
   },
 };
 
+export const showcaseTopics: ShowcaseTopic[] = [
+  {
+    title: "AI + Notes",
+    eyebrow: "Tools",
+    summary:
+      "Hermes runs on a headless Mac mini and connects from every device over Tailscale. It handles daily briefs, memory, cron automations, and multi-model routing — all from one backend.",
+    items: ["Hermes", "Tailscale", "Mnemosyne", "Obsidian", "OpenCode Go"],
+    ascii:
+      "  DESKTOP ───────┐\n  LAPTOP  ── VPN ├──> MAC MINI\n  IPAD    ───────┘       └── HERMES\n                                  └── MNEMOSYNE",
+    tone: "lime",
+  },
+  {
+    title: "Homelab",
+    eyebrow: "Server",
+    summary:
+      "My ThinkStation P520 runs Proxmox. I use it for storage, local AI, media, and services, with the important parts separated from whatever I'm testing that week.",
+    items: ["ThinkStation P520", "Proxmox + ZFS", "GPU passthrough", "Docker / LXC"],
+    ascii:
+      "  [ THINKSTATION P520 ]\n       ├── ZFS ────── 4 TB\n       ├── VM ─────── GPU\n       └── LXC ────── SERVICES",
+    tone: "violet",
+  },
+  {
+    title: "Audio",
+    eyebrow: "Listening",
+    summary:
+      "I keep separate desktop and living-room 2.1 systems, compare headphones and IEMs, and spend a lot of time getting placement, crossover, and EQ right. The oscilloscope above is how I see sound.",
+    items: ["WiiM Ultra + ZA3", "KEF Q150", "Kube 12b / SB-1000 Pro", "Dusk / Daybreak / Zero:RED"],
+    ascii:
+      "  DESK   : Q150 ── ZA3 ── WIIM\n                    └───── SB-1000 PRO\n  ROOM   : Q150 ── RX-V677 ── KUBE 12b",
+    tone: "cyan",
+  },
+];
+
 export const projects: Project[] = [
+  {
+    slug: "crt-lab",
+    title: "CRT Lab",
+    summary:
+      "A local-first signal workstation for routing patterns, images, video, audio, web pages, and emulation through an adjustable CRT display.",
+    story:
+      "CRT Lab treats whatever you have as an input signal: generated test patterns, local images and video, MP3 waveforms, browser URLs, or user-owned ROMs. The current build combines CRT and oscilloscope views with phosphor presets, live scanline and geometry controls, aspect-ratio locking, drag-and-drop, and fullscreen playback. The goal is a reliable creative lab with clear source errors, local preset storage, keyboard and gamepad input, strong accessibility, and optional capture tools — without uploading source media.",
+    stack: ["Signal processing", "Browser media", "EmulatorJS", "Local-first"],
+    status: "in-progress",
+    year: "Now",
+    liveUrl: "https://crt-lab-xi.vercel.app/",
+  },
   {
     slug: "hermes-agent",
     title: "Hermes Agent",
@@ -111,7 +166,7 @@ export const projects: Project[] = [
     title: "Vault Refactor",
     summary: "Refactoring my Obsidian vault into a lean, git-backed, self-managing knowledge base.",
     story:
-      "The vault had missing plugins, stale paths, and too much historical material mixed into the active notes. I rewired it around a clear structure, restored the required plugin stack, connected it to private GitHub history, and made the agent instructions describe the current layout.",
+      "The vault had missing plugins, stale paths, and too much historical material mixed into the active notes. I rewired it around a clear structure, restored the required plugin stack, connected it to versioned history, and made the agent instructions describe the current layout. The goal is a knowledge base that stays understandable as it grows.",
     stack: ["Obsidian", "Git", "GitHub", "Hermes"],
     status: "in-progress",
     year: "Now",
@@ -121,7 +176,7 @@ export const projects: Project[] = [
     title: "RAG Assistant",
     summary: "A retrieval-augmented assistant that answers questions from my Obsidian vault.",
     story:
-      "The RAG assistant indexes the Obsidian vault and answers questions grounded in actual notes — build logs, device configs, and project decisions. The goal is letting Hermes pull useful context from my notes without exposing private parts of the vault to a model.",
+      "The RAG assistant indexes the Obsidian vault and answers questions grounded in actual notes — build logs, device configs, and project decisions. The indexing pipeline is done; deployment is pending. The point is letting Hermes pull context from my notes without exposing the private parts of the vault to a model.",
     stack: ["Python", "RAG", "Obsidian", "Embeddings"],
     status: "in-progress",
     year: "Now",
@@ -225,8 +280,8 @@ export const systemLayers: SystemLayer[] = [
   {
     index: "L4",
     title: "Knowledge",
-    description: "A git-backed Obsidian vault structured by agent files, with public writing as a separate layer.",
-    items: ["Obsidian vault (git + GitHub)", "Agent-defined structure", "Derived views (Bases)", "Curated public writing"],
+    description: "A versioned Obsidian vault structured by agent files, with public writing as a separate layer.",
+    items: ["Obsidian vault", "Agent-defined structure", "Derived views (Bases)", "Curated public writing"],
     signal: "question → test → note → reuse",
   },
 ];
@@ -235,7 +290,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "What Hermes Does",
     description:
-      "Hermes is my personal AI agent. It runs daily operations — morning briefs, interview prep, session journals, and scheduled automations — from a headless Mac mini, and connects from every device over Tailscale.",
+      "Hermes is my personal AI agent. It runs the daily operations — morning briefs, interview prep, session journals, and scheduled automations — from a headless Mac mini, and connects from every device over Tailscale.",
     items: [
       "Morning brief — vault, tasks, email, and calendar",
       "Interview prep and question prompts",
@@ -247,7 +302,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Memory System",
     description:
-      "Mnemosyne holds persistent memory — facts, preferences, insights, and relationships that survive across sessions. Local embeddings keep recall fast, and a knowledge graph connects related memories.",
+      "Mnemosyne holds the persistent memory — facts, preferences, insights, and relationships that survive across sessions. Local embeddings keep recall fast, and a knowledge graph connects related memories.",
     items: [
       "Local embeddings for recall",
       "Provider tools for memory and graph queries",
@@ -259,7 +314,7 @@ export const hermesSections: HermesSection[] = [
   {
     title: "Multi-Model Routing",
     description:
-      "Hermes routes between models based on task complexity and cost. The daily work stays lightweight while harder reasoning can use a stronger model when needed.",
+      "Hermes routes between models based on task complexity and cost. Routine work stays lightweight while harder reasoning can use a stronger model when needed.",
     items: [
       "Daily-driver model for routine work",
       "Stronger reasoning model for complex tasks",
@@ -349,10 +404,11 @@ export const aboutContent: AboutContent = {
   intro:
     "I break hardware and software until I understand it. I'm a Computer Engineering student at San José State and I run my own everything — homelab, AI agent, knowledge base — because letting someone else do it sounds boring.",
   story: [
-    "I got into technology through jailbreaking devices and running emulators. There is something about a device doing what it was not supposed to do that never gets old. Every piece of hardware I own gets the same treatment eventually: push it until it breaks, figure out why, fix it, then break it again on purpose to make sure I understood it.",
-    "Most of my projects start with a practical question. Can an old ThinkStation be a real server? Can one Mac mini run an AI agent for my entire life? The answer to both has been yes, as long as I am willing to understand the boring parts too.",
-    "I study Computer Engineering at San José State, after Computer Science at Foothill, where I ran the Data Science & AI club and started Principia STEM Magazine. I have shipped a chatbot for Foothill students, an emotion-aware bot at CalHacks, and an audio-visualization project that became a magazine article.",
-    "Outside class, technology is still the main hobby — Linux, audio, cameras, old hardware, game streaming, and whatever I am trying to configure that week. I build, break, and run my own systems, and I write down what happens.",
+    "I got into technology the way kids with my kind of curiosity did — jailbreaking devices and running emulators. There's something about a device doing what it wasn't supposed to do that never gets old. Every piece of hardware I own gets the same treatment eventually: push it until it breaks, figure out why, fix it, then break it again on purpose to make sure I actually understood it.",
+    "That instinct is probably from moving from India to the US when I was young and having to figure out a whole new everything on my own. I learned by poking at things until they made sense, and computers were the best version of that — every device was a puzzle, and the answer was never 'that's just how it is.' There's always a reason the defaults are wrong. Finding it is the fun part.",
+    "Most of my projects start with a practical question. Can an old ThinkStation be a real server? Can one Mac mini run an AI agent for my entire life? The answer to both has been yes, as long as I am willing to understand the boring parts too. Old stuff needs convincing, and I like being the one who convinces it.",
+    "I study Computer Engineering at San José State, after Computer Science at Foothill, where I ran the Data Science & AI club and started Principia STEM Magazine. I've shipped a chatbot for Foothill students, an emotion-aware bot at CalHacks, and an audio-visualization project that became a magazine article. None of it went perfectly, and most of it is documented in a versioned Obsidian vault because I got tired of forgetting what I did and why.",
+    "Outside class, technology is still the main hobby, and it's probably going to be forever — Linux, audio, cameras, old hardware, game streaming, and whatever I'm trying to configure that week. Right now that's a JIS keyboard and an Arch install that's almost exactly how I want it. Almost. TLDR: I build, break, and run my own systems, and I write down what happens.",
   ],
   education: [
     { school: "San José State", program: "Computer Engineering" },

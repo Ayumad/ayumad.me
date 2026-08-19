@@ -50,7 +50,14 @@ describe("Ayumad.me", () => {
     expect(screen.getAllByRole("heading", { name: "Hermes Agent" })).toHaveLength(2);
     expect(screen.getByRole("heading", { name: "The layers underneath" })).toBeInTheDocument();
     expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "AI + Notes" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Audio", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Voice Assistant", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Ayumad.me" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Open Hermes case study/i })).toHaveAttribute("href", "/projects/hermes");
+    expect(screen.getByRole("heading", { name: "CRT Lab" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open CRT Lab live app" })).toHaveAttribute("href", "https://crt-lab-xi.vercel.app/");
   });
 
   it("renders Hermes as a nested project case study", () => {
@@ -70,6 +77,8 @@ describe("Ayumad.me", () => {
     renderAt("/about");
     expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Want to talk?" })).toBeInTheDocument();
+    expect(screen.getByText(/moving from India to the US/i)).toBeInTheDocument();
+    expect(document.querySelector(".contact-field")?.textContent).toMatch(/AYUMAD\.ME/);
     expect(screen.getByRole("link", { name: /Emailhello@ayumad\.me/ })).toHaveAttribute("href", "mailto:hello@ayumad.me");
   });
 
@@ -80,9 +89,11 @@ describe("Ayumad.me", () => {
     expect(screen.queryByText(/Session journal for 2026/)).not.toBeInTheDocument();
 
     renderAt("/journal/gpu-passthrough-p520");
-    expect(screen.getByRole("heading", { name: "GPU Passthrough on a Proxmox Server", level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "The checklist" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "GPU Passthrough on the P520", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Host setup" })).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getByText(/Lenovo ThinkStation P520/)).toBeInTheDocument();
+    expect(screen.getByText(/nvidia-smi/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
   });
 

@@ -1597,7 +1597,8 @@ main {
   padding: 34px;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   color: var(--tone);
   font: 700 clamp(0.62rem, 1.05vw, 0.9rem)/1.55 var(--mono);
   text-shadow: 0 0 18px color-mix(in srgb, var(--tone) 34%, transparent);
@@ -4074,6 +4075,7 @@ main {
 /* Consolidated Projects + curated Journal */
 
 .project-current,
+.projects-context,
 .systems-embedded,
 .about-contact {
   margin-top: clamp(58px, 8vw, 112px);
@@ -4086,11 +4088,13 @@ main {
 }
 
 .project-current .section-title,
+.projects-context .section-title,
 .systems-embedded .section-title {
   margin-bottom: 28px;
 }
 
 .project-current .section-title p:last-child,
+.projects-context .section-title p:last-child,
 .systems-embedded .section-title p:last-child {
   max-width: 58ch;
   margin: 12px 0 0;
@@ -4114,6 +4118,10 @@ main {
 }
 
 .systems-embedded {
+  padding-top: 8px;
+}
+
+.projects-context {
   padding-top: 8px;
 }
 
