@@ -21,7 +21,7 @@
       "destination": "https://ayumad.github.io/ayumad.vault/:path*"
     },
     {
-      "source": "/((?!api(?:/|$)).*)",
+      "source": "/((?!api).*)",
       "destination": "/index.html"
     }
   ],
