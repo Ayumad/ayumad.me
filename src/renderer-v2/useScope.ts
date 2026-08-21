@@ -49,8 +49,14 @@ export function useScope(initial: ScopeState, energy?: () => number) {
     const host = hostRef.current;
     if (!host) return;
     const measure = () => {
+      // Probe with the SAME font the grid actually renders in (--mono), not
+      // the root font — mismatch made cols/rows wildly wrong on wide screens.
       const probe = document.createElement("span");
-      probe.style.font = getComputedStyle(document.documentElement).font;
+      const preFont = getComputedStyle(host);
+      probe.style.fontFamily = preFont.fontFamily;
+      probe.style.fontSize = preFont.fontSize;
+      probe.style.fontWeight = preFont.fontWeight;
+      probe.style.whiteSpace = "pre";
       probe.style.position = "absolute";
       probe.style.visibility = "hidden";
       probe.textContent = "@".repeat(10);

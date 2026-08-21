@@ -4782,6 +4782,8 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   width: 100%;
   display: block;
   font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.15; /* fixed: measurement assumes cw*1.6 row height */
   white-space: pre;
 }
 .renderer-page .renderer-canvas {
