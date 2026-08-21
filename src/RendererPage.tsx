@@ -1,12 +1,14 @@
 /**
  * RendererPage.tsx — /renderer — standalone scope built on renderer-v2.
  * Signal → clock → frame buffer → adapters. One rAF, pauses off-screen.
+ * Energy modulator: derived from live Spotify playback when available.
  */
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useScope, type RenderMode } from "./renderer-v2/useScope";
 import { renderModes } from "./renderMode";
+import { useSpotifyPlayback } from "./useSpotifyPlayback";
 import type { SignalSettings } from "./renderer-v2/signal";
 
 interface PresetDef {
@@ -15,17 +17,29 @@ interface PresetDef {
   generator: string;
   xRatio: number;
   yRatio: number;
+  phaseDegrees: number;
   form: number;
+  rotationDegrees: number;
   scale: number;
   motion: number;
 }
 
+/** Full preset table — geometry identical to AsciiOscilloscope presets. */
 const presets: PresetDef[] = [
-  { id: "wave", label: "Wave", generator: "lissajous", xRatio: 1, yRatio: 1, form: 0, scale: 0.85, motion: 1 },
-  { id: "figure8", label: "Figure 8", generator: "lissajous", xRatio: 1, yRatio: 2, form: 0, scale: 0.8, motion: 1 },
-  { id: "lissajous", label: "Lissajous 3:2", generator: "lissajous", xRatio: 3, yRatio: 2, form: 0.15, scale: 0.75, motion: 0.6 },
-  { id: "star", label: "Star", generator: "star", xRatio: 1, yRatio: 1, form: 0.5, scale: 0.9, motion: 0.4 },
-  { id: "hex", label: "Hexagon", generator: "polygon", xRatio: 1, yRatio: 1, form: 0, scale: 0.9, motion: 0.4 },
+  { id: "star", label: "Star", generator: "star", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.86, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
+  { id: "hex", label: "Hexagon", generator: "polygon", xRatio: 6, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.12 },
+  { id: "square", label: "Square", generator: "polygon", xRatio: 4, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 45, scale: 0.5, motion: 0.12 },
+  { id: "circle", label: "Circle", generator: "lissajous", xRatio: 1, yRatio: 1, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.14 },
+  { id: "triangle", label: "Triangle", generator: "polygon", xRatio: 3, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.12 },
+  { id: "figure8", label: "Figure 8", generator: "lissajous", xRatio: 2, yRatio: 1, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
+  { id: "spiral", label: "Spiral", generator: "spiral", xRatio: 3, yRatio: 1, phaseDegrees: 0, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "knot", label: "Torus Knot", generator: "lissajous", xRatio: 3, yRatio: 2, phaseDegrees: 90, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.2 },
+  { id: "orbit", label: "Orbit", generator: "orbit", xRatio: 5, yRatio: 3, phaseDegrees: 0, form: 0.93, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "rose", label: "Rose", generator: "rose", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.92, rotationDegrees: 0, scale: 0.5, motion: 0.15 },
+  { id: "octahedron", label: "Octahedron", generator: "polygon", xRatio: 4, yRatio: 1, phaseDegrees: 0, form: 1, rotationDegrees: 0, scale: 0.5, motion: 0.13 },
+  { id: "icosahedron", label: "Icosahedron", generator: "star", xRatio: 5, yRatio: 1, phaseDegrees: 0, form: 0.94, rotationDegrees: 0, scale: 0.5, motion: 0.14 },
+  { id: "mobius", label: "Mobius", generator: "lissajous", xRatio: 1, yRatio: 2, phaseDegrees: 90, form: 0.18, rotationDegrees: 0, scale: 0.5, motion: 0.18 },
+  { id: "wave", label: "Wave Surface", generator: "wave", xRatio: 2, yRatio: 1, phaseDegrees: 0, form: 0, rotationDegrees: 0, scale: 0.5, motion: 0.16 },
 ];
 
 const defaultSettings: SignalSettings = {
@@ -33,15 +47,36 @@ const defaultSettings: SignalSettings = {
   generator: "lissajous",
   dimension: "2d",
   frequency: 220,
-  xRatio: 1,
-  yRatio: 2,
-  phase: 0,
+  xRatio: 2,
+  yRatio: 1,
+  phase: Math.PI / 2,
   form: 0,
   rotation: 0,
-  scale: 0.8,
-  motion: 1,
+  scale: 0.5,
+  motion: 0.16,
   copies: 1,
 };
+
+/**
+ * Deterministic per-track energy [0..1]: playing state gates it, a hash of
+ * title+artists gives each track its own character, and progress drift adds
+ * slow evolution. Honest proxy — no audio analysis available client-side.
+ */
+function trackEnergy(
+  playback: { isPlaying?: boolean; state?: string; title?: string | null; artists?: string[]; progressMs?: number | null; durationMs?: number | null } | null,
+): number {
+  if (!playback || playback.isPlaying !== true) return 0;
+  const seedText = `${playback.title ?? ""}|${(playback.artists ?? []).join(",")}`;
+  let h = 2166136261;
+  for (let i = 0; i < seedText.length; i += 1) {
+    h ^= seedText.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  const trackChar = ((h >>> 0) % 1000) / 1000; // stable per track
+  const progress = (playback.progressMs ?? 0) / Math.max(1, playback.durationMs ?? 1);
+  const drift = 0.5 + 0.5 * Math.sin(progress * Math.PI * 4);
+  return Math.min(1, 0.35 + trackChar * 0.45 + drift * 0.2);
+}
 
 export default function RendererPage() {
   const initial = useMemo(
@@ -53,7 +88,13 @@ export default function RendererPage() {
     [],
   );
 
-  const { state, dispatch, hostRef, preRef, canvasRef } = useScope(initial);
+  // Spotify energy flows through a ref so the clock reads it per-frame
+  // without React re-renders being involved in the hot path.
+  const { playback } = useSpotifyPlayback();
+  const energyRef = useRef(0);
+  energyRef.current = trackEnergy(playback);
+
+  const { state, dispatch, hostRef, preRef, canvasRef } = useScope(initial, () => energyRef.current);
   const { settings, mode, units } = state;
 
   const applyPreset = (id: string) => {
@@ -66,7 +107,9 @@ export default function RendererPage() {
         generator: p.generator,
         xRatio: p.xRatio,
         yRatio: p.yRatio,
+        phase: (p.phaseDegrees * Math.PI) / 180,
         form: p.form,
+        rotation: (p.rotationDegrees * Math.PI) / 180,
         scale: p.scale,
         motion: p.motion,
       },
@@ -90,6 +133,7 @@ export default function RendererPage() {
           <span>{mode === "ascii" ? "XY MODE" : `${mode.toUpperCase()} ADAPTER`}</span>
           <span>{units} PTS</span>
           <span>{settings.frequency.toFixed(0)} Hz</span>
+          <span aria-live="off">ENERGY {(energyRef.current * 100).toFixed(0)}%</span>
         </div>
         {mode === "ascii" ? (
           <pre className="oscilloscope-grid renderer-grid" ref={preRef} aria-label="Oscilloscope display" />

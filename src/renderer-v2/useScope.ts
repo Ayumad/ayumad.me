@@ -3,7 +3,7 @@
  * Settings live in a reducer; URL + localStorage sync happen here.
  */
 
-import { useEffect, useMemo, useRef, useReducer } from "react";
+import { useEffect, useRef, useReducer, useState } from "react";
 import { startClock, type ClockHandle } from "./clock";
 import { asciiAdapter, canvasAdapter, type Adapter } from "./adapters";
 import type { Frame, SignalSettings } from "./signal";
@@ -32,7 +32,7 @@ function reducer(state: ScopeState, action: Action): ScopeState {
   }
 }
 
-export function useScope(initial: ScopeState) {
+export function useScope(initial: ScopeState, energy?: () => number) {
   const [state, dispatch] = useReducer(reducer, initial);
   const hostRef = useRef<HTMLDivElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
@@ -41,21 +41,37 @@ export function useScope(initial: ScopeState) {
   const stateRef = useRef(state);
   stateRef.current = state;
 
-  // Grid metrics for the ASCII adapter
-  const grid = useMemo(() => {
-    if (typeof window === "undefined") return { cols: 80, rows: 24 };
-    const probe = document.createElement("span");
-    probe.style.font = getComputedStyle(document.documentElement).font;
-    probe.style.position = "absolute";
-    probe.style.visibility = "hidden";
-    probe.textContent = "@".repeat(10);
-    document.body.appendChild(probe);
-    const cw = probe.getBoundingClientRect().width / 10 || 9;
-    probe.remove();
-    const el = hostRef.current;
-    const w = el?.clientWidth || 800;
-    const h = el?.clientHeight || 400;
-    return { cols: Math.max(20, Math.floor(w / cw)), rows: Math.max(10, Math.floor(h / (cw * 1.6))) };
+  // Grid metrics for the ASCII adapter — measured from the real host element
+  // after layout settles, and re-measured on resize. (A mount-time useMemo
+  // ran before CSS applied and locked in a tiny 54x16 grid.)
+  const [grid, setGrid] = useState({ cols: 80, rows: 24 });
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const measure = () => {
+      const probe = document.createElement("span");
+      probe.style.font = getComputedStyle(document.documentElement).font;
+      probe.style.position = "absolute";
+      probe.style.visibility = "hidden";
+      probe.textContent = "@".repeat(10);
+      document.body.appendChild(probe);
+      const cw = probe.getBoundingClientRect().width / 10 || 9;
+      probe.remove();
+      const w = host.clientWidth || 800;
+      const h = host.clientHeight || 400;
+      setGrid((prev) => {
+        const next = {
+          cols: Math.max(20, Math.floor(w / cw)),
+          rows: Math.max(10, Math.floor(h / (cw * 1.6))),
+        };
+        return next.cols === prev.cols && next.rows === prev.rows ? prev : next;
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(host);
+    return () => ro.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -83,6 +99,7 @@ export function useScope(initial: ScopeState) {
       canvas: host,
       settings: () => stateRef.current.settings,
       units: () => stateRef.current.units,
+      energy,
       draw: (frame: Frame) => adapter.draw(frame),
     });
 
