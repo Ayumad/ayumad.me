@@ -4767,3 +4767,69 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
     bottom: 390px;
   }
 }
+
+/* ── Renderer page (/renderer) — renderer-v2 ─────────────────────── */
+.renderer-page .scope-stage {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  height: clamp(320px, 52vh, 560px);
+  overflow: hidden;
+}
+.renderer-page .renderer-grid {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: block;
+  font-family: var(--mono);
+  white-space: pre;
+}
+.renderer-page .renderer-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.renderer-page [data-mode="particles"] .renderer-canvas,
+.renderer-page [data-mode="glitch"] .renderer-canvas,
+.renderer-page [data-mode="crt"] .renderer-canvas,
+.renderer-page [data-mode="dither"] .renderer-canvas {
+  color: var(--cyan); /* canvas fill uses currentColor-independent cyan */
+}
+.renderer-page .scope-readout {
+  position: absolute;
+  top: 10px; left: 12px; right: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  pointer-events: none;
+  z-index: 1;
+}
+.renderer-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.renderer-mode-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.renderer-mode-buttons button {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--soft);
+  cursor: pointer;
+}
+.renderer-mode-buttons button:hover { border-color: var(--cyan); color: var(--text); }
+.renderer-mode-buttons button.active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(72, 239, 208, 0.08);
+}

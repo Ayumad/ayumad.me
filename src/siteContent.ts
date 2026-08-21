@@ -461,6 +461,10 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
     title: "Journal — Ayumad.me",
     description: "Curated field notes on building, configuring, and understanding things.",
   },
+  "/renderer": {
+    title: "Renderer — Ayumad.me",
+    description: "A dedicated XY oscilloscope renderer: one signal, one clock, five display adapters.",
+  },
   "/about": {
     title: "About — Ayumad.me",
     description: "About Ayush Madhukar, his interests, listening habits, and contact details.",
