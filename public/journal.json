@@ -1,0 +1,418 @@
+[
+ {
+  "date": "2026-08-23",
+  "summary": "Session journal for 2026-08-23: live-tasks outage fixed (Google OAuth re-auth + Reminders TCC grant + sync ping-pong bug), weekly review delivered, cron health mixed.",
+  "highlights": [
+   "**Live-tasks sync fully restored** — Google Tasks OAuth re-authed, Apple Reminders TCC re-granted, and the long-standing ping-pong bug (6 items cycling endlessly) patched and verified converged. Most impactful single fix today.",
+   "**Weekly review delivered** — comprehensive Aug 16–23 summary covering 5 major accomplishments (vault cleanup, CRT Lab v3, publish pipeline, interview prep, gear acquisitions) and 10 project statuses. Flagged the OAuth production-publish as the highest-priority single action.",
+   "**Google OAuth token dying repeatedly remains the top recurring pain** — testing-mode refresh tokens expire ~7 days; 3 re-auths in 8 days. Publishing the OAuth app to production (manual, in Google Cloud Console) is the permanent fix. Ayush still needs to do this step.",
+   "**No Codex activity** — database file inaccessible; no coding sessions tracked today."
+  ]
+ },
+ {
+  "date": "2026-08-21",
+  "summary": "Session journal for 2026-08-21: vault deep audit + cleanup, CRT Lab v3 engine rebuild, vault publishing pipeline rebuild (Quartz removed), renderer v2, governance refactor, marketplace sweeps, ayumad.me monitor.",
+  "highlights": [
+   "**Massive vault rearchitecture day.** Deep audit → cleanup execution → validator to zero across 396 notes. Metadata repaired, 33 unresolved links → 0, 13 roadmaps deprecated, navigation rewired, governance docs refactored. Vault is structurally cleanest it's ever been.",
+   "**CRT Lab v3 shipped.** Original source recovered from Vercel, rebuilt as a real WebGL2 signal chain (7-stage shader pipeline, phosphor persistence, YIQ encoding). Live at crt-lab-xi.vercel.app.",
+   "**Vault publishing rebuilt from scratch.** Quartz removed entirely; new pipeline is pure Node + AES-256-GCM encrypted SPA with Obsidian-style reader. 231 notes live behind password gate.",
+   "**3 cron jobs still broken** (Omarchy, Sentinel, Reminders sync). Omarchy needs hardware; Sentinel is transient; Reminders sync has a recurring reopen loop that needs investigation."
+  ]
+ },
+ {
+  "date": "2026-08-20",
+  "summary": "Session journal for 2026-08-20: interview prep framework for ASIC DV + 8 company plans, calendar event for major advising, cron health mixed.",
+  "highlights": [
+   "**Interview prep framework complete** — 8 company plans + 3-tier strategy + landscape index all built, validated, and pushed. This is the foundational map for Fall '26 internship applications.",
+   "**Omarchy Health Monitor is chronically failing** — 87 consecutive failures today suggests a systemic issue (SSH connectivity or service check broken). Needs a focused debug session.",
+   "**Reminders ↔ Google Tasks sync is unstable** — intermittently completing suggests the Google OAuth token may be nearing its testing-mode expiry window again (~7 days since last auth).",
+   "**Major advising appointment locked** — Tue Aug 25 on the Class calendar; hold removal is the stated purpose."
+  ]
+ },
+ {
+  "date": "2026-08-19",
+  "summary": "Session journal for 2026-08-19: CRT picture-quality research, daily-archive habit, Ayumad.me information architecture, CRT Lab project capture, and CRT rendering calibration.",
+  "highlights": [
+   "**Picture ceiling resolved:** composite-only TV = composite is the ceiling; the converter isn't the bottleneck, composite input is. Real fix = Pi 4 native composite (already owned), not a pricier converter.",
+   "**Pi 4B confirmed as the CRT workhorse:** games + Kodi/Jellyfin retro-media, $0, already owned. Wii needs a purchase and doesn't beat it on this composite set.",
+   "**Top-line CRT monitor checklist locked** for the X1 Lite second-display slot: aperture grille + ≤0.24mm + 1600×1200@85Hz + clean low-wear tube (F520 / FE2111SB / FP2141SB league).",
+   "**New standing habit:** daily vault archive note written per conversation for the current day, merged into the existing Session Journal system."
+  ]
+ },
+ {
+  "date": "2026-08-18",
+  "summary": "Session journal for 2026-08-18: oscilloscope accessories + scope music hookup plan, CRT rehaul finalized (WEGA + signal chain locked), cron sweep ongoing, marketplace mostly noise.",
+  "highlights": [
+   "**Electronics Workbench milestone:** Both oscilloscopes now owned + fully accessory-planned. Scope music hookup is a ~$16 buy-now that unlocks XY visuals — lowest-effort path to oscilloscope music.",
+   "**CRT stack locked:** Sony WEGA canonicalized, signal chain mapped, cable ordered. Pi 4 → WEGA build is ready to start when cable arrives (08-19).",
+   "**Omarchy still down** — 6+ days offline. No remote fix possible; needs physical visit. Logged as top blocker for homelab sprint.",
+   "**Reminders sync loop:** 4 tasks keep reopening on every Google→Apple sync. Needs a targeted fix (likely a direction/merge logic bug in the sync script)."
+  ]
+ },
+ {
+  "date": "2026-08-17",
+  "summary": "Session journal for 2026-08-17: oscilloscopes picked up (HP 54600B + Tektronix 465B), CRT TV purchase evaluation (Sylvania 6420FF negotiate, Trinitron alternatives), 34\\\" ultrawide shopping, desk-space planning.",
+  "highlights": [
+   "**Both oscilloscopes now owned** — Tektronix 465B ($120) + HP 54600B ($80). Electronics Workbench scope-half complete; scope music (XY visuals) is the immediate next use via SV1 → TRS→BNC.",
+   "**CRT TV hunt narrowing:** Sylvania 6420FF is a negotiate-to-$80 for the vibes slot (Pi-composite primary), with Trinitron KV-20FS100 as the better-tube alternative. CRT Monitor lane (workbench function monitor) also active with NEC 2A as a negotiate candidate.",
+   "**Desk-space question open:** 72×30\" desk with two scopes + 34\" ultrawide + CRT TV — layout computation pending (cut off by error).",
+   "**Noted correction:** the \"FREE\" Portland CRT was a mislabel — seller wants cash (trades for a moped)."
+  ]
+ },
+ {
+  "date": "2026-08-16",
+  "summary": "Session journal for 2026-08-16: Tektronix 465B oscilloscope evaluation, SV1 VGA discovery, oscilloscope music planning, weekly review.",
+  "highlights": [
+   "**Oscilloscope hunt advancing.** The Tektronix 465B at $140 is a fair deal for a wishlist-listed analog scope; seller contact already initiated via Messenger. The scope music workflow is now concrete: SV1 generates stereo tracks → TRS→BNC → scope XY input.",
+   "**SV1 VGA discovery simplifies the workbench CRT stack.** Native VGA output means no converter needed for the Sun monitor test or the function-monitor leg of the stack — one laptop covers both field meets.",
+   "**Omarchy Health Monitor is in chronic failure.** All 86 runs failed today. This is the most broken recurring job and should be investigated.",
+   "**Reminders sync remains degraded.** The Apple Reminders TCC permission issue is still the root cause — 4 items stay in \"reopened\" limbo until the permission is granted."
+  ]
+ },
+ {
+  "date": "2026-08-15",
+  "summary": "Session journal for 2026-08-15: Craigslist wishlist sweeps, workbench multimeter find, cron health mixed.",
+  "highlights": [
+   "**Workbench multimeter gap identified:** FREE RadioShack DMM in San Rafael scored 76/100 — zero-cost pickup to fill the #1 workbench essential. Even a basic RadioShack unit covers continuity/voltage/resistance for the first soldering sessions.",
+   "**Omarchy Health Monitor is fully down all day** — 0/86 runs succeeded. This is a persistent issue that should go on the Hermes Operations Queue for investigation.",
+   "**Reminders ↔ Google Tasks sync is unstable** — 4 tasks keep reopening into Apple Reminders on every sync cycle (Social bookmark sync, YouTube deep dive, Apple Reminders TCC fix, Google SF office study). The TCC permission fix task is the root cause — until Hermes gets Reminders TCC permission, this loop continues.",
+   "**Vault auto-sync ran perfectly** — 88/88 completions, the backbone of vault consistency."
+  ]
+ },
+ {
+  "date": "2026-08-14",
+  "summary": "Session journal for 2026-08-14: Uline desk fitting research, cron health degradation (Omarchy monitor down all day), routine automation runs.",
+  "highlights": [
+   "**Omarchy health monitor is fully broken** — every execution failed today. Should be investigated; this is a watch-list item.",
+   "**Reminders ↔ Google Tasks sync degraded** — most runs failed. Combined with Omarchy issues, suggests a connectivity or config problem on the sync path.",
+   "**No user-initiated sessions today** — the only substantive work was a cross-day desktop session about a desk purchase (completed, no open items).",
+   "**No vault changes or decisions today** — quiet operational day."
+  ]
+ },
+ {
+  "date": "2026-08-13",
+  "summary": "Session journal for 2026-08-13: Craigslist desk hunt → Uline electric desk secured, Homelab NAS planning (ZFS raidz expansion confirmed), cron infrastructure steady, Omarchy still down.",
+  "highlights": [
+   "**Desk secured** — Uline H-7599GR electric 72×30 at $150 is the best value found in a 330-listing sweep. Beats every Craigslist option on spec and price for a commercial electric sit-stand desk in the Bay Area.",
+   "**NAS path clarified** — The \"which OS/filesystem\" question is settled: stay on Proxmox ZFS, use raidz expansion, no Unraid pivot. Tomorrow's NAS setup is concrete (datasets → Samba LXC → SMB).",
+   "**Omarchy (SER8) still unreachable** — 87 consecutive failures, two days running. Needs physical investigation or Tailscale check when Ayush is near the machine.",
+   "**Reminders sync 3-task reopen loop persists** — Same 3 tasks keep reverting to \"open\" on every sync. Needs a state-file fix to stop the churn; logged in yesterday's journal as needing investigation.",
+   "**Cron infrastructure solid** — Vault auto-sync, GPU watch, daily brief, and all agent-driven crons ran cleanly. The connectivity-dependent jobs (Omarchy, Sentinel, partial Reminders) are the weak links."
+  ]
+ },
+ {
+  "date": "2026-08-12",
+  "summary": "Session journal for 2026-08-12: Apple Reminders TCC fix, handheld PC-gaming research, marketplace deal eval, Sunshine+Moonlight guide, task management (towel bar done, bed disposed), reminders sync debugging.",
+  "highlights": [
+   "**Apple Reminders TCC fix** — The sync pipeline was down for ~3 hours after a TCC permission loss (likely caused by ENOSPC on cron temp files). Diagnosed root cause, reset via `tccutil`, re-authorized via GUI session, confirmed green. The cron delivery mechanism (`last_delivery_error: \"unknown platform 'webui'\"`) is a separate issue to fix.",
+   "**Handheld gaming research → action** — Deep comparison led to ordering the Retroid Pocket Nova (8GB) and creating a concrete Sunshine/Moonlight streaming setup guide with a due-date task (Aug 15). The $0 streaming path from Creekwood's RTX 5080 makes Nova a smart complement, not a replacement for the Edge.",
+   "**Omarchy (SER8) unreachable all day** — 80 consecutive health check failures. Machine may be down or network-routed differently. Needs investigation when Ayush is at the machine.",
+   "**Reminders sync reopen loop** — 3 tasks keep reopening on every sync cycle (social bookmark, YouTube deep dive, Google SF study). Needs state-file investigation to stop the churn.",
+   "**Script improvement** — gtasks_mutate.py now accepts CLI args for complete/delete/due, making task management from terminal flexible beyond the hardcoded list."
+  ]
+ },
+ {
+  "date": "2026-08-11",
+  "summary": "Session journal for 2026-08-11: cron-heavy day, Ayumad.me deploy detected, Omarchy health monitor failing all day, interview prep session offered.",
+  "highlights": [
+   "**Omarchy health monitor failing all day** — ~70+ consecutive failures. Needs investigation; either Omarchy is down or the check script needs debugging.",
+   "**Reminders sync unreliable** — only ~10-15% of sync cycles succeed today. Pattern suggests a transient auth or network issue with Apple Reminders.",
+   "**Ayumad.me got a new deploy** — hash changed (DuvDBtHL → Cb7c16pI), vault updated. Site is live and current.",
+   "**Interview prep gap growing** — 7 weeks since last session (Jun 29). Most of the knowledge map remains untested; fall semester starts Aug 19."
+  ]
+ },
+ {
+  "date": "2026-08-10",
+  "summary": "Session journal for 2026-08-10: SJSU IT call unanswered, tasks rescheduled, NAS drive plan update.",
+  "highlights": [
+   "**NAS plan changed**: 2 drives from Creekwood instead of new purchases — 5x 4TB total, pending a 3D-printed part from a friend.",
+   "**SJSU IT**: phone dead end → **resolved**: IT called back, auto-fixed once classes start Aug 19. No visit needed."
+  ]
+ },
+ {
+  "date": "2026-08-09",
+  "summary": "Session journal for 2026-08-09: ayumad.me deploy, Notion skills broken, weekly review, task sync, question prompts.",
+  "highlights": [
+   "**Ayumad.me deployed new bundle** (`DuvDBtHL`) — site is current and live, vault record updated.",
+   "**Notion Progress Check is broken and redundant** — skills are missing and Notion is paused. Should be disabled to stop wasting cron cycles.",
+   "**Quiet Saturday** — no interactive sessions, all automated. Weekly review ran on schedule; reminders sync applied 6 task updates."
+  ]
+ },
+ {
+  "date": "2026-08-08",
+  "summary": "Session journal for 2026-08-08: loadout valuation, DAC/speaker deep-dives, tube amplifiers, agentic workflow brainstorming.",
+  "highlights": [
+   "**Loadout valued at $32,955** — computers are 45% of the total; top 10 items = ~$14K.",
+   "**Two new audio reference notes** created (Tube Amplifiers, DAC Topologies) — the audio resource library is maturing.",
+   "**Speaker upgrade path clarified**: desk upgrades are lateral; living room Q350 clearance is the only genuinely audible move at near-zero net cost.",
+   "**Agentic project roadmap scoped**: self-improving agent loop first (low cost, high uniqueness), voice assistant second (demo centerpiece). Notion cron jobs flagged for cleanup."
+  ]
+ },
+ {
+  "date": "2026-08-07",
+  "summary": "Vault refactor Phases 0–2 (1281→376 notes), site updated + deployed, sync built, TODO triage, MCP/Sentinel/cron fixes, site voice audit, writeup articles skill.",
+  "highlights": [
+   "Google Tasks authorization (open TODO since June) finally done, and the sync went zero → 42 synced items in one session",
+   "Real TODO triage: 3 sections deleted, 5 items → backburner, acquisitions properly folded into wishlist instead of masquerading as tasks",
+   "The marketplace skill caught its own loadout-search error mid-run and corrected the verdict — vault-first evaluation works"
+  ]
+ },
+ {
+  "date": "2026-08-06",
+  "summary": "Session journal for 2026-08-06: marketplace deal evaluations, DEG1 eGPU dock research, Hermes introduction, and cron status.",
+  "highlights": [
+   "Vault CRT research used effectively to evaluate marketplace deals — criteria cross-referencing worked well",
+   "DEG1 eGPU dock research: $59 refurb price identified as worth trying with X1 Lite",
+   "4 automated cron jobs ran successfully throughout the day"
+  ]
+ },
+ {
+  "date": "2026-08-05",
+  "summary": "Vault-wide navigation, plugin, dashboard, and Kanban cleanup session.",
+  "highlights": []
+ },
+ {
+  "date": "2026-08-04",
+  "summary": "Workdesk TODO Additions — Added center channel speaker, standing desk, oscilloscope, CRT, monitors, EE supplies, and general workdesk items to TODO Ma",
+  "highlights": [
+   "Loadout vault chain fully updated (Minisforum V3 + X1 Lite trade, all files synced)",
+   "Workdesk planning complete with prioritized item list and budget estimate",
+   "Hermes extensions installed (LCM, code-review-graph, agent-browser) — take effect next session"
+  ]
+ },
+ {
+  "date": "2026-08-03",
+  "summary": "Daily Brief (9:30 AM) — Morning brief. No calendar events. Top tasks: Burlingame study reply, Ayumad.me visual overhaul, Google Tasks API auth.",
+  "highlights": [
+   "All 13+ cron jobs ran successfully, no errors",
+   "Ayumad.me confirmed stable — no changes since Jul 30",
+   "Quiet day — no user-initiated sessions; all automated ops"
+  ]
+ },
+ {
+  "date": "2026-08-02",
+  "summary": "Daily Brief (9:30 AM) — Morning brief delivered: vault status, Notion tasks, no calendar events, no urgent email",
+  "highlights": [
+   "All 10 cron jobs ran successfully today (9:30 AM – 8:06 PM)",
+   "Ayumad.me confirmed stable — no changes since Jul 30 overhaul",
+   "Notion progress check script rebuilt with Python workaround (skills not found)"
+  ]
+ },
+ {
+  "date": "2026-08-01",
+  "summary": "Question Prompt (20:01) — Read Questions Dashboard, picked a reflective question for Ayush",
+  "highlights": [
+   "Notion progress checker now runs as standalone Python script (works in cron without approval)",
+   "Interview prep surfaced Hardware/Systems as next category — 8 untested topics",
+   "All 8 Notion tasks and 6 projects stable — no blockers"
+  ]
+ },
+ {
+  "date": "2026-07-31",
+  "summary": "TODO Audit — Cleaned 48→30 tasks. Created Completed Tasks.md. Discord bot → Backburner.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-30",
+  "summary": "Daily Brief (09:31) — Morning brief covering vault state, email, calendar",
+  "highlights": [
+   "Ayumad.me site overhaul fully captured in vault — Spotify integration partially live, Gear page with 35 items added",
+   "Interview Prep Knowledge Map path fixed (moved to 90 Operations/)",
+   "Two Notion check runs confirmed no drift; cron job stable"
+  ]
+ },
+ {
+  "date": "2026-07-29",
+  "summary": "Hermes Setup & Plugins — Installed hermes-lcm, agent-browser, code-review-graph. OpenCode Go + Mnemosyne researched.",
+  "highlights": [
+   "3 kanban tasks completed (runbook, monitoring, voice research)",
+   "Full Hermes plugin stack installed (lcm, agent-browser, code-review-graph)",
+   "ayumad.me site audited — all 10 pages verified live"
+  ]
+ },
+ {
+  "date": "2026-07-28",
+  "summary": "Session journal for 2026-07-28: Full migration Beelink → Mac mini + Hermex setup..",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-27",
+  "summary": "Session journal for 2026-07-27: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-26",
+  "summary": "Session journal for 2026-07-26: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-25",
+  "summary": "Session journal for 2026-07-25: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-24",
+  "summary": "Session journal for 2026-07-24: Mac mini Hermes migration..",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-23",
+  "summary": "Session journal for 2026-07-23: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-22",
+  "summary": "Session journal for 2026-07-22: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-21",
+  "summary": "Session journal for 2026-07-21: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-20",
+  "summary": "Session journal for 2026-07-20: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-19",
+  "summary": "Session journal for 2026-07-19: 2 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-18",
+  "summary": "Session journal for 2026-07-18: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-17",
+  "summary": "Session journal for 2026-07-17: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-16",
+  "summary": "Session journal for 2026-07-16: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-15",
+  "summary": "Session journal for 2026-07-15: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-14",
+  "summary": "Session journal for 2026-07-14: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-13",
+  "summary": "Session journal for 2026-07-13: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-12",
+  "summary": "Session journal for 2026-07-12: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-11",
+  "summary": "Session journal for 2026-07-11: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-10",
+  "summary": "Session journal for 2026-07-10: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-09",
+  "summary": "Session journal for 2026-07-09: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-08",
+  "summary": "Session journal for 2026-07-08: OpenRouter credit monitor moved to a systemd timer.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-07",
+  "summary": "Session journal for 2026-07-07: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-06",
+  "summary": "Session journal for 2026-07-06: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-05",
+  "summary": "Session journal for 2026-07-05: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-04",
+  "summary": "Session journal for 2026-07-04: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-03",
+  "summary": "Session journal for 2026-07-03: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-02",
+  "summary": "Session journal for 2026-07-02: 3 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-07-01",
+  "summary": "Session journal for 2026-07-01: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-30",
+  "summary": "Session journal for 2026-06-30: 2 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-29",
+  "summary": "Session journal for 2026-06-29: Notion rebuild from Obsidian..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-28",
+  "summary": "Session journal for 2026-06-28: Obsidian and Notion workflow integration (Telegram, 780 msgs)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-27",
+  "summary": "Session journal for 2026-06-27: NixOS todo list check (Telegram, 381 msgs)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-26",
+  "summary": "Session journal for 2026-06-26: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-25",
+  "summary": "Session journal for 2026-06-25: Pokemon ROM Hacks & game tracking (Telegram)..",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-24",
+  "summary": "Session journal for 2026-06-24: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-23",
+  "summary": "Session journal for 2026-06-23: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-06-22",
+  "summary": "Session journal for 2026-06-22: Session 1 — Hermes setup day (CLI + Telegram)..",
+  "highlights": []
+ }
+]
