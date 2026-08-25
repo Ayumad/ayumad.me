@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-08-24",
+  "summary": "Session journal for 2026-08-24: ACM workshop planning doc + Echosphere interest form created, Retroid Pocket Nova setup guide from RGC video, Alienware m18 deal evaluated (skip), Min email draft ready (blocked on school mail).",
+  "highlights": [
+   "**ACM Fall 2026 workshop rolling** — planning doc + Echosphere interest form created; Min email draft blocked only on school-email access.",
+   "**Retroid Pocket Nova setup guide** distilled from RGC video; Sunshine/Moonlight streaming task now due Fri Aug 28.",
+   "**Omarchy Monitor persistent failure** (86/86 today) — SER8 has been offline since Aug 12; needs physical power-on or removal from cron.",
+   "**Alienware m18 deal rejected** — heavy, redundant with G14, no wishlist match."
+  ]
+ },
+ {
   "date": "2026-08-23",
   "summary": "Session journal for 2026-08-23: live-tasks outage fixed (Google OAuth re-auth + Reminders TCC grant + sync ping-pong bug), weekly review delivered, cron health mixed.",
   "highlights": [
