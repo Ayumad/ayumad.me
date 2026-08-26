@@ -1,12 +1,22 @@
 [
  {
+  "date": "2026-08-25",
+  "summary": "Session journal for 2026-08-25: calendar auto-capture rule set, Panasonic PVM deal evaluated, 'AI as a Computer' article concept fleshed out, Articles Hub created, dailies cleared, Omarchy Health Monitor still failing.",
+  "highlights": [
+   "**Calendar auto-capture rule is live** — any time-mentioned activity now auto-books to Hermes calendar without asking. Persisted across skill, memory, and Mnemosyne.",
+   "**Articles Hub created** — new vault structure for writing projects. \"AI as a Computer\" is the first concept, fully fleshed with mapping table + narrative arc, ready to draft.",
+   "**Omarchy Health Monitor still failing** — every 15-min run errors out all day. Needs investigation (SER8 offline is the known cause but the monitor itself may need a graceful offline handling).",
+   "**Reminders↔Tasks sync intermittent** — mixed completed/failed runs; worth investigating if it stabilizes."
+  ]
+ },
+ {
   "date": "2026-08-24",
-  "summary": "Session journal for 2026-08-24: ACM workshop planning doc + Echosphere interest form created, Retroid Pocket Nova setup guide from RGC video, Alienware m18 deal evaluated (skip), Min email draft ready (blocked on school mail).",
+  "summary": "Session journal for 2026-08-24: ACM workshop planning doc + Echosphere interest form created, Retroid Pocket Nova setup guide from RGC video, Alienware m16 deal evaluated (skip → user bought for $600), Min email draft ready (blocked on school mail).",
   "highlights": [
    "**ACM Fall 2026 workshop rolling** — planning doc + Echosphere interest form created; Min email draft blocked only on school-email access.",
    "**Retroid Pocket Nova setup guide** distilled from RGC video; Sunshine/Moonlight streaming task now due Fri Aug 28.",
    "**Omarchy Monitor persistent failure** (86/86 today) — SER8 has been offline since Aug 12; needs physical power-on or removal from cron.",
-   "**Alienware m18 deal rejected** — heavy, redundant with G14, no wishlist match."
+   "**Alienware m16 deal evaluated (skip → bought anyway)** — scored weak on overlap with G14, but user grabbed it for $600; strong value at ~50% below fair used price."
   ]
  },
  {
