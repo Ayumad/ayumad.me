@@ -548,12 +548,18 @@ for (const r of records) {
   const slug = slugByRel.get(r.rel);
   fs.writeFileSync(path.join(outDir, slug + ".html"), pageHtml(r));
   written++;
-  // keep the old folder-structure URL alive with a redirect stub
+  // keep the old folder-structure URL alive with a redirect stub. cleanUrls
+  // 308s `X.html` → `X` (extensionless) when X.html exists, so the stub must be
+  // present BOTH as `.html` (to trigger the clean redirect) AND extensionless
+  // (the redirect's destination) — otherwise the old URL falls to the SPA.
   if (path.posix.dirname(r.rel) !== ".") {
     const oldRelNoMd = r.rel.slice(0, -3); // "04 Workflows and Orchestration/Workflow Patterns"
-    const oldFile = path.join(outDir, ...oldRelNoMd.split("/")) + ".html";
-    fs.mkdirSync(path.dirname(oldFile), { recursive: true });
-    fs.writeFileSync(oldFile, redirectPage(r.title, hrefFor(r.rel, r.rel)));
+    const htmlStub = path.join(outDir, ...oldRelNoMd.split("/")) + ".html";
+    const cleanStub = path.join(outDir, ...oldRelNoMd.split("/"));
+    const stubBody = redirectPage(r.title, hrefFor(r.rel, r.rel));
+    fs.mkdirSync(path.dirname(htmlStub), { recursive: true });
+    fs.writeFileSync(htmlStub, stubBody);
+    fs.writeFileSync(cleanStub, stubBody);
     redirected++;
   }
 }
