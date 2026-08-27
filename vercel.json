@@ -22,6 +22,22 @@
       "destination": "https://ayumad.github.io/ayumad.vault/:path*"
     },
     {
+      "source": "/ai",
+      "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/"
+    },
+    {
+      "source": "/ai/",
+      "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/"
+    },
+    {
+      "source": "/ai/:path*/",
+      "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/:path*/"
+    },
+    {
+      "source": "/ai/:path*",
+      "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/:path*"
+    },
+    {
       "source": "/((?!api).*)",
       "destination": "/index.html"
     }
