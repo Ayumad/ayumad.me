@@ -263,17 +263,18 @@ function vendorRuntime() {
 const CSS = `:root{
   --bg:#000000;--surface:#0a0a0a;--raised:#101014;--hover:#16161c;
   --border:#1e1e26;--border-strong:#2e2e3a;
-  --text:#d8d6c8;--muted:#8a8878;--faint:#55534a;
+  --text:#e8e6de;--muted:#a8a597;--faint:#6f6e66;
   --accent:#c4b5fd;--accent-strong:#e0d7ff;--accent-dim:rgba(196,181,253,.10);
   --phos:#7ef0b2;--cyan:#67e8f9;--amber:#fcd34d;--red:#ff6b81;
   --glow-r:rgba(255,0,60,.35);--glow-c:rgba(0,255,240,.30);
   --mono:'3270 Nerd Font','IBM Plex Mono','SF Mono',ui-monospace,Menlo,monospace;
+  --text-font:'IBM Plex Mono','SF Mono',ui-monospace,Menlo,monospace; /* readable face for body prose */
   --radius:4px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13.5px;
-  line-height:1.62;text-rendering:optimizeLegibility}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14px;
+  line-height:1.66;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
 ::selection{background:rgba(126,240,178,.25);color:#fff}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:5px;border:2px solid var(--bg)}
@@ -281,7 +282,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13
 
 /* ---------- CRT atmosphere (same as vault) ---------- */
 body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0px,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px);
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0px,rgba(0,0,0,.14) 1px,transparent 1px,transparent 4px);
   animation:scanlines 12s linear infinite;mix-blend-mode:multiply}
 body::after{content:"";position:fixed;inset:-100%;z-index:998;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
@@ -345,31 +346,34 @@ kbd{font-family:var(--mono);font-size:10px;color:var(--faint);border:1px solid v
   border-radius:3px;padding:0 4px;margin-left:6px}
 
 /* ---------- markdown (terminal document, same as vault) ---------- */
-.md h1{font-size:22px;font-weight:600;letter-spacing:.01em;margin:0 0 20px;line-height:1.3;color:var(--text)}
-.md h1::before{content:"█ ";color:var(--phos);font-size:16px}
-.md h2{font-size:16.5px;font-weight:600;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.md{font-family:var(--text-font);font-size:16px;line-height:1.72;color:var(--text)}
+.md h1{font-size:26px;font-weight:600;letter-spacing:.01em;margin:0 0 22px;line-height:1.25;color:var(--text);font-family:var(--mono)}
+.md h1::before{content:"█ ";color:var(--phos);font-size:18px}
+.md h2{font-size:19px;font-weight:600;margin:38px 0 13px;padding-bottom:7px;border-bottom:1px solid var(--border);font-family:var(--mono)}
 .md h2::before{content:"## ";color:var(--faint)}
-.md h3{font-size:14px;font-weight:600;margin:26px 0 8px}
+.md h3{font-size:16.5px;font-weight:600;margin:28px 0 9px;font-family:var(--mono)}
 .md h3::before{content:"### ";color:var(--faint)}
-.md h4{font-size:13px;font-weight:600;margin:20px 0 6px;color:var(--cyan)}
-.md p{margin:10px 0}.md ul,.md ol{margin:10px 0;padding-left:26px}
-.md li{margin:3.5px 0}.md li::marker{color:var(--phos)}
-.md a{color:var(--cyan);text-decoration:none}
+.md h4{font-size:15px;font-weight:600;margin:22px 0 7px;color:var(--cyan);font-family:var(--mono)}
+.md p{margin:12px 0}
+.md ul,.md ol{margin:12px 0;padding-left:28px}
+.md li{margin:5px 0}.md li::marker{color:var(--phos)}
+.md a{color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent}
 .md a:hover{text-decoration:underline;text-shadow:0 0 8px rgba(103,232,249,.4)}
 .md a.wl{border-bottom:1px dashed rgba(126,240,178,.35);color:var(--phos)}
 .md span.wl-x{color:var(--faint);cursor:default}
-.md code{font-family:var(--mono);font-size:.9em;background:var(--raised);border:1px solid var(--border);
+.md strong,.md b{color:var(--text);font-weight:650}
+.md code{font-family:var(--mono);font-size:.88em;background:var(--raised);border:1px solid var(--border);
   border-radius:3px;padding:1px 6px;color:var(--amber)}
 .md pre{background:#050507;border:1px solid var(--border);border-radius:var(--radius);
-  padding:14px 16px;overflow-x:auto;margin:16px 0}
-.md pre code{background:none;border:none;padding:0;color:var(--phos);font-size:12.3px;line-height:1.55;text-shadow:0 0 6px rgba(126,240,178,.25)}
+  padding:14px 16px;overflow-x:auto;margin:18px 0}
+.md pre code{background:none;border:none;padding:0;color:var(--phos);font-size:13.5px;line-height:1.6;text-shadow:0 0 6px rgba(126,240,178,.25)}
 .md blockquote{border-left:2px solid var(--phos);background:rgba(126,240,178,.05);
-  padding:10px 18px;border-radius:0 3px 3px 0;margin:16px 0;color:var(--muted)}
-.md blockquote p{margin:4px 0}
-.md hr{border:none;border-top:1px dashed var(--border-strong);margin:30px 0}
-.md table{border-collapse:collapse;margin:16px 0;width:100%;font-size:12.5px}
+  padding:10px 18px;border-radius:0 3px 3px 0;margin:18px 0;color:var(--muted);font-size:15px}
+.md blockquote p{margin:5px 0}
+.md hr{border:none;border-top:1px dashed var(--border-strong);margin:32px 0}
+.md table{border-collapse:collapse;margin:18px 0;width:100%;font-size:14px}
 .md th{background:var(--raised);font-weight:600;text-align:left;color:var(--cyan)}
-.md th,.md td{border:1px solid var(--border);padding:6px 11px}
+.md th,.md td{border:1px solid var(--border);padding:7px 12px;line-height:1.5}
 .md tr:hover td{background:var(--hover)}
 .md img{max-width:100%;border-radius:var(--radius);border:1px solid var(--border)}
 .md input[type=checkbox]{accent-color:var(--phos);margin-right:7px;transform:translateY(1px)}
