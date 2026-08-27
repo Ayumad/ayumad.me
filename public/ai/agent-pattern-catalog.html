@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="02 Agents and Harnesses/What Is an Agent · 02 Agents and Harnesses/Agent Harness · ReAct · plannerexecutor · criticreviewer · humaninloop · skill loading · chec">
+<title>Agent pattern catalog — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/agent-pattern-catalog</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/glossary" title="Glossary">←</a><a class="tb-btn" rel="next" href="/ai/acronyms" title="Acronyms">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Agent pattern catalog</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, patterns, reference</span></div>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Shape</th>
+<th>Use when</th>
+<th>Primary failure mode</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Single call</td>
+<td>model → answer</td>
+<td>Fixed transformation</td>
+<td>Unsupported confidence</td>
+</tr>
+<tr>
+<td>Prompt chain</td>
+<td>A → B → C</td>
+<td>Known stages</td>
+<td>Brittle handoff / latency</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>classify → specialist</td>
+<td>Clear task classes</td>
+<td>Misrouting</td>
+</tr>
+<tr>
+<td>Parallel fan-out</td>
+<td>A → [B,C,D]</td>
+<td>Independent work</td>
+<td>Cost and merge conflict</td>
+</tr>
+<tr>
+<td>Map-reduce</td>
+<td>map items → combine</td>
+<td>Many similar records</td>
+<td>Weak aggregation</td>
+</tr>
+<tr>
+<td>ReAct</td>
+<td>reason ↔ act</td>
+<td>Tool-driven uncertainty</td>
+<td>Drift or repeated action</td>
+</tr>
+<tr>
+<td>Planner-executor</td>
+<td>plan → execute</td>
+<td>Long, decomposable work</td>
+<td>Stale plan</td>
+</tr>
+<tr>
+<td>Evaluator-optimizer</td>
+<td>draft ↔ critic</td>
+<td>Checkable quality</td>
+<td>Infinite loop / correlated judge</td>
+</tr>
+<tr>
+<td>Supervisor-workers</td>
+<td>manager → specialists</td>
+<td>Real specialization</td>
+<td>Coordination overhead</td>
+</tr>
+<tr>
+<td>Handoff</td>
+<td>agent → agent</td>
+<td>Conversation ownership changes</td>
+<td>Lost context / authority confusion</td>
+</tr>
+<tr>
+<td>Blackboard</td>
+<td>agents ↔ shared state</td>
+<td>Many collaborators</td>
+<td>Stale/conflicting state</td>
+</tr>
+<tr>
+<td>Debate or voting</td>
+<td>candidates → judge/vote</td>
+<td>Independent views add value</td>
+<td>False consensus</td>
+</tr>
+<tr>
+<td>Human gate</td>
+<td>agent → approval → action</td>
+<td>Consequential execution</td>
+<td>Friction or rubber-stamping</td>
+</tr>
+<tr>
+<td>Skill/tool search</td>
+<td>task → retrieve capability</td>
+<td>Large catalog</td>
+<td>Discovery mistaken for permission</td>
+</tr>
+<tr>
+<td>Agentic RAG</td>
+<td>search ↔ evaluate ↔ search</td>
+<td>Retrieval uncertainty</td>
+<td>Endless search / weak evidence</td>
+</tr>
+</tbody></table>
+<p>For each selected pattern, document: the problem, topology, input/output contract, when not to use it, permissions, costs, stop condition, expected failures, and evaluation cases. See <a href="/ai/workflow-patterns">Workflow Patterns</a> and <a href="/ai/mode-and-topology-selector">Mode and Topology Selector</a>.</p>
+<blockquote>
+<p><strong>Cross-reference:</strong> Workflow patterns are detailed in <a href="/ai/workflow-patterns">Workflow Patterns</a> — this catalog is the reference index (no duplication of pattern details).</p>
+</blockquote>
+<h2>Agent patterns</h2>
+<p><a href="/ai/what-is-an-agent">What Is an Agent</a> · <a href="/ai/agent-harness">Agent Harness</a> · ReAct · planner-executor · critic-reviewer · human-in-loop · skill loading · checkpoint/resume.</p>
+<h2>Workflow patterns</h2>
+<p><a href="/ai/workflow-patterns">Workflow Patterns</a> · sequence · router · branch · parallel fan-out/fan-in · map-reduce · evaluator-optimizer · event-driven · durable workflow.</p>
+<h2>Multi-agent patterns</h2>
+<p><a href="/ai/multi-agent-systems">Multi-Agent Systems</a> · supervisor-workers · specialist handoff · hierarchy · swarm · blackboard · debate · jury · quorum.</p>
+<h2>Knowledge patterns</h2>
+<p><a href="/ai/retrieval-augmented-generation-rag">RAG</a> · semantic retrieval · BM25 · hybrid retrieval · reranking · query decomposition · agentic RAG · knowledge graph.</p>
+<h2>Safety patterns</h2>
+<p><a href="/ai/security-jailbreaks-and-prompt-injection">Security and Jailbreaking</a> · least privilege · approval gate · sandbox · provenance/taint labels · credential broker · kill switch · audit trail.</p>
+<h2>Provenance and further reading</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Canonical reference</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Single call · prompt chain · router · parallel fan-out · evaluator-optimizer · supervisor-workers</td>
+<td>Anthropic, &quot;Building effective agents&quot; (Dec 2024) — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a></td>
+</tr>
+<tr>
+<td>ReAct</td>
+<td>Yao et al., 2022 — <a href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a></td>
+</tr>
+<tr>
+<td>Planner-executor</td>
+<td>Weng, &quot;LLM Powered Autonomous Agents&quot; (2023) — <a href="https://lilianweng.github.io/posts/2023-06-23-agent/">https://lilianweng.github.io/posts/2023-06-23-agent/</a> — planning and reflection lineage</td>
+</tr>
+<tr>
+<td>Debate or voting</td>
+<td>Song et al., &quot;More Agents Is All You Need&quot; (2024) — <a href="https://arxiv.org/abs/2402.05120">https://arxiv.org/abs/2402.05120</a></td>
+</tr>
+<tr>
+<td>Human gate · handoff</td>
+<td>OpenAI, &quot;A practical guide to building agents&quot; (2025) — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a> — guardrails and handoffs</td>
+</tr>
+<tr>
+<td>Agentic RAG</td>
+<td>Lewis et al. (2020) — <a href="https://arxiv.org/abs/2005.11401">https://arxiv.org/abs/2005.11401</a>; Anthropic, &quot;Introducing Contextual Retrieval&quot; (2024) — <a href="https://www.anthropic.com/engineering/contextual-retrieval">https://www.anthropic.com/engineering/contextual-retrieval</a></td>
+</tr>
+<tr>
+<td>Skill/tool search</td>
+<td>Anthropic, &quot;Effective context engineering for AI agents&quot; (2025) — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a> — minimal viable tool sets</td>
+</tr>
+</tbody></table>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/glossary">Glossary</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/acronyms">Acronyms</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/glossary">← Glossary</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/acronyms">Acronyms →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 11 Glossary and Sources/Pattern Catalog.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

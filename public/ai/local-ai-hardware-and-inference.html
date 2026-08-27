@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Local model viability is governed first by usable model memory, then by memory bandwidth, runtime support, context/KV-cache headroom, and only then by headline ">
+<title>Local AI hardware and inference — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/local-ai-hardware-and-inference</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/structured-outputs-and-tool-calling" title="Structured Outputs and Tool Calling">←</a><a class="tb-btn" rel="next" href="/ai/fine-tuning-decision-framework" title="Fine-Tuning Decision Framework">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Local AI hardware and inference</h1>
+<div class="fm"><span><b>status</b> current-snapshot</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, hardware, inference, local-ai, quantization</span></div>
+<blockquote>
+<p>[!summary] The gist
+Running a model locally means your machine needs enough memory to hold it and enough bandwidth to read it for every word it generates. A setup that barely loads a model may still be too slow once you add context, a vision encoder, or a second user. This note walks through memory, bandwidth, and hardware trade-offs.</p>
+</blockquote>
+<hr>
+<h2>Start with usable memory</h2>
+<p>Parameter count is a storage problem before it is a compute problem. A dense 27B model needs roughly 54 GB at FP16, 27 GB at 8-bit, and 13.5 GB of raw 4-bit weights. Quantization metadata, the KV cache, runtime buffers, and platform overhead mean the practical Q4 requirement is higher—often roughly 16–20 GB.</p>
+<table>
+<thead>
+<tr>
+<th>Dense model class</th>
+<th align="right">Approximate practical Q4 memory</th>
+<th>Comfortable tier</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1–3B</td>
+<td align="right">2–4 GB</td>
+<td>Modern CPU or small GPU</td>
+</tr>
+<tr>
+<td>7–8B</td>
+<td align="right">5–7 GB</td>
+<td>8 GB GPU</td>
+</tr>
+<tr>
+<td>12–14B</td>
+<td align="right">8–11 GB</td>
+<td>12–16 GB GPU</td>
+</tr>
+<tr>
+<td>20–27B</td>
+<td align="right">14–20 GB</td>
+<td>24 GB preferred</td>
+</tr>
+<tr>
+<td>30–32B</td>
+<td align="right">19–24 GB</td>
+<td>24–32 GB</td>
+</tr>
+<tr>
+<td>70–72B</td>
+<td align="right">40–50 GB</td>
+<td>48–64 GB</td>
+</tr>
+</tbody></table>
+<p>Treat these as planning ranges, not compatibility guarantees. Architecture, quantizer, context length, batching, and multimodal components change them materially.</p>
+<h2>Bandwidth, compute, and memory architecture</h2>
+<p>Interactive decoding is often memory-bandwidth-bound: each generated token reads a large share of the weights. More compute does not rescue a model that cannot be fed efficiently. Prompt prefill, large batches, image/video generation, and training make matrix compute more important.</p>
+<p>Discrete GPUs provide high-bandwidth VRAM but limited capacity. CPU/RAM offload can make a too-large model run, but PCIe is vastly slower than VRAM and usually reduces tokens per second. Unified-memory systems trade some peak speed for a large shared memory pool: they can fit models that a 24–32 GB card cannot. Use a GPU platform for mature runtime support as well as hardware; CUDA, Metal, HIP/ROCm, Vulkan, and CPU backends each change what is practical.</p>
+<h2>Quantization, context, and MoE</h2>
+<p>Lower precision reduces memory use and bandwidth demand, but may affect quality and supported kernels. The KV cache grows with context length, sequence count, and architecture, so reserve headroom instead of comparing model weights to total VRAM.</p>
+<p>For mixture-of-experts models, total parameters determine storage while active parameters more closely determine per-token compute. A model can therefore be quick once loaded yet too large to fit on a personal machine.</p>
+<h2>Choose hardware from the workload</h2>
+<ol>
+<li>Define the model family, quantization, context, and concurrency target.</li>
+<li>Budget weights, KV cache, runtime overhead, and growth margin.</li>
+<li>Choose the memory architecture that fits that budget; use offload only when its latency is acceptable.</li>
+<li>Verify the runtime and kernels for the intended model, precision, and platform.</li>
+<li>Measure prompt prefill, decode speed, peak memory, and power on a representative workload.</li>
+</ol>
+<p>For inference, capacity and bandwidth lead. For LoRA/QLoRA, add activations, optimizer state, and batches. Full pretraining is a different scale of problem.</p>
+<h2>The bandwidth math</h2>
+<p>For interactive decoding, latency per token is dominated by reading weights, not math:</p>
+<pre><code class="language-text">tokens/s ≈ effective memory bandwidth ÷ (active parameters × bytes per weight)
+</code></pre>
+<p>A 70B model at 4-bit reads roughly half the bytes per token of the same model at 8-bit, so quantization directly buys tokens per second on the same hardware. This is the frame behind &quot;inference is memory-bound&quot;: compute wins on prefill, batching, and training; bandwidth wins on single-stream chat (Karpathy 2023; Huyen 2025).</p>
+<h2>What the evidence says about quantization</h2>
+<p>QLoRA&#39;s authors fine-tuned a 65B model on a single 48 GB GPU using 4-bit base weights while preserving full 16-bit-level task performance (Dettmers et al. 2023). Quantization is therefore a mature memory lever—with two caveats: quality depends on the quantizer and format used, and some low-precision kernels simply are not implemented on every platform/runtime.</p>
+<h2>Hardware in practice</h2>
+<p>Hardware platforms differ not just in raw specs but in software ecosystem maturity, which often matters more than the numbers on the spec sheet.</p>
+<ul>
+<li><strong>Apple M-series (unified memory):</strong> M2/M3/M4 Ultra with 192–512 GB unified memory can load models that no single consumer GPU fits. Memory bandwidth is high relative to power draw (M4 Ultra ~800 GB/s); the Metal/MPS backend in llama.cpp and MLX is mature. Best for developers and power users who want a single quiet machine for local inference without a GPU server.</li>
+<li><strong>NVIDIA RTX / H100 / H200:</strong> CUDA + tensor cores remain the most widely supported runtime. An RTX 4090 (24 GB, ~1,007 GB/s) fits 7–14B quantized models interactively. H100/H200 (80 GB, ~3.35 TB/s HBM3e) are the data-center workhorse—multiple can serve 70B+ models or batch many smaller ones. If you need broad kernel support and vendor tooling, NVIDIA is the default.</li>
+<li><strong>AMD MI300 (ROCm/HIP):</strong> MI300X offers 192 GB HBM3 with ~5.3 TB/s bandwidth—on paper competitive with H200 for large-model inference. ROCm support has improved but kernel coverage still lags CUDA; verify your specific model, quantization, and framework before committing.</li>
+<li><strong>CPU-only inference</strong> is acceptable when the model is small (≤7–8B quantized), latency tolerance is high (background processing, offline batch), or power/heat budgets are strict. llama.cpp on modern CPUs can sustain 10–30 tokens/s for small models, adequate for non-interactive workloads.</li>
+<li><strong>Energy note:</strong> A single H100 draws ~700 W under load; an M4 Ultra desktop peaks around 150 W. For always-on local inference, watts-per-useful-token matters more than peak throughput.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Dettmers et al., &quot;QLoRA: Efficient Finetuning of Quantized LLMs,&quot; 2023 — <a href="https://arxiv.org/abs/2305.14314">https://arxiv.org/abs/2305.14314</a></li>
+<li>Karpathy, <em>Intro to Large Language Models</em> — <a href="https://www.youtube.com/watch?v=zjkBMFhNj_g">https://www.youtube.com/watch?v=zjkBMFhNj_g</a> — the memory-bandwidth-bound decoding intuition.</li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a> — hardware and inference chapters.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="/ai/context-windows-and-inference">Context Windows and Inference</a> · <a href="/ai/fine-tuning-decision-framework">Fine-Tuning Decision Framework</a> · <a href="/ai/latency-and-cost-engineering">Latency and Cost Engineering</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/structured-outputs-and-tool-calling">Structured Outputs and Tool Calling</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/fine-tuning-decision-framework">Fine-Tuning Decision Framework</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/structured-outputs-and-tool-calling">← Structured Outputs and Tool Calling</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/fine-tuning-decision-framework">Fine-Tuning Decision Framework →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 01 Foundations/Local AI Hardware and Inference.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

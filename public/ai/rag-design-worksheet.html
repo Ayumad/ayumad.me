@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Question and users:">
+<title>RAG design worksheet — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/rag-design-worksheet</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/context-checklist" title="Context Checklist">←</a><a class="tb-btn" rel="next" href="/ai/evaluation-and-security-review" title="Evaluation and Security Review">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">RAG design worksheet</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, rag, retrieval, design</span></div>
+<blockquote>
+<p>[!summary] The gist
+RAG bolts real sources onto a model so answers come with evidence instead of guesses. This worksheet walks every design decision — ingestion, chunking, indexing, retrieval, evaluation — with blanks to fill in and a worked example to check against. Catch the gaps before they become bugs.</p>
+</blockquote>
+<hr>
+<p><strong>Question and users:</strong></p>
+<p><strong>Sources and authority:</strong></p>
+<p><strong>Freshness and ACL requirements:</strong></p>
+<p><strong>Ingestion:</strong> formats, parsing, OCR, normalization, metadata, deduplication.</p>
+<p><strong>Chunking:</strong> semantic boundaries, overlap, maximum size, parent/child relationships.</p>
+<p><strong>Indexing:</strong> embedding model, keyword index, vector store, metadata filters.</p>
+<p><strong>Querying:</strong> rewrite, decomposition, hybrid retrieval, candidate count, reranking.</p>
+<p><strong>Context assembly:</strong> ordering, citations, conflict handling, token budget, untrusted-data labels.</p>
+<p><strong>Failure cases:</strong> missing evidence, stale evidence, contradictory sources, poisoned content, ACL leak, prompt injection.</p>
+<p><strong>Evaluation:</strong> retrieval recall/precision, groundedness, citation correctness, answer quality, latency, cost.</p>
+<p><strong>Operations:</strong> re-index schedule, deletion, access revocation, drift monitoring, rollback.</p>
+<h2>Worked example: internal support KB</h2>
+<p><strong>Question and users:</strong> Front-line support agents need answers from a 50K-doc internal knowledge base (confluence + Jira tickets). Users are non-technical support reps; answers must be cited.</p>
+<p><strong>Sources and authority:</strong> Confluence (authoritative), Jira tickets (supplementary, stale after 6 months), Slack threads (untrusted, never cite directly). Authority hierarchy: Confluence &gt; Jira &gt; Slack.</p>
+<p><strong>Freshness and ACL:</strong> Confluence pages re-indexed hourly. Jira tickets indexed on close. ACL: support team sees everything; engineering-only pages restricted via metadata filter.</p>
+<p><strong>Ingestion:</strong> Confluence export (HTML → markdown via pandoc). Jira: API export to JSON, extract description + comments. Slack: excluded from index. Deduplication via URL hash.</p>
+<p><strong>Chunking:</strong> Recursive splitter, 512 tokens, 15% overlap. FAQ pages: 256 tokens. Long architecture docs: 1024 tokens with parent/child (parent = section header, child = chunk).</p>
+<p><strong>Indexing:</strong> Embedding model: <code>text-embedding-3-small</code>. Vector store: Pinecone (managed, ACL filters). Keyword index: BM25 via Elasticsearch. Metadata filters: <code>source</code>, <code>acl_group</code>, <code>last_updated</code>.</p>
+<p><strong>Querying:</strong> Rewrite: expand acronyms (&quot;KB&quot; → &quot;knowledge base&quot;). Decomposition: complex questions split into sub-questions. Hybrid retrieval: BM25 + dense via RRF (k=60). Candidate count: top-20 per retrieval method. Reranking: Cohere rerank-v3.0.</p>
+<p><strong>Context assembly:</strong> Top-5 reranked chunks. Citations inline. Conflict handling: prefer Confluence over Jira. Token budget: 4K tokens for context. Unttrusted data labels on Jira chunks.</p>
+<p><strong>Failure cases:</strong> Missing evidence → &quot;I don&#39;t have enough information.&quot; Stale evidence → flag last-updated date. Poisoned content → ACL filter blocks. Prompt injection → input guardrails.</p>
+<p><strong>Evaluation:</strong> Retrieval recall@10 &gt; 85%. Groundedness &gt; 90%. Citation correctness &gt; 95%. Latency p50 &lt; 2s. Cost &lt; $0.01/query.</p>
+<p><strong>Operations:</strong> Re-index Confluence hourly. Jira on close. Weekly retrieval drift benchmark. Schema hashing on MCP tools. Rollback: revert to previous index snapshot.</p>
+<blockquote>
+<p><strong>Canonical source:</strong> The fill-in version of this worksheet lives in <a href="/ai/ai-engineering-template-library">Template Library</a>. This note is the explanation and worked example.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/context-checklist">Context Checklist</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/evaluation-and-security-review">Evaluation and Security Review</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/context-checklist">← Context Checklist</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/evaluation-and-security-review">Evaluation and Security Review →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 09 Playbooks/RAG Design Worksheet.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

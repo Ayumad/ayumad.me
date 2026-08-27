@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A practical method for turning an idea into a discoverable project context package: a PRD for what to build, repository instructions for how to work, and execut">
+<title>Project initialization and instruction files — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/project-initialization-and-instruction-files</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/large-project-navigation-and-context-scaling" title="Large Project Navigation and Context Scaling">←</a><a class="tb-btn" rel="next" href="/ai/behavior-and-communication-controls" title="Behavior and Communication Controls">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Project initialization and instruction files</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, project-initialization, prd, instruction-files, agents-md, specifications</span></div>
+<blockquote>
+<p>[!summary] The gist
+Before an agent changes a project, hand it a small, inspectable context package: a PRD for what to build, repo instructions for how to work, and verifiable facts for done. This note covers the artifact map, a safe initialization sequence, and templates for PRDs and instruction files.</p>
+</blockquote>
+<hr>
+<h2>The artifact map</h2>
+<p>Use the smallest set of files that gives the project a reliable shared memory. Names vary by ecosystem; purpose matters more than filename.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Answers</th>
+<th>Keep here</th>
+<th>Do not use it for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PRD or feature specification</td>
+<td>Why are we building this, for whom, and what counts as success?</td>
+<td>Problem, goals, non-goals, requirements, acceptance criteria, risks, rollout</td>
+<td>Shell commands, temporary task state, or hidden policy</td>
+</tr>
+<tr>
+<td><code>AGENTS.md</code> / <code>CLAUDE.md</code> / <code>GEMINI.md</code></td>
+<td>How should an agent work in this repository or directory?</td>
+<td>Architecture map, commands, conventions, safety rules, verification, reporting</td>
+<td>The complete product plan or a security boundary</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>How does a human understand and use this project?</td>
+<td>Purpose, setup, basic usage, links to deeper docs</td>
+<td>Agent-only policy or a copy of every implementation detail</td>
+</tr>
+<tr>
+<td><code>CONTRIBUTING.md</code></td>
+<td>How do people propose, test, review, and merge changes?</td>
+<td>Contribution flow, style checks, review expectations, release rules</td>
+<td>Runtime authorization</td>
+</tr>
+<tr>
+<td>Architecture decision record</td>
+<td>Why was a consequential design choice made?</td>
+<td>Decision, alternatives, consequences, date, status</td>
+<td>Current task instructions that will expire soon</td>
+</tr>
+<tr>
+<td>Project manifest and config</td>
+<td>What is executable truth?</td>
+<td>Dependencies, scripts, tool versions, build and test configuration</td>
+<td>Aspirational requirements that are not implemented</td>
+</tr>
+<tr>
+<td><code>PLAN.md</code> / task record</td>
+<td>What is the current work state?</td>
+<td>Steps, decisions, evidence, blockers, next action</td>
+<td>Durable repository policy</td>
+</tr>
+<tr>
+<td><code>STYLE.md</code> or behavior profile</td>
+<td>How should user-facing communication be written?</td>
+<td>Audience, tone, terminology, structure, examples, exclusions</td>
+<td>Safety policy or product requirements</td>
+</tr>
+</tbody></table>
+<p>The same repository may combine some of these. Preserve the distinctions even when the files are combined: requirements, working instructions, executable facts, and temporary state have different owners and lifetimes.</p>
+<h2>A safe initialization sequence</h2>
+<ol>
+<li><strong>Inventory the project.</strong> Identify the repository root, existing instruction files, manifests, test commands, deployment boundaries, generated files, and sensitive paths. Read existing guidance before adding a competing version.</li>
+<li><strong>Write the PRD before the implementation plan.</strong> Agree on the user problem, desired outcome, non-goals, constraints, risks, and observable acceptance criteria. A PRD is a decision record, not a list of imagined implementation steps.</li>
+<li><strong>Map the sources of truth.</strong> Point to the code, schema, API contract, design, or operational dashboard that can verify each important requirement. Mark assumptions and unresolved questions.</li>
+<li><strong>Write repository instructions.</strong> Put stable architecture, commands, conventions, safety rules, and definition-of-done guidance in the nearest applicable instruction file. Keep instructions short enough to load and specific enough to test.</li>
+<li><strong>Create the human entry point.</strong> Update the README with purpose, setup, first successful run, and links to the PRD, architecture decisions, contribution guidance, and agent instructions.</li>
+<li><strong>Record consequential decisions.</strong> Use an ADR when a choice affects interfaces, data, security, deployment, cost, or reversibility. Link it from the relevant PRD or README.</li>
+<li><strong>Create current task state.</strong> Turn the approved PRD into a bounded plan with dependencies, evidence, approvals, and a next action. Keep it separate from permanent instructions.</li>
+<li><strong>Run a discovery test.</strong> Ask a fresh agent to locate the project instructions, explain the architecture, identify the right verification command, and list what it is not authorized to do. Correct ambiguity before granting write access.</li>
+</ol>
+<h2>PRD template</h2>
+<pre><code class="language-text"># &lt;Feature or product name&gt;
+
+Status: draft | approved | in progress | shipped | retired
+Owner: &lt;person or team&gt;
+Last updated: &lt;date&gt;
+
+## Problem
+Who has what problem, in what situation, and what evidence supports it?
+
+## Goal
+What user-visible or operational outcome should exist?
+
+## Non-goals
+What related work is explicitly out of scope for this version?
+
+## Users and workflows
+- Primary user:
+- Trigger:
+- Main flow:
+- Important alternate or failure flows:
+
+## Requirements
+- Functional:
+- Data and interfaces:
+- Performance and cost:
+- Privacy and security:
+- Accessibility or localization:
+
+## Constraints and dependencies
+- Must remain true:
+- Dependencies:
+- Authority or approval boundaries:
+- Compatibility requirements:
+
+## Definition of done
+- Observable acceptance criterion:
+- Observable acceptance criterion:
+
+## Verification
+- Tests or checks:
+- Evidence to retain:
+- Reviewers or approval gates:
+
+## Rollout and recovery
+- Release strategy:
+- Monitoring:
+- Rollback or migration path:
+
+## Open questions and risks
+- Question or risk:
+- Owner and next decision date:
+</code></pre>
+<p>Write acceptance criteria as observable facts. “Improve search” is a goal; “for the test corpus, the top five relevant documents contain the answer in at least four cases, with citations” is testable.</p>
+<h2>Repository instruction template</h2>
+<pre><code class="language-text"># Agent instructions for &lt;repository or directory&gt;
+
+## Scope and precedence
+These instructions apply to &lt;path&gt;. More specific instructions may add constraints; task-specific instructions may define the current objective but cannot override safety policy or authorization.
+
+## Project map
+- &lt;path&gt;: &lt;responsibility&gt;
+- &lt;path&gt;: &lt;responsibility&gt;
+
+## Setup and commands
+- Install:
+- Run locally:
+- Test:
+- Lint/typecheck:
+- Build:
+
+## Working conventions
+- Follow:
+- Preserve:
+- Generated files:
+- Naming or dependency rules:
+
+## Safety boundaries
+- Read-only by default:
+- Ask before:
+- Never:
+- Sensitive paths or data:
+
+## Verification and reporting
+- Definition of done:
+- Required checks:
+- Report changed files, evidence, assumptions, failures, and unresolved risks.
+</code></pre>
+<p>Do not claim a hierarchy that the harness does not implement. If multiple instruction files are supported, document the actual discovery and precedence rules and test them with a harmless conflicting example. A nearer file should narrow scope, not silently weaken a broader safety rule.</p>
+<h2>Instruction-file precedence and ecosystem differences</h2>
+<p>When multiple instruction files exist in a project, the agent must know which one wins. Precedence rules vary by tool:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Tool ecosystem</th>
+<th>Scope</th>
+<th>Precedence rule</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AGENTS.md</code></td>
+<td>Community standard (Linux Foundation stewardship). Works across Claude Code, Gemini CLI, Cursor, Codex, Jules, Amp, Factory.</td>
+<td>Repository-wide and per-directory</td>
+<td>Nested files override parent: closest <code>AGENTS.md</code> to the working directory wins. Root-level file is the fallback.</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code></td>
+<td>Claude Code</td>
+<td>Project root (primary context mechanism)</td>
+<td>Single file at project root; Claude Code reads it automatically on startup. Directory-level variants are supported.</td>
+</tr>
+<tr>
+<td><code>GEMINI.md</code></td>
+<td>Gemini CLI</td>
+<td>Project-level and directory-level</td>
+<td>Technical hierarchy: project-level → directory-level. Gemini CLI also reads <code>AGENTS.md</code> for compatibility, so both can coexist.</td>
+</tr>
+</tbody></table>
+<p><strong>Key ecosystem differences:</strong></p>
+<ul>
+<li><strong>AGENTS.md</strong> has no required fields. Sections typically cover: project overview, build/test commands, code style, testing instructions, security. Can be updated anytime. Symlink migration for repos with existing <code>AGENT.md</code>: <code>mv AGENT.md AGENTS.md &amp;&amp; ln -s AGENTS.md AGENT.md</code>.</li>
+<li><strong>CLAUDE.md</strong> is Claude Code&#39;s primary context mechanism. It is read at project root and provides stable instructions for how Claude Code should operate in the repository.</li>
+<li><strong>GEMINI.md</strong> is Gemini CLI&#39;s context file. Gemini CLI is open-source (Apache 2.0), supports 60 req/min free, 1M token context, MCP support, checkpointing, headless mode, sandboxing, subagents, and token caching. It reads both <code>GEMINI.md</code> and <code>AGENTS.md</code>.</li>
+</ul>
+<p><strong>Precedence principle:</strong> when a nearer file narrows scope, it should not silently weaken a broader safety rule. Document the actual precedence and test it with a conflicting example before granting write access.</p>
+<h2>Quality checks</h2>
+<ul>
+<li>Every requirement has an owner, source of truth, and verification path.</li>
+<li>The PRD distinguishes goals from non-goals and stable requirements from open questions.</li>
+<li>Instructions describe the project as it exists, not an imagined architecture.</li>
+<li>Commands are copied from executable project configuration and have been run successfully.</li>
+<li>Safety rules identify approval boundaries and do not rely on the model merely obeying prose.</li>
+<li>Temporary plans, incidents, and bugs are not promoted into permanent repository instructions without review.</li>
+<li>A fresh agent can discover the right files and explain what it may and may not do.</li>
+<li>Changes to the PRD or instruction files are reviewed like code because they change future agent behavior.</li>
+</ul>
+<h2>Common failure modes</h2>
+<ul>
+<li><strong>The mega-instruction file:</strong> everything from product strategy to a one-off bug is loaded on every task. Split by scope and lifetime.</li>
+<li><strong>The stale command list:</strong> instructions name scripts that the manifest no longer provides. Verify commands continuously.</li>
+<li><strong>Policy by suggestion:</strong> “never deploy” in prose does not replace deployment credentials, environment separation, or approval gates.</li>
+<li><strong>Requirements without tests:</strong> a polished PRD that cannot produce evidence is only an aspiration.</li>
+<li><strong>Instruction drift:</strong> architecture changes while <code>AGENTS.md</code> remains authoritative-looking. Assign ownership and review dates.</li>
+<li><strong>Conflicting authorities:</strong> multiple files give different commands or rules. Define precedence, remove duplicates, and add a discovery test.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>AGENTS.md official (Linux Foundation, 2026) — <a href="https://agents.md/">https://agents.md/</a> — community standard, nested file precedence, no required fields, symlink migration.</li>
+<li>Gemini CLI GitHub (Google, 2026) — <a href="https://github.com/google-gemini/gemini-cli">https://github.com/google-gemini/gemini-cli</a> — GEMINI.md mechanism, AGENTS.md compatibility, open-source Apache 2.0.</li>
+<li>Gemini CLI Documentation — <a href="https://geminicli.com/docs/">https://geminicli.com/docs/</a> — technical hierarchy, directory-level overrides, token caching.</li>
+<li>Anthropic, &quot;Effective harnesses for long-running agents,&quot; Nov 2025 — <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents</a> — initializer+coding-agent pattern, progress files for multi-session continuity.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="/ai/context-engineering">Context Engineering</a> · <a href="/ai/large-project-navigation-and-context-scaling">Large Project Navigation and Context Scaling</a> · <a href="/ai/prompting-for-agents">Prompting for Agents</a> · <a href="/ai/planning-state-and-persistence">Planning State and Persistence</a> · <a href="/ai/agent-harness">Agent Harness</a> · <a href="/ai/agent-task-template">Prompt Template</a> · <a href="/ai/ai-engineering-template-library">Template Library</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/large-project-navigation-and-context-scaling">Large Project Navigation and Context Scaling</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/behavior-and-communication-controls">Behavior and Communication Controls</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/large-project-navigation-and-context-scaling">← Large Project Navigation and Context Scaling</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/behavior-and-communication-controls">Behavior and Communication Controls →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 03 Context Knowledge Memory/Project Initialization and Instruction Files.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

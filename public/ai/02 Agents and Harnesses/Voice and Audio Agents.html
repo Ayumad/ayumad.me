@@ -2,96 +2,9 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Voice agents are real-time systems: capture, turn detection, transcription or audio reasoning, response generation, synthesis, interruption handling, and safe a">
 <title>Voice and audio agents — AI Engineering</title>
-<link rel="stylesheet" href="/ai/ai.css">
+<meta http-equiv="refresh" content="0; url=https://ayumad.me/ai/voice-and-audio-agents">
+<link rel="canonical" href="https://ayumad.me/ai/voice-and-audio-agents">
 </head><body>
-<header class="topbar">
-  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
-  <span class="crumbs">~/ai/02 Agents and Harnesses/Voice and Audio Agents</span>
-  <nav class="tb-nav" aria-label="Note navigation">
-    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
-    <a class="tb-btn" rel="prev" href="/ai/02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html" title="Vision and Multimodal Input Engineering">←</a><a class="tb-btn" rel="next" href="/ai/02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html" title="Computer-Use and Browser Agents">→</a>
-  </nav>
-  <div class="tb-search" role="search">
-    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
-    <div id="ai-panel" hidden></div>
-  </div>
-  <span id="status">66 notes<kbd>/</kbd></span>
-</header>
-<div class="page">
-<main>
-<article class="md">
-<h1 class="crt-title">Voice and audio agents</h1>
-<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, voice, audio, realtime, multimodal</span></div>
-<blockquote>
-<p>[!summary] The gist
-Voice agents are real-time systems: capture, turn detection, transcription or audio reasoning, response generation, synthesis, interruption handling, and safe actions must work as one loop.
-This note explains the machinery that makes voice interactions feel smooth and natural, from latency budgets to barge-in handling.</p>
-</blockquote>
-<hr>
-<p>Voice is not simply text chat with speech-to-text and text-to-speech attached. The interface needs low perceived latency, barge-in handling, turn detection, noise tolerance, and clear confirmation before actions that would be consequential in text as well.</p>
-<h2>Reference architecture</h2>
-<pre><code class="language-text">microphone → VAD/turn detection → transcription or audio model → agent/harness
-                                                            ↓
-speaker ← synthesis/streaming ← response and action state ←┘
-</code></pre>
-<p>Voice activity detection (VAD) determines when someone starts or stops speaking; poor turn detection makes even a capable model feel rude or slow. Stream partial recognition and response where useful, but distinguish provisional text from a final committed action.</p>
-<h2>Design decisions</h2>
-<ul>
-<li>Use transcription-first when text tools, auditing, and deterministic routing dominate.</li>
-<li>Use native audio reasoning when prosody, interruption, or nonverbal audio is central and the runtime supports it.</li>
-<li>Keep a transcript, timestamps, confidence/uncertainty, and action state for review.</li>
-<li>Let the user interrupt playback; cancel downstream work safely.</li>
-<li>Confirm names, numbers, destinations, and irreversible intent rather than guessing from noisy audio.</li>
-</ul>
-<p>Measure time to first audible response, end-to-end turn latency, interruption success, transcription/action accuracy, and escalation rate. For calls or assistants, disclose recording and retention policy and protect audio as sensitive input.</p>
-<h2>Latency budget</h2>
-<p>Conversational voice agents require an end-to-end latency budget of ~300–800ms for responsive interaction. This budget spans the entire pipeline:</p>
-<ul>
-<li><strong>VAD + turn detection:</strong> &lt;50ms (Silero VAD processes a 30ms audio chunk in &lt;1ms on a single CPU thread).</li>
-<li><strong>Transcription or audio reasoning:</strong> 100–300ms depending on provider and model.</li>
-<li><strong>LLM inference:</strong> 100–300ms for short responses.</li>
-<li><strong>TTS synthesis:</strong> 75–150ms for first audible token (ElevenLabs Flash: 75ms).</li>
-<li><strong>Network round-trips:</strong> 20–50ms per hop.</li>
-</ul>
-<p>If any stage exceeds its budget, the conversation feels sluggish. Synchronous tool calls are the most common bottleneck—OpenAI recommends a spoken preamble (&quot;I&#39;ll check that now&quot;) to cover the latency while the tool executes.</p>
-<h2>Provider landscape</h2>
-<p><strong>OpenAI Realtime API</strong> maintains a persistent WebSocket or WebRTC session. Tools are declared in <code>session.update</code>; the model outputs <code>function_call</code> on <code>response.done</code>; the client must reply with <code>function_call_output</code> + <code>response.create</code>. Forgetting <code>response.create</code> after a tool call is the most common bug—the model freezes silently. VAD modes include <code>server_vad</code> (silence-based) and <code>semantic_vad</code> (with an <code>eagerness</code> parameter for interruptibility). Cost is token-based, rising with prompt/context accumulation.</p>
-<p><strong>Deepgram</strong> offers connection-time pricing ($0.05/min on Growth tier), predictable regardless of prompt size. The Flux model is purpose-built for real-time turn-taking and native interruption handling. Unlike token-based pricing, Deepgram&#39;s cost is stable across long conversations with large system prompts.</p>
-<p><strong>ElevenLabs Flash TTS</strong> achieves 75ms latency at 50% lower cost than the flagship model, optimized specifically for voice agents. WebSocket streaming provides word-level timestamps and interruption handling, enabling the agent to cut off synthesis mid-word when the user barge-ins.</p>
-<p><strong>Whisper</strong> (OpenAI) is an encoder-decoder Transformer trained on 680K hours of weakly-supervised speech. It processes 30-second chunks via log-Mel spectrogram and achieves 50% fewer errors than specialized models in zero-shot settings. However, Whisper was not designed for streaming—chunking workarounds introduce latency and boundary artifacts. Dictation targets &lt;3s latency; conversational targets &lt;1s.</p>
-<h2>Voice activity detection</h2>
-<p>VAD determines when someone starts or stops speaking; poor turn detection makes even a capable model feel rude or slow.</p>
-<p><strong>Silero VAD</strong> is the dominant open-source option: &lt;1ms processing per 30ms audio chunk on a single CPU thread, ~2MB JIT model, supports 6000+ languages, works at 8kHz and 16kHz sampling rates, MIT licensed with zero telemetry. It is lightweight enough to run on-device alongside the main agent.</p>
-<p>OpenAI&#39;s Realtime API offers two built-in VAD modes: <code>server_vad</code> (silence-duration threshold) and <code>semantic_vad</code> (model-based, with an <code>eagerness</code> parameter controlling how quickly the model considers a pause as a turn boundary).</p>
-<h2>Barge-in and interruption</h2>
-<p>Users will talk over the agent. Handling this gracefully requires:</p>
-<ul>
-<li><strong>OpenAI:</strong> <code>response.cancel</code> + <code>conversation.item.truncate</code> to stop in-flight synthesis and discard the truncated audio.</li>
-<li><strong>Deepgram Flux:</strong> handles interruption natively—the model detects the user&#39;s voice and stops generating.</li>
-<li><strong>Amazon Nova Sonic:</strong> supports async tool calling, allowing the agent to keep talking while a slow retrieval resolves in the background, then seamlessly incorporate the result.</li>
-</ul>
-<p>Without barge-in handling, the agent continues speaking after the user has already moved on, creating a frustrating experience. Stream partial recognition and response where useful, but distinguish provisional text from a final committed action.</p>
-<h2>Sources and further reading</h2>
-<ul>
-<li>Silero VAD GitHub, 2024 — <a href="https://github.com/snakers4/silero-vad">https://github.com/snakers4/silero-vad</a> — VAD model, benchmarks, MIT license.</li>
-<li>Deepgram, &quot;Deepgram vs OpenAI Realtime API,&quot; Jul 2026 — <a href="https://deepgram.com/learn/deepgram-voice-agent-api-vs-openai-realtime-api">https://deepgram.com/learn/deepgram-voice-agent-api-vs-openai-realtime-api</a> — pricing comparison, Flux model, interruption handling.</li>
-<li>Zylos, &quot;Mid-Conversation Tool Calling in Realtime Voice Agents,&quot; Jul 2026 — <a href="https://zylos.ai/research/2026-07-18-realtime-voice-agent-tool-calling/">https://zylos.ai/research/2026-07-18-realtime-voice-agent-tool-calling/</a> — tool calling patterns, response.create bug, barge-in.</li>
-<li>OpenAI, &quot;Introducing Whisper,&quot; Sep 2022 — <a href="https://openai.com/index/whisper/">https://openai.com/index/whisper/</a> — architecture, training data, streaming limitations.</li>
-</ul>
-<p>All links verified 2026-08-27.</p>
-<p><a href="/ai/02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a> · <a href="/ai/07%20Operations%20and%20Economics/Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a> · <a href="/ai/06%20Reliability%20and%20Security/Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a></p>
-<hr>
-<blockquote>
-<p><strong>← <a href="/ai/02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a> →</strong></p>
-</blockquote>
-
-</article>
-
-<nav class="bar" id="section-nav"><a rel="prev" href="/ai/02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html">← Vision and Multimodal Input Engineering</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents →</a></nav>
-</main>
-</div>
-<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Voice and Audio Agents.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
-<script type="module" src="/ai/ai.js"></script>
+<p style="font-family:monospace">Moved → <a href="https://ayumad.me/ai/voice-and-audio-agents">/ai/voice-and-audio-agents</a></p>
 </body></html>

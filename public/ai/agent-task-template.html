@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="text Goal:">
+<title>Agent task template — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/agent-task-template</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/mode-and-topology-selector" title="Mode and Topology Selector">←</a><a class="tb-btn" rel="next" href="/ai/context-checklist" title="Context Checklist">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Agent task template</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, prompting, template</span></div>
+<p>A good prompt is like a clear brief you hand a contractor: state the goal, give the relevant background, list the rules, say how to prove the work is done, and explain when to stop. This template organizes those pieces into a fill-in structure so you don&#39;t forget anything important. Copy it, fill in the blanks for your task, and let the model do its best work with full clarity.</p>
+<pre><code class="language-text">Goal:
+
+Context:
+- Relevant files, systems, facts, prior decisions:
+
+Constraints:
+- Must remain true:
+- Out of scope:
+- Authority granted:
+- Authority withheld:
+
+Definition of done:
+- Observable acceptance criteria:
+
+Verification:
+- Tests, evidence, review, or commands required:
+
+Uncertainty and escalation:
+- Ask before:
+- Report assumptions and unresolved risks:
+
+Stopping conditions:
+- Stop when:
+- Stop if budget, safety, or authority is exceeded:
+</code></pre>
+<p>Avoid persona inflation. Specific context, constraints, evidence, and verification usually improve outcomes more than claims that the model is an extraordinary expert.</p>
+<h2>Worked example</h2>
+<pre><code class="language-text">Goal:
+Rewrite the billing error email to use plain language, reduce refund processing time,
+and keep the tone calm and factual.
+
+Context:
+- Original email: &quot;Due to an anomaly in our payment reconciliation pipeline, we have
+  identified a discrepancy in your account for invoice #INV-2026-0847.&quot;
+- Audience: small-business owner, non-technical, frustrated.
+- Brand voice: direct, no jargon, no blame.
+
+Constraints:
+- Must remain true: refund amount ($247.50), invoice number, 5-business-day SLA.
+- Out of scope: policy changes, new support channel suggestions.
+- Authority granted: rewrite tone, simplify language.
+- Authority withheld: cannot change refund amount or SLA.
+
+Definition of done:
+- Email uses no jargon; all sentences under 25 words.
+- Subject line is action-oriented and includes the invoice number.
+- Refund amount and timeline are stated in the first paragraph.
+
+Verification:
+- Read the draft aloud; flag any sentence longer than 25 words.
+- Confirm the invoice number and amount match the original.
+
+Uncertainty and escalation:
+- Ask before: any mention of root cause (do we know it?).
+- Report assumptions and unresolved risks: none identified.
+
+Stopping conditions:
+- Stop when: email passes the checks above.
+- Stop if budget, safety, or authority is exceeded: N/A.
+</code></pre>
+<blockquote>
+<p><strong>Canonical source:</strong> The fill-in version of this template lives in <a href="/ai/ai-engineering-template-library">Template Library</a>. This note is the explanation and worked example. Keep both in sync to prevent drift — do not duplicate the template body here.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/mode-and-topology-selector">Mode and Topology Selector</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/context-checklist">Context Checklist</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/mode-and-topology-selector">← Mode and Topology Selector</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/context-checklist">Context Checklist →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 09 Playbooks/Prompt Template.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

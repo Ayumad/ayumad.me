@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Multimodal systems must preserve provenance and uncertainty across capture, extraction, reasoning, and action; an image is evidence, not an instruction or autho">
+<title>Vision and multimodal input engineering — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/vision-and-multimodal-input-engineering</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/planning-state-and-persistence" title="Planning State and Persistence">←</a><a class="tb-btn" rel="next" href="/ai/voice-and-audio-agents" title="Voice and Audio Agents">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Vision and multimodal input engineering</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, vision, multimodal, images, video</span></div>
+<blockquote>
+<p>[!summary] The gist
+Multimodal systems must preserve provenance and uncertainty across capture, extraction, reasoning, and action; an image is evidence, not an instruction or authority grant.
+This note covers how agents take in visual information, how to avoid being fooled by bad images or hidden tricks, and how to keep costs down when every image has a price tag.</p>
+</blockquote>
+<hr>
+<p>A multimodal agent combines text with images, PDFs, screenshots, video, audio, or UI state. The hard problem is not just passing pixels to a model: it is deciding what was observed, what can be trusted, what needs extraction, and what action—if any—may follow.</p>
+<h2>Pipeline</h2>
+<pre><code class="language-text">capture → normalize → extract/OCR → interpret → verify → act or ask
+</code></pre>
+<p>Keep the source artifact and a link to the relevant region or timestamp. Separate model inference (&quot;this looks like an invoice total&quot;) from verified data (a parsed field that passes validation). Treat embedded text as untrusted: a screenshot can contain prompt injection just like a web page can.</p>
+<h2>Practical controls</h2>
+<ul>
+<li>Use targeted crops, page ranges, or sampled video frames to manage cost and context.</li>
+<li>Prefer structured extraction with schema validation for IDs, prices, dates, and commands.</li>
+<li>Preserve confidence and request clarification when a visual fact changes authority or money.</li>
+<li>Do not infer identity, intent, or permission from an image alone.</li>
+<li>Redact or minimize sensitive visual input; images often carry more personal data than their apparent task requires.</li>
+</ul>
+<p>Evaluate on image quality, layouts, handwriting, adversarial overlays, missing context, and correct refusal/confirmation behavior—not only on clean benchmark images.</p>
+<h2>Model capabilities snapshot</h2>
+<p>As of mid-2026, three model families dominate multimodal input:</p>
+<ul>
+<li><strong>GPT-4o:</strong> Single end-to-end neural net across text, audio, image, and video. Audio response latency as low as 232ms (320ms avg), comparable to human conversational speed. 2x faster, 50% cheaper, and 5x higher rate limits than GPT-4 Turbo. New tokenizer achieves 1.1x–4.4x fewer tokens across 20 languages (Gujarati 4.4x, Hindi 2.9x, Chinese 1.4x, English 1.1x).</li>
+<li><strong>Claude (Anthropic):</strong> Vision via the Messages API. Computer Use toolset adds ~4,500 tokens per screenshot; each screenshot billed separately at vision pricing. Includes a <code>zoom</code> tool for targeted high-res inspection without re-screenshotting the full viewport.</li>
+<li><strong>Gemini (Google):</strong> Native multimodal input across text, image, audio, video, and PDF. Long-context window supports large document and video analysis.</li>
+</ul>
+<p>All vision models read text from screenshots without a separate OCR step, but accuracy degrades for small text, complex layouts, and multilingual content—documented final interpretation accuracy drops to ~30% for complex visual scenes.</p>
+<h2>Resolution and tiling strategies</h2>
+<p>Screenshots are tokenized at image-token rates, making resolution a direct cost lever:</p>
+<ul>
+<li><strong>Full-viewport screenshots</strong> capture everything but at model-native resolution; small text and fine details may be unreadable.</li>
+<li><strong>Targeted crops</strong> (using coordinates or CSS selectors) focus the model on the relevant region at full resolution, reducing token cost while improving accuracy.</li>
+<li><strong>Tiling</strong> splits a large image into overlapping patches, processes each independently, then merges results. Useful for high-resolution documents or dense UIs.</li>
+<li><strong>Zoom tool</strong> (Anthropic): the model can request a zoomed view of a specific region without re-rendering the full screenshot—~4,500 tokens for the base screenshot plus a smaller token cost for the zoom patch.</li>
+</ul>
+<p>Trade-off: higher resolution improves accuracy but increases token cost linearly. Use the minimum resolution that solves the task.</p>
+<h2>Video frame sampling</h2>
+<p>Video input requires frame selection strategies to manage cost and context:</p>
+<ul>
+<li><strong>Uniform sampling</strong> (e.g., 1 frame/second) provides baseline coverage but may miss brief events.</li>
+<li><strong>Scene-change detection</strong> samples frames at transition points, capturing more information per token.</li>
+<li><strong>Prompt-directed sampling</strong> lets the model request specific timestamps based on earlier frames—useful for follow-up questions about a video.</li>
+<li><strong>Keyframe extraction</strong> using ffmpeg or similar tools before sending to the model reduces token cost while preserving visual content.</li>
+</ul>
+<p>Each frame is billed as a separate image; a 60-second video at 1 frame/second costs the same as 60 individual screenshots.</p>
+<h2>OCR pipeline</h2>
+<p>For document-heavy workflows, a structured OCR pipeline outperforms raw model vision:</p>
+<ol>
+<li><strong>Pre-processing:</strong> deskew, denoise, and normalize the image. For PDFs, extract the text layer first (it may already contain machine-readable text).</li>
+<li><strong>Extraction:</strong> use a vision model or specialized OCR engine (Tesseract, Azure Document Intelligence) to extract text with bounding boxes.</li>
+<li><strong>Validation:</strong> apply schema validation to extracted fields (dates, prices, IDs). Flag low-confidence extractions for human review.</li>
+<li><strong>Provenance:</strong> link each extracted field back to its source region (page number, bounding box, confidence score).</li>
+</ol>
+<p>Treat embedded text as untrusted: a screenshot can contain prompt injection just like a web page can.</p>
+<h2>Provenance and cost management</h2>
+<p>Every image token consumed is a cost event. Manage it proactively:</p>
+<ul>
+<li><strong>Track per-iteration cost:</strong> each screenshot loop iteration adds image tokens; batch actions compound costs quickly.</li>
+<li><strong>Use targeted crops over full screenshots</strong> when the task involves a specific UI element or text region.</li>
+<li><strong>Cache and reuse</strong> screenshots when the page state has not changed between iterations.</li>
+<li><strong>Set token budgets</strong> per task and alert when approaching limits.</li>
+<li><strong>Preserve source artifacts</strong> and link them to extracted data for audit and reproducibility.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>OpenAI, &quot;Hello GPT-4o,&quot; May 2024 — <a href="https://openai.com/index/hello-gpt-4o/">https://openai.com/index/hello-gpt-4o/</a> — GPT-4o multimodal capabilities, tokenizer improvements, latency benchmarks.</li>
+<li>Anthropic Computer Use Tool Docs, 2026 — <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool</a> — zoom tool, screenshot tokenization, injection defense.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<p><a href="/ai/computer-use-and-browser-agents">Computer-Use and Browser Agents</a> · <a href="/ai/security-jailbreaks-and-prompt-injection">Security and Jailbreaking</a> · <a href="/ai/evaluation-engineering">Evaluation Engineering</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/planning-state-and-persistence">Planning State and Persistence</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/voice-and-audio-agents">Voice and Audio Agents</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/planning-state-and-persistence">← Planning State and Persistence</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/voice-and-audio-agents">Voice and Audio Agents →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Vision and Multimodal Input Engineering.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="| Mode | Use when | Expected behavior | |||| | Ask | You need understanding | Explore and explain; do not change state | | Plan | The work is ambiguous or broad">
+<title>Mode and topology selector — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/mode-and-topology-selector</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/practical-playbooks" title="Playbooks Hub">←</a><a class="tb-btn" rel="next" href="/ai/agent-task-template" title="Prompt Template">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Mode and topology selector</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, planning, multi-agent, decision</span></div>
+<blockquote>
+<p>[!summary] The gist
+The first decision with an agent is how to work, not what to build: ask, plan, hand over authority, or run it across sessions. Then whether that&#39;s one agent, several in parallel, or a team with roles. This guide makes those choices concrete with tables, a worked example, and cost notes.</p>
+</blockquote>
+<hr>
+<h2>Interaction mode</h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Use when</th>
+<th>Expected behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ask</td>
+<td>You need understanding</td>
+<td>Explore and explain; do not change state</td>
+</tr>
+<tr>
+<td>Plan</td>
+<td>The work is ambiguous or broad</td>
+<td>Inspect, decompose, identify risks, propose steps</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>The outcome is clear and authority is granted</td>
+<td>Execute, verify, and report</td>
+</tr>
+<tr>
+<td>Debug</td>
+<td>Something is failing</td>
+<td>Gather runtime evidence before changing code</td>
+</tr>
+<tr>
+<td>Goal</td>
+<td>Work must persist across turns or time</td>
+<td>Track durable progress, checkpoints, and stopping conditions</td>
+</tr>
+</tbody></table>
+<h2>Agent topology</h2>
+<table>
+<thead>
+<tr>
+<th>Choice</th>
+<th>Use when</th>
+<th>Avoid when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One agent</td>
+<td>Problem is coherent and sequential</td>
+<td>Independent domains can proceed in parallel</td>
+</tr>
+<tr>
+<td>One agent + skills</td>
+<td>Expertise can be loaded on demand</td>
+<td>Roles need independent trust boundaries</td>
+</tr>
+<tr>
+<td>Subagents</td>
+<td>Work is bounded, parallel, or needs isolation</td>
+<td>Handoffs would cost more than the work</td>
+</tr>
+<tr>
+<td>Full multi-agent team</td>
+<td>Specialization, debate, or ownership is essential</td>
+<td>A single verified loop is sufficient</td>
+</tr>
+</tbody></table>
+<h2>Worked choice example</h2>
+<p><strong>Scenario:</strong> You need to migrate a Python service from PostgreSQL to MongoDB, update queries, and deploy to staging.</p>
+<ol>
+<li><strong>Ask first</strong> — &quot;What files touch the database layer?&quot; → explore, don&#39;t change state.</li>
+<li><strong>Plan</strong> — Decompose into: schema mapping, query rewriting, migration script, tests, deployment. Identify risks: data loss, query incompatibility, staging drift.</li>
+<li><strong>Agent</strong> — Execute each step as a bounded task: rewrite queries, generate migration, run tests. One agent + skills is sufficient; no parallel work needed.</li>
+<li><strong>Goal</strong> — Track progress across multiple sessions (the migration may span days). Checkpoint at each verified step.</li>
+</ol>
+<p><strong>Cost implications:</strong></p>
+<ul>
+<li>Ask/Plan: low cost — few tokens, no tool calls, no state mutations.</li>
+<li>Agent: moderate — tool calls, file reads/writes, tests. Budget per step.</li>
+<li>Subagents: higher — parallel execution multiplies token cost; justified only if subtasks are truly independent.</li>
+<li>Multi-agent team: highest — coordination overhead (orchestrator + specialists), 200ms × 2 agents → 4+ seconds × 8 agents. Reserve for specialized debate or trust-boundary needs.</li>
+</ul>
+<h2>Mid-task switching</h2>
+<p>You can switch modes mid-task. Common pattern: Ask → Plan → Agent. If an Agent step reveals ambiguity, drop back to Plan. If Goal work hits a blocker, drop to Debug. The mode selector is a decision aid, not a lock-in.</p>
+<p>Default: Ask/Plan first for uncertainty; Agent for a bounded task; Goal for durable work; one agent until a concrete reason justifies more coordination.</p>
+<p>For deeper agent harness and topology guidance, see <a href="/ai/workflows-and-orchestration">Orchestration Hub</a> and <a href="/ai/agent-harness">Agent Harness</a>.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/practical-playbooks">Playbooks Hub</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/agent-task-template">Prompt Template</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/practical-playbooks">← Playbooks Hub</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/agent-task-template">Prompt Template →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 09 Playbooks/Mode and Topology Selector.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

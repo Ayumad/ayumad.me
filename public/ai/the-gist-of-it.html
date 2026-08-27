@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="One-paragraph plain-English digest of every content note in the curriculum, in table-of-contents order.">
+<title>The gist of it — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/the-gist-of-it</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/ai-engineering-full-table-of-contents" title="Full Table of Contents">←</a><a class="tb-btn" rel="next" href="/ai/how-to-use-this-vault" title="How to Use This Vault">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">The gist of it</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span></div>
+<p>Every content note in the curriculum, one plain-English paragraph each, in the same order as the <a href="/ai/ai-engineering-full-table-of-contents">table of contents</a>.</p>
+<h2>Unit 1 — Models, inference, and local hardware (~8–10h)</h2>
+<ol>
+<li><p><strong><a href="/ai/what-is-an-llm">LLMs and the model/application boundary</a></strong></p>
+<blockquote>
+<p>An LLM is autocomplete at scale. It predicts the next word based on patterns from training data. It doesn&#39;t look things up or take actions—those are engineering problems solved around the model. This note covers tokenization, embeddings, model families, and what isn&#39;t built in.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/context-windows-and-inference">Tokens, context windows, decoding, and inference</a></strong></p>
+<blockquote>
+<p>The context window is a fixed-size stack of papers the model can read at once. Once it&#39;s full, older material must be dropped or summarized. More context isn&#39;t automatically better—irrelevant material wastes space and dilutes the answer. This note explains how the window works and how to manage it.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/local-ai-hardware-and-inference">Local AI hardware: VRAM, unified memory, bandwidth, quantization, and model fit</a></strong></p>
+<blockquote>
+<p>Running a model locally means your machine needs enough memory to hold it and enough bandwidth to read it for every word it generates. A setup that barely loads a model may still be too slow once you add context, a vision encoder, or a second user. This note walks through memory, bandwidth, and hardware trade-offs.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/structured-outputs-and-tool-calling">Structured outputs and function calling</a></strong></p>
+<blockquote>
+<p>Models produce freeform text, but software needs structured data. Structured outputs force a model to fill out a form instead of writing an essay. Tool calling lets it request specific operations—databases, APIs, other software. Together they bridge the gap between language and code.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 2 — Instructions and capabilities (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/prompting-for-agents">Prompting for agents</a></strong></p>
+<blockquote>
+<p>The best agent prompts describe the outcome and the guardrails, not every step. A rigid script breaks the moment something unexpected happens. This note lays out a goal-constraint-definition-verification framework for writing prompts that work even when the agent takes a different path.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/project-initialization-and-instruction-files">Project initialization: PRDs, repository instructions, and project context files</a></strong></p>
+<blockquote>
+<p>Before an agent changes a project, hand it a small, inspectable context package: a PRD for what to build, repo instructions for how to work, and verifiable facts for done. This note covers the artifact map, a safe initialization sequence, and templates for PRDs and instruction files.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/behavior-and-communication-controls">Effort levels, writing style, and response contracts</a></strong></p>
+<blockquote>
+<p>An agent has two independent jobs: reach a good decision and explain it well. Configure them separately — deep thinking doesn&#39;t require a long answer, and polished prose doesn&#39;t prove the work is correct. This note covers the control stack, effort levels, provider-specific routing, and output contracts.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/skills-tools-and-capability-management">Skills, tool discovery, and capability management</a></strong></p>
+<blockquote>
+<p>Tools are raw instruments. Skills are the procedures for using them well. A capability system decides which ones an agent can access and when. Keeping these three layers distinct makes it safe to add tools, update skills, and control permissions without breaking the rest. This note covers registries, selection policy, and lifecycle management.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/model-context-protocol-mcp">Model Context Protocol</a></strong></p>
+<blockquote>
+<p>MCP is the standard plug that connects an AI application to external tools and data. It defines three primitives — tools, resources, and prompts — and handles discovery, invocation, and results. Without it, every tool integration is custom-built. This note covers the architecture, transports, auth flow, and error handling.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/agent-protocol-family">ACP, A2A, AG-UI, and A2UI</a></strong></p>
+<blockquote>
+<p>AI systems talk to editors, other agents, user interfaces, and tools — each boundary needs its own protocol. The industry has built a family of five: ACP, A2A, AG-UI, A2UI, and MCP. Understanding which protocol fits which boundary is key to building secure, composable systems.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 3 — Knowledge, retrieval, memory, and context (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/context-engineering">Context engineering</a></strong></p>
+<blockquote>
+<p>Context engineering is the practice of feeding an AI model exactly what it needs to know at the right moment — picking files, decisions, and reminders instead of dumping the entire project on the model. It turns a capable but unfocused model into one that responds as if it&#39;s been on the project for months. This note covers the hierarchy of context sources, practical controls, and budgeting.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/large-project-navigation-and-context-scaling">Large-project navigation and context scaling</a></strong></p>
+<blockquote>
+<p>When a project exceeds one context window, don&#39;t load everything — build a map, pick the right neighborhood, and work in bounded slices. Progressive disclosure loads only the layers needed for the next decision, keeping evidence traceable and the context lean. This note covers the operating loop, navigation layers, and multi-repo patterns.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/context-checklist">Context checklist</a></strong></p>
+<blockquote>
+<p>Bad context is why agents waste turns: the model guesses, fills blanks, and sometimes gets them wrong. This checklist catches the usual failures — missing files, unclear authority, stale data, missing stop rules — before they cost you time or produce garbage. Use it per message, per task, or per session.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/retrieval-augmented-generation-rag">RAG and retrieval</a></strong></p>
+<blockquote>
+<p>RAG searches a document collection at answer time and hands the most relevant pieces to the model as evidence. It beats fine-tuning when knowledge is private, changes fast, or didn&#39;t exist at training time. This note covers the retrieval pipeline: chunking, embeddings, hybrid search, reranking, and deployment patterns.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/rag-design-worksheet">RAG design worksheet</a></strong></p>
+<blockquote>
+<p>RAG bolts real sources onto a model so answers come with evidence instead of guesses. This worksheet walks every design decision — ingestion, chunking, indexing, retrieval, evaluation — with blanks to fill in and a worked example to check against. Catch the gaps before they become bugs.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/memory-and-skills">Memory types and safeguards</a></strong></p>
+<blockquote>
+<p>An agent needs different kinds of memory: working memory for the current task, durable facts across sessions, and reusable procedures. This note maps those kinds and compares two memory architectures — Mem0 (passive extraction) and Letta (agentic self-editing) — plus backend selection and consolidation strategies.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 4 — Single agents and safe execution (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/what-is-an-agent">Agent loops and stopping conditions</a></strong></p>
+<blockquote>
+<p>An agent can break a task into steps, try different approaches, and keep going until it reaches a goal or hits a limit. Unlike a calculator, it can decide its own path. This note explains how that loop works, when it is the right tool for the job, and how to tell if an agent actually performed well or just sounded convincing.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/agent-harness">Harness design</a></strong></p>
+<blockquote>
+<p>The harness is the machinery that makes an agent useful and governable. It translates user intent into context, exposes tools, executes actions, manages state, and decides when to ask for help or stop. Two teams can use the same AI model and get wildly different results depending on how they build the harness around it. This note walks through each part of that machinery.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/planning-state-and-persistence">Planning, checkpoints, and durable state</a></strong></p>
+<blockquote>
+<p>Planning turns a broad request into observable work. State records what is known, what is complete, what failed, and what must happen next. Without a way to save their progress, a crash or interruption means losing everything an agent has figured out. This note explains how agents create plans, save their work at key moments, and recover when things go wrong.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/sandboxes-and-execution-planes">Execution planes and sandboxing</a></strong></p>
+<blockquote>
+<p>Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CPU, memory, packages, credentials, and network access. This note explains how to design that safe workspace, how to hand the agent only the secrets it needs for one task, and how to bring back only the results you trust.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/sandboxing-infrastructure">Process, container, gVisor, microVM, and VM trade-offs</a></strong></p>
+<blockquote>
+<p>Sandbox choice follows the threat model: processes suit trusted code, containers provide moderate isolation, and microVMs or VMs suit generated or arbitrary untrusted execution. This note compares the different types of isolation technology available: from lightweight process separation to full virtual machines. It also covers cloud services that rent you ready-made sandboxes.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/computer-use-and-browser-agents">Computer-use and browser agents</a></strong></p>
+<blockquote>
+<p>Computer-use agents operate an untrusted visual environment. Prefer semantic APIs, isolate sessions, ground actions in fresh UI state, and gate consequential clicks at the point of execution. This note explains how these agents work, what dangers to watch for, and how to keep them from causing harm.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 5 — Voice and multimodal agents (~8–10h)</h2>
+<ol>
+<li><p><strong><a href="/ai/voice-and-audio-agents">Voice and audio agents</a></strong></p>
+<blockquote>
+<p>Voice agents are real-time systems: capture, turn detection, transcription or audio reasoning, response generation, synthesis, interruption handling, and safe actions must work as one loop. This note explains the machinery that makes voice interactions feel smooth and natural, from latency budgets to barge-in handling.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/vision-and-multimodal-input-engineering">Vision and multimodal input</a></strong></p>
+<blockquote>
+<p>Multimodal systems must preserve provenance and uncertainty across capture, extraction, reasoning, and action; an image is evidence, not an instruction or authority grant. This note covers how agents take in visual information, how to avoid being fooled by bad images or hidden tricks, and how to keep costs down when every image has a price tag.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 6 — Workflows, orchestration, and teams (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/workflow-patterns">Workflow patterns</a></strong></p>
+<blockquote>
+<p>Workflow patterns are the standard shapes for arranging AI steps — sequential, parallel, routed, looping, and so on. Pick the simplest one that makes the work visible and correct. This note covers the main patterns, how to build each one, and where they break.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/multi-agent-systems">Multi-agent systems</a></strong></p>
+<blockquote>
+<p>Multiple agents beat a single one when specialization, parallelism, or independent critique matters more than coordination cost. A team of focused agents can outperform a solo generalist — but every handoff is a failure point. This note covers when a team helps, common structures, and the real risks.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/agent-democracies-and-societies">Debate, voting, reputation, and governance</a></strong></p>
+<blockquote>
+<p>Agent democracies let multiple AI agents independently propose, critique, and vote on a decision before acting — borrowing the structure of human committees and juries. Powerful for high-stakes choices where a single agent&#39;s answer is too risky. This note covers the governance mechanics and when the overhead pays off.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/mode-and-topology-selector">Mode and topology selector</a></strong></p>
+<blockquote>
+<p>The first decision with an agent is how to work, not what to build: ask, plan, hand over authority, or run it across sessions. Then whether that&#39;s one agent, several in parallel, or a team with roles. This guide makes those choices concrete with tables, a worked example, and cost notes.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 7 — Resource engineering (~8–10h)</h2>
+<ol>
+<li><p><strong><a href="/ai/local-models-subscriptions-apis-and-hybrid-designs">Local, subscription, API, and hybrid deployment</a></strong></p>
+<blockquote>
+<p>Running AI models has three main paths: self-host for privacy and control, subscribe for simplicity, or use APIs for scale. Each has different trade-offs in cost, control, and convenience. This guide walks through a decision sequence — from data sensitivity and concurrency needs to pricing and exit plans — with a comparison table covering local, subscription, API, and hybrid approaches. It includes a 2026 pricing snapshot, self-hosting crossover estimates, GDPR considerations for data residency, and a hybrid routing pattern that balances privacy, latency, and cost across providers.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/latency-and-cost-engineering">Latency, caching, routing, and cost budgets</a></strong></p>
+<blockquote>
+<p>Latency and cost engineering treats response time and spending as explicit design constraints. An agent&#39;s wait time adds up from queueing, prompt construction, model decoding, tool calls, retries, and synthesis — and cost follows the same path. This note covers the controls that matter most: generating fewer tokens, caching stable prefixes, routing by difficulty, parallelizing independent work, and streaming. It walks through budget mechanics, a worked cost model showing 89% savings from prompt caching, gateway routing with LiteLLM and OpenRouter, batch inference discounts, and per-request token budgets that keep autonomous runs from spiraling.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 8 — Evaluation, observability, and AgentOps (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/evaluation-engineering">Evaluation engineering</a></strong></p>
+<blockquote>
+<p>Evaluation engineering tests the full agent trajectory instead of only the final answer. Like a trial period where you watch how an employee works, you check tool choices, context selection, error recovery, cost, and policy compliance. This note covers building versioned test suites, scoring at different layers, using LLM judges safely, and choosing between open-source and commercial eval frameworks.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/observability">Logs, metrics, traces, and replay</a></strong></p>
+<blockquote>
+<p>Observability records everything your agent does during a request, like a black box recorder on a plane. When something goes wrong, you replay the full trajectory: model calls, tool use, retrievals, retries, and approvals. This note covers the three signals (metrics, logs, traces), how to set alerts, build dashboards, and catch drift before it reaches users.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/deployment-and-agentops">Deployment and AgentOps</a></strong></p>
+<blockquote>
+<p>Deployment and AgentOps is DevOps adapted for probabilistic, tool-using systems. You version and deploy more than code: prompts, skills, tool schemas, retrieval indexes, and evaluation datasets each change real behavior. This guide covers the delivery loop from change to production, operational contracts that assign every run an owner and version, serving stacks compared by throughput, rate limiting patterns for five distinct 429 error types, incident response and rollback procedures, and multi-tenancy isolation with separate control planes and execution workers.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/evaluation-and-security-review">Evaluation and security review</a></strong></p>
+<blockquote>
+<p>Before an AI system ships, it has to be checked for quality and for harm. This is that checklist: define success and failure, run test scenarios from easy to adversarial, verify tools and data access are locked down, and have an incident plan ready. The tool table says what you can automate, and the severity ratings say how fast to respond.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 9 — Security, oversight, and adaptation (~10–12h)</h2>
+<ol>
+<li><p><strong><a href="/ai/security-jailbreaks-and-prompt-injection">Security and jailbreak resistance</a></strong></p>
+<blockquote>
+<p>Jailbreaking is lock-picking for AI. Attackers try to make models ignore their rules through fake personas, hidden instructions in documents, encoded payloads, or slow trust-building across turns. No single defense holds. This note catalogs the main attack families and the layered countermeasures: input scanning, output filtering, tool allowlists, sandboxing, and taint-aware context assembly.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/defensive-red-team-labs">Defensive red-team labs</a></strong></p>
+<blockquote>
+<p>Defensive red-team labs are fire drills for AI security. You build a harmless test agent with fake tools, then run realistic attacks against it in a sandbox. This note provides seven lab cases: authority confusion, tool-output injection, memory poisoning, confused deputy, replay attacks, multimodal boundary testing, and cross-agent trust. Only test against toy harnesses or explicitly authorized systems.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/human-oversight-and-trust-engineering">Autonomy, approvals, and trust calibration</a></strong></p>
+<blockquote>
+<p>AI agents need an autonomy ladder, like self-driving cars. The real question is what the agent may decide and execute without a person. Authority depends on error cost and evidence quality. This note covers the seven-level autonomy scale, how to separate proposal from execution, and how to build interfaces that keep human judgment at consequential boundaries.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/fine-tuning-decision-framework">Prompting vs RAG vs tools vs fine-tuning</a></strong></p>
+<blockquote>
+<p>When a model gives weak answers, the instinct is to retrain—but training is expensive and often unnecessary. Better prompts, retrieval, or a tool call usually solve it. This note walks through lighter options first, then fine-tuning as a last resort.</p>
+</blockquote>
+</li>
+</ol>
+<h2>Unit 10 — Capstone and continuing reference (~12–15h)</h2>
+<ol>
+<li><strong><a href="/ai/staged-learning-projects">Learning projects and capstone</a></strong><blockquote>
+<p>Nine projects, roughly in difficulty order, that build real agent skills: structured output, tool use, memory, evaluation, multi-agent coordination. Each lists the time, difficulty, and the curriculum note behind it. Do them in order and you end with a governed, production-ready system instead of a demo.</p>
+</blockquote>
+</li>
+</ol>
+<h2>The rest of the tour</h2>
+<ul>
+<li><p><strong><a href="/ai/ai-engineering-from-zero-to-production">AI Engineering Curriculum</a></strong></p>
+<blockquote>
+<p>This curriculum teaches AI engineering as a hands-on craft. It starts with model fundamentals and moves through agents, safety, and production systems. Each unit pairs reading with a practical exercise, because real skill comes from building. You need basic Python and an API key. No ML background required.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/vector-search-and-embeddings">Vector Search and Embeddings</a></strong></p>
+<blockquote>
+<p>Embeddings turn text into numerical coordinates where similar meanings sit close together. Vector databases search those coordinates at speed. Together they power RAG&#39;s retrieval step — but the real pitfalls lie in how embedders are trained, how ANN indexes trade recall for speed, and the gap between similarity and relevance. This note covers the machinery under the hood.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/coding-and-general-agent-profiles">Coding Agent Profiles</a></strong></p>
+<blockquote>
+<p>AI coding agents range from terminal-first harnesses to cloud-delegated workstreams. This guide profiles the major players — Herdr, Hermes, DeepSeek Harness, Codex, Devin, Cursor, Claude Code, OpenCode, Pi, OpenHands, and Kimi Code — comparing their architecture, strengths, and trade-offs. A category map helps you match needs to candidate tools, and a context window comparison shows that harness quality is about context management, not raw token count.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/agent-runtimes-and-frameworks">Agent Runtimes and Frameworks</a></strong></p>
+<blockquote>
+<p>Agent runtimes and frameworks provide the scaffolding for chaining model calls, managing state, and recovering from failures. Frameworks compose model calls and tools; orchestration runtimes provide durable execution; agent platforms add user-facing control planes. This guide compares LangGraph, CrewAI, AutoGen/AG2, Haystack, and direct SDK approaches across learning curve, community, and production readiness — and helps you decide when a simple SDK call beats a full framework.</p>
+</blockquote>
+</li>
+<li><p><strong><a href="/ai/infrastructure-and-observability-tools">Infrastructure and Observability Tools</a></strong></p>
+<blockquote>
+<p>Production agents need sandboxes for safe code execution, browser tools for web interaction, gateways for model routing, and observability stacks for tracing failures. This guide covers each category: execution and browser environments, model routing with LiteLLM and OpenRouter, self-hosted vs hosted observability, four-layer guardrails architectures, prompt management, and serving platforms from Replicate to Modal. Each section includes comparison tables and selection heuristics so you can pick the right pieces for your stack.</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/ai-engineering-full-table-of-contents">Full Table of Contents</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/how-to-use-this-vault">How to Use This Vault</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/ai-engineering-full-table-of-contents">← Full Table of Contents</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/how-to-use-this-vault">How to Use This Vault →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 00 Start Here/The Gist of It.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

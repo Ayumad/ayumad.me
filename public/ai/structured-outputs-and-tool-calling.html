@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Freeform text is difficult for software to validate. Structured output constrains a response to a schema, while tool calling lets a model request an operation w">
+<title>Structured outputs and tool calling — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/structured-outputs-and-tool-calling</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/context-windows-and-inference" title="Context Windows and Inference">←</a><a class="tb-btn" rel="next" href="/ai/local-ai-hardware-and-inference" title="Local AI Hardware and Inference">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Structured outputs and tool calling</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, structured-output, tools</span></div>
+<blockquote>
+<p>[!summary] The gist
+Models produce freeform text, but software needs structured data. Structured outputs force a model to fill out a form instead of writing an essay. Tool calling lets it request specific operations—databases, APIs, other software. Together they bridge the gap between language and code.</p>
+</blockquote>
+<hr>
+<h2>Design the contract first</h2>
+<p>Treat a tool call or structured response as a contract between uncertain model behavior and deterministic software. Specify required fields, types, allowed values, bounds, defaults, and what the system should do when validation fails. The model proposes; code validates and executes only permitted operations.</p>
+<p>Keep the schema small and separate planning from side effects. For a consequential task, ask for a typed proposal, validate it against policy and current state, present the resulting action for approval where needed, then execute with an idempotency key. Return an observation that lets the agent verify outcome rather than assume success.</p>
+<h2>Failure handling</h2>
+<p>Malformed output should trigger bounded repair or a clear request for clarification—not unbounded retry. Tool results are untrusted input too: validate shape, redact secrets, record provenance, and never treat a tool&#39;s text as authority to bypass policy.</p>
+<pre><code class="language-json">{
+  &quot;tool&quot;: &quot;get_weather&quot;,
+  &quot;arguments&quot;: {&quot;city&quot;: &quot;Seattle&quot;},
+  &quot;reason&quot;: &quot;The user asked for current conditions&quot;
+}
+</code></pre>
+<p>The harness must validate the schema, authorize the action, execute it, record the result, and return a bounded observation. A schema is not a permission: authorization belongs outside the model.</p>
+<h2>Design rules</h2>
+<ul>
+<li>Use enums and explicit required fields where possible.</li>
+<li>Make dangerous operations separate from read-only operations.</li>
+<li>Validate both arguments and returned data.</li>
+<li>Add idempotency keys for retried side effects.</li>
+<li>Return errors as typed observations the model can reason about.</li>
+</ul>
+<h2>Constrained decoding</h2>
+<p>Instead of sampling freeform text and repairing it later, constrain sampling itself: mask the vocabulary so only tokens valid under a regular expression or grammar can be emitted. Outlines-style finite-state-machine-guided generation adds little to no overhead and turns malformed output from a validation problem into a design-impossible event (Willard &amp; Louf 2023).</p>
+<h2>Tool calling in practice</h2>
+<p>Frontier models are post-trained to emit structured tool calls—typed arguments, and with several providers, parallel calls in one response. The provider API returns machine-readable calls, but the harness remains responsible for validation, authorization, and execution (see <a href="/ai/agent-harness">Agent Harness</a>). Keep schemas narrow and descriptive: if a human engineer cannot say which tool fits a situation, a model will not do better (Anthropic 2025).</p>
+<h2>JSON-schema example</h2>
+<p>A realistic tool schema constrains the model to emit exactly the fields the harness expects:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;function&quot;,
+  &quot;function&quot;: {
+    &quot;name&quot;: &quot;create_issue&quot;,
+    &quot;description&quot;: &quot;Create a tracked issue in the project board&quot;,
+    &quot;parameters&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;properties&quot;: {
+        &quot;title&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;maxLength&quot;: 200 },
+        &quot;priority&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;urgent&quot;] },
+        &quot;assignee_id&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;pattern&quot;: &quot;^USER-[0-9]+$&quot; },
+        &quot;labels&quot;: { &quot;type&quot;: &quot;array&quot;, &quot;items&quot;: { &quot;type&quot;: &quot;string&quot; }, &quot;maxItems&quot;: 5 },
+        &quot;description&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;maxLength&quot;: 2000 }
+      },
+      &quot;required&quot;: [&quot;title&quot;, &quot;priority&quot;],
+      &quot;additionalProperties&quot;: false
+    }
+  }
+}
+</code></pre>
+<p>The <code>enum</code> on priority and <code>required</code> array are the key safety rails: the model cannot invent a priority outside the four allowed values, and the harness rejects any call missing <code>title</code> or <code>priority</code>.</p>
+<h2>Provider tool-calling differences</h2>
+<p>All major providers expose tool/function calling but differ in mechanics. OpenAI&#39;s function-calling API returns tool calls as structured JSON in a dedicated response field; the model never &quot;writes&quot; a function call as freeform text. Anthropic&#39;s tool_use works similarly but places tool results in <code>user</code> turns with a <code>tool_result</code> content block; Anthropic also supports computer-use tools with a distinct type. Google Gemini uses <code>function_declarations</code> with slightly different schema semantics (<code>anyOf</code> support, different required-field defaults). Local model runtimes (llama.cpp, vLLM, SGLang) expose tool calling via Jinja templates or logit-bias guidance; compatibility varies—always test with your specific model and runtime, as not all open models are equally well-tuned for function calling.</p>
+<h2>Multi-turn repair loop</h2>
+<p>When structured output validation fails, a bounded repair loop is the standard pattern:</p>
+<ol>
+<li>Model emits a tool call or structured response.</li>
+<li>Harness validates against the schema; if invalid, constructs an error observation: <em>&quot;The <code>priority</code> field must be one of low, medium, high, urgent; you sent &#39;critical&#39;.&quot;</em></li>
+<li>The error is appended to the conversation as a tool result and the model retries.</li>
+<li>Cap retries (typically 2–3) to prevent infinite loops; fall back to a human-readable error or a default safe action.</li>
+</ol>
+<p>This keeps the model in control of generation while ensuring no invalid output reaches downstream systems.</p>
+<h2>Guidance decoding as an alternative</h2>
+<p>Rather than generating freeform and repairing after the fact, guidance decoding constrains the sampler itself: a grammar (JSON, regex, or custom FSM) masks invalid tokens at each step so the model <em>cannot</em> emit them. Willard &amp; Louf&#39;s Outlines library (2023) demonstrated this with near-zero overhead. For simpler constraints, provider-level <code>response_format: { type: &quot;json_schema&quot; }</code> (OpenAI) and Anthropic&#39;s tool-use enforcement achieve similar guarantees without user-side grammar files. Guidance decoding is most valuable for local or self-hosted models where provider-side schema enforcement is unavailable.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Willard &amp; Louf, &quot;Efficient Guided Generation for Large Language Models,&quot; 2023 — <a href="https://arxiv.org/abs/2307.09702">https://arxiv.org/abs/2307.09702</a> (the <em>Outlines</em> library)</li>
+<li>OpenAI, &quot;A practical guide to building agents&quot; — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a> — tool design and guardrails for production agents.</li>
+<li>Anthropic, &quot;Effective context engineering for AI agents,&quot; Sep 2025 — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a> — tool-set curation guidance.</li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a></li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="/ai/what-is-an-agent">What Is an Agent</a> · <a href="/ai/model-context-protocol-mcp">MCP</a> · <a href="/ai/reliability-evaluation-and-observability">Reliability Evals and Observability</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/context-windows-and-inference">Context Windows and Inference</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/local-ai-hardware-and-inference">Local AI Hardware and Inference</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/context-windows-and-inference">← Context Windows and Inference</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/local-ai-hardware-and-inference">Local AI Hardware and Inference →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 01 Foundations/Structured Outputs and Tool Calling.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

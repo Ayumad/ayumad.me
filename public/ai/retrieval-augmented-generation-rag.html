@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="RAG retrieves relevant external evidence and places it into model context at answer time. It is usually preferable to finetuning when knowledge changes or is pr">
+<title>Retrieval-augmented generation (RAG) — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/retrieval-augmented-generation-rag</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/skills-tools-and-capability-management" title="Skills, Tools, and Capability Management">←</a><a class="tb-btn" rel="next" href="/ai/vector-search-and-embeddings" title="Vector Search and Embeddings">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Retrieval-augmented generation (RAG)</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, rag, retrieval, embeddings</span></div>
+<blockquote>
+<p>[!summary] The gist
+RAG searches a document collection at answer time and hands the most relevant pieces to the model as evidence. It beats fine-tuning when knowledge is private, changes fast, or didn&#39;t exist at training time. This note covers the retrieval pipeline: chunking, embeddings, hybrid search, reranking, and deployment patterns.</p>
+</blockquote>
+<hr>
+<h2>Retrieval toolbox</h2>
+<ul>
+<li><strong>Embeddings:</strong> semantic vectors for meaning-based search.</li>
+<li><strong>Keyword/BM25:</strong> strong for exact identifiers, error codes, and names.</li>
+<li><strong>Metadata filters:</strong> tenant, date, ACL, source, language, or document type.</li>
+<li><strong>Hybrid retrieval:</strong> combine lexical and semantic candidates.</li>
+<li><strong>Reranking:</strong> spend more compute to order a smaller candidate set.</li>
+<li><strong>Query rewriting/decomposition:</strong> turn vague questions into retrievable subqueries.</li>
+<li><strong>Agentic RAG:</strong> let the agent inspect evidence gaps, search again, compare sources, and resolve contradictions.</li>
+<li><strong>Knowledge graphs:</strong> preserve entities and relations when connections matter more than passages.</li>
+</ul>
+<p>Chunking must preserve enough local meaning without making every result too broad. Store provenance such as document, section, page, timestamp, and access policy. Retrieval quality, context construction, and citation behavior all require evaluation.</p>
+<h2>Chunking strategies</h2>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>How it works</th>
+<th>Trade-offs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Fixed</strong></td>
+<td>Split every N tokens (e.g., 512)</td>
+<td>Fastest; cuts mid-sentence, losing local context</td>
+</tr>
+<tr>
+<td><strong>Recursive</strong></td>
+<td>Split by separator hierarchy (paragraph → sentence → token), cuts at largest natural boundary that fits</td>
+<td>Sensible default; preserves more semantic boundaries</td>
+</tr>
+<tr>
+<td><strong>Semantic</strong></td>
+<td>Embed each sentence, break on topic shift</td>
+<td>Best coherence; costs one embedding call per sentence</td>
+</tr>
+</tbody></table>
+<p><strong>Practical defaults:</strong> start at ~512 tokens with 10–20% overlap using recursive splitting. Adjust by content type: FAQ entries ~256 tokens, articles ~512, legal/technical documents ~1024, tables/page-aligned.</p>
+<p><strong>Overlap:</strong> 10–20% token overlap helps boundary-spanning concepts in dense retrieval. However, a Jan 2026 study found no measurable benefit with sparse (SPLADE) retrieval while raising indexing cost—keep overlap for dense retrieval, omit for sparse-only pipelines.</p>
+<p><strong>Benchmark caveat:</strong> public chunking benchmarks conflict because they ran on different documents with different embedders. Do not copy someone else&#39;s leaderboard; evaluate on your own corpus.</p>
+<p><strong>Contextual Retrieval (Anthropic 2024):</strong> prepend 50–100 tokens of chunk-specific context to each chunk before embedding AND BM25 indexing. This reduces failed retrievals by 49% alone, 67% with reranking. Uses prompt caching for indexing efficiency. This is the single highest-leverage chunking improvement in current practice.</p>
+<h2>Hybrid search (BM25 + vector)</h2>
+<p>Combine dense (semantic) and sparse (lexical) retrieval via <strong>Reciprocal Rank Fusion (RRF)</strong>:</p>
+<pre><code class="language-python"># RRF combines rank positions, not raw scores — calibration-free
+def rrf_score(rank, k=60):
+    return 1 / (k + rank)
+
+# Merge ranked lists from BM25 and vector search
+# k=60 smoothing constant works well empirically
+</code></pre>
+<p>RRF is calibration-free across different score scales (BM25 scores vs cosine similarity). Expect 5–15% higher recall@10 vs the stronger individual method.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Excels at</th>
+<th>Fails at</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BM25 (sparse)</td>
+<td>Exact matches, rare terms, product names, acronyms, error codes</td>
+<td>Vocabulary gaps, paraphrases, semantic similarity</td>
+</tr>
+<tr>
+<td>Vector (dense)</td>
+<td>Semantic matching, paraphrase handling, conceptual queries</td>
+<td>Exact string matches, rare terminology</td>
+</tr>
+</tbody></table>
+<p>Their failures are complementary—this is why hybrid outperforms either alone.</p>
+<h2>Rerankers</h2>
+<p>After initial retrieval, rerankers spend more compute to improve ordering of a smaller candidate set:</p>
+<table>
+<thead>
+<tr>
+<th>Reranker</th>
+<th>Approach</th>
+<th>Latency</th>
+<th>Quality</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Cross-encoder</strong> (general)</td>
+<td>Jointly attend to [query; doc] pair</td>
+<td>~100ms+</td>
+<td>+5–15 NDCG@10 over bi-encoder</td>
+<td>Gold standard for quality; too slow for full corpus</td>
+</tr>
+<tr>
+<td><strong>BGE-Reranker-v2-m3</strong></td>
+<td>Multilingual cross-encoder, 568M params</td>
+<td>~50–100ms</td>
+<td>60.4 MTEB</td>
+<td>Default choice; MIT licensed</td>
+</tr>
+<tr>
+<td><strong>Cohere rerank-v3.0</strong></td>
+<td>Proprietary cross-encoder</td>
+<td>~100ms p50</td>
+<td>Strong</td>
+<td>$1/1K queries; managed service</td>
+</tr>
+<tr>
+<td><strong>ColBERT</strong></td>
+<td>Late interaction: token-level matching</td>
+<td>5–50ms</td>
+<td>+3–8 NDCG</td>
+<td>Faster than cross-encoder; token embeddings cached</td>
+</tr>
+</tbody></table>
+<h2>GraphRAG</h2>
+<p>Microsoft&#39;s GraphRAG extracts a knowledge graph from text, then uses hierarchical clustering (Leiden algorithm) to create community summaries for retrieval:</p>
+<table>
+<thead>
+<tr>
+<th>Search mode</th>
+<th>How it works</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Global Search</strong></td>
+<td>Holistic question answered from community summaries</td>
+<td>&quot;What are the main themes across this corpus?&quot;</td>
+</tr>
+<tr>
+<td><strong>Local Search</strong></td>
+<td>Entity fan-out: find entity → retrieve related entities and communities</td>
+<td>&quot;What does X know about Y?&quot;</td>
+</tr>
+<tr>
+<td><strong>DRIFT Search</strong></td>
+<td>Entity + community with dynamic retrieval</td>
+<td>Complex multi-hop questions requiring traversal</td>
+</tr>
+</tbody></table>
+<p>GraphRAG is strong on questions requiring traversing disparate information that pure vector search would miss. Note: now in maintenance mode. See <a href="https://microsoft.github.io/graphrag/">https://microsoft.github.io/graphrag/</a> for current status.</p>
+<h2>Vector database selection</h2>
+<table>
+<thead>
+<tr>
+<th>Database</th>
+<th>Strengths</th>
+<th>Weaknesses</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Chroma</strong></td>
+<td>Zero-config, embedded, quick start</td>
+<td>Limited scale, basic features</td>
+<td>Prototyping, local dev</td>
+</tr>
+<tr>
+<td><strong>Qdrant</strong></td>
+<td>Rust performance, rich filtering, hybrid search</td>
+<td>Younger ecosystem</td>
+<td>Production vector search with metadata filtering</td>
+</tr>
+<tr>
+<td><strong>Weaviate</strong></td>
+<td>GraphQL API, built-in vectorization modules</td>
+<td>Operational complexity</td>
+<td>Multi-modal search, managed cloud option</td>
+</tr>
+<tr>
+<td><strong>Pinecone</strong></td>
+<td>Fully managed, serverless, low ops</td>
+<td>Vendor lock-in, cost at scale</td>
+<td>Teams wanting zero-ops managed service</td>
+</tr>
+<tr>
+<td><strong>pgvector</strong></td>
+<td>PostgreSQL extension, relational + vector</td>
+<td>Vector perf trails dedicated DBs at scale</td>
+<td>Teams already on Postgres</td>
+</tr>
+</tbody></table>
+<p><strong>Selection criteria:</strong> evaluate on your corpus size, query latency requirements, filtering needs (metadata, ACL, tenant), operational budget, and whether you need hybrid (vector + keyword) search natively.</p>
+<h2>Production deployment patterns</h2>
+<ol>
+<li><strong>Indexing pipeline:</strong> chunk → enrich (contextual metadata) → embed → store with provenance. Run on every document change. Use prompt caching for contextual enrichment cost.</li>
+<li><strong>Query pipeline:</strong> rewrite query → hybrid retrieve (BM25 + vector) → rerank → build context → generate with citations. Measure hit@K, MRR, citation correctness, and faithfulness.</li>
+<li><strong>Monitoring:</strong> track retrieval precision, answer faithfulness, latency p50/p99, and cost per query. Alert on precision drops—stale indexes are the silent killer.</li>
+<li><strong>Lost-in-the-middle mitigation:</strong> models ignore information in the middle of long context. Use smaller context windows (2–4K tokens), place strongest chunks at start AND end, query after context presentation.</li>
+<li><strong>Incremental updates:</strong> re-index only changed documents. Use document hashing and version tracking to avoid full rebuilds.</li>
+</ol>
+<h2>RAG versus fine-tuning</h2>
+<p><code>Changing knowledge → RAG</code> · <code>Changing behavior/style → fine-tuning</code> · <code>Both → combine them deliberately</code>.</p>
+<p>Related: <a href="/ai/memory-and-skills">Memory and Skills</a> · <a href="/ai/context-engineering">Context Engineering</a> · <a href="/ai/reliability-evaluation-and-observability">Reliability Evals and Observability</a>.</p>
+<h2>Practice and evaluation</h2>
+<p>Start with a small authoritative corpus and inspect actual queries before tuning a complex pipeline. Evaluate hit@K/MRR, source coverage, citation correctness, faithfulness, access control, and correct abstention. RAG serves changing facts; memory serves retained experience; skills serve reusable procedures.</p>
+<p>For the machinery under this pipeline — how embedding models are trained, ANN index internals (HNSW/IVF/PQ), similarity-vs-relevance, and the local Ollama + ChromaDB stack — see <a href="/ai/vector-search-and-embeddings">Vector Search and Embeddings</a>.</p>
+<h2>Evidence base</h2>
+<ul>
+<li><strong>RAG&#39;s origin (Lewis et al. 2020):</strong> combine parametric memory (the model&#39;s weights) with non-parametric memory (retrievable documents). The paper&#39;s recipe produced strong gains on knowledge-intensive NLP tasks and is the canonical citation for the pattern.</li>
+<li><strong>ColBERT (Khattab &amp; Zaharia 2020):</strong> late-interaction, token-level search delivers better retrieval quality than single-vector embedding search at practical cost—the basis of many modern dense and hybrid designs.</li>
+<li><strong>Contextual retrieval (Anthropic 2024):</strong> prepending a short context to each chunk (explaining what the chunk is about and where it fits) and combining BM25 with embeddings substantially reduced retrieval failures in Anthropic&#39;s public evaluations. Chunk design matters as much as the retriever.</li>
+<li><strong>Book treatment (Huyen 2025):</strong> retrieval is a design space—chunking, embedding vs. keyword, hybrid, reranking, evals—and RAG beats fine-tuning when knowledge changes or is private, matching this note&#39;s core claim.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Lewis et al., &quot;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,&quot; 2020 — <a href="https://arxiv.org/abs/2005.11401">https://arxiv.org/abs/2005.11401</a></li>
+<li>Khattab &amp; Zaharia, &quot;ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT,&quot; 2020 — <a href="https://arxiv.org/abs/2004.12832">https://arxiv.org/abs/2004.12832</a></li>
+<li>Anthropic, &quot;Introducing Contextual Retrieval,&quot; Sep 2024 — <a href="https://www.anthropic.com/engineering/contextual-retrieval">https://www.anthropic.com/engineering/contextual-retrieval</a></li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a> — retrieval and evals chapters.</li>
+<li>&quot;RAG Chunking Strategies&quot; (The Agent Ecosystem, Jul 2026) — <a href="https://www.theagentecosystem.com/blog/rag-chunking-strategies">https://www.theagentecosystem.com/blog/rag-chunking-strategies</a> — fixed/recursive/semantic comparison, practical defaults.</li>
+<li>&quot;Hybrid Search for RAG&quot; (Adaptive Recall) — <a href="https://www.adaptiverecall.com/rag-pipelines/hybrid-search-rag.php">https://www.adaptiverecall.com/rag-pipelines/hybrid-search-rag.php</a> — RRF fusion, BM25+vector complementarity.</li>
+<li>GraphRAG official docs (Microsoft) — <a href="https://microsoft.github.io/graphrag/">https://microsoft.github.io/graphrag/</a> — entity extraction, Leiden clustering, Global/Local/DRIFT search.</li>
+<li>GraphRAG GitHub (Microsoft) — <a href="https://github.com/microsoft/graphrag">https://github.com/microsoft/graphrag</a> — open-source implementation, maintenance status.</li>
+<li>&quot;Reranking &amp; Cross-Encoders for RAG&quot; (LocalAIMaster, 2026) — <a href="https://localaimaster.com/blog/reranking-cross-encoders-guide">https://localaimaster.com/blog/reranking-cross-encoders-guide</a> — cross-encoder vs bi-encoder benchmarks.</li>
+<li>&quot;Rerankers &amp; context engineering&quot; (Masst Docs) — <a href="https://docs.masst.dev/ai/retrieval/rerankers-context">https://docs.masst.dev/ai/retrieval/rerankers-context</a> — ColBERT latency, Cohere pricing.</li>
+<li>&quot;RAG vs Fine-tuning&quot; (The Agent Ecosystem, Jul 2026) — <a href="https://www.theagentecosystem.com/blog/rag-chunking-strategies">https://www.theagentecosystem.com/blog/rag-chunking-strategies</a> — chunking benchmark caveats.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/skills-tools-and-capability-management">Skills, Tools, and Capability Management</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/vector-search-and-embeddings">Vector Search and Embeddings</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/skills-tools-and-capability-management">← Skills, Tools, and Capability Management</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/vector-search-and-embeddings">Vector Search and Embeddings →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 03 Context Knowledge Memory/RAG.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

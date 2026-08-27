@@ -84,6 +84,29 @@ for (const n of notes) {
   byTitle.set(path.basename(n.rel, ".md").toLowerCase(), n.rel);
 }
 
+// ---------- slugs: short, stable, unique URLs (flat, extensionless) ----------
+// "The Gist of It" → /ai/the-gist-of-it. The old folder-structure URLs
+// (`/ai/00%20Start%20Here/The%20Gist%20of%20It.html`) get generated redirect
+// pages so anything already shared keeps working.
+const slugByRel = new Map(); // rel -> slug (AI_Home.md handled separately → /ai/)
+const usedSlugs = new Set();
+function slugify(s) {
+  return s
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+for (const n of notes) {
+  if (n.rel === "AI_Home.md") continue;
+  let base = slugify(n.title) || slugify(path.basename(n.rel, ".md")) || "note";
+  let slug = base, i = 2;
+  while (usedSlugs.has(slug)) slug = `${base}-${i++}`;
+  usedSlugs.add(slug);
+  slugByRel.set(n.rel, slug);
+}
+
 function resolveTarget(raw) {
   const t = raw.trim();
   if (t.includes("/")) {
@@ -93,11 +116,10 @@ function resolveTarget(raw) {
   return byTitle.get(t.toLowerCase()) || null;
 }
 
-/** URL for a note from anywhere: root-absolute, folder structure preserved. */
+/** URL for a note from anywhere: root-absolute, short slug, no extension. */
 function hrefFor(fromRel, rel) {
   if (rel === "AI_Home.md") return URL_BASE;
-  const toNoMd = rel.slice(0, -3);
-  return URL_BASE + toNoMd.split("/").map(encodeURIComponent).join("/") + ".html";
+  return URL_BASE + slugByRel.get(rel);
 }
 
 /** Convert wikilinks in a body: in-scope → markdown link, else inert dimmed span. */
@@ -419,7 +441,7 @@ function topbarHtml(r) {
   const prev = r.meta.prev ? resolveTarget(r.meta.prev) : null;
   const next = r.meta.next ? resolveTarget(r.meta.next) : null;
   const isHome = r.rel === "AI_Home.md";
-  const crumbPath = isHome ? "~/ai" : `~/ai/${escapeHtml(r.rel.slice(0, -3))}`;
+  const crumbPath = isHome ? "~/ai" : `~/ai/${escapeHtml(slugByRel.get(r.rel))}`;
   const prevBtn = prev
     ? `<a class="tb-btn" rel="prev" href="${hrefFor(r.rel, prev)}" title="${escapeHtml(prev.slice(0, -3).split("/").pop())}">←</a>`
     : `<span class="tb-btn" disabled title="no previous note">←</span>`;
@@ -496,16 +518,47 @@ ${isHome ? renderTreeIndex() : ""}
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "ai.css"), CSS);
+
+/** Tiny HTML redirect so old folder-structure URLs keep working. */
+function redirectPage(title, targetUrl) {
+  const abs = "https://ayumad.me" + targetUrl;
+  return `<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(title)} — AI Engineering</title>
+<meta http-equiv="refresh" content="0; url=${abs}">
+<link rel="canonical" href="${abs}">
+</head><body>
+<p style="font-family:monospace">Moved → <a href="${abs}">${targetUrl}</a></p>
+</body></html>`;
+}
+
 let written = 0;
+let redirected = 0;
 for (const r of records) {
-  const relNoMd = r.rel.slice(0, -3);
-  const outFile = relNoMd === "AI_Home" ? path.join(outDir, "index.html") : path.join(outDir, ...relNoMd.split("/")) + ".html";
-  fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, pageHtml(r));
+  // new canonical home: root of the section, where the "home" note lives
+  if (r.rel === "AI_Home.md") {
+    fs.writeFileSync(path.join(outDir, "index.html"), pageHtml(r));
+    written++;
+    continue;
+  }
+  // every other note: flat file at /ai/<slug>.html (Vercel cleanUrls serves
+  // /ai/<slug> extensionless)
+  const slug = slugByRel.get(r.rel);
+  fs.writeFileSync(path.join(outDir, slug + ".html"), pageHtml(r));
   written++;
+  // keep the old folder-structure URL alive with a redirect stub
+  if (path.posix.dirname(r.rel) !== ".") {
+    const oldRelNoMd = r.rel.slice(0, -3); // "04 Workflows and Orchestration/Workflow Patterns"
+    const oldFile = path.join(outDir, ...oldRelNoMd.split("/")) + ".html";
+    fs.mkdirSync(path.dirname(oldFile), { recursive: true });
+    fs.writeFileSync(oldFile, redirectPage(r.title, hrefFor(r.rel, r.rel)));
+    redirected++;
+  }
 }
 fs.copyFileSync(path.join(repoRoot, "scripts", "ai-search-client.js"), path.join(outDir, "ai.js"));
-console.log(`wrote ${written} pages + ai.css → ${outDir}`);
+console.log(`wrote ${written} pages + ${redirected} old-path redirects + ai.css → ${outDir}`);
 await buildSearchIndex();
 vendorRuntime();
 console.log("done");

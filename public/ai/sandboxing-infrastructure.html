@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Sandbox choice follows the threat model: processes suit trusted code, containers provide moderate isolation, and microVMs or VMs suit generated or arbitrary unt">
+<title>Sandboxing infrastructure — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/sandboxing-infrastructure</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/sandboxes-and-execution-planes" title="Sandboxes and Execution Planes">←</a><a class="tb-btn" rel="next" href="/ai/planning-state-and-persistence" title="Planning State and Persistence">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Sandboxing infrastructure</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, sandbox, containers, microvms, execution</span></div>
+<blockquote>
+<p>[!summary] The gist
+Sandbox choice follows the threat model: processes suit trusted code, containers provide moderate isolation, and microVMs or VMs suit generated or arbitrary untrusted execution.
+This note compares the different types of isolation technology available: from lightweight process separation to full virtual machines. It also covers cloud services that rent you ready-made sandboxes.</p>
+</blockquote>
+<hr>
+<p>There is no universally best sandbox. Select an isolation boundary based on what executes, the data and credentials it can reach, the blast radius of compromise, compatibility requirements, and startup/operating cost. For the architectural principle of separating policy from execution, see <a href="/ai/sandboxes-and-execution-planes">Sandboxes and Execution Planes</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Isolation</th>
+<th>Startup</th>
+<th>Best fit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Process</td>
+<td>Low</td>
+<td>Excellent</td>
+<td>Trusted internal tools</td>
+</tr>
+<tr>
+<td>Container</td>
+<td>Medium</td>
+<td>Excellent</td>
+<td>Bounded code execution</td>
+</tr>
+<tr>
+<td>gVisor-style runtime</td>
+<td>Stronger</td>
+<td>Good</td>
+<td>Untrusted containers</td>
+</tr>
+<tr>
+<td>MicroVM</td>
+<td>Very strong</td>
+<td>Good</td>
+<td>LLM-generated or user code</td>
+</tr>
+<tr>
+<td>Full VM</td>
+<td>Very strong</td>
+<td>Slower</td>
+<td>Heavy isolation/compliance</td>
+</tr>
+<tr>
+<td>Browser sandbox</td>
+<td>Scoped</td>
+<td>Good</td>
+<td>Web interaction only</td>
+</tr>
+</tbody></table>
+<h2>Technology deep dives</h2>
+<p><strong>Firecracker (AWS, Rust):</strong> MicroVMs boot in ~100–200ms with &lt;5 MiB overhead per instance. Each microVM runs its own Linux kernel in KVM with only 5 virtio devices (minimal attack surface). ~50K lines of Rust vs. QEMU&#39;s ~2M lines of C. Sustains ~150 microVMs/sec per host. Used by AWS Lambda and Fargate. Requires custom orchestration—no built-in Kubernetes integration.</p>
+<p><strong>gVisor (Google, Go):</strong> User-space kernel that intercepts syscalls via Sentry. Supports Systrap, KVM, and Directfs modes. Boot time in milliseconds with lower memory than VM-based alternatives. The trade-off: syscall interception adds overhead on I/O-heavy workloads, and while it reduces the kernel attack surface, it still shares the host kernel (unlike full VM isolation).</p>
+<p><strong>Kata Containers:</strong> An orchestration framework that pairs multiple VMMs (Cloud Hypervisor default, Firecracker, or QEMU) with Kubernetes. Boot ~150–300ms. Handles kernel images, networking, storage, and lifecycle management with native CRI integration. Combines hardware isolation (via the VMM) with container workflows (via Kubernetes), making it the bridge between VM security and container ergonomics.</p>
+<p><strong>Isolation hierarchy (strongest to weakest):</strong> Full VM (KVM) &gt; Firecracker/Kata microVM &gt; gVisor &gt; container &gt; process. For adversarial workloads (LLM-generated code, untrusted user uploads), VM-based isolation is strongest. gVisor&#39;s syscall interception is simpler to deploy but weaker against determined attackers.</p>
+<h2>Cloud sandbox platforms</h2>
+<p>Managed services abstract the underlying isolation technology:</p>
+<ul>
+<li><strong>E2B:</strong> Open-source, Firecracker-based. Cold-start &lt;200ms. Supports Python, JS, Ruby, C++. Full filesystem, terminal, packages, and browser. Sessions up to 24h. SDKs for Python and TypeScript. Integrates with OpenAI, Anthropic, LangChain, and Vercel AI SDK. Freemium tier.</li>
+<li><strong>Modal:</strong> gVisor-based sandboxes. Supports Python, JS, TS, Go. ~$0.0504/vCPU-hour. Broader platform including inference, training, and batch workloads.</li>
+<li><strong>Northflank:</strong> Managed container and microVM hosting with configurable network policies. Supports Firecracker-based isolation.</li>
+</ul>
+<p>Network egress is configurable across platforms: E2B/Firecracker support network policies at the microVM level; gVisor provides syscall-level filtering for finer-grained control.</p>
+<h2>Sandbox-escape risks</h2>
+<p>No sandbox is absolute. Understand the escape vectors:</p>
+<ul>
+<li><strong>Docker containers</strong> share the host kernel—a kernel exploit gives full host access. Suitable only for trusted code with no adversarial input.</li>
+<li><strong>gVisor</strong> reduces the kernel attack surface by intercepting syscalls, but the Sentry process itself runs on the host kernel. A vulnerability in Sentry or a kernel exploit that bypasses interception can escape.</li>
+<li><strong>Firecracker/Kata</strong> require escaping both the guest kernel and the hypervisor (KVM). This is a significantly harder attack—no known production escapes as of 2026—but the guest kernel is still a real kernel with its own vulnerability surface.</li>
+<li><strong>Full VMs</strong> provide the strongest boundary but are not immune to hypervisor exploits (e.g., VENOM, though patched).</li>
+</ul>
+<p>Defense in depth: combine sandbox isolation with network policies, credential scoping, output validation, and monitoring. Sandboxing complements—rather than replaces—tool allowlists, approval gates, input validation, secrets management, logging, and incident response.</p>
+<h2>Resource-limit configuration</h2>
+<p>Set resource limits outside the model. A typical agent sandbox configuration:</p>
+<pre><code class="language-yaml">sandbox:
+  cpu_limit: &quot;2.0&quot;          # vCPUs
+  memory_limit: &quot;1Gi&quot;       # RAM
+  wall_clock_limit: &quot;300s&quot;  # max runtime
+  process_count: 64         # max processes
+  disk_limit: &quot;5Gi&quot;         # writable filesystem
+  network: &quot;egress-https&quot;   # allow HTTPS only, no internal
+  package_install: false    # no pip/npm install
+  file_mounts: []           # no host filesystem access
+</code></pre>
+<p>Destroy the environment after the job unless durable state is deliberately promoted through a validated boundary (see <a href="/ai/sandboxes-and-execution-planes">Sandboxes and Execution Planes</a>).</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Northflank, &quot;Kata Containers vs Firecracker vs gVisor,&quot; Jan 2026 — <a href="https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor">https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor</a> — technology comparison, isolation hierarchy, startup costs.</li>
+<li>E2B Documentation, 2026 — <a href="https://docs.e2b.dev/">https://docs.e2b.dev/</a> — Firecracker-based cloud sandboxes, SDK, session management.</li>
+<li>E2B API Evangelist profile, 2026 — <a href="https://github.com/api-evangelist/e2b">https://github.com/api-evangelist/e2b</a> — integration examples and architecture.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="/ai/sandboxes-and-execution-planes">Sandboxes and Execution Planes</a> · <a href="/ai/computer-use-and-browser-agents">Computer-Use and Browser Agents</a> · <a href="/ai/security-jailbreaks-and-prompt-injection">Security and Jailbreaking</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/sandboxes-and-execution-planes">Sandboxes and Execution Planes</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/planning-state-and-persistence">Planning State and Persistence</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/sandboxes-and-execution-planes">← Sandboxes and Execution Planes</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/planning-state-and-persistence">Planning State and Persistence →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Sandboxing Infrastructure.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An agent is a model plus a goal, instructions, tools, state, and a loop that continues until a stopping condition.">
+<title>What is an agent? — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/what-is-an-agent</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/agents-and-harnesses" title="Agents and Harnesses Hub">←</a><a class="tb-btn" rel="next" href="/ai/agent-harness" title="Agent Harness">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">What is an agent?</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, agents, react, loop</span></div>
+<blockquote>
+<p>[!summary] The gist
+An agent can break a task into steps, try different approaches, and keep going until it reaches a goal or hits a limit. Unlike a calculator, it can decide its own path.
+This note explains how that loop works, when it is the right tool for the job, and how to tell if an agent actually performed well or just sounded convincing.</p>
+</blockquote>
+<hr>
+<h2>A bounded control loop</h2>
+<p>An agent repeatedly observes its environment, selects a next action, receives an observation, and stops under explicit conditions. The loop is useful when the path to an outcome is uncertain; it is not automatically better than deterministic code for a known sequence.</p>
+<p>Define the objective, allowed observations and actions, success evidence, failure modes, resource budget, and stopping rules before adding autonomy. A good first agent has a read-only tool, a small task scope, an action limit, and a trace that makes each decision inspectable.</p>
+<h2>Evaluate the whole trajectory</h2>
+<p>An answer can sound correct after the agent selected irrelevant context, used a forbidden tool, or retried a side effect. Evaluate both the final outcome and the path: tool choice, arguments, evidence, cost, latency, recovery, and whether it stopped at the right time.</p>
+<p>An agent is a model plus a goal, instructions, tools, state, and a loop that continues until a stopping condition.</p>
+<pre><code class="language-text">observe → reason → decide → act → observe → …
+</code></pre>
+<p>The loop stops when the goal is achieved, a human decision is required, a failure/budget limit is reached, or the system cannot safely continue.</p>
+<h2>Minimal pseudocode</h2>
+<pre><code class="language-python">while not stop(state):
+    decision = model(goal, state, available_tools)
+    if decision.finished:
+        return decision.answer
+    observation = execute_and_validate(decision.tool_call)
+    state.append(observation)
+</code></pre>
+<p>ReAct (“reason and act”) is a historically influential pattern. Modern systems may hide internal reasoning and expose only actions, summaries, and tool results; the architectural loop remains.</p>
+<h2>Agent versus workflow</h2>
+<p>Use an explicit workflow when steps, ordering, and failure handling are known. Use an agent when the path depends on information discovered during execution. Combine them when agents choose within deterministic boundaries.</p>
+<h2>Where the agent idea comes from</h2>
+<ul>
+<li><strong>ReAct (Yao et al. 2022):</strong> interleave reasoning traces with actions; the authors showed gains over reasoning-only and acting-only baselines on knowledge-intensive QA and decision-making tasks. The reason→act loop is the direct ancestor of most modern agent loops.</li>
+<li><strong>Weng&#39;s agent anatomy (2023):</strong> planning, memory, tool use—the three subsystems that still organize agent-design discussion.</li>
+<li><strong>Anthropic (Dec 2024):</strong> production agents succeed with simple, composable patterns; a workflow follows a predefined path, while an agent decides the path at runtime.</li>
+<li><strong>OpenAI (2025):</strong> an agent is model + tools + orchestration loop. Start simple, add autonomy only where the task demands it, and keep guardrails and evaluation from day one.</li>
+</ul>
+<h2>Memory in the loop</h2>
+<p>Agents that run across multiple steps need memory to avoid re-discovering what they already know. Two architectural patterns dominate: passive extraction (a system automatically stores and retrieves facts without model involvement, predictably token-efficient but unable to judge nuance) and agentic self-editing (the model explicitly decides what to store, overwrite, or forget via tool calls, adaptive but every memory operation costs inference tokens). The MemGPT paper frames this as an OS analogy: the LLM manages its own context window like an OS manages RAM, paging information between a small in-context working set and larger archival storage. Choosing between these patterns depends on whether the agent&#39;s tasks require flexible judgment about what is worth remembering or benefit from the consistency of automatic extraction.</p>
+<h2>Failure modes</h2>
+<p>Autonomous agents fail in characteristic, predictable ways. Catalog them explicitly so your harness can detect and recover from each:</p>
+<ol>
+<li><strong>Cascading hallucination propagation</strong> — one hallucinated fact enters the context and is cited as evidence by subsequent steps, compounding error silently.</li>
+<li><strong>Coordination latency collapse</strong> — each additional agent in a multi-agent system adds 200ms+ of coordination overhead; scaling from 2 to 8 agents can push end-to-end latency from seconds to minutes.</li>
+<li><strong>Cascading timeouts</strong> — a slow downstream tool call delays the entire chain; without per-step timeouts, the agent hangs or exhausts its budget on a single blocked step.</li>
+<li><strong>Premature completion</strong> — the agent sees partial progress (a file written, a test passing) and declares the task done before verifying the full objective.</li>
+<li><strong>One-shot overreach</strong> — the agent tries to complete a multi-step task in a single context window, runs out of tokens mid-implementation, and leaves an inconsistent state.</li>
+<li><strong>Side-effect accumulation</strong> — each tool call mutates external state; without idempotency keys or compensating actions, retries duplicate work or create contradictions.</li>
+<li><strong>Budget blindness</strong> — the agent optimizes for task completion without tracking token cost, API spend, or wall-clock time, leading to runaway expenses.</li>
+</ol>
+<p>Empirical data underscores the urgency: 1,600+ traces across 7 frameworks showed 41–87% failure rates, and Carnegie Mellon studies report 30–35% task completion on multi-step tasks.</p>
+<h2>Trajectory evaluation</h2>
+<p>Evaluating only the final answer misses most failures. Score the entire trajectory: tool choice, arguments, evidence quality, recovery behavior, cost, latency, and whether the agent stopped at the right time. See <a href="/ai/evaluation-engineering">Evaluation Engineering</a> for trajectory metrics and structured eval frameworks.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Yao et al., &quot;ReAct: Synergizing Reasoning and Acting in Language Models,&quot; 2022 — <a href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a> — canonical reason-and-act loop.</li>
+<li>Weng, &quot;LLM Powered Autonomous Agents,&quot; Jun 2023 — <a href="https://lilianweng.github.io/posts/2023-06-23-agent/">https://lilianweng.github.io/posts/2023-06-23-agent/</a> — planning/memory/tool use taxonomy.</li>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 19, 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a> — simple composable patterns.</li>
+<li>OpenAI, &quot;A practical guide to building agents,&quot; 2025 — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a> — tooling, orchestration, guardrails.</li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a> — model as one component among many.</li>
+<li>Pan, &quot;Agentic Systems Are Distributed Systems,&quot; May 2026 — <a href="https://tianpan.co/blog/2026-05-05-agentic-systems-distributed-services-microservices-patterns">https://tianpan.co/blog/2026-05-05-agentic-systems-distributed-services-microservices-patterns</a> — failure rates, coordination patterns.</li>
+<li>Anthropic, &quot;Effective harnesses for long-running agents,&quot; Nov 2025 — <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents</a> — initializer/coding agent pattern, failure modes.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="/ai/agent-harness">Agent Harness</a> · <a href="/ai/workflow-patterns">Workflow Patterns</a> · <a href="/ai/reliability-evaluation-and-observability">Reliability Evals and Observability</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/agents-and-harnesses">Agents and Harnesses Hub</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/agent-harness">Agent Harness</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/agents-and-harnesses">← Agents and Harnesses Hub</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/agent-harness">Agent Harness →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/What Is an Agent.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>

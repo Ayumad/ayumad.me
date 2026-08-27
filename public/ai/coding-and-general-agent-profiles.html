@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Profiles the major coding and general-purpose agents — Herdr, Hermes, DeepSeek Harness, Codex, Devin, Cursor, Claude Code, OpenCode, Pi, OpenHands, and Kimi Cod">
+<title>Coding and general-agent profiles — AI Engineering</title>
+<link rel="stylesheet" href="/ai/ai.css">
+</head><body>
+<header class="topbar">
+  <a class="brand" href="/ai/" title="AI Engineering home"><span class="brand-dot"></span>AYUMAD/AI</a>
+  <span class="crumbs">~/ai/coding-and-general-agent-profiles</span>
+  <nav class="tb-nav" aria-label="Note navigation">
+    <a class="tb-btn home" href="/ai/" title="Home">⌂ Home</a>
+    <a class="tb-btn" rel="prev" href="/ai/agent-tool-landscape-2026-snapshot" title="Tool Landscape Hub">←</a><a class="tb-btn" rel="next" href="/ai/agent-runtimes-and-frameworks" title="Agent Runtimes and Frameworks">→</a>
+  </nav>
+  <div class="tb-search" role="search">
+    <input id="ai-search" type="text" placeholder="Search the curriculum…" autocomplete="off" spellcheck="false" aria-label="Search the curriculum">
+    <div id="ai-panel" hidden></div>
+  </div>
+  <span id="status">66 notes<kbd>/</kbd></span>
+</header>
+<div class="page">
+<main>
+<article class="md">
+<h1 class="crt-title">Coding and general-agent profiles</h1>
+<div class="fm"><span><b>status</b> current-snapshot</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, tools, coding-agents</span></div>
+<blockquote>
+<p>[!summary] The gist
+AI coding agents range from terminal-first harnesses to cloud-delegated workstreams. This guide profiles the major players — Herdr, Hermes, DeepSeek Harness, Codex, Devin, Cursor, Claude Code, OpenCode, Pi, OpenHands, and Kimi Code — comparing their architecture, strengths, and trade-offs. A category map helps you match needs to candidate tools, and a context window comparison shows that harness quality is about context management, not raw token count.</p>
+</blockquote>
+<hr>
+<h2>Herdr — persistent agent runtime and control plane</h2>
+<p>Herdr keeps existing terminal agents running across disconnects and adds workspaces, panes, agent-state detection, SSH access, and a socket/API surface for spawning, inspecting, prompting, waiting, and collecting agent output. Its value is coordination and persistence, not a smarter underlying model. Best for many CLI agents, remote machines, and a supervising agent that needs to manage other processes. Tradeoffs are another runtime layer, security of the control API, and the need to understand which process state is being detected. <a href="https://herdr.dev/">Official site</a> · <a href="https://github.com/herdrdev/herdr">repository</a>.</p>
+<h2>Hermes — persistent personal/general agent</h2>
+<p>Nous Research’s Hermes spans CLI, desktop, TUI, gateway, messaging, browser, terminal, filesystem, memory, skills, subagents, scheduling, MCP, voice, and media capabilities. Its distinctive idea is an always-available agent that accumulates operational knowledge: memory stores facts and skills store procedures. Best for self-hosted personal assistants, homelabs, messaging-driven automation, and experimentation. Tradeoffs include broad permission surface, setup/maintenance, and the need to audit skills and integrations. <a href="https://hermes-agent.nousresearch.com/docs/">Official documentation</a> · <a href="https://github.com/NousResearch/hermes-agent">repository</a>.</p>
+<h2>DeepSeek Harness — everything as a plugin</h2>
+<p>DeepSeek Harness is a developer preview built on Cordis. Model, tools, skills, sessions, sandbox, storage, loop, scheduler, and UI are composable plugins. Its standard, code, minimal, and creator modes and append-only trajectories make it valuable for studying and modifying harness architecture. Best for research and experimentation; simpler coding tasks may be easier in a mature product. Treat preview stability and security posture as open questions. <a href="https://www.deepseek.com/harness/">Official developer preview</a> · <a href="https://github.com/deepseek-ai/deepseek-harness">repository</a>.</p>
+<h2>Codex — delegation-first agent command center</h2>
+<p>Codex spans CLI, app, IDE surfaces, skills, automations, sandboxing, cloud execution, projects, and parallel agents. The app emphasizes assigning workstreams, isolating changes in worktrees, and reviewing results. Best when an agent should own an end-to-end work package or several agents should run in parallel. Tradeoffs include provider coupling, review responsibility, and cost/permission management. <a href="https://openai.com/codex/">Codex</a> · <a href="https://openai.com/index/introducing-the-codex-app/">Codex app announcement</a>.</p>
+<h2>Devin — autonomous cloud engineer</h2>
+<p>Devin is Cognition&#39;s autonomous AI software engineer. It works in its own cloud environment: plan the work, edit files, run commands and tests, browse the web, and open the pull request. Devin 2.0 (April 2025) added an agent-native IDE, so you can run several Devins in parallel and steer each one mid-task. Interactive Planning researches the codebase and proposes a plan you can edit before execution. Devin Search answers codebase questions with cited code, and Devin Wiki re-indexes repositories into architecture diagrams and docs.</p>
+<p>The platform now also does Review (automatic pull-request review), Automations (scheduled and event-triggered runs from Slack, Jira, or Linear), Datadog incident triage, and code scanning. Devin CLI is the open-source local half: a terminal agent built on AG-UI that works on your local files, then hands the task to a cloud Devin when it needs a full environment. Model choice is yours — frontier models like Opus and GPT, Cognition&#39;s own SWE models, or cheap minis.</p>
+<p>Best for delegating end-to-end tickets (description to pull request), migrations, incident triage, and parallel workstreams you don&#39;t want to babysit. Tradeoffs include cloud-only execution outside the CLI, review responsibility for autonomous changes, and usage-based cost that climbs with heavy or premium-model work. <a href="https://cognition.com/blog/devin-2">Devin 2.0 announcement</a> · <a href="https://devin.ai/">Devin</a> · <a href="https://github.com/CognitionAI/devin-cli">CLI repository</a>.</p>
+<h2>Cursor — AI-native IDE and inner loop</h2>
+<p>Cursor tightly couples human, editor, codebase, and agent. Its Ask, Plan, Agent, and Debug modes separate understanding, planning, execution, and diagnosis; it also supports MCP, skills, rules, subagents, and cloud agents. Best for interactive codebase exploration and rapid human-agent iteration. Tradeoffs include editor-centric workflow, provider/product coupling, and the need to review broad edits. <a href="https://docs.cursor.com/en/agent/modes">Modes</a> · <a href="https://cursor.com/docs">documentation</a>.</p>
+<h2>Claude Code — model/harness co-design</h2>
+<p>Claude Code is a terminal-first coding harness with context files, shell and file tools, MCP, planning, subagents, hooks, background tasks, checkpoints, permissions, and an Agent SDK. It is especially useful to study for context management and long-running harness design. Best for terminal-centric engineering and custom agents built on a mature harness. Tradeoffs include model/provider coupling and a large permission surface. <a href="https://docs.anthropic.com/en/docs/claude-code/overview">Documentation</a> · <a href="https://docs.anthropic.com/en/docs/agents-and-tools/agent-sdk/overview">Agent SDK</a>.</p>
+<h2>OpenCode — open, provider-agnostic terminal agent</h2>
+<p>OpenCode is an open-source, terminal-first coding agent designed to work across providers and local models, with parallel sessions and developer tooling. Its educational value is separating harness quality from model choice. Best for experimentation, local models, and avoiding one-provider lock-in. Tradeoffs are self-hosting, configuration, and uneven provider behavior. <a href="https://opencode.ai/docs">Documentation</a> · <a href="https://github.com/sst/opencode">repository</a>.</p>
+<h2>Pi — minimal, extensible harness</h2>
+<p>Pi keeps the core loop small and extends it through TypeScript extensions, skills, templates, and packages. It is useful for learning the path from prompt to model to tools without a large platform obscuring the mechanics. Best for builders who want a small programmable base. Tradeoffs are fewer batteries-included features and more assembly work. <a href="https://pi.dev/docs/latest">Documentation</a>.</p>
+<h2>OpenHands — agent SDK and cloud/control layer</h2>
+<p>OpenHands provides a Software Agent SDK, CLI, and Cloud surfaces for agents that work with code, tools, and sandboxes. It is a useful layer above individual coding sessions when remote execution, automation, or custom developer experiences matter. Best for platform builders and autonomous software agents. Tradeoffs include platform complexity and operational ownership. <a href="https://docs.openhands.dev/overview/introduction">Overview</a> · <a href="https://docs.openhands.dev/sdk/index">SDK</a>.</p>
+<h2>Kimi Code — terminal/IDE agent with ACP and MCP</h2>
+<p>Kimi Code offers CLI, web, ACP, MCP, provider configuration, session export, and multimodal context such as video input. Its distinctive angle is moving between terminal and editor while exposing interoperability boundaries. Best for multimodal coding workflows and protocol experimentation. Tradeoffs include evolving compatibility and provider/service dependence. <a href="https://www.kimi.com/code/docs/en/kimi-code-cli/reference/kimi-command">CLI reference</a> · <a href="https://www.kimi.com/en/help/kimi-code/cli-ides">ACP/IDE integration</a>.</p>
+<h2>Category map</h2>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Candidate layer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Interactive IDE loop</td>
+<td>Cursor, Claude Code integrations, Kimi Code</td>
+</tr>
+<tr>
+<td>Delegated parallel work</td>
+<td>Codex, Devin, OpenHands, Herdr</td>
+</tr>
+<tr>
+<td>General persistent assistant</td>
+<td>Hermes</td>
+</tr>
+<tr>
+<td>Harness research/customization</td>
+<td>DeepSeek Harness, Pi, OpenCode</td>
+</tr>
+<tr>
+<td>Provider/model portability</td>
+<td>OpenCode, OpenHands, gateways</td>
+</tr>
+</tbody></table>
+<h2>Context window comparison</h2>
+<p>Context window size affects how much code, conversation history, and retrieved context an agent can hold. Larger windows reduce the need for truncation but increase cost and may degrade attention quality on long contexts.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Context window</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Claude Code</td>
+<td>200K tokens (Opus/Sonnet)</td>
+<td>Extended thinking available; strong at long-context code comprehension</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>Model-dependent (up to 200K via Claude)</td>
+<td>Inherits provider context limits</td>
+</tr>
+<tr>
+<td>Codex</td>
+<td>Model-dependent (up to 200K via GPT-4o)</td>
+<td>Inherits provider context limits</td>
+</tr>
+<tr>
+<td>Devin</td>
+<td>Model-dependent (Opus, GPT, SWE)</td>
+<td>Cloud VM sessions; context managed by the platform</td>
+</tr>
+<tr>
+<td>Hermes</td>
+<td>Model-dependent (configurable)</td>
+<td>Supports any provider&#39;s context window</td>
+</tr>
+<tr>
+<td>OpenCode</td>
+<td>Model-dependent (provider-agnostic)</td>
+<td>Inherits provider context limits</td>
+</tr>
+<tr>
+<td>DeepSeek Harness</td>
+<td>128K (DeepSeek models)</td>
+<td>DeepSeek&#39;s native context</td>
+</tr>
+<tr>
+<td>Pi</td>
+<td>Model-dependent</td>
+<td>Small harness, large context via provider</td>
+</tr>
+<tr>
+<td>OpenHands</td>
+<td>Model-dependent</td>
+<td>Inherits provider context limits</td>
+</tr>
+<tr>
+<td>Kimi Code</td>
+<td>128K (Kimi models)</td>
+<td>Multimodal context including video</td>
+</tr>
+</tbody></table>
+<p><strong>Key insight:</strong> Context window size is a provider property, not a harness property. Harness quality is determined by how well it manages, compresses, and prioritizes context within the available window — not by the raw token count.</p>
+<h2>Pricing and maturity</h2>
+<blockquote>
+<p>Most coding agents are in rapid development. Verified prices from research-D are limited; where research-D lacks confirmed pricing, the column is marked &quot;check vendor.&quot;</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Pricing model</th>
+<th>Maturity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Herdr</td>
+<td>Check vendor</td>
+<td>Early — persistent runtime, niche</td>
+</tr>
+<tr>
+<td>Hermes</td>
+<td>Open-source (self-hosted)</td>
+<td>Active development, broad feature set</td>
+</tr>
+<tr>
+<td>DeepSeek Harness</td>
+<td>Developer preview</td>
+<td>Preview — treat stability/security as open questions</td>
+</tr>
+<tr>
+<td>Codex</td>
+<td>Subscription (check vendor)</td>
+<td>GA — backed by OpenAI</td>
+</tr>
+<tr>
+<td>Devin</td>
+<td>Subscription (Free / $20 Pro / $200 Max; usage quotas)</td>
+<td>GA — cloud platform + open-source CLI</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>Subscription (check vendor)</td>
+<td>GA — widely adopted IDE</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td>API usage-based (Anthropic pricing)</td>
+<td>GA — production-ready</td>
+</tr>
+<tr>
+<td>OpenCode</td>
+<td>Open-source (self-hosted)</td>
+<td>Active development</td>
+</tr>
+<tr>
+<td>Pi</td>
+<td>Open-source</td>
+<td>Active development, small core</td>
+</tr>
+<tr>
+<td>OpenHands</td>
+<td>Open-source</td>
+<td>Active development, platform focus</td>
+</tr>
+<tr>
+<td>Kimi Code</td>
+<td>Check vendor</td>
+<td>Active development, protocol focus</td>
+</tr>
+</tbody></table>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Herdr — <a href="https://herdr.dev/">https://herdr.dev/</a> — persistent agent runtime.</li>
+<li>Hermes docs — <a href="https://hermes-agent.nousresearch.com/docs/">https://hermes-agent.nousresearch.com/docs/</a> — personal/general agent platform.</li>
+<li>DeepSeek Harness — <a href="https://www.deepseek.com/harness/">https://www.deepseek.com/harness/</a> — composable developer preview.</li>
+<li>Codex — <a href="https://openai.com/codex/">https://openai.com/codex/</a> — delegation-first agent command center.</li>
+<li>Devin 2.0 announcement — <a href="https://cognition.com/blog/devin-2">https://cognition.com/blog/devin-2</a> — parallel Devins and the agent-native IDE.</li>
+<li>Devin pricing — <a href="https://devin.ai/pricing">https://devin.ai/pricing</a> — plans from free to $200/month with usage quotas.</li>
+<li>Devin docs — <a href="https://docs.devin.ai">https://docs.devin.ai</a> — platform docs and release notes.</li>
+<li>Devin CLI — <a href="https://github.com/CognitionAI/devin-cli">https://github.com/CognitionAI/devin-cli</a> — open-source local coding agent (AG-UI).</li>
+<li>Devin for Terminal — <a href="https://cognition.com/blog/devin-for-terminal">https://cognition.com/blog/devin-for-terminal</a> — start locally, hand off to the cloud.</li>
+<li>Cursor modes — <a href="https://docs.cursor.com/en/agent/modes">https://docs.cursor.com/en/agent/modes</a> — AI-native IDE.</li>
+<li>Claude Code docs — <a href="https://docs.anthropic.com/en/docs/claude-code/overview">https://docs.anthropic.com/en/docs/claude-code/overview</a> — terminal-first coding harness.</li>
+<li>Claude Agent SDK — <a href="https://docs.anthropic.com/en/docs/agents-and-tools/agent-sdk/overview">https://docs.anthropic.com/en/docs/agents-and-tools/agent-sdk/overview</a> — agent SDK.</li>
+<li>OpenCode docs — <a href="https://opencode.ai/docs">https://opencode.ai/docs</a> — provider-agnostic terminal agent.</li>
+<li>Pi docs — <a href="https://pi.dev/docs/latest">https://pi.dev/docs/latest</a> — minimal extensible harness.</li>
+<li>OpenHands docs — <a href="https://docs.openhands.dev/overview/introduction">https://docs.openhands.dev/overview/introduction</a> — agent SDK and cloud.</li>
+<li>Kimi Code CLI — <a href="https://www.kimi.com/code/docs/en/kimi-code-cli/reference/kimi-command">https://www.kimi.com/code/docs/en/kimi-code-cli/reference/kimi-command</a> — terminal/IDE agent.</li>
+<li>Kimi ACP/IDE integration — <a href="https://www.kimi.com/en/help/kimi-code/cli-ides">https://www.kimi.com/en/help/kimi-code/cli-ides</a> — protocol integration.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="/ai/agent-tool-landscape-2026-snapshot">Tool Landscape Hub</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/agent-runtimes-and-frameworks">Agent Runtimes and Frameworks</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/agent-tool-landscape-2026-snapshot">← Tool Landscape Hub</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/agent-runtimes-and-frameworks">Agent Runtimes and Frameworks →</a></nav>
+</main>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 08 Tool Landscape/Coding Agent Profiles.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
+<script type="module" src="/ai/ai.js"></script>
+</body></html>
