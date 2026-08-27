@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="| Model | Strengths | Costs and limits | |||| | Local | Privacy, control, predictable marginal cost, offline use | Hardware, setup, maintenance, model quality, ">
+<title>Local models, subscriptions, APIs, and hybrid designs — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Local models, subscriptions, APIs, and hybrid designs</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, economics, deployment, models</span></div>
+<h1>Local models, subscriptions, APIs, and hybrid designs</h1>
+<blockquote>
+<p>[!summary] The gist
+Running AI models has three main paths: self-host for privacy and control, subscribe for simplicity, or use APIs for scale. Each has different trade-offs in cost, control, and convenience. This guide walks through a decision sequence — from data sensitivity and concurrency needs to pricing and exit plans — with a comparison table covering local, subscription, API, and hybrid approaches. It includes a 2026 pricing snapshot, self-hosting crossover estimates, GDPR considerations for data residency, and a hybrid routing pattern that balances privacy, latency, and cost across providers.</p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Strengths</th>
+<th>Costs and limits</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local</td>
+<td>Privacy, control, predictable marginal cost, offline use</td>
+<td>Hardware, setup, maintenance, model quality, heat, upgrades</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>Simple UX, bundled limits, hosted capability, predictable personal spend</td>
+<td>Provider limits, less control, account dependence, data policy</td>
+</tr>
+<tr>
+<td>API</td>
+<td>Programmatic scale, model choice, usage-based economics, routing</td>
+<td>Variable spend, latency, secrets, quotas, vendor and network dependence</td>
+</tr>
+<tr>
+<td>Hybrid</td>
+<td>Route sensitive/cheap/fast work locally and difficult work to hosted models</td>
+<td>More operational complexity and policy design</td>
+</tr>
+</tbody></table>
+<h2>Decision sequence</h2>
+<ol>
+<li>Classify data sensitivity and residency requirements.</li>
+<li>Estimate concurrency, context size, latency, and monthly volume.</li>
+<li>Price hardware plus maintenance against API usage and engineering time.</li>
+<li>Compare capability, reliability, licensing, provider lock-in, and fallback options.</li>
+<li>Decide what can be cached, batched, downgraded, or routed to a smaller model.</li>
+<li>Add budgets, quotas, alerts, redaction, and an exit plan.</li>
+</ol>
+<p>There is no universally cheapest option: utilization, task mix, and operational labor dominate. Use a gateway such as LiteLLM or OpenRouter when routing, observability, and fallback value exceed their added complexity.</p>
+<h2>Pricing snapshot (2026-08-27)</h2>
+<blockquote>
+<p><strong>Note:</strong> These are representative figures from research-D snapshots. Actual prices change frequently — verify with vendors before making commitments.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Model/Provider</th>
+<th>Type</th>
+<th>Cost per 1M tokens</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT-4o (OpenAI)</td>
+<td>API</td>
+<td>~$4.38/M</td>
+<td>Frontier, pay-per-use</td>
+</tr>
+<tr>
+<td>Llama 70B fp16 (H100/Lambda)</td>
+<td>Self-hosted</td>
+<td>~$0.49/M</td>
+<td>Requires H100 (~$2.49/hr on-demand)</td>
+</tr>
+<tr>
+<td>Llama 8B fp16 (A10G/AWS)</td>
+<td>Self-hosted</td>
+<td>~$0.14/M</td>
+<td>Smaller model, commodity GPU</td>
+</tr>
+<tr>
+<td>Llama 70B int4 (A100/Lambda)</td>
+<td>Self-hosted</td>
+<td>~$0.92/M</td>
+<td>Quantized, fits single A100</td>
+</tr>
+<tr>
+<td>Lambda Labs A100 80GB</td>
+<td>On-demand GPU</td>
+<td>~$1.99/hr</td>
+<td>~60% cheaper than AWS</td>
+</tr>
+<tr>
+<td>AWS A100 80GB</td>
+<td>On-demand GPU</td>
+<td>~$5.12/hr</td>
+<td>Hyperscaler premium</td>
+</tr>
+<tr>
+<td>Lambda Labs H100 SXM</td>
+<td>On-demand GPU</td>
+<td>~$2.49/hr</td>
+<td>~80% cheaper than AWS/GCP</td>
+</tr>
+<tr>
+<td>Spot/preemptible A100</td>
+<td>Spot GPU</td>
+<td>~$1.49–1.99/hr</td>
+<td>50–80% discount, batch/dev only</td>
+</tr>
+</tbody></table>
+<p><strong>Self-hosting crossover</strong> (2026-08-27): ~3–5B tokens/month on a flagship model. Below that, API pricing is cheaper after accounting for GPU rental, ops labor, and maintenance.</p>
+<h2>Data residency and GDPR</h2>
+<p>API providers store prompts and completions on their infrastructure by default. For GDPR-regulated data, consider: (1) providers with explicit EU data residency (OpenRouter enterprise, Azure OpenAI), (2) self-hosting on EU-located GPUs (Lambda EU, Hetzner), (3) hybrid routing where sensitive queries stay local and non-sensitive queries go to hosted models. Anthropic and OpenAI both offer zero-data-retention options for enterprise tiers. Always verify data processing agreements (DPAs) and sub-processor lists before routing sensitive data through any provider.</p>
+<h2>Hybrid routing pattern</h2>
+<p>The hybrid pattern routes work across local and hosted models based on data sensitivity, latency requirements, and cost thresholds:</p>
+<ol>
+<li><strong>Classify the request</strong> — data sensitivity (PII, financial, health), latency requirement (interactive vs batch), complexity (simple classification vs complex reasoning).</li>
+<li><strong>Route by policy</strong> — sensitive data stays on self-hosted models; simple tasks go to cheap/small models (Llama 8B locally); complex reasoning goes to frontier models via API; batch work goes to the cheapest provider with acceptable latency.</li>
+<li><strong>Enforce budgets</strong> — per-tenant token limits, per-query cost caps, daily spend ceilings enforced at the gateway layer (LiteLLM virtual keys or OpenRouter per-key budgets).</li>
+<li><strong>Monitor and adjust</strong> — track cost per task type, cache hit rates, and quality scores; rebalance routing thresholds monthly based on actual usage patterns.</li>
+</ol>
+<h2>Sources and further reading</h2>
+<ul>
+<li>GingerLabs, &quot;Cloud GPU Pricing&quot; — <a href="https://www.gingerlabs.ai/resources/cloud-gpu-pricing">https://www.gingerlabs.ai/resources/cloud-gpu-pricing</a> — on-demand and spot GPU pricing snapshots.</li>
+<li>GPU Cloud Prices — <a href="https://gpucloudprices.com/">https://gpucloudprices.com/</a> — cross-provider GPU price comparison.</li>
+<li>GetDeploying — <a href="https://getdeploying.com/gpus">https://getdeploying.com/gpus</a> — GPU availability and pricing tracker.</li>
+<li>LiteLLM docs — <a href="https://docs.litellm.ai/docs/routing">https://docs.litellm.ai/docs/routing</a> — gateway routing and virtual keys for hybrid deployments.</li>
+<li>OpenRouter docs — <a href="https://openrouter.ai/docs">https://openrouter.ai/docs</a> — managed multi-provider routing.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="../08%20Tool%20Landscape/Tool%20Landscape%20Hub.html">Tool landscape</a> · <a href="./Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Deployment%20and%20AgentOps.html">Deployment and AgentOps</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Latency%20and%20Cost%20Engineering.html">← Latency and Cost Engineering</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Deployment%20and%20AgentOps.html">Deployment and AgentOps →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

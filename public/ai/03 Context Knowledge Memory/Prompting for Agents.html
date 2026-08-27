@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The most reliable agent prompts specify outcomes and invariants, not a screenplay of implementation steps.">
+<title>Prompting for agents — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Prompting for agents</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, prompting, task-specification</span></div>
+<h1>Prompting for agents</h1>
+<blockquote>
+<p>[!summary] The gist
+The best agent prompts describe the outcome and the guardrails, not every step. A rigid script breaks the moment something unexpected happens. This note lays out a goal-constraint-definition-verification framework for writing prompts that work even when the agent takes a different path.</p>
+</blockquote>
+<hr>
+<h2>G-C-C-D-V</h2>
+<pre><code class="language-text">Goal:          what outcome should exist?
+Context:       where are the relevant files, facts, and prior decisions?
+Constraints:   what must not change; what authority is available?
+Definition:    what observable facts mean “done”?
+Verification:  which tests, evidence, or review must run before stopping?
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-text">Goal: Add password-reset support.
+Context: Auth is in src/auth; mail code is in src/email; the database is PostgreSQL.
+Constraints: Preserve the session format; do not deploy or touch production.
+Done: Tokens expire in 30 minutes, cannot be reused, and existing auth tests pass.
+Verification: Run the auth suite, new reset tests, and linting; report failures honestly.
+</code></pre>
+<h2>Prompt hygiene</h2>
+<ul>
+<li>State the user’s authority and the agent’s authority separately.</li>
+<li>Give examples only when the format or edge cases are ambiguous.</li>
+<li>Prefer “must remain true” over “open file X, then line Y.”</li>
+<li>State stopping conditions, budget limits, and when to ask.</li>
+<li>Tell the agent how to report uncertainty and evidence.</li>
+</ul>
+<p>Use <a href="../09%20Playbooks/Prompt%20Template.html">Prompt Template</a> for a reusable blank form.</p>
+<h2>Practice and limits</h2>
+<p>Treat the prompt as an executable task brief: goal, context, constraints, definition of done, and verification. Stable policy belongs before volatile task data; permissions, secret handling, validation, and side effects belong in the harness, not merely in prose. Test prompt changes with a fixed evaluation set because clarity can still regress cost, safety, or tool choice.</p>
+<h2>Evidence behind the guidance</h2>
+<ul>
+<li><strong>Chain-of-thought (Wei et al. 2022):</strong> a few demonstrations with intermediate reasoning steps significantly improve multi-step arithmetic, symbolic, and commonsense reasoning—and the capability <em>emerges at sufficient model scale</em>. CoT is a lever for capable models, not a fix for small ones.</li>
+<li><strong>Anthropic&#39;s guidance (2024–2025):</strong> keep instructions clear and specific, provide examples, organize prompts into sections, and start minimal—test against failures, then add detail only where needed.</li>
+<li><strong>Examples are &quot;pictures worth a thousand words&quot;:</strong> diverse, canonical examples portray expected behavior better than exhaustive rule lists (Anthropic 2025).</li>
+<li><strong>A prompt is not a security boundary.</strong> Never rely on prose to enforce authority; permission, validation, and side-effect control belong in the harness (see <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
+</ul>
+<h2>Few-shot vs zero-shot trade-offs</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Few-shot (examples in prompt)</th>
+<th>Zero-shot (instructions only)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Format consistency</td>
+<td>Strong—model mimics example structure</td>
+<td>Weaker—model invents its own structure</td>
+</tr>
+<tr>
+<td>Token cost</td>
+<td>Higher—each example adds 50–200+ tokens</td>
+<td>Lower—only instructions consume tokens</td>
+</tr>
+<tr>
+<td>Edge-case coverage</td>
+<td>Better when examples are diverse and canonical</td>
+<td>Better when the task is simple or the model is strong</td>
+</tr>
+<tr>
+<td>Maintenance burden</td>
+<td>Examples must be updated when requirements change</td>
+<td>Instructions are easier to keep current</td>
+</tr>
+<tr>
+<td>When to prefer</td>
+<td>Ambiguous output format, complex multi-step reasoning, domain-specific conventions</td>
+<td>Simple classification/extraction, strong instruction-following models, token-budget-constrained tasks</td>
+</tr>
+</tbody></table>
+<p>Anthropic&#39;s guidance: examples are &quot;pictures worth a thousand words&quot;—diverse, canonical examples portray expected behavior better than exhaustive rule lists. But keep examples <em>diverse and canonical</em>, not an exhaustive edge-case laundry list.</p>
+<h2>Provider-specific prompting features</h2>
+<p>Different providers expose different levers that affect prompt design:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>OpenAI</th>
+<th>Anthropic</th>
+<th>Google</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>System message</td>
+<td>Supported; user/assistant/system roles</td>
+<td>Supported; can set via <code>system</code> param</td>
+<td>Supported via <code>system_instruction</code></td>
+</tr>
+<tr>
+<td>Reasoning effort</td>
+<td><code>reasoning_effort</code> param: low/medium/high</td>
+<td><code>budget_tokens</code> for extended thinking</td>
+<td>N/A (Gemini uses <code>thinkingConfig</code>)</td>
+</tr>
+<tr>
+<td>Tool definitions</td>
+<td><code>tools</code> array with <code>function</code> schema</td>
+<td><code>tools</code> array with <code>input_schema</code> JSON Schema</td>
+<td><code>function_declarations</code></td>
+</tr>
+<tr>
+<td>JSON mode</td>
+<td><code>response_format: { type: &quot;json_object&quot; }</code></td>
+<td>Structured output via tool use or XML</td>
+<td><code>responseMimeType: &quot;application/json&quot;</code></td>
+</tr>
+<tr>
+<td>Max tokens</td>
+<td><code>max_tokens</code> on response</td>
+<td><code>max_tokens</code> on response</td>
+<td><code>maxOutputTokens</code></td>
+</tr>
+<tr>
+<td>Seed/reproducibility</td>
+<td><code>seed</code> param with <code>system_fingerprint</code></td>
+<td>N/A</td>
+<td><code>seed</code> parameter</td>
+</tr>
+</tbody></table>
+<p>These differences matter when writing portable prompts. Abstract the prompt logic from provider-specific wiring; use a thin adapter layer that maps your task contract to the target provider&#39;s API shape.</p>
+<h2>Evaluating prompt effectiveness</h2>
+<p>A prompt change is a code change—measure before and after:</p>
+<ol>
+<li><strong>Fixed evaluation set.</strong> Assemble 20–50 representative tasks covering happy paths, edge cases, and adversarial inputs. Run the same set before and after every prompt change.</li>
+<li><strong>Metrics that matter.</strong> Task success rate, cost (tokens × price), latency, tool-call accuracy, hallucination rate, and safety-refusal appropriateness. Do not optimize for one at the expense of others.</li>
+<li><strong>A/B comparison.</strong> Run old and new prompts on the same inputs. Report deltas in a table, not anecdotes.</li>
+<li><strong>Regression safety.</strong> A prompt that improves style but degrades factuality or safety has regressed. Test style and effort against the same safety and factuality cases.</li>
+<li><strong>Human evaluation for subjective tasks.</strong> For open-ended generation, use a structured rubric (clarity, completeness, audience fit, tone adherence) with 2–3 evaluators and inter-rater reliability checks.</li>
+</ol>
+<p>See <a href="../06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> for the full evaluation framework.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Wei et al., &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models,&quot; 2022 — <a href="https://arxiv.org/abs/2201.11903">https://arxiv.org/abs/2201.11903</a></li>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 19, 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a></li>
+<li>Anthropic, &quot;Effective context engineering for AI agents,&quot; Sep 2025 — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a></li>
+<li>Weng, &quot;LLM Powered Autonomous Agents,&quot; Jun 2023 — <a href="https://lilianweng.github.io/posts/2023-06-23-agent/">https://lilianweng.github.io/posts/2023-06-23-agent/</a></li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Context%20Engineering.html">Context Engineering</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Memory%20and%20Skills.html">Memory and Skills</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Context%20Engineering.html">← Context Engineering</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Memory%20and%20Skills.html">Memory and Skills →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

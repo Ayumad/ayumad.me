@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An agent is a modeldirected loop. A harness is the runtime around that loop: it manages context, tools, state, planning, permissions, retries, checkpoints, and ">
+<title>Agents and harnesses — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Agents and harnesses</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, agents, harnesses, map-of-content</span></div>
+<h1>Agents and harnesses</h1>
+<h2>Why the distinction matters</h2>
+<p>The model (the &quot;brain&quot;) is only one component. Two teams can ship the same model with wildly different reliability, cost, and safety profiles depending on how they build the harness—the context manager, tool router, planner, retry logic, sandbox, and approval gates that surround it. Anthropic&#39;s production surveys found that the most successful agents use simple, composable harness patterns; the complexity lives in the runtime, not the prompt. Understanding where the agent loop ends and the harness begins lets you diagnose failures precisely: a wrong answer may be a prompt problem, but a dropped tool call, an un-retried timeout, or an un-sandboxed side effect is a harness problem.</p>
+<p>The child notes below explore the trade-offs at each layer of this stack.</p>
+<ul>
+<li><a href="./What%20Is%20an%20Agent.html">What Is an Agent</a> — The observe/decide/act loop: when autonomy helps, when deterministic workflows suffice, and how to evaluate the whole trajectory—not just the final answer.</li>
+<li><a href="./Agent%20Harness.html">Agent Harness</a> — The runtime machinery around the model: how context managers, tool registries, planners, and retry loops cooperate; thin-harness vs. framework design patterns.</li>
+<li><a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a> — The policy/execution split: secret brokering, artifact promotion, and why policy must stay separate from execution.</li>
+<li><a href="./Planning%20State%20and%20Persistence.html">Planning State and Persistence</a> — Durable execution: state schemas, checkpoint/replay/compensate recovery, idempotency keys, and backend choices (Temporal, Redis, DynamoDB).</li>
+<li><a href="./Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a> — Grounded UI actions: Anthropic Computer Use, OpenAI CUA, DOM vs. screenshot pipelines, and why vision-driven browsing is expensive and fragile.</li>
+<li><a href="./Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a> — Multimodal input: model capabilities, resolution/tiling strategies, OCR pipelines, video frame sampling, and cost management.</li>
+<li><a href="./Voice%20and%20Audio%20Agents.html">Voice and Audio Agents</a> — Real-time audio: OpenAI Realtime API, Deepgram STT, ElevenLabs TTS, Silero VAD, barge-in, and the ~300ms conversational latency budget.</li>
+<li><a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> — Isolation technology choice: gVisor vs. Kata vs. Firecracker, cloud sandboxes (E2B, Modal), and escape-risk trade-offs.</li>
+<li><a href="../04%20Workflows%20and%20Orchestration/Multi-Agent%20Systems.html">Multi-Agent Systems</a> — When one loop becomes a team: coordination, delegation, and multi-agent failure modes.</li>
+</ul>
+<pre><code class="language-mermaid">flowchart TB
+  User --&gt; Harness
+  Harness --&gt; Context
+  Context --&gt; Model
+  Model --&gt; Decision{Finish or act?}
+  Decision --&gt;|finish| Answer[Answer / artifact]
+  Decision --&gt;|act| Router[Tool router]
+  Router --&gt; Sandbox[Sandbox or API]
+  Sandbox --&gt; Observation[Validated observation]
+  Observation --&gt; Context
+</code></pre>
+<hr>
+<blockquote>
+<p><strong>← <a href="../01%20Foundations/Fine-Tuning%20Decision%20Framework.html">Fine-Tuning Decision Framework</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./What%20Is%20an%20Agent.html">What Is an Agent</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="../01%20Foundations/Fine-Tuning%20Decision%20Framework.html">← Fine-Tuning Decision Framework</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./What%20Is%20an%20Agent.html">What Is an Agent →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

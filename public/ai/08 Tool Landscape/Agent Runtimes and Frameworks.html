@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="These tools solve different problems. Frameworks compose model calls and tools; orchestration runtimes provide durable execution; agent platforms add userfacing">
+<title>Agent runtimes and frameworks — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Agent runtimes and frameworks</h1>
+<div class="meta"><span>current-snapshot</span><span>updated 2026-08-27</span><span>ai-engineering, frameworks, orchestration</span></div>
+<h1>Agent runtimes and frameworks</h1>
+<blockquote>
+<p>[!summary] The gist
+Agent runtimes and frameworks provide the scaffolding for chaining model calls, managing state, and recovering from failures. Frameworks compose model calls and tools; orchestration runtimes provide durable execution; agent platforms add user-facing control planes. This guide compares LangGraph, CrewAI, AutoGen/AG2, Haystack, and direct SDK approaches across learning curve, community, and production readiness — and helps you decide when a simple SDK call beats a full framework.</p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What to learn from it</th>
+<th>Typical fit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LangGraph</td>
+<td>Explicit graphs, state, checkpoints, human-in-loop</td>
+<td>Stateful agent workflows</td>
+</tr>
+<tr>
+<td>OpenAI Agents SDK</td>
+<td>Harness primitives, tools, handoffs, tracing</td>
+<td>Hosted or custom OpenAI-agent applications</td>
+</tr>
+<tr>
+<td>LangChain</td>
+<td>Model/tool abstractions and integrations</td>
+<td>Application composition and provider breadth</td>
+</tr>
+<tr>
+<td>PydanticAI</td>
+<td>Typed Python agents and validated outputs</td>
+<td>Type-safe application agents</td>
+</tr>
+<tr>
+<td>Mastra</td>
+<td>TypeScript agent/workflow primitives</td>
+<td>JS/TS product teams</td>
+</tr>
+<tr>
+<td>Temporal</td>
+<td>Durable workflows, retries, timers, versioning</td>
+<td>Long-running reliable operations</td>
+</tr>
+<tr>
+<td>OpenHands SDK</td>
+<td>Composable coding agents with execution surfaces</td>
+<td>Developer-agent platforms</td>
+</tr>
+<tr>
+<td>CrewAI</td>
+<td>Role-based orchestration (Agents/Tasks/Crews/Flows)</td>
+<td>Fast prototyping (30–60 min)</td>
+</tr>
+<tr>
+<td>AutoGen/AG2 (MS Agent Framework)</td>
+<td>Multi-agent conversations, merged with Semantic Kernel</td>
+<td>Enterprise multi-language (C#, Python, Java), Azure</td>
+</tr>
+<tr>
+<td>Semantic Kernel</td>
+<td>Microsoft&#39;s agent SDK, plugin model, planners</td>
+<td>.NET/Java shops, Azure-native</td>
+</tr>
+<tr>
+<td>Haystack</td>
+<td>Search and RAG pipelines, hybrid retrieval</td>
+<td>Document ingestion and retrieval quality</td>
+</tr>
+</tbody></table>
+<h3>Comparison dimensions</h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>LangGraph</th>
+<th>CrewAI</th>
+<th>AutoGen/AG2</th>
+<th>Haystack</th>
+<th>Direct SDK</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Learning curve</td>
+<td>Medium (graph mental model)</td>
+<td>Low (role-based API)</td>
+<td>Medium (conversations)</td>
+<td>Medium (pipeline DAGs)</td>
+<td>Lowest (just API calls)</td>
+</tr>
+<tr>
+<td>Community</td>
+<td>Large (126k+ stars, 400+ prod companies)</td>
+<td>Growing (20k+ stars, $18M funding)</td>
+<td>Large (Microsoft backing)</td>
+<td>Niche (deepset, strong RAG)</td>
+<td>Varies by provider</td>
+</tr>
+<tr>
+<td>Production readiness</td>
+<td>High (Uber, LinkedIn, Klarna)</td>
+<td>Medium (teams hit ceiling at 6–12 months)</td>
+<td>GA April 2026 (Agent Framework 1.0)</td>
+<td>High for RAG pipelines</td>
+<td>Depends on implementation</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Complex stateful workflows with HITL</td>
+<td>Rapid prototyping, small teams</td>
+<td>Enterprise Azure/.NET environments</td>
+<td>Precision retrieval, hybrid search</td>
+<td>Single model calls, 1–2 tools</td>
+</tr>
+</tbody></table>
+<h3>When raw SDK beats framework</h3>
+<p>Use the direct provider SDK when: (1) you need a single model call, (2) you have 1–2 tools, (3) the workflow is simple and linear, (4) you want minimal dependencies, (5) provider-specific features matter (extended thinking, prompt caching, vision). Use a framework when: (1) you need multi-source retrieval with reranking, (2) the workflow has multi-step tool calling with state, (3) you need long-running workflows with human approval, (4) you need full tracing with evals, (5) you&#39;re building a team-facing product, not a single pipeline.</p>
+<p><strong>CrewAI caveat:</strong> fastest to prototype but teams hit a ceiling at 6–12 months as workflow complexity grows. It was rewritten independently of LangChain. <strong>AutoGen/Semantic Kernel note:</strong> merged into Microsoft Agent Framework 1.0 (GA April 2026); AutoGen and Semantic Kernel are now in maintenance mode. <strong>Haystack</strong> is strongest for document ingestion and retrieval quality; it is not a general-purpose agent framework.</p>
+<p>Do not choose a framework before deciding whether the problem is a workflow, an agent, or a team. A framework cannot compensate for missing authority, evaluation, or observability design.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>LangGraph vs CrewAI vs AutoGen comparison — <a href="https://devops.gheware.com/blog/posts/langgraph-vs-crewai-vs-autogen-comparison-2026.html">https://devops.gheware.com/blog/posts/langgraph-vs-crewai-vs-autogen-comparison-2026.html</a> — side-by-side framework analysis.</li>
+<li>AI SDKs and Frameworks guide — <a href="https://aiunpacking.com/guides/ai-sdks-frameworks-langchain-llamaindex-autogen/">https://aiunpacking.com/guides/ai-sdks-frameworks-langchain-llamaindex-autogen/</a> — ecosystem overview.</li>
+<li>LangGraph docs — <a href="https://docs.langchain.com/oss/python/langgraph/overview">https://docs.langchain.com/oss/python/langgraph/overview</a> — graph-based workflow engine.</li>
+<li>OpenAI Agents SDK — <a href="https://openai.github.io/openai-agents-python/">https://openai.github.io/openai-agents-python/</a> — harness primitives and handoffs.</li>
+<li>PydanticAI — <a href="https://ai.pydantic.dev/">https://ai.pydantic.dev/</a> — typed Python agents.</li>
+<li>Mastra docs — <a href="https://mastra.ai/docs">https://mastra.ai/docs</a> — TypeScript agent primitives.</li>
+<li>Temporal docs — <a href="https://docs.temporal.io/">https://docs.temporal.io/</a> — durable workflow execution.</li>
+<li>OpenHands SDK — <a href="https://docs.openhands.dev/sdk/index">https://docs.openhands.dev/sdk/index</a> — composable coding agents.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<p>Primary references: <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph</a>, <a href="https://openai.github.io/openai-agents-python/">OpenAI Agents SDK</a>, <a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain</a>, <a href="https://ai.pydantic.dev/">PydanticAI</a>, <a href="https://mastra.ai/docs">Mastra</a>, <a href="https://docs.temporal.io/">Temporal</a>, and <a href="https://docs.openhands.dev/sdk/index">OpenHands SDK</a>.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Coding%20Agent%20Profiles.html">Coding Agent Profiles</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Coding%20Agent%20Profiles.html">← Coding Agent Profiles</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

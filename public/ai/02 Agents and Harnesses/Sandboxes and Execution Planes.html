@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CP">
+<title>Sandboxes and execution planes — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Sandboxes and execution planes</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, security, sandbox, infrastructure</span></div>
+<h1>Sandboxes and execution planes</h1>
+<blockquote>
+<p>[!summary] The gist
+Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CPU, memory, packages, credentials, and network access.
+This note explains how to design that safe workspace, how to hand the agent only the secrets it needs for one task, and how to bring back only the results you trust.</p>
+</blockquote>
+<hr>
+<h2>Control plane versus execution plane</h2>
+<p>Keep policy, credentials, approvals, and durable state in a trusted control plane. Run generated code, untrusted files, browser sessions, and transient dependencies in an execution plane with a small, explicit interface back to the controller. The controller decides what may be mounted, reached, exported, or retained.</p>
+<p>Make the execution environment disposable by default and set resource/time/network limits outside the model. Inspect generated artifacts before promotion. See <a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for choosing the actual isolation technology.</p>
+<p>Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CPU, memory, packages, credentials, and network access.</p>
+<h2>Reference architecture</h2>
+<pre><code class="language-text">CONTROL PLANE                         EXECUTION PLANE
+agent loop · policy · state DB        disposable container/VM
+credentials broker · traces    →      files · shell · packages · tests
+</code></pre>
+<p>Common primitives include containers, VMs, microVMs, namespaces, seccomp, temporary filesystems, network policies, and short-lived credentials. Isolation is defense in depth; it does not make arbitrary code automatically safe.</p>
+<h2>Secret brokering and credential lifecycle</h2>
+<p>The execution plane should never hold long-lived credentials. Instead, the control plane brokers secrets on a per-operation basis:</p>
+<ol>
+<li><strong>Request phase:</strong> the agent declares which secret it needs and for what purpose (e.g., &quot;read-only access to the users table for this query&quot;).</li>
+<li><strong>Grant phase:</strong> the control plane validates the request against policy, provisions a short-lived credential (time-boxed, scope-limited), and injects it into the sandbox environment.</li>
+<li><strong>Execute phase:</strong> the agent uses the credential within the sandbox. The credential is invisible to the model&#39;s context—it appears as an environment variable, not as text the model can echo or exfiltrate.</li>
+<li><strong>Revoke phase:</strong> on completion or timeout, the credential is revoked. The sandbox is destroyed, taking any cached credentials with it.</li>
+</ol>
+<p>This lifecycle prevents ambient credential accumulation: an agent that runs 100 tool calls never holds more than one active credential at a time, and each credential is scoped to the minimum required permissions.</p>
+<h2>Artifact promotion</h2>
+<p>Not everything an agent produces should leave the sandbox. Artifact promotion is the controlled process of extracting validated results:</p>
+<ul>
+<li><strong>Ephemeral artifacts</strong> (logs, intermediate files, test output) stay in the sandbox and are destroyed on teardown.</li>
+<li><strong>Promoted artifacts</strong> (code, documents, data exports) are explicitly extracted through a validated boundary: the control plane inspects, scans, or lints the artifact before accepting it into durable storage.</li>
+<li><strong>Rejected artifacts</strong> (failed validation, policy violations) are discarded with an audit record.</li>
+</ul>
+<p>The promotion boundary is where human review, automated testing, or policy checks happen. Never promote raw stdout or model output as authority—always validate against a schema or test suite first.</p>
+<h2>Isolation overhead</h2>
+<p>Isolation is not free. Each layer adds startup latency, memory overhead, and I/O cost:</p>
+<ul>
+<li><strong>Process isolation:</strong> near-zero overhead, but shares the host kernel—an exploit in the agent&#39;s code can reach the host.</li>
+<li><strong>Container isolation:</strong> minimal overhead (~10ms startup), but shares the host kernel syscall surface.</li>
+<li><strong>gVisor:</strong> user-space kernel adds syscall interception overhead; fast boot (milliseconds) but degraded I/O throughput.</li>
+<li><strong>MicroVM (Firecracker):</strong> ~100–200ms boot, &lt;5 MiB overhead, full kernel isolation—but requires custom orchestration.</li>
+<li><strong>Full VM:</strong> strongest isolation but slowest startup (seconds to minutes).</li>
+</ul>
+<p>The trade-off is linear: more isolation buys more safety at the cost of more latency and resource consumption. Choose based on the threat model—trusted internal tools may need only process isolation, while LLM-generated code executing arbitrary operations warrants microVM or stronger boundaries. See <a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for technology-specific trade-offs.</p>
+<h2>Boundaries to specify</h2>
+<ul>
+<li>What files can be read or written?</li>
+<li>Can the process reach the internet, metadata services, or internal networks?</li>
+<li>Which secrets are brokered, and for which exact operation?</li>
+<li>What survives teardown?</li>
+<li>Which actions require human approval?</li>
+</ul>
+<p>Related infrastructure appears in <a href="../08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a> and the security review in <a href="../09%20Playbooks/Evaluation%20and%20Security%20Review.html">Evaluation and Security Review</a>.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>E2B Documentation, 2026 — <a href="https://docs.e2b.dev/">https://docs.e2b.dev/</a> — Firecracker-based cloud sandboxes, SDK, cold-start &lt;200ms.</li>
+<li>Northflank, &quot;Kata Containers vs Firecracker vs gVisor,&quot; Jan 2026 — <a href="https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor">https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor</a> — isolation hierarchy, startup costs, escape risks.</li>
+<li>Anthropic, &quot;Effective context engineering for AI agents,&quot; Sep 2025 — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a> — context management, tool injection patterns.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Agent%20Harness.html">Agent Harness</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Agent%20Harness.html">← Agent Harness</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

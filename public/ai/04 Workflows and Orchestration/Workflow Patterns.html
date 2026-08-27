@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Choose the simplest topology that makes the work observable and correct.">
+<title>Workflow patterns — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Workflow patterns</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, workflows, patterns</span></div>
+<h1>Workflow patterns</h1>
+<blockquote>
+<p>[!summary] The gist
+Workflow patterns are the standard shapes for arranging AI steps — sequential, parallel, routed, looping, and so on. Pick the simplest one that makes the work visible and correct. This note covers the main patterns, how to build each one, and where they break.</p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Shape</th>
+<th>Best fit</th>
+<th>Main risk</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sequential</td>
+<td>A → B → C</td>
+<td>Known pipeline</td>
+<td>Latency and brittle handoff</td>
+</tr>
+<tr>
+<td>Branching</td>
+<td>Condition → path</td>
+<td>Explicit business rules</td>
+<td>Uncovered branch</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>Classify → specialist</td>
+<td>Distinct task types</td>
+<td>Misrouting</td>
+</tr>
+<tr>
+<td>Parallel</td>
+<td>Fan out → join</td>
+<td>Independent research or tests</td>
+<td>Merge conflicts and cost</td>
+</tr>
+<tr>
+<td>Map-reduce</td>
+<td>Map items → reduce</td>
+<td>Many similar records</td>
+<td>Weak aggregation</td>
+</tr>
+<tr>
+<td>Evaluator-optimizer</td>
+<td>Draft ↔ critic</td>
+<td>Quality improvement</td>
+<td>Infinite loops and correlated error</td>
+</tr>
+<tr>
+<td>Agent loop</td>
+<td>Observe → decide → act</td>
+<td>Uncertain path</td>
+<td>Drift and side effects</td>
+</tr>
+<tr>
+<td>Event-driven</td>
+<td>Event → handler</td>
+<td>Reactive systems</td>
+<td>Ordering and duplicate events</td>
+</tr>
+<tr>
+<td>Durable workflow</td>
+<td>Persisted steps</td>
+<td>Long-running operations</td>
+<td>State-version compatibility</td>
+</tr>
+</tbody></table>
+<p>Add deterministic boundaries around model choices: schemas, allowlists, budgets, idempotency, approval gates, and explicit stop conditions.</p>
+<h2>Implementation sketches</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>How to build it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sequential</td>
+<td>Chain calls: <code>a = step_a(input); b = step_b(a); return step_c(b)</code>. Add try/except per step for independent error handling.</td>
+</tr>
+<tr>
+<td>Branching</td>
+<td><code>if/elif/else</code> on a classifier output or function return. Each branch is its own function with its own retry policy.</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>Call a classifier (LLM or embeddings) to pick a specialist. Use structured output (JSON schema) to force a valid route.</td>
+</tr>
+<tr>
+<td>Parallel</td>
+<td><code>asyncio.gather</code> or thread pool for independent calls. Typed join: each branch returns the same schema.</td>
+</tr>
+<tr>
+<td>Map-reduce</td>
+<td><code>map(fn, items)</code> then reduce with an aggregator LLM call. Chunk items if context window is tight.</td>
+</tr>
+<tr>
+<td>Evaluator-optimizer</td>
+<td>Loop: generate draft → evaluate with rubric → if score below threshold, feed critique back as prompt revision. Cap iterations.</td>
+</tr>
+<tr>
+<td>Agent loop</td>
+<td>ReAct-style: observe state → decide next action → execute tool → check stop condition. Max iterations with escalation.</td>
+</tr>
+<tr>
+<td>Event-driven</td>
+<td>Message queue (SQS, Redis Streams, Temporal signals). Handler subscribes to event type. Deduplicate by event ID.</td>
+</tr>
+<tr>
+<td>Durable workflow</td>
+<td>Use Temporal or LangGraph checkpointing. Each step is a durable activity with idempotency key. State serialized between steps.</td>
+</tr>
+</tbody></table>
+<h2>Cost and latency trade-offs</h2>
+<ul>
+<li><strong>Sequential</strong>: Lowest coordination cost; latency is sum of all steps. Best when steps are cheap and depend on each other.</li>
+<li><strong>Parallel / Map-reduce</strong>: Latency drops to max of parallel branches; cost is sum of all branches. Only worth it when branches are independent and expensive enough to justify coordination overhead.</li>
+<li><strong>Router</strong>: One classification call plus one specialist call — two LLM calls total. Fast and cheap if classification is accurate.</li>
+<li><strong>Evaluator-optimizer</strong>: Cost scales with quality bar. Each optimization round is a full generate + evaluate cycle. Cap at 2–3 rounds to avoid correlated error amplification.</li>
+<li><strong>Agent loop</strong>: Unpredictable cost. Each iteration is a full LLM call plus tool execution. Hard token and iteration budgets are mandatory.</li>
+</ul>
+<h2>Failure modes</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Failure mode</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sequential</td>
+<td>Latency compounds; brittle handoff if step N output doesn&#39;t match step N+1 input contract</td>
+<td>Typed schemas between steps; independent retry per step</td>
+</tr>
+<tr>
+<td>Branching</td>
+<td>Uncovered branch falls through silently</td>
+<td>Explicit default/error branch; exhaustive condition coverage</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>Misrouting — classifier picks wrong specialist</td>
+<td>Confidence threshold with fallback; log route decisions for eval</td>
+</tr>
+<tr>
+<td>Parallel</td>
+<td>Merge conflicts; one branch fails silently</td>
+<td>Typed join with error propagation; timeout per branch</td>
+</tr>
+<tr>
+<td>Map-reduce</td>
+<td>Weak aggregation loses signal from individual items</td>
+<td>Chunking strategy; aggregation prompt with explicit instructions to preserve item-level evidence</td>
+</tr>
+<tr>
+<td>Evaluator-optimizer</td>
+<td>Infinite loops; correlated error (evaluator and generator share same model weaknesses)</td>
+<td>Hard iteration cap; use different model for evaluator; rubric-based scoring</td>
+</tr>
+<tr>
+<td>Agent loop</td>
+<td>Drift (plan diverges from goal); side effects accumulate</td>
+<td>Stop conditions; budget caps; checkpoint and human review at thresholds</td>
+</tr>
+<tr>
+<td>Event-driven</td>
+<td>Ordering violations; duplicate events; lost events</td>
+<td>Idempotency keys; exactly-once delivery guarantees; dead-letter queues</td>
+</tr>
+<tr>
+<td>Durable workflow</td>
+<td>State-version compatibility after code changes</td>
+<td>Versioned schemas; migration support in durable execution engines</td>
+</tr>
+</tbody></table>
+<h2>Error recovery patterns</h2>
+<ul>
+<li><strong>Exponential backoff with jitter</strong>: Double wait time and add randomness on each retry. Base 1s, max 60s. Default for all LLM API calls. Never retry 400/401/404 — these are permanent failures.</li>
+<li><strong>Circuit breaker</strong>: Closed → Open → Half-open states. After N consecutive failures, stop calling the service entirely. Periodically probe with half-open requests.</li>
+<li><strong>Saga / compensation</strong>: When a multi-step workflow has side effects (e.g., API writes), define a compensating action for each step. On failure, execute compensations in reverse order to undo partial work.</li>
+<li><strong>Checkpoint and resume</strong>: Serialize agent state to durable storage at each step. LangGraph <code>MemorySaver</code>/<code>PostgresSaver</code>; Temporal workflows. On crash, resume from last checkpoint.</li>
+<li><strong>Escalation queue</strong>: Structured path for failures needing human resolution. Don&#39;t silently retry forever — route to a human after exhausting retries.</li>
+<li><strong>Common pitfalls</strong>: Retrying non-retriable errors (4xx), losing state on retry, unbounded loops (always cap at ~5), silent fallback that hides the real failure.</li>
+</ul>
+<h2>Durable execution</h2>
+<p>For long-running or multi-hour workflows, durable execution (Temporal, Restate) journals every step <em>before</em> executing it. The engine replays from the journal on restart, guaranteeing idempotency. This differs from the saga pattern: sagas require you to write compensation logic; durable execution replays the original logic deterministically. Stripe, Revolut, and Wise use Temporal for production financial workflows.</p>
+<h2>Selection method</h2>
+<p>Start deterministic when steps are known. Add model decisions only where interpretation has measurable upside, parallelism only for independent work with a typed join, and durable state when delays could repeat effects. For every topology, state owner, contract, stop condition, retry/idempotency behavior, budget, and evaluation.</p>
+<h2>Provenance and reading</h2>
+<ul>
+<li><strong>The five canonical agent patterns</strong> — prompt chaining, routing, parallelization, orchestrator-workers, evaluator-optimizer — come from Anthropic&#39;s &quot;Building effective agents&quot; (Dec 2024), which reports these cover most production designs.</li>
+<li><strong>ReAct-style agent loop</strong> originates in Yao et al. 2022 (interleaved reasoning and acting).</li>
+<li><strong>Sequential and branching</strong> are classic software control flow, not LLM-specific; they stay preferred when steps are known.</li>
+<li><strong>Durable and event-driven workflows</strong> come from durable-execution practice (e.g., Temporal): persisted steps, retries, idempotency, and replay across failures.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 19, 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a> — five canonical agent patterns.</li>
+<li>Yao et al., &quot;ReAct: Synergizing Reasoning and Acting in Language Models,&quot; 2022 — <a href="https://arxiv.org/abs/2210.03629">https://arxiv.org/abs/2210.03629</a> — canonical reason-and-act loop.</li>
+<li>Temporal documentation — <a href="https://docs.temporal.io/">https://docs.temporal.io/</a> — durable workflows, retries, and idempotency.</li>
+<li>Restate documentation — <a href="https://docs.restate.dev/tour/microservice-orchestration">https://docs.restate.dev/tour/microservice-orchestration</a> — durable execution, journal-based replay.</li>
+<li>OpenAI, &quot;A practical guide to building agents,&quot; 2025 — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a></li>
+<li>AI Agents Blog, &quot;5 Patterns for Production Reliability,&quot; 2026 — <a href="https://aiagentsblog.com/blog/agent-error-recovery-patterns/">https://aiagentsblog.com/blog/agent-error-recovery-patterns/</a> — error recovery patterns for agent workflows.</li>
+<li>Fernel.io, &quot;Durable Execution vs. Saga Pattern,&quot; 2026 — <a href="https://fernel.io/insights/06-durable-execution-vs-saga">https://fernel.io/insights/06-durable-execution-vs-saga</a> — saga vs durable execution trade-offs.</li>
+<li>LangChain, LangGraph Overview — <a href="https://docs.langchain.com/oss/python/langgraph/overview">https://docs.langchain.com/oss/python/langgraph/overview</a> — checkpointing, MemorySaver/PostgresSaver.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Orchestration%20Hub.html">Orchestration Hub</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Multi-Agent%20Systems.html">Multi-Agent Systems</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Orchestration%20Hub.html">← Orchestration Hub</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Multi-Agent%20Systems.html">Multi-Agent Systems →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

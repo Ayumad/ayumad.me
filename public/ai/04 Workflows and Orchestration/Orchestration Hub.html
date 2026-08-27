@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Orchestration is the control plane for work that spans steps, agents, tools, queues, schedules, retries, and people. It turns a clever loop into a system that c">
+<title>Workflows and orchestration — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Workflows and orchestration</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, orchestration, workflows, map-of-content</span></div>
+<h1>Workflows and orchestration</h1>
+<pre><code class="language-mermaid">flowchart LR
+  Trigger --&gt; Router
+  Router --&gt; Sequential
+  Router --&gt; Parallel
+  Router --&gt; AgentLoop
+  Sequential --&gt; Verify
+  Parallel --&gt; Verify
+  AgentLoop --&gt; Verify
+  Verify --&gt;|pass| Complete
+  Verify --&gt;|fail| RetryOrHuman[Retry, compensate, or ask human]
+</code></pre>
+<h2>Framework mini-map</h2>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Language</th>
+<th>Best fit</th>
+<th>Production readiness</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LangGraph</strong></td>
+<td>Python</td>
+<td>Complex workflows needing fine-grained graph control, durable state, human-in-the-loop. Nodes + edges with built-in persistence and LangGraph Studio.</td>
+<td>High — v1.0 Oct 2025; Uber, LinkedIn, Klarna, JP Morgan, Cisco.</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>Python</td>
+<td>Role-based multi-agent with defined roles, goals, and backstories. Two modes: Crews (model-driven) and Flows (event-driven, deterministic).</td>
+<td>High — commercial AMP Cloud product.</td>
+</tr>
+<tr>
+<td><strong>AutoGen / MS Agent Framework</strong></td>
+<td>Python + .NET</td>
+<td>AutoGen absorbed into Microsoft Agent Framework (merged with Semantic Kernel). Public preview Oct 2025, v1.0 Apr 2026.</td>
+<td>High (new MS Framework), low (legacy AutoGen).</td>
+</tr>
+<tr>
+<td><strong>OpenAI Agents SDK</strong></td>
+<td>Python</td>
+<td>Minimal-abstraction SDK. Primitives: Agents, Handoffs, Guardrails. Built-in tracing, sandbox, MCP integration.</td>
+<td>High — first-party, actively maintained.</td>
+</tr>
+<tr>
+<td><strong>Mastra</strong></td>
+<td>TypeScript</td>
+<td>TypeScript-first agents with Mastra Studio UI. Supports OpenAI, Anthropic, Google, xAI.</td>
+<td>Moderate — newer ecosystem.</td>
+</tr>
+<tr>
+<td><strong>Temporal</strong></td>
+<td>Polyglot</td>
+<td>Durable execution engine for long-running workflows. Journal every step before executing; engine replays on restart. Used by Stripe, Revolut, Wise.</td>
+<td>High — battle-tested in financial systems.</td>
+</tr>
+</tbody></table>
+<p>See <a href="./Workflow%20Patterns.html">Workflow Patterns</a> for topology selection and <a href="./Multi-Agent%20Systems.html">Multi-Agent Systems</a> for multi-agent coordination.</p>
+<h2>Cost awareness across multi-step runs</h2>
+<p>Multi-step orchestration multiplies LLM cost. A single agent loop at 2k tokens per step across 10 steps is 20k tokens; a supervisor-worker system with 5 parallel subagents each spending 10k tokens hits 50k+ tokens per invocation. Budget controls: per-step and per-run token ceilings, max-retry limits, hard timeouts. Durable execution (Temporal, LangGraph checkpointing) avoids wasted spend by resuming from checkpoints rather than replaying entire runs.</p>
+<h2>Error recovery</h2>
+<p>Agent workflows fail non-deterministically. Orchestration must handle: transient LLM API errors (exponential backoff with jitter, never retry 400/401/404), tool failures (circuit breaker to stop calling a failing service), state loss (checkpoint serialization at each step), and unbounded loops (hard cap ~5 iterations with escalation). Durable execution engines provide engine-guaranteed idempotency — the journal is the audit trail. For compensation when partial work has side effects, the saga pattern (compensating transactions) or durable execution (replay from journal) are standard approaches. See <a href="./Workflow%20Patterns.html">Workflow Patterns</a> § Error recovery for the detailed pattern catalog.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>LangChain, LangGraph Overview — <a href="https://docs.langchain.com/oss/python/langgraph/overview">https://docs.langchain.com/oss/python/langgraph/overview</a> — graph-based orchestration, durable state, v1.0 Oct 2025.</li>
+<li>CrewAI, Docs — <a href="https://docs.crewai.com/">https://docs.crewai.com/</a> — role-based multi-agent, Crews and Flows modes.</li>
+<li>AG2, Docs — <a href="https://docs.ag2.ai/">https://docs.ag2.ai/</a> — AutoGen successor, absorbed into Microsoft Agent Framework.</li>
+<li>Mastra, Docs — <a href="https://mastra.ai/docs">https://mastra.ai/docs</a> — TypeScript-first agent framework.</li>
+<li>OpenAI Agents SDK, Docs — <a href="https://openai.github.io/openai-agents-python/">https://openai.github.io/openai-agents-python/</a> — minimal-abstraction SDK with agents, handoffs, guardrails.</li>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a> — five canonical workflow patterns.</li>
+<li>Forasoft, &quot;LangGraph vs CrewAI vs AutoGen,&quot; 2026 — <a href="https://www.forasoft.com/learn/ai-for-video-engineering/articles-ai/langgraph-vs-crewai-vs-autogen-agent-frameworks">https://www.forasoft.com/learn/ai-for-video-engineering/articles-ai/langgraph-vs-crewai-vs-autogen-agent-frameworks</a> — framework comparison.</li>
+<li>Fernel.io, &quot;Durable Execution vs. Saga Pattern,&quot; 2026 — <a href="https://fernel.io/insights/06-durable-execution-vs-saga">https://fernel.io/insights/06-durable-execution-vs-saga</a> — saga vs durable execution trade-offs.</li>
+<li>AI Agents Blog, &quot;5 Patterns for Production Reliability,&quot; 2026 — <a href="https://aiagentsblog.com/blog/agent-error-recovery-patterns/">https://aiagentsblog.com/blog/agent-error-recovery-patterns/</a> — error recovery patterns.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Workflow%20Patterns.html">Workflow Patterns</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">← Behavior and Communication Controls</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Workflow%20Patterns.html">Workflow Patterns →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

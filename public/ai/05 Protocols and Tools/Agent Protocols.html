@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="| Protocol | Boundary | Typical concern | |||| | ACP | Editor/client ↔ agent | Sessions, updates, permissions, cancellation | | A2A | Agent ↔ agent | Discovery,">
+<title>Agent protocol family — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Agent protocol family</h1>
+<div class="meta"><span>current-snapshot</span><span>updated 2026-08-27</span><span>ai-engineering, protocols, interoperability</span></div>
+<h1>Agent protocol family</h1>
+<blockquote>
+<p>[!summary] The gist
+AI systems talk to editors, other agents, user interfaces, and tools — each boundary needs its own protocol. The industry has built a family of five: ACP, A2A, AG-UI, A2UI, and MCP. Understanding which protocol fits which boundary is key to building secure, composable systems.</p>
+</blockquote>
+<hr>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Boundary</th>
+<th>Typical concern</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ACP</td>
+<td>Editor/client ↔ agent</td>
+<td>Sessions, updates, permissions, cancellation</td>
+</tr>
+<tr>
+<td>A2A</td>
+<td>Agent ↔ agent</td>
+<td>Discovery, messages, tasks, async collaboration</td>
+</tr>
+<tr>
+<td>AG-UI</td>
+<td>Agent ↔ application/user interface</td>
+<td>Streaming state and interactive UI events</td>
+</tr>
+<tr>
+<td>A2UI</td>
+<td>Agent → generated UI</td>
+<td>Declarative, model-driven interface surfaces</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>Agent application ↔ tools/data</td>
+<td>Capabilities and context</td>
+</tr>
+</tbody></table>
+<p>Adjacent standards may also cover commerce, identity, payments, and agent authorization. Treat these as separate trust and liability boundaries: an agent-to-agent message is not proof of identity, authority, consent, payment settlement, or user intent.</p>
+<p>Protocols compose, but every boundary adds identity, trust, schema, and replay questions. A2A should not be treated as permission to act; ACP should not imply a tool is safe; MCP discovery should not silently grant credentials.</p>
+<h2>Per-protocol internals</h2>
+<h3>ACP (Agent Client Protocol)</h3>
+<ul>
+<li><strong>What it does</strong>: Defines how an IDE, editor, or client application communicates with an agent. Manages sessions, sends user messages, receives agent responses, and handles cancellation.</li>
+<li><strong>Transport</strong>: WebSocket or HTTP. Session-scoped — the client opens a session, sends messages within it, and closes when done.</li>
+<li><strong>When to use</strong>: IDE integrations (VS Code, JetBrains), CLI tools, any scenario where a human-facing application needs to talk to an agent.</li>
+<li><strong>v2 overview</strong>: Supports bidirectional streaming, structured updates (tool calls, progress), and permission requests (agent asks for access to files, APIs). The client controls what the agent can do.</li>
+<li><strong>Key design</strong>: The agent is a service; the client is the authority. The agent cannot act without client approval on sensitive operations.</li>
+</ul>
+<h3>A2A (Agent-to-Agent)</h3>
+<ul>
+<li><strong>What it does</strong>: Enables discovery, messaging, and task delegation between agents. Agents advertise capabilities via &quot;agent cards&quot; (JSON metadata). One agent can send a task to another, stream partial results, and receive a final response.</li>
+<li><strong>Transport</strong>: HTTP/HTTPS with SSE for streaming. Discovery via well-known URLs (<code>/.well-known/agent.json</code>).</li>
+<li><strong>When to use</strong>: Multi-agent systems where agents are owned by different parties or run in different environments. Cross-organization agent collaboration.</li>
+<li><strong>Backed by</strong>: Linux Foundation, Apache 2.0 license. Google, Salesforce, SAP, and others are contributors.</li>
+<li><strong>Key design</strong>: Asynchronous tasks with status updates (submitted, working, input-required, completed, failed). Supports push notifications for long-running tasks.</li>
+</ul>
+<h3>AG-UI (Agent-User Interface)</h3>
+<ul>
+<li><strong>What it does</strong>: Streams agent state (text, tool calls, status) to a user interface in real-time. Enables interactive, conversational UIs where the user sees the agent working.</li>
+<li><strong>Transport</strong>: WebSocket or SSE. Bidirectional — user can interrupt, provide input, or modify the agent&#39;s plan mid-stream.</li>
+<li><strong>When to use</strong>: Chat-based interfaces, co-pilot experiences, any scenario where the user needs to see and interact with the agent&#39;s reasoning process.</li>
+</ul>
+<h3>A2UI (Agent → Generated UI)</h3>
+<ul>
+<li><strong>What it does</strong>: Agent generates a declarative UI description (forms, dashboards, data visualizations) that the application renders. The agent decides <em>what</em> to show; the application handles <em>how</em> to render it.</li>
+<li><strong>Transport</strong>: JSON or structured markup embedded in agent responses.</li>
+<li><strong>When to use</strong>: Dynamic dashboards, data exploration tools, scenarios where the agent needs to present complex data in interactive formats without hard-coding UI components.</li>
+</ul>
+<h2>Security considerations</h2>
+<ul>
+<li><strong>ACP</strong>: Client controls permissions. Encrypt transport (WSS/HTTPS). Validate session tokens. Enforce cancellation server-side — don&#39;t trust the client to stop sending.</li>
+<li><strong>A2A</strong>: Agent identity is a claim, not proof. Verify via signed agent cards and mutual TLS. Apply rate limits per-agent. Don&#39;t assume an agent card&#39;s claimed capabilities are accurate — verify at runtime.</li>
+<li><strong>AG-UI</strong>: Streaming state can leak sensitive data (tool outputs, intermediate reasoning). Enforce auth on connection establishment, not per-message. Sanitize state before rendering.</li>
+<li><strong>A2UI</strong>: Generated UI descriptions can contain injection attacks (XSS via dynamic forms). Validate and sanitize all agent-generated UI schemas before rendering. Render in sandboxed iframes where possible.</li>
+<li><strong>Cross-protocol</strong>: When composing protocols (e.g., ACP + MCP), each boundary has its own trust model. Don&#39;t assume auth from one protocol covers the other.</li>
+</ul>
+<h2>Interop and composition</h2>
+<p>Protocols are complementary, not competing:</p>
+<table>
+<thead>
+<tr>
+<th>Composition</th>
+<th>Pattern</th>
+<th>Trust model</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MCP + A2A</td>
+<td>Agent uses MCP for tools, A2A for peer coordination</td>
+<td>MCP: tool trust; A2A: agent trust</td>
+</tr>
+<tr>
+<td>ACP + MCP</td>
+<td>IDE talks to agent via ACP; agent uses MCP for tools</td>
+<td>ACP: user-facing session; MCP: tool-facing permissions</td>
+</tr>
+<tr>
+<td>AG-UI + A2UI</td>
+<td>App streams agent state via AG-UI; agent generates UI via A2UI</td>
+<td>AG-UI: connection auth; A2UI: content sanitization</td>
+</tr>
+</tbody></table>
+<p>Every composition boundary adds latency, failure modes, and trust questions. Document the trust model at each crossing. Minimize unnecessary boundaries.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>ACP overview (v2) — <a href="https://github.com/agentclientprotocol/agentclientprotocol/blob/main/docs/protocol/v2/overview.mdx">https://github.com/agentclientprotocol/agentclientprotocol/blob/main/docs/protocol/v2/overview.mdx</a> — agent-client protocol for IDE integration.</li>
+<li>A2A protocol — <a href="https://a2a-protocol.org/">https://a2a-protocol.org/</a> — agent-to-agent protocol, discovery, messaging, backed by Linux Foundation.</li>
+<li>AgentProtocol.ai — <a href="https://agentprotocol.ai/">https://agentprotocol.ai/</a> — earlier agent protocol standard.</li>
+<li>MCP specification — <a href="https://modelcontextprotocol.io/specification/2025-06-18/server/index">https://modelcontextprotocol.io/specification/2025-06-18/server/index</a> — see <a href="./MCP.html">MCP</a> for detailed MCP internals (transports, OAuth, error handling).</li>
+<li>MCP Transports — <a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/transports">https://modelcontextprotocol.io/specification/2025-06-18/basic/transports</a> — stdio and Streamable HTTP.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./MCP.html">MCP</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="../06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./MCP.html">← MCP</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="../06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

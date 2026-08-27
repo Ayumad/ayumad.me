@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="MCP is an open protocol for connecting an AI application to external data sources and tools. Its primitives are:">
+<title>Model Context Protocol (MCP) — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Model Context Protocol (MCP)</h1>
+<div class="meta"><span>current-snapshot</span><span>updated 2026-08-27</span><span>ai-engineering, mcp, tools, protocols</span></div>
+<h1>Model Context Protocol (MCP)</h1>
+<blockquote>
+<p>[!summary] The gist
+MCP is the standard plug that connects an AI application to external tools and data. It defines three primitives — tools, resources, and prompts — and handles discovery, invocation, and results. Without it, every tool integration is custom-built. This note covers the architecture, transports, auth flow, and error handling.</p>
+</blockquote>
+<hr>
+<h2>Architecture</h2>
+<pre><code class="language-text">Host application
+  └─ MCP client ↔ MCP server
+                    ├─ tools
+                    ├─ resources
+                    └─ prompts
+</code></pre>
+<p>MCP is not an agent. A server may be a thin adapter around an API. The host still owns user consent, authorization, context policy, and execution boundaries.</p>
+<h2>Transports (2025-06-18 spec)</h2>
+<table>
+<thead>
+<tr>
+<th>Transport</th>
+<th>How it works</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>stdio</strong></td>
+<td>Server runs as a subprocess. JSON-RPC messages travel over stdin/stdout.</td>
+<td>Local tools, CLI integrations, development. Simple, low-latency, no network config.</td>
+</tr>
+<tr>
+<td><strong>Streamable HTTP</strong></td>
+<td>HTTP POST for client→server requests. Server responds with SSE (Server-Sent Events) for streaming. Resumability via <code>Last-Event-ID</code> header. Session tracking via <code>Mcp-Session-Id</code>.</td>
+<td>Remote tools, cloud-hosted servers, multi-client scenarios. Requires HTTPS.</td>
+</tr>
+</tbody></table>
+<p>Key design points:</p>
+<ul>
+<li><strong>stdio</strong> is fire-and-forget: the host spawns the server process and communicates via pipes. No authentication needed (the host controls the process).</li>
+<li><strong>Streamable HTTP</strong> supports resumability: if a connection drops, the client replays from the last event ID. This is critical for long-running tool calls.</li>
+<li>Servers declare supported transports in their configuration. The client picks the best available.</li>
+</ul>
+<h2>Capability negotiation</h2>
+<p>During initialization, client and server exchange capability declarations:</p>
+<ul>
+<li><strong>Server capabilities</strong>: which primitives it supports (tools, resources, prompts), whether it supports sampling, and notification types.</li>
+<li><strong>Client capabilities</strong>: whether it supports roots (file system access), sampling (server-initiated LLM calls), and notifications.</li>
+<li>Neither side should invoke capabilities the other hasn&#39;t declared. This prevents runtime errors and security violations.</li>
+</ul>
+<h2>Versioning</h2>
+<p>The 2025-06-18 spec defines a versioned protocol (<code>protocolVersion</code> field in the initialize request). Clients must send their supported version; servers respond with their own. If versions are incompatible, the server returns an error. This prevents protocol mismatches when either side upgrades independently.</p>
+<h2>OAuth 2.1 security (2025-06-18 spec)</h2>
+<p>The full auth flow for remote MCP servers:</p>
+<ol>
+<li>Client sends a request → server returns <code>401 Unauthorized</code> with <code>WWW-Authenticate: Bearer resource_metadata=&quot;...&quot;</code>.</li>
+<li>Client fetches the Protected Resource Metadata (PRM) to discover the authorization server.</li>
+<li>Client fetches the Auth Server&#39;s OAuth metadata (RFC 8414).</li>
+<li>Client registers (or reuses) a client ID via dynamic client registration.</li>
+<li>User authenticates via browser redirect or device code flow.</li>
+<li>Client receives a short-lived access token.</li>
+<li>All subsequent requests include <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+</ol>
+<p><strong>Key security rules</strong>: Always validate tokens server-side. Use short-lived tokens (minutes, not hours). Enforce HTTPS. Apply least-privilege scopes — a tool that reads database records should not also be able to delete them. Server descriptions and tool output are untrusted input; validate and sanitize.</p>
+<h2>Typical server design</h2>
+<p>A minimal MCP server:</p>
+<ol>
+<li><strong>Declare capabilities</strong>: tools, resources, prompts. Each tool has a name, description, and JSON Schema input.</li>
+<li><strong>Handle <code>tools/list</code></strong>: return available tools with schemas.</li>
+<li><strong>Handle <code>tools/call</code></strong>: validate arguments against schema, execute the underlying operation, return structured result.</li>
+<li><strong>Handle <code>resources/read</code></strong>: fetch and return resource content.</li>
+<li><strong>Handle <code>prompts/get</code></strong>: return a pre-built prompt template.</li>
+<li><strong>Error handling</strong>: return JSON-RPC error objects with <code>code</code>, <code>message</code>, and optional <code>data</code>. Use standard codes (<code>-32600</code> for invalid request, <code>-32601</code> for method not found).</li>
+</ol>
+<h2>Error handling</h2>
+<p>MCP uses JSON-RPC error codes:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-32700</code></td>
+<td>Parse error</td>
+<td>Malformed JSON-RPC message</td>
+</tr>
+<tr>
+<td><code>-32600</code></td>
+<td>Invalid request</td>
+<td>Missing required fields, wrong protocol version</td>
+</tr>
+<tr>
+<td><code>-32601</code></td>
+<td>Method not found</td>
+<td>Client calls a method the server doesn&#39;t implement</td>
+</tr>
+<tr>
+<td><code>-32602</code></td>
+<td>Invalid params</td>
+<td>Tool arguments don&#39;t match the JSON Schema</td>
+</tr>
+<tr>
+<td><code>-32603</code></td>
+<td>Internal error</td>
+<td>Server-side failure (API down, timeout)</td>
+</tr>
+</tbody></table>
+<p>Servers should also implement timeouts (per-tool and global), rate limiting, and circuit breakers. Never let a tool call run indefinitely — set a maximum execution time and return a timeout error if exceeded.</p>
+<h2>Security checklist</h2>
+<ul>
+<li>Display what a tool does and what data it can access.</li>
+<li>Separate read and write tools; use least privilege and scoped credentials.</li>
+<li>Validate arguments and results; impose timeouts and budgets.</li>
+<li>Treat server descriptions, resources, and tool output as untrusted data.</li>
+<li>Pin versions, review dependencies, and maintain an allowlist of servers.</li>
+<li>Log actor, tool, arguments, approval, result, and redaction status.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Model Context Protocol specification, 2025-06-18 — <a href="https://modelcontextprotocol.io/specification/2025-06-18/server/index">https://modelcontextprotocol.io/specification/2025-06-18/server/index</a> — transports, lifecycle, and OAuth 2.1 authorization semantics (verified 2026-08-27).</li>
+<li><a href="https://www.anthropic.com/news/model-context-protocol">Anthropic announcement of MCP</a> — origin and intent of the standard (verified 2026-08-27).</li>
+<li>For protocol boundaries and comparisons: <a href="./Agent%20Protocols.html">Agent Protocols</a> and the [Protocols canvas](10 Maps/Protocols.canvas).</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Protocols%20Hub.html">Protocols Hub</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Agent%20Protocols.html">Agent Protocols</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Protocols%20Hub.html">← Protocols Hub</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Agent%20Protocols.html">Agent Protocols →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

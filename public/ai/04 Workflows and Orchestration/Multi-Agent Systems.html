@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Multiple agents are useful when specialization, isolation, parallelism, or independent critique outweighs communication and coordination cost.">
+<title>Multi-agent systems — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Multi-agent systems</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, multi-agent, orchestration</span></div>
+<h1>Multi-agent systems</h1>
+<blockquote>
+<p>[!summary] The gist
+Multiple agents beat a single one when specialization, parallelism, or independent critique matters more than coordination cost. A team of focused agents can outperform a solo generalist — but every handoff is a failure point. This note covers when a team helps, common structures, and the real risks.</p>
+</blockquote>
+<hr>
+<h2>Common topologies</h2>
+<ul>
+<li><strong>Supervisor → workers:</strong> one coordinator delegates bounded tasks.</li>
+<li><strong>Router → specialists:</strong> classify once, then hand off to a domain agent.</li>
+<li><strong>Handoffs:</strong> an agent transfers ownership with a typed context package.</li>
+<li><strong>Hierarchical team:</strong> managers coordinate subteams.</li>
+<li><strong>Swarm:</strong> peers discover and delegate dynamically.</li>
+<li><strong>Blackboard:</strong> agents publish artifacts to shared state rather than chatting endlessly.</li>
+<li><strong>Debate or jury:</strong> independent answers are compared, criticized, or voted on.</li>
+</ul>
+<h2>Single versus multiple</h2>
+<p>Start with one agent. Add dynamic skills when the problem is capability loading rather than coordination. Add subagents for bounded parallel work or isolation. Use a full team only when roles, contracts, budgets, and failure ownership are explicit.</p>
+<p>Every handoff should include goal, evidence, assumptions, open questions, output schema, and authority. Never treat another agent’s text as automatically trusted.</p>
+<p>See <a href="./Agent%20Democracies.html">Agent Democracies</a> and <a href="../09%20Playbooks/Mode%20and%20Topology%20Selector.html">Mode and Topology Selector</a>.</p>
+<h2>Practical rule</h2>
+<p>Use a team only to gain specialization, isolation, or independent parallelism. Give workers bounded tools and typed outputs, and make the supervisor accountable for integration, cost, and stopping. Compare the system with a strong single-agent baseline on quality, latency, cost, and safety.</p>
+<h2>Framework topology coverage</h2>
+<table>
+<thead>
+<tr>
+<th>Topology</th>
+<th>LangGraph</th>
+<th>CrewAI</th>
+<th>OpenAI Agents SDK</th>
+<th>AutoGen/MS AF</th>
+<th>Mastra</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Supervisor → workers</td>
+<td>✅ graph of sub-graphs</td>
+<td>✅ crew with manager</td>
+<td>✅ orchestrator agent</td>
+<td>✅ GroupChat manager</td>
+<td>✅ agent delegation</td>
+</tr>
+<tr>
+<td>Router → specialists</td>
+<td>✅ conditional edges</td>
+<td>✅ routing tasks</td>
+<td>✅ handoffs</td>
+<td>✅ selector</td>
+<td>✅ conditional routing</td>
+</tr>
+<tr>
+<td>Handoffs</td>
+<td>✅ dynamic graph edges</td>
+<td>✅ task delegation</td>
+<td>✅ first-class handoff primitive</td>
+<td>✅ handoff messages</td>
+<td>✅ agent-to-agent calls</td>
+</tr>
+<tr>
+<td>Hierarchical team</td>
+<td>✅ nested sub-graphs</td>
+<td>✅ manager crews</td>
+<td>✅ nested handoffs</td>
+<td>✅ nested GroupChat</td>
+<td>❌ not built-in</td>
+</tr>
+<tr>
+<td>Swarm</td>
+<td>✅ dynamic routing</td>
+<td>❌ not built-in</td>
+<td>✅ swarm handoff</td>
+<td>✅ swarm mode</td>
+<td>❌ not built-in</td>
+</tr>
+<tr>
+<td>Debate/jury</td>
+<td>✅ custom graph</td>
+<td>❌ not built-in</td>
+<td>❌ not built-in</td>
+<td>✅ GroupChat debate</td>
+<td>❌ not built-in</td>
+</tr>
+</tbody></table>
+<h2>Failure modes in detail</h2>
+<ul>
+<li><strong>Agent drift</strong>: Each subagent has its own prompt, tool set, and context window. Without shared schemas and periodic alignment checks, agents can diverge — producing plans that conflict or contradict each other. Detection: compare reasoning traces across agents; flag when tool call patterns diverge from baseline.</li>
+<li><strong>Coordination bugs</strong>: Handoffs are the most fragile point. If agent A&#39;s output schema doesn&#39;t match agent B&#39;s expected input, the pipeline silently degrades. Mitigation: typed output contracts with validation at each boundary; integration tests that exercise the full multi-agent path.</li>
+<li><strong>Shared-state contention</strong>: When multiple agents read/write shared state (blackboard, shared memory), race conditions and stale reads are common. Mitigation: append-only shared state with versioning; read-write locks; or avoid shared state entirely by using message-passing.</li>
+<li><strong>Cost amplification</strong>: Multi-agent systems consume tokens across all agents. A 3-agent pipeline at 5k tokens each per iteration hits 15k tokens per cycle. Budget per-agent and per-run; detect runaway costs early.</li>
+<li><strong>Lost context across handoffs</strong>: Evidence, assumptions, and open questions must travel with every handoff. Without structured context packages, downstream agents make decisions on incomplete information (OpenAI 2025).</li>
+</ul>
+<h2>Debate/jury as a pattern</h2>
+<p>The debate or jury topology (independent answers compared, criticized, or voted on) is a common multi-agent pattern. For governance-oriented implementations of this topology — with proposers, critics, quorum rules, reputation tracking, and formal voting mechanics — see <a href="./Agent%20Democracies.html">Agent Democracies</a>.</p>
+<h2>Evidence and trade-offs</h2>
+<ul>
+<li><strong>Anthropic&#39;s research system (Jun 2025)</strong> is an orchestrator-worker design: a lead agent decomposes the query, parallel subagents explore (often spending tens of thousands of tokens each), and each returns a condensed summary (~1–2k tokens) that the lead synthesizes with citations. Anthropic reports substantial improvement over single-agent on complex research tasks, while being explicit that multi-agent engineering overhead and new failure modes (agent drift, coordination bugs) are real costs.</li>
+<li><strong>Sampling and voting (Song et al. 2024):</strong> scaling up the <em>number of agents</em> on an inference task improves accuracy, but gains are asymptotic and effectiveness depends on task difficulty—cheap parallelism is not a substitute for design.</li>
+<li><strong>Handoffs carry risk:</strong> pass goal, evidence, assumptions, open questions, output schema, and authority; do not trust another agent&#39;s text implicitly (OpenAI 2025).</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Anthropic, &quot;How we built our multi-agent research system,&quot; Jun 13, 2025 — <a href="https://www.anthropic.com/engineering/multi-agent-research-system">https://www.anthropic.com/engineering/multi-agent-research-system</a></li>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 19, 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a> — the orchestrator-workers pattern.</li>
+<li>Song et al., &quot;More Agents Is All You Need,&quot; 2024 — <a href="https://arxiv.org/abs/2402.05120">https://arxiv.org/abs/2402.05120</a></li>
+<li>OpenAI, &quot;A practical guide to building agents,&quot; 2025 — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a></li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Workflow%20Patterns.html">Workflow Patterns</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Agent%20Democracies.html">Agent Democracies</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Workflow%20Patterns.html">← Workflow Patterns</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Agent%20Democracies.html">Agent Democracies →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

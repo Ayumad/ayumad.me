@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="An LLM is a learned function that maps a sequence of tokens and other inputs to a probability distribution over possible next tokens or structured outputs. In p">
+<title>What is an LLM? — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>What is an LLM?</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, models, llm</span></div>
+<h1>What is an LLM?</h1>
+<blockquote>
+<p>[!summary] The gist
+An LLM is autocomplete at scale. It predicts the next word based on patterns from training data. It doesn&#39;t look things up or take actions—those are engineering problems solved around the model. This note covers tokenization, embeddings, model families, and what isn&#39;t built in.</p>
+</blockquote>
+<hr>
+<h2>Mental model</h2>
+<p><code>context → model inference → candidate continuation → decoding</code></p>
+<p>Tokens are not identical to words. Tokenization affects context length, cost, and how identifiers or code are represented. Decoding chooses an output from probabilities; temperature, top-p, seed behavior, and model-specific controls affect variability.</p>
+<h2>Tokenization</h2>
+<p>Tokenization converts raw text into the integer sequences models actually process. The choice of tokenizer determines context length, cost, and how well code, rare words, and multilingual text are handled.</p>
+<p><strong>BPE (Byte Pair Encoding):</strong> Merges the most frequent byte pairs iteratively (Sennrich 2016). Handles rare and unknown words via subword decomposition. +1.1–1.3 BLEU over dictionary baselines on WMT 15.</p>
+<p><strong>WordPiece:</strong> Used in BERT (Google). Longest-match-first strategy with a trie. Fast WordPiece achieves O(n) tokenization via Aho-Corasick—8.2× faster than HuggingFace Tokenizers (Wu et al. 2021).</p>
+<p><strong>SentencePiece:</strong> Language-independent tokenizer (Kudo &amp; Richardson 2018). Trains directly from raw sentences without pre-tokenization. Implements BPE + Unigram LM. Used by T5, Llama, and Gemma.</p>
+<p><strong>Why tokenization matters for cost and context:</strong> APIs charge per token. English averages <del>0.75 words per token (</del>4 characters). CJK languages average ~1 token per character (2–3× more expensive for the same content). Code, agglutinative languages, and URLs also tokenize poorly. A 128K-token context window ≈ 96K English words but ≈ 40K CJK characters. Petrov et al. (NeurIPS 2023) showed tokenized lengths differ by &gt;10× between best- and worst-served languages for the same content.</p>
+<h2>Embeddings</h2>
+<p>After tokenization, each token (or sequence) is mapped to a dense vector—an embedding—that captures semantic and syntactic relationships.</p>
+<p><strong>Static embeddings</strong> (Word2Vec, GloVe): One fixed vector per word regardless of context. Word2Vec (Mikolov 2013) learns from local co-occurrence via skip-gram or CBOW. GloVe (Pennington 2014) factorizes log co-occurrence matrices. Dimensions: 100–300. Fast and interpretable, but cannot distinguish polysemous uses (e.g., &quot;bank&quot; as riverbank vs. financial institution).</p>
+<p><strong>Contextual embeddings</strong> (ELMo, BERT, GPT): Representation varies by sentence. ELMo (Peters 2018) extracts deep bidirectional LM internals; upper layers become more context-specific (Ethayarajh 2019). Transformer hidden dimensions range from 768 (BERT-base) to 12,288 (GPT-4 class). Retrieval-specific embeddings: OpenAI ada-002 uses 3,072 dimensions; BGE uses 1,024.</p>
+<p><strong>Cosine similarity</strong> measures the angle between two vectors: 1 = identical direction, 0 = orthogonal, −1 = opposite. It is the primary metric for retrieval and nearest-neighbor search. Inner product and L2 distance are alternatives with different geometric interpretations.</p>
+<p><strong>Trade-off:</strong> Static embeddings are fast and cheap but ignore context. Contextual embeddings capture polysemy and nuance but require the full model forward pass.</p>
+<h2>Model families snapshot</h2>
+<p>The landscape as of 2026-08-27:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Provider</th>
+<th>Key models</th>
+<th>Approx. params</th>
+<th>Strengths</th>
+<th>Access</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GPT</td>
+<td>OpenAI</td>
+<td>GPT-4o, GPT-4.1</td>
+<td>~1.8T MoE (rumored)</td>
+<td>Broad reasoning, multimodal</td>
+<td>Closed API</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>Anthropic</td>
+<td>Claude 4 Opus, Sonnet</td>
+<td>Undisclosed</td>
+<td>Constitutional AI alignment, 100K+ context</td>
+<td>Closed API</td>
+</tr>
+<tr>
+<td>Llama</td>
+<td>Meta</td>
+<td>Llama 4 Scout/Maverick</td>
+<td>8B–405B</td>
+<td>Open weights, commercial license, 128K context</td>
+<td>Open</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td>Google</td>
+<td>Gemini 2.5 Pro</td>
+<td>Undisclosed</td>
+<td>Multimodal native, 1M+ context</td>
+<td>API</td>
+</tr>
+<tr>
+<td>DeepSeek</td>
+<td>DeepSeek</td>
+<td>V3 (671B/37B active), R1</td>
+<td>671B MoE</td>
+<td>Extremely cost-efficient training, open weights</td>
+<td>Open</td>
+</tr>
+<tr>
+<td>Mistral</td>
+<td>Mistral AI</td>
+<td>Mixtral 8x7B</td>
+<td>47B/13B active</td>
+<td>Efficiency-focused, strong small models, Apache 2.0</td>
+<td>Open</td>
+</tr>
+</tbody></table>
+<p>Parameter counts are approximate; MoE models store more parameters than they activate per token (see <a href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>).</p>
+<h2>Evaluation benchmarks</h2>
+<p>Common benchmarks and why single numbers mislead:</p>
+<table>
+<thead>
+<tr>
+<th>Benchmark</th>
+<th>What it tests</th>
+<th>Status (2026)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MMLU (57 subjects, multiple-choice)</td>
+<td>Broad knowledge</td>
+<td>Saturated (&gt;90% by frontier)</td>
+</tr>
+<tr>
+<td>MMLU-Pro (10 choices, reasoning-focused)</td>
+<td>Harder reasoning, less trivia</td>
+<td>Better discriminator; drops accuracy 16–33% vs MMLU</td>
+</tr>
+<tr>
+<td>GSM8K (grade school math)</td>
+<td>Multi-step reasoning</td>
+<td>Largely saturated (&gt;95%)</td>
+</tr>
+<tr>
+<td>HumanEval (164 Python problems)</td>
+<td>Code generation with unit tests</td>
+<td>Saturated (&gt;95%); spawned SWE-bench</td>
+</tr>
+<tr>
+<td>Chatbot Arena (LMSYS)</td>
+<td>Crowdsourced pairwise preference, Elo rating</td>
+<td>Most referenced live leaderboard; rankings shift by task type</td>
+</tr>
+</tbody></table>
+<p><strong>Why single numbers mislead:</strong> (a) Saturation—top models cluster near ceiling. (b) Prompt sensitivity—same model scores vary 4–5% across formats. (c) No single benchmark covers all capabilities. (d) Contamination—training data may contain benchmark questions. (e) Arena shows rankings shift by task type.</p>
+<h2>What is not built in</h2>
+<p>An LLM does not automatically possess current web access, private files, durable memory, a todo list, authentication, safe execution, or a goal that persists after the request. Engineers add these around the model through a <a href="../02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>.</p>
+<h2>Useful distinctions</h2>
+<table>
+<thead>
+<tr>
+<th>Thing</th>
+<th>Primary responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Model</td>
+<td>Pattern completion and reasoning from supplied context</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>User experience and domain logic</td>
+</tr>
+<tr>
+<td>Agent</td>
+<td>Model-directed loop that can choose actions</td>
+</tr>
+<tr>
+<td>Workflow</td>
+<td>Explicit sequence and control flow</td>
+</tr>
+<tr>
+<td>Harness</td>
+<td>Runtime that gives an agent context, tools, state, and guardrails</td>
+</tr>
+</tbody></table>
+<h2>How to use this mental model</h2>
+<p>When a system fails, locate the missing layer before changing the model. A wrong current fact suggests retrieval; an invalid JSON field suggests a schema/validator; an action the model cannot take suggests a tool; repeated unsafe behavior suggests a harness policy. This prevents the common mistake of trying to solve every problem with a longer prompt or a larger model.</p>
+<p>Build a small exercise around one request: record the exact input context, model output distribution/decoding settings where available, validator result, and final user-facing answer. Change one variable at a time. You will quickly see that the system surrounding inference controls much of real-world reliability.</p>
+<h2>Common misconceptions</h2>
+<ul>
+<li>Fluent output is not evidence of current knowledge, authorization, or tool completion.</li>
+<li>A context window is not durable memory; it is a limited working set that must be selected and managed.</li>
+<li>Reasoning capability does not confer safe execution. Authority comes from the application and its policies.</li>
+</ul>
+<h2>How a model is built and why that matters</h2>
+<p>Karpathy&#39;s &quot;two-file&quot; mental model: an LLM is <strong>parameters</strong> (the learned weights) plus <strong>the code</strong> that runs them. Everything a model &quot;knows&quot; was selected during training—so a capability gap is usually a training fact, not a prompt bug.</p>
+<ul>
+<li><strong>Pretraining:</strong> predict the next token over web-scale text. This yields broad language and world knowledge but no instruction-following. Loss falls as a power law with model size, data, and compute (Kaplan et al. 2020), and compute-optimal training shifts the balance toward more data per parameter (Hoffmann et al. 2022, &quot;Chinchilla&quot;).</li>
+<li><strong>Post-training:</strong> supervised fine-tuning shapes output format, and preference/RL alignment tunes behavior against human judgments. Alignment changes behavior; it is <strong>not</strong> a security boundary (see <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
+<li><strong>Architecture:</strong> the transformer&#39;s attention mechanism (Vaswani et al. 2017) lets every token attend to every other token; most chat models are autoregressive decoder-only transformers that emit one token at a time. Mixture-of-experts models store more parameters than they activate per token (see <a href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>). Chain-of-thought-style reasoning emerges at sufficient scale (Wei et al. 2022; see <a href="../03%20Context%20Knowledge%20Memory/Prompting%20for%20Agents.html">Prompting for Agents</a>).</li>
+</ul>
+<h2>Scaling laws: practical implications</h2>
+<p>Kaplan et al. (2020) showed loss falls as a power law with model size, dataset size, and compute. The key practical implication: doubling parameters without proportionally more data yields diminishing returns. Chinchilla (Hoffmann et al. 2022) showed compute-optimal training shifts the balance toward more tokens per parameter—many &quot;large&quot; models were actually undertrained. This means a well-trained 70B model can outperform a poorly-trained 200B model. For practitioners, scaling laws predict the minimum data and compute needed for a target performance level, and they explain why simply making a model bigger without more data rarely helps.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Sennrich, Haddow &amp; Birch, &quot;Neural Machine Translation of Rare Words with Subword Units,&quot; 2016 — <a href="https://arxiv.org/abs/1508.07909">https://arxiv.org/abs/1508.07909</a> — BPE algorithm and NMT results.</li>
+<li>Kudo &amp; Richardson, &quot;SentencePiece,&quot; 2018 — <a href="https://arxiv.org/abs/1808.06226">https://arxiv.org/abs/1808.06226</a> — language-independent tokenization.</li>
+<li>Wu et al., &quot;Fast WordPiece Tokenization,&quot; 2021 — <a href="https://arxiv.org/abs/2012.15524">https://arxiv.org/abs/2012.15524</a> — O(n) tokenization via Aho-Corasick.</li>
+<li>Mikolov et al., &quot;Efficient Estimation of Word Representations in Vector Space,&quot; 2013 — <a href="https://arxiv.org/abs/1301.3781">https://arxiv.org/abs/1301.3781</a> — Word2Vec skip-gram/CBOW.</li>
+<li>Pennington, Socher &amp; Manning, &quot;GloVe: Global Vectors for Word Representation,&quot; 2014 — <a href="https://aclanthology.org/D14-1162/">https://aclanthology.org/D14-1162/</a> — log co-occurrence factorization.</li>
+<li>Peters et al., &quot;Deep contextualized word representations,&quot; 2018 — <a href="https://arxiv.org/abs/1802.05365">https://arxiv.org/abs/1802.05365</a> — ELMo contextual embeddings.</li>
+<li>Ethayarajh, &quot;How Contextual are Contextualized Word Representations?,&quot; 2019 — <a href="https://arxiv.org/abs/1909.00512">https://arxiv.org/abs/1909.00512</a> — anisotropy in contextual embeddings.</li>
+<li>Multigrid, &quot;How Many Tokens Is a Word?,&quot; 2026 — <a href="https://multigrid.ai/learn/tokens-per-word">https://multigrid.ai/learn/tokens-per-word</a> — token-per-word ratios across languages.</li>
+<li>Karpathy, <em>Intro to Large Language Models</em> — <a href="https://www.youtube.com/watch?v=zjkBMFhNj_g">https://www.youtube.com/watch?v=zjkBMFhNj_g</a> — the two-file view, training, tokenization, and scale intuition.</li>
+<li>Vaswani et al., &quot;Attention Is All You Need,&quot; 2017 — <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a></li>
+<li>Kaplan et al., &quot;Scaling Laws for Neural Language Models,&quot; 2020 — <a href="https://arxiv.org/abs/2001.08361">https://arxiv.org/abs/2001.08361</a></li>
+<li>Hoffmann et al., &quot;Training Compute-Optimal Large Language Models&quot; (Chinchilla), 2022 — <a href="https://arxiv.org/abs/2203.15556">https://arxiv.org/abs/2203.15556</a></li>
+<li>Wei et al., &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models,&quot; 2022 — <a href="https://arxiv.org/abs/2201.11903">https://arxiv.org/abs/2201.11903</a></li>
+<li>OpenAI, &quot;GPT-4 Technical Report,&quot; 2023 — <a href="https://arxiv.org/abs/2303.08774">https://arxiv.org/abs/2303.08774</a></li>
+<li>Meta AI, &quot;The Llama 3 Herd of Models,&quot; 2024 — <a href="https://arxiv.org/abs/2407.21783">https://arxiv.org/abs/2407.21783</a></li>
+<li>DeepSeek AI, &quot;DeepSeek-V3 Technical Report,&quot; 2024 — <a href="https://arxiv.org/abs/2412.19437">https://arxiv.org/abs/2412.19437</a></li>
+<li>Jiang et al., &quot;Mistral 7B,&quot; 2023 — <a href="https://arxiv.org/abs/2310.06825">https://arxiv.org/abs/2310.06825</a></li>
+<li>Jiang et al., &quot;Mixtral of Experts,&quot; 2024 — <a href="https://arxiv.org/abs/2401.04088">https://arxiv.org/abs/2401.04088</a></li>
+<li>Hendrycks et al., &quot;Measuring Massive Multitask Language Understanding,&quot; 2021 — <a href="https://arxiv.org/abs/2009.03300">https://arxiv.org/abs/2009.03300</a></li>
+<li>Wang et al., &quot;MMLU-Pro,&quot; 2024 — <a href="https://arxiv.org/abs/2406.01574">https://arxiv.org/abs/2406.01574</a></li>
+<li>Cobbe et al., &quot;Training Verifiers to Solve Math Word Problems,&quot; 2021 — <a href="https://arxiv.org/abs/2110.14168">https://arxiv.org/abs/2110.14168</a></li>
+<li>Chen et al., &quot;Evaluating Large Language Models Trained on Code,&quot; 2021 — <a href="https://arxiv.org/abs/2107.03374">https://arxiv.org/abs/2107.03374</a></li>
+<li>Zheng et al., &quot;Chatbot Arena,&quot; 2024 — <a href="https://arxiv.org/abs/2403.04132">https://arxiv.org/abs/2403.04132</a></li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a> — practitioner reference for the whole stack.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> · <a href="./Structured%20Outputs%20and%20Tool%20Calling.html">Structured Outputs and Tool Calling</a> · <a href="../02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Foundations%20Hub.html">Foundations Hub</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Foundations%20Hub.html">← Foundations Hub</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Planning turns a broad request into observable work. State records what is known, what is complete, what failed, and what must happen next.">
+<title>Planning, state, and persistence — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Planning, state, and persistence</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, planning, state, persistence</span></div>
+<h1>Planning, state, and persistence</h1>
+<blockquote>
+<p>[!summary] The gist
+Planning turns a broad request into observable work. State records what is known, what is complete, what failed, and what must happen next.
+Without a way to save their progress, a crash or interruption means losing everything an agent has figured out. This note explains how agents create plans, save their work at key moments, and recover when things go wrong.</p>
+</blockquote>
+<hr>
+<h2>Durable work needs durable state</h2>
+<p>Plans are hypotheses, not authority. Store enough state to resume safely: objective, constraints, completed and pending steps, artifact references, decisions, approvals, idempotency keys, and the last verified observation. Do not persist raw, unbounded conversation merely because it exists; compact it into state that a later run can inspect and correct.</p>
+<p>Checkpoint around irreversible or long-running boundaries. On recovery, read the checkpoint and current external state before retrying—never infer that a previous tool call failed just because the process ended. Version state schemas and provide migrations so a deployment does not strand in-flight work.</p>
+<p>Planning turns a broad request into observable work. State records what is known, what is complete, what failed, and what must happen next.</p>
+<h2>Concrete state schema</h2>
+<p>A minimal but complete agent state record:</p>
+<pre><code class="language-json">{
+  &quot;run_id&quot;: &quot;run_a1b2c3&quot;,
+  &quot;objective&quot;: &quot;Deploy staging environment for auth service&quot;,
+  &quot;constraints&quot;: {&quot;max_cost_usd&quot;: 5.0, &quot;deadline&quot;: &quot;2026-08-28T12:00:00Z&quot;},
+  &quot;plan&quot;: [
+    {&quot;step&quot;: 1, &quot;action&quot;: &quot;provision_db&quot;, &quot;status&quot;: &quot;completed&quot;, &quot;idempotency_key&quot;: &quot;db-prod-v2&quot;},
+    {&quot;step&quot;: 2, &quot;action&quot;: &quot;run_migrations&quot;, &quot;status&quot;: &quot;completed&quot;, &quot;idempotency_key&quot;: &quot;mig-0827&quot;},
+    {&quot;step&quot;: 3, &quot;action&quot;: &quot;deploy_service&quot;, &quot;status&quot;: &quot;in_progress&quot;, &quot;idempotency_key&quot;: &quot;deploy-staging-42&quot;},
+    {&quot;step&quot;: 4, &quot;action&quot;: &quot;run_smoke_tests&quot;, &quot;status&quot;: &quot;pending&quot;}
+  ],
+  &quot;artifacts&quot;: {&quot;db_connection&quot;: &quot;postgres://staging:5432/auth&quot;, &quot;commit_sha&quot;: &quot;f3a9c2e&quot;},
+  &quot;approvals&quot;: [{&quot;step&quot;: 3, &quot;approved_by&quot;: &quot;ops-bot&quot;, &quot;at&quot;: &quot;2026-08-27T10:00:00Z&quot;}],
+  &quot;errors&quot;: [],
+  &quot;budget&quot;: {&quot;tokens_used&quot;: 14200, &quot;tokens_limit&quot;: 100000, &quot;cost_usd&quot;: 0.87},
+  &quot;last_observation&quot;: &quot;migrations applied successfully, deploying service...&quot;,
+  &quot;updated_at&quot;: &quot;2026-08-27T10:05:00Z&quot;
+}
+</code></pre>
+<p>Persist state separately from the transcript so a run can resume, fork, or be audited. Checkpoint before consequential side effects and after meaningful milestones.</p>
+<h2>Recovery patterns</h2>
+<p>When an agent run fails or is interrupted, three recovery strategies apply:</p>
+<ul>
+<li><strong>Resume (replay from checkpoint):</strong> Load the persisted state, verify external world consistency (did the database migration actually apply?), and continue from the next pending step. Fastest recovery when the checkpoint is recent and side effects are idempotent.</li>
+<li><strong>Compensate (Saga pattern):</strong> For partially completed work with non-idempotent side effects, execute compensating actions to undo completed steps before retrying. Use try...catch logic per step: if step 3 fails after step 2 succeeded, run the compensating action for step 2 before retrying the whole sequence.</li>
+<li><strong>Re-execute (fresh run):</strong> Discard partial progress and restart from scratch with the same inputs. Appropriate when the failure mode is unclear or when compensation is more expensive than re-execution.</li>
+</ul>
+<p>Temporal&#39;s durable execution model captures this spectrum: workflows record every state transition as an immutable event (event sourcing), persisting to Cassandra, PostgreSQL, or MySQL. On failure, the runtime replays the event history to reconstruct the exact workflow state. Activities (individual steps) retry automatically with configurable policies. This model has been in production for 9 years, originating from AWS SQS/SWF and the Uber Cadence team. OpenAI uses Temporal for Codex production agents: crash recovery replays from persisted checkpoints.</p>
+<h2>Idempotency keys</h2>
+<p>Every tool call that mutates external state must carry an idempotency key—a unique identifier that allows the execution layer to detect and deduplicate repeated calls. Combine workflow-level IDs (preventing duplicate workflow execution) with activity-level keys (preventing duplicate side effects within a workflow). Keys should be deterministic functions of the intended outcome, not random UUIDs, so that a retry of the same logical operation produces the same key.</p>
+<h2>Backend comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Durability</th>
+<th>Latency</th>
+<th>Best fit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SQLite</td>
+<td>File-level</td>
+<td>Sub-ms</td>
+<td>Single-node dev, local agents</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>Volatile (AOF optional)</td>
+<td>Sub-ms</td>
+<td>Ephemeral state, pub/sub coordination</td>
+</tr>
+<tr>
+<td>DynamoDB</td>
+<td>Strong (AWS-managed)</td>
+<td>5–15ms</td>
+<td>Cloud-native, autoscaling, item-level transactions</td>
+</tr>
+<tr>
+<td>Temporal</td>
+<td>Event-sourced, strongly durable</td>
+<td>10–50ms</td>
+<td>Long-running workflows, multi-day tasks, crash recovery</td>
+</tr>
+</tbody></table>
+<p>Choose based on the durability-latency trade-off: in-memory stores are fast but lose state on crash; event-sourced systems survive crashes but add write overhead. For agents that run across minutes or hours, durable persistence is non-negotiable.</p>
+<h2>Long-running agents</h2>
+<p>Long runs need context compaction, heartbeat/timeout handling, durable queues, resumability, human handoff, and explicit expiry. A &quot;goal&quot; is a durable objective with progress and stopping conditions; a normal prompt is a single turn.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Temporal official, 2026 — <a href="https://temporal.io/">https://temporal.io/</a> — durable execution, event sourcing, workflow recovery.</li>
+<li>Pan, &quot;Agentic Systems Are Distributed Systems,&quot; May 2026 — <a href="https://tianpan.co/blog/2026-05-05-agentic-systems-distributed-services-microservices-patterns">https://tianpan.co/blog/2026-05-05-agentic-systems-distributed-services-microservices-patterns</a> — failure rates, circuit breakers, idempotency patterns.</li>
+<li>Anthropic, &quot;Effective harnesses for long-running agents,&quot; Nov 2025 — <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents</a> — initializer/coding agent, progress files, multi-session continuity.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="../04%20Workflows%20and%20Orchestration/Orchestration%20Hub.html">Orchestration Hub</a> · <a href="../06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a> · <a href="../09%20Playbooks/Mode%20and%20Topology%20Selector.html">Mode and Topology Selector</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Sandboxing%20Infrastructure.html">← Sandboxing Infrastructure</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

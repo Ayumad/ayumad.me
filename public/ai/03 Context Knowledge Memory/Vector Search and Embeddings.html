@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="How retrieval embeddings are actually trained (contrastive objectives, SimCSE, task-prefix conditioning), what ANN indexes do under the hood (HNSW/IVF/PQ mechan">
+<title>Vector search and embeddings — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Vector search and embeddings</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, retrieval, embeddings, vector-search, ann</span></div>
+<h1>Vector search and embeddings</h1>
+<blockquote>
+<p>[!summary] The gist
+Embeddings turn text into numerical coordinates where similar meanings sit close together. Vector databases search those coordinates at speed. Together they power RAG&#39;s retrieval step — but the real pitfalls lie in how embedders are trained, how ANN indexes trade recall for speed, and the gap between similarity and relevance. This note covers the machinery under the hood.</p>
+</blockquote>
+<hr>
+<h2>What an embedding model actually learns</h2>
+<p>Retrieval embedders are trained with <strong>contrastive objectives</strong>: pull &quot;positive&quot; pairs (texts that mean the same thing) together in vector space, push &quot;negative&quot; pairs apart. Distance then encodes meaning — within the distribution the model saw in training.</p>
+<ul>
+<li><strong>SimCSE (Gao et al. 2021)</strong> is the reference simple recipe: an unsupervised contrastive objective where a sentence predicts itself, using standard dropout as the only noise. Dropout acts as minimal data augmentation — remove it and the model undergoes <strong>representation collapse</strong>. The supervised variant uses NLI entailment pairs as positives and contradiction pairs as hard negatives and reaches 81.6% Spearman correlation on STS with BERT-base.</li>
+<li>The same paper shows contrastive training <strong>regularizes the anisotropic space</strong> that raw pretrained embeddings collapse into — one reason vanilla BERT/GPT hidden states are poor retrieval vectors without a task-specific stage.</li>
+<li><strong>Modern embedders stack stages</strong>: nomic-embed-text-v1 starts from a long-context BERT and runs an unsupervised contrastive stage on weakly related pairs (forum Q&amp;A, title–body pairs), then a finetuning stage on labeled search-query/answer data with hard-example mining. It is a text encoder only as an embedding model — 8,192-token context, MTEB 62.39 — tuned per the official model card.</li>
+</ul>
+<p><strong>Task prefixes are the secret sauce.</strong> nomic (and several peers) require a small instruction prefix so one model can serve many geometries: documents embed as <code>search_document: &lt;text&gt;</code>, queries as <code>search_query: &lt;text&gt;</code>. Mixing modes without prefixes measurably degrades retrieval — a cheap, often-missed lever.</p>
+<p><strong>Dimension guidance:</strong> retrieval embedders commonly run 300–3,000+ dimensions (BGE at 1,024, ada-002 at 3,072 — see <a href="../01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> for the full lineage). Every dimension costs ~4 bytes (float32) per vector and slows brute-force scans, and more dimensions do not automatically mean better retrieval for a personal corpus. Size the model to the corpus, not the shiny leaderboard.</p>
+<h2>ANN index internals: why vector DBs aren&#39;t just arrays</h2>
+<p>Brute-force kNN is exact but O(n·d) per query. Vector DBs use <strong>approximate nearest neighbor (ANN)</strong> structures that trade a little recall for orders of magnitude less search time:</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>Idea</th>
+<th>Strengths</th>
+<th>Costs / trade-offs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>HNSW</strong></td>
+<td>Multi-layer navigable small-world graph; search starts at the sparsest top layer and works down, logarithmic complexity (Malkov &amp; Yashunin)</td>
+<td>Best recall-latency in memory; robust to clustered data; the paper reports strongly outperforming prior open-source vector-only approaches</td>
+<td>Memory-hungry (raw vectors <strong>plus</strong> the link graph); slower bulk inserts; must fit RAM</td>
+</tr>
+<tr>
+<td><strong>IVF</strong></td>
+<td>Cluster vectors (k-means, <code>nlist</code> clusters); probe only the <code>nprobe</code> nearest clusters at query time</td>
+<td>Low memory; fast inserts; simple</td>
+<td>Recall drops when a query straddles cluster boundaries; needs a training pass over the data</td>
+</tr>
+<tr>
+<td><strong>PQ / OPQ</strong></td>
+<td>Compress vectors into short product-quantized codes</td>
+<td>Big memory savings — what makes billion-scale in-RAM possible</td>
+<td>Distances are approximate (code residual error); exact rescoring needs the original vectors at the end</td>
+</tr>
+</tbody></table>
+<p>Counterintuitive but true for personal scale: <strong>at ~10K–1M chunks the index choice moves retrieval quality far less than embeddings and chunking do.</strong> ANN-Benchmarks (Aumüller, Bernhardsson &amp; Faithfull) compares implementations on a precision-performance frontier precisely because, tuned properly, they all sit on the same curve. Pick the index the store ships with; spend the tuning budget on chunking and metadata filters instead.</p>
+<h2>Similarity is not relevance</h2>
+<p>Top-k cosine returns <em>related</em> chunks, not necessarily <em>answers</em>. Embedding recall finds the candidate set; reranking and prompt construction decide whether the answer is right. Two mitigations, both built out in <a href="./RAG.html">RAG</a>:</p>
+<ol>
+<li><strong>Rerankers</strong> — cross-encoders or late-interaction models (e.g. ColBERT) that re-score the shortlist with full token-level comparison.</li>
+<li><strong>Query-side care</strong> — hybrid keyword + vector fusion (RRF), query rewriting, and the fact that exact identifiers, error codes, and numbers are terrible embedding queries (they want BM25).</li>
+</ol>
+<h2>Local-stack field notes (Ollama + ChromaDB)</h2>
+<ul>
+<li><strong>Embed:</strong> <code>ollama pull nomic-embed-text</code> (requires Ollama 0.1.26+; embedding-only model). Talk to it through the embed endpoint, <code>POST /api/embed</code>. Remember the <code>search_document:</code> / <code>search_query:</code> prefixes in ingestion and query paths respectively.</li>
+<li><strong>Index:</strong> ChromaDB — open-source, zero-config embedded store for local or single-node workloads; collections hold <code>id + embedding + metadata + document</code>, with metadata filtering and dense-plus-sparse search. Its architecture page documents local / single-node (sub-10M records) / distributed deployment modes; for this corpus the embedded mode is right.</li>
+<li><strong>Pin the embed model.</strong> Re-embedding with a different model or checkpoint produces vectors on a different geometry — old and new vectors in one collection become incomparable. Version-pin the model + prefix scheme in the ingestion script and reindex wholesale on any upgrade.</li>
+<li><strong>Chunking and filters beat index tuning</strong> — and the stale-index is the silent killer: re-index on document change (hashing/version tracking), not on a calendar.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Malkov &amp; Yashunin, &quot;Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs,&quot; 2016–2018 — <a href="https://arxiv.org/abs/1603.09320">https://arxiv.org/abs/1603.09320</a> — HNSW algorithm: multi-layer graph, log-complexity search, neighbor-selection heuristic (verified 2026-08-27).</li>
+<li>Gao et al., &quot;SimCSE: Simple Contrastive Learning of Sentence Embeddings,&quot; 2021 — <a href="https://arxiv.org/abs/2104.08821">https://arxiv.org/abs/2104.08821</a> — contrastive sentence-embedding recipe; dropout-as-noise; anisotropy regularization (verified 2026-08-27).</li>
+<li>Aumüller, Bernhardsson &amp; Faithfull, &quot;ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms,&quot; Information Systems, 2019 — <a href="https://github.com/erikbern/ann-benchmarks">https://github.com/erikbern/ann-benchmarks</a> — empirical recall/latency frontier across ANN libraries (repo, verified 2026-08-27; the project notes VIBE as its successor).</li>
+<li>Nomic Embed model card (<code>nomic-embed-text-v1</code>) — <a href="https://huggingface.co/nomic-ai/nomic-embed-text-v1">https://huggingface.co/nomic-ai/nomic-embed-text-v1</a> — 8,192 context, MTEB numbers, task-prefix requirement, two-stage contrastive training; technical report arXiv:2402.01613 (verified 2026-08-27).</li>
+<li>Chroma documentation — <a href="https://docs.trychroma.com/">https://docs.trychroma.com/</a> — open-source retrieval store: collections model, metadata filtering, dense+sparse search, deployment modes (verified 2026-08-27).</li>
+<li>Ollama, &quot;Generate embeddings&quot; API reference — <a href="https://docs.ollama.com/api/embed">https://docs.ollama.com/api/embed</a> — local embedding endpoint (verified 2026-08-27).</li>
+<li>Khattab &amp; Zaharia, &quot;ColBERT,&quot; 2020 — <a href="https://arxiv.org/abs/2004.12832">https://arxiv.org/abs/2004.12832</a> — late-interaction reranking for the &quot;similarity ≠ relevance&quot; mitigation (verified 2026-08-27).</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<ul>
+<li><a href="./RAG.html">RAG</a> — end-to-end retrieval pipeline, hybrid search, rerankers, vector-store comparison table.</li>
+<li><a href="../01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> — embedding fundamentals, static vs contextual embeddings, cosine-similarity math.</li>
+<li><a href="./Memory%20and%20Skills.html">Memory and Skills</a> — embeddings as agent archival recall.</li>
+<li><a href="./Context%20Engineering.html">Context Engineering</a> — what to do with retrieved context once you have it.</li>
+<li><a href="../09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> — worked embedding-model and vector-store decisions.</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>← <a href="./RAG.html">RAG</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./RAG.html">← RAG</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

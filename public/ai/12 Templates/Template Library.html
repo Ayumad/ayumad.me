@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Copyable templates for the artifacts used throughout the AI Engineering curriculum, from project initialization and agent prompts to workflows, handoffs, evalua">
+<title>AI Engineering template library — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>AI Engineering template library</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, templates, prd, agents-md, handoff, prompting, agents, workflows, evals, operations</span></div>
+<h1>AI Engineering template library</h1>
+<h2>Template map</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Templates</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Project initialization</td>
+<td>PRD, <code>AGENTS.md</code>, <code>README.md</code>, <code>docs/INDEX.md</code>, ADR, <code>PLAN.md</code>, <code>HANDOFF.md</code>, <code>STYLE.md</code></td>
+</tr>
+<tr>
+<td>Context and capabilities</td>
+<td>Task brief, context packet, RAG worksheet, memory record, skill spec, tool spec</td>
+</tr>
+<tr>
+<td>Agent architecture</td>
+<td>Agent brief, harness spec, sandbox boundary, checkpoint/state record</td>
+</tr>
+<tr>
+<td>Interaction</td>
+<td>Voice/multimodal spec, browser/computer-use task</td>
+</tr>
+<tr>
+<td>Workflows and teams</td>
+<td>Workflow spec, multi-agent role/handoff contract, agent-democracy charter</td>
+</tr>
+<tr>
+<td>Protocols and integrations</td>
+<td>Protocol decision record, MCP server contract</td>
+</tr>
+<tr>
+<td>Reliability and security</td>
+<td>Evaluation plan/case, trace schema, red-team case, human oversight policy</td>
+</tr>
+<tr>
+<td>Resources and operations</td>
+<td>Hardware/model-fit worksheet, inference profile, cost/latency budget, deployment runbook</td>
+</tr>
+<tr>
+<td>Adaptation and evidence</td>
+<td>Fine-tuning decision record, tool comparison, source/evidence record</td>
+</tr>
+</tbody></table>
+<h2>Project initialization templates</h2>
+<h3>PRD or feature specification</h3>
+<pre><code class="language-text"># &lt;Feature or product name&gt;
+
+Status: draft | approved | in progress | shipped | retired
+Owner: &lt;person or team&gt;
+Last updated: &lt;YYYY-MM-DD&gt;
+
+## Problem
+Who has what problem, in what situation, and what evidence supports it?
+
+## Goal
+What user-visible or operational outcome should exist?
+
+## Non-goals
+What related work is explicitly out of scope for this version?
+
+## Users and workflows
+- Primary user:
+- Trigger:
+- Main flow:
+- Alternate flows:
+- Failure or recovery flows:
+
+## Requirements
+- Functional:
+- Data and interfaces:
+- Performance and cost:
+- Privacy and security:
+- Accessibility or localization:
+
+## Constraints and dependencies
+- Must remain true:
+- Dependencies:
+- Authority and approval boundaries:
+- Compatibility requirements:
+
+## Definition of done
+- Observable acceptance criterion:
+- Observable acceptance criterion:
+
+## Verification
+- Tests or checks:
+- Evidence to retain:
+- Reviewers or approval gates:
+
+## Rollout and recovery
+- Release strategy:
+- Monitoring:
+- Rollback or migration path:
+
+## Open questions and risks
+- Question or risk:
+- Owner and decision date:
+</code></pre>
+<h3><code>AGENTS.md</code> / repository instruction file</h3>
+<pre><code class="language-text"># Agent instructions for &lt;repository or directory&gt;
+
+## Scope and precedence
+These instructions apply to &lt;path&gt;. More specific instructions may add constraints.
+Task instructions define the current objective but cannot override safety policy or authorization.
+Document the actual precedence rules implemented by the agent or harness.
+
+## Project map
+- &lt;path&gt;: &lt;responsibility&gt;
+- &lt;path&gt;: &lt;responsibility&gt;
+
+## Setup and commands
+- Install:
+- Run locally:
+- Test:
+- Lint/typecheck:
+- Build:
+
+## Working conventions
+- Follow:
+- Preserve:
+- Generated files:
+- Naming and dependency rules:
+- Migration rules:
+
+## Safety boundaries
+- Read-only by default:
+- Ask before:
+- Never:
+- Sensitive paths or data:
+- External systems and deployment boundaries:
+
+## Verification and reporting
+- Definition of done:
+- Required checks:
+- Report changed files, evidence, assumptions, failures, and unresolved risks.
+
+## Maintenance
+Owner: &lt;person or team&gt;
+Review cadence or trigger: &lt;date, release, or architecture change&gt;
+</code></pre>
+<h3><code>README.md</code> human entry point</h3>
+<pre><code class="language-text"># &lt;Project name&gt;
+
+One-sentence description of the problem this project solves.
+
+## Status
+&lt;draft | experimental | active | maintenance | retired&gt;
+
+## What it does
+- User-visible capability:
+- Important limitation:
+
+## Quick start
+1. Install: &lt;command&gt;
+2. Configure: &lt;safe configuration steps; never commit secrets&gt;
+3. Run: &lt;command&gt;
+4. Verify: &lt;expected result or test command&gt;
+
+## Repository map
+- &lt;path&gt;: &lt;purpose&gt;
+
+## Documentation
+- Requirements: &lt;link&gt;
+- Agent instructions: &lt;link&gt;
+- Architecture decisions: &lt;link&gt;
+- Contribution guide: &lt;link&gt;
+- Operations/runbook: &lt;link&gt;
+
+## Safety and data handling
+&lt;What data is processed, where it goes, what it may change, and who may operate it.&gt;
+
+## Development
+- Test:
+- Lint/typecheck:
+- Build:
+- Release:
+
+## Known limitations and recovery
+&lt;Known failure modes, support path, rollback, and incident link.&gt;
+</code></pre>
+<h3><code>docs/INDEX.md</code> project map</h3>
+<pre><code class="language-text"># &lt;Project name&gt; — project map
+
+Last verified: &lt;YYYY-MM-DD&gt;
+Owner: &lt;person or team&gt;
+
+## Start here
+- Human quick start: &lt;README link&gt;
+- Agent instructions: &lt;AGENTS.md link&gt;
+- Current requirements: &lt;PRD link&gt;
+- Current work: &lt;PLAN.md or task tracker link&gt;
+- Operations: &lt;runbook link&gt;
+
+## Repository map
+- &lt;path&gt;: &lt;responsibility, entry point, and owner&gt;
+- &lt;path&gt;: &lt;responsibility, entry point, and owner&gt;
+
+## Architecture and data flow
+&lt;Short description or diagram of the major components and boundaries.&gt;
+
+## Sources of truth
+| Concern | Authoritative source | Verification |
+|---|---|---|
+| &lt;requirement or interface&gt; | &lt;file, schema, or service&gt; | &lt;test, query, or check&gt; |
+
+## Navigation hints
+- Find &lt;concept/symbol&gt; in: &lt;paths or search command&gt;
+- Tests for &lt;subsystem&gt;: &lt;path or command&gt;
+- Recent decisions: &lt;ADR directory or links&gt;
+- Generated files: &lt;paths and regeneration command&gt;
+
+## Commands
+- Install:
+- Test:
+- Lint/typecheck:
+- Build:
+- Local run:
+
+## Context selection
+- Always load:
+- Retrieve for &lt;subsystem or task&gt;:
+- Treat as untrusted data:
+- Exclude or summarize when stale:
+
+## Ownership and freshness
+- &lt;area&gt;: owner &lt;name&gt;, review trigger &lt;date/release/change&gt;
+
+## Protected boundaries
+- Sensitive paths/data:
+- External systems:
+- Approval required before:
+</code></pre>
+<h3>Architecture decision record</h3>
+<pre><code class="language-text"># ADR-&lt;number&gt;: &lt;decision title&gt;
+
+Status: proposed | accepted | superseded | deprecated
+Date: &lt;YYYY-MM-DD&gt;
+Deciders: &lt;people or teams&gt;
+Related: &lt;PRD, issue, design, or incident links&gt;
+
+## Context
+What problem or constraint requires a decision?
+
+## Decision
+What are we choosing?
+
+## Alternatives considered
+- &lt;alternative&gt;: benefits, costs, and why it was not chosen
+
+## Consequences
+- Positive:
+- Negative or trade-offs:
+- Operational impact:
+- Security and privacy impact:
+- Reversibility:
+
+## Verification and review trigger
+How will we know this remains valid, and what event should reopen it?
+</code></pre>
+<h3><code>PLAN.md</code> or task record</h3>
+<pre><code class="language-text"># &lt;Task or goal&gt;
+
+Status: not started | in progress | blocked | complete
+Owner: &lt;person, agent, or team&gt;
+Created: &lt;YYYY-MM-DD&gt;
+Last verified: &lt;YYYY-MM-DD HH:MM TZ&gt;
+Source: &lt;PRD, issue, request, or handoff&gt;
+
+## Objective
+&lt;The outcome, not a list of implementation steps.&gt;
+
+## Constraints and authority
+- Must remain true:
+- Out of scope:
+- Authority granted:
+- Authority withheld:
+
+## Steps
+- [ ] &lt;step&gt; — evidence: &lt;how it will be verified&gt;
+- [ ] &lt;step&gt; — evidence: &lt;how it will be verified&gt;
+
+## Decisions
+- &lt;decision&gt;: &lt;reason and date&gt;
+
+## Evidence and artifacts
+- &lt;path, URL, test result, trace, or approval&gt;
+
+## Blockers and risks
+- &lt;blocker or risk&gt;: owner &lt;name&gt;, next action &lt;action&gt;
+
+## Next action
+&lt;One concrete, safe next action.&gt;
+
+## Stop conditions
+- Stop when:
+- Stop if budget, safety, or authority is exceeded:
+</code></pre>
+<h3><code>HANDOFF.md</code> ownership-transfer note</h3>
+<pre><code class="language-text"># Handoff: &lt;task or goal&gt;
+
+Status: ready | needs-input | blocked | complete
+From: &lt;person, agent, or team&gt;
+To: &lt;person, agent, or team&gt;
+Created: &lt;YYYY-MM-DD HH:MM TZ&gt;
+Expires or review by: &lt;date or condition&gt;
+
+## Objective
+&lt;What outcome is still wanted?&gt;
+
+## Current status
+&lt;What is complete, in progress, or blocked?&gt;
+
+## Work completed
+- &lt;change or investigation&gt; — evidence: &lt;link or result&gt;
+
+## Relevant files and artifacts
+- &lt;path or URL&gt;: &lt;why it matters&gt;
+
+## Decisions and assumptions
+- &lt;decision or assumption&gt;: &lt;reason, confidence, and date&gt;
+
+## Verification
+- Checks run:
+- Results:
+- Not yet verified:
+
+## Open questions and blockers
+- &lt;question or blocker&gt;: &lt;owner or required input&gt;
+
+## Authority
+- The recipient may:
+- The recipient must ask before:
+- The recipient may not:
+
+## Risks and recovery
+- &lt;risk&gt;: &lt;mitigation or rollback&gt;
+
+## Next action
+&lt;The smallest concrete action the recipient should take first.&gt;
+</code></pre>
+<p>For automated handoffs, serialize the same fields as a versioned schema such as <code>handoff.json</code>. A Markdown handoff is a human bridge; a checkpoint or structured payload is the source of truth for software.</p>
+<h3><code>STYLE.md</code> or behavior profile</h3>
+<pre><code class="language-text"># Communication style for &lt;product, agent, or audience&gt;
+
+Owner: &lt;person or team&gt;
+Version: &lt;semver or date&gt;
+Audience: &lt;who will read this&gt;
+Purpose: &lt;decide, learn, execute, reassure, compare&gt;
+
+## Voice and tone
+- Voice:
+- Tone:
+- Formality: casual | neutral | formal
+- Perspective: first | second | third person
+- Active/passive voice:
+
+## Density and length
+- Default density: brief | moderate | detailed
+- Target length:
+- Hard maximum where applicable:
+
+## Language
+- Preferred terms:
+- Define these terms before use:
+- Avoid:
+- Localization or reading-level requirements:
+
+## Structure and formatting
+- Lead with:
+- Use headings, bullets, tables, or examples when:
+- Output format:
+- Citation and link rules:
+
+## Accuracy and uncertainty
+- State assumptions:
+- Express uncertainty:
+- Never claim:
+
+## Examples
+&lt;A short representative example, without private or copyrighted content.&gt;
+
+## Evaluation
+- Style rubric:
+- Test cases:
+- Review trigger:
+</code></pre>
+<h2>Prompt, context, and capability templates</h2>
+<h3>Agent task brief (G-C-C-D-V)</h3>
+<pre><code class="language-text">Goal:
+&lt;What outcome should exist?&gt;
+
+Context:
+- Relevant files, systems, facts, and prior decisions:
+- Sources of truth:
+
+Constraints:
+- Must remain true:
+- Out of scope:
+- Authority granted:
+- Authority withheld:
+
+Definition of done:
+- Observable acceptance criterion:
+- Observable acceptance criterion:
+
+Verification:
+- Tests, evidence, review, or commands required:
+
+Uncertainty and escalation:
+- Ask before:
+- Report assumptions and unresolved risks:
+
+Stopping conditions:
+- Stop when:
+- Stop if budget, safety, or authority is exceeded:
+</code></pre>
+<h3>Context packet</h3>
+<pre><code class="language-text"># Context packet for &lt;task&gt;
+
+Next decision the agent must make:
+
+Authoritative instructions:
+- &lt;source&gt;: &lt;scope, owner, and freshness&gt;
+
+Task facts:
+- &lt;fact&gt;: &lt;source and timestamp&gt;
+
+Relevant evidence:
+- &lt;file, record, or URL&gt;: &lt;why relevant; confidence; ACL&gt;
+
+Untrusted content:
+- &lt;source&gt;: &lt;why it is data rather than instruction&gt;
+
+Current state:
+- Goal:
+- Completed:
+- Pending:
+- Decisions:
+- Open questions:
+
+Available capabilities:
+- &lt;tool or skill&gt;: &lt;purpose, permissions, cost, and risk&gt;
+
+Budgets:
+- Input/output tokens:
+- Tool calls:
+- Wall time:
+- Cost:
+
+Removal and expiry:
+- Stale or duplicate material to exclude:
+- Expiry or refresh trigger:
+
+Context selection evidence:
+- Why each item was included:
+</code></pre>
+<h3>RAG design worksheet</h3>
+<pre><code class="language-text">Question and users:
+
+Sources and authority:
+
+Freshness, deletion, and ACL requirements:
+
+Ingestion:
+Formats, parsing, OCR, normalization, metadata, deduplication.
+
+Chunking:
+Semantic boundaries, overlap, maximum size, parent/child relationships.
+
+Indexing:
+Embedding model, keyword index, vector store, metadata filters.
+
+Querying:
+Rewrite, decomposition, hybrid retrieval, candidate count, reranking.
+
+Context assembly:
+Ordering, citations, conflict handling, token budget, untrusted-data labels.
+
+Failure cases:
+Missing, stale, contradictory, poisoned, unauthorized, or injected content.
+
+Evaluation:
+Recall/precision, groundedness, citation correctness, answer quality, latency, cost.
+
+Operations:
+Re-index schedule, deletion, access revocation, drift monitoring, rollback.
+</code></pre>
+<h3>Memory record</h3>
+<pre><code class="language-text">Memory ID:
+Type: working | conversation | semantic | episodic | procedural
+Content:
+Source:
+Owner:
+Created:
+Last verified:
+Confidence: high | medium | low
+Visibility: private | project | team | public
+Lifetime or expiry:
+Why retain it:
+Retrieval conditions:
+Sensitive data present: yes | no
+Confirmation required: yes | no
+Correction and deletion path:
+</code></pre>
+<h3>Skill specification</h3>
+<pre><code class="language-text"># Skill: &lt;name&gt;
+
+Version and owner:
+Purpose:
+Use when:
+Do not use when:
+
+Inputs:
+- Name, type, required/optional, source:
+
+Outputs:
+- Name, type, schema, evidence:
+
+Procedure:
+1. &lt;step&gt;
+2. &lt;step&gt;
+
+Tools and dependencies:
+- &lt;tool&gt;: purpose, permission, expected cost/latency
+
+Safety and authority:
+- Read/write/execute permissions:
+- Approval gates:
+- Sensitive data handling:
+
+Failure and recovery:
+- Validation failure:
+- Timeout or retry:
+- Missing evidence:
+
+Evaluation cases:
+- Happy path:
+- Edge case:
+- Injection or authority-confusion case:
+
+Deprecation and rollback:
+</code></pre>
+<h3>Tool specification</h3>
+<pre><code class="language-text"># Tool: &lt;name&gt;
+
+Purpose:
+Owner and version:
+Side-effect level: none | reversible | consequential
+Required identity or role:
+
+Input schema:
+{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;&lt;field&gt;&quot;],
+  &quot;properties&quot;: {
+    &quot;&lt;field&gt;&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;&lt;meaning&gt;&quot;}
+  },
+  &quot;additionalProperties&quot;: false
+}
+
+Output schema:
+- Success:
+- Typed errors:
+
+Authorization:
+- Allowed callers:
+- Resource and data boundaries:
+- Approval required when:
+
+Operational limits:
+- Timeout:
+- Rate limit:
+- Cost limit:
+- Idempotency behavior:
+
+Validation and observability:
+- Argument checks:
+- Return-value checks:
+- Audit fields:
+- Trace fields:
+
+Failure examples and recovery:
+</code></pre>
+<h2>Agent architecture and execution templates</h2>
+<h3>Agent design brief</h3>
+<pre><code class="language-text"># Agent: &lt;name&gt;
+
+User and job:
+Primary outcome:
+Why an agent loop is preferable to deterministic code:
+Non-goals:
+
+Observe:
+- &lt;state, event, file, or tool result&gt;
+
+Decide:
+- &lt;bounded choice or proposal&gt;
+
+Act:
+- &lt;tool, API, sandbox action, or response&gt;
+
+Verify:
+- &lt;observation or validator that confirms the action&gt;
+
+Stop when:
+- Goal achieved:
+- Human decision required:
+- Budget exceeded:
+- Safe continuation impossible:
+
+Context:
+- Always available:
+- Retrieved on demand:
+- Untrusted data:
+
+Capabilities:
+- &lt;tool or skill&gt;: permissions and approval boundary
+
+State and recovery:
+- Persist:
+- Checkpoint:
+- Retry/idempotency:
+- Handoff:
+
+Evaluation:
+- Success:
+- Failure:
+- Trajectory metrics:
+</code></pre>
+<h3>Harness specification</h3>
+<pre><code class="language-text"># Harness: &lt;name&gt;
+
+Control plane:
+- Context manager:
+- Tool registry/router:
+- Planner and task state:
+- Policy and approvals:
+- Memory and skills:
+- Retries and checkpoints:
+- Tracing and evaluation:
+
+Execution plane:
+- Sandbox or worker:
+- Mounted files:
+- Network policy:
+- Credentials:
+- Resource limits:
+- Artifact export rules:
+
+Runtime loop:
+user → context → model → decision → authorization → tool/sandbox → observation → verify
+
+Authority model:
+- Allowed by default:
+- Requires approval:
+- Forbidden:
+
+Recovery:
+- Retryable errors:
+- Non-retryable errors:
+- Idempotency or compensation:
+- Human handoff:
+
+Budgets:
+- Tokens:
+- Model calls:
+- Tool calls:
+- Subagents:
+- Wall time:
+- Cost:
+
+Evidence:
+- Trace ID:
+- State version:
+- Artifacts:
+- Final outcome:
+</code></pre>
+<h3>Sandbox and execution boundary</h3>
+<pre><code class="language-text"># Execution boundary: &lt;workload&gt;
+
+Threat model:
+- Untrusted inputs:
+- Adversary or failure:
+- Assets to protect:
+- Required isolation strength:
+
+Control plane owns:
+- Policy and authorization:
+- Credentials:
+- Durable state:
+- Approval:
+- Telemetry:
+
+Execution plane may access:
+- Files:
+- Network destinations:
+- Packages:
+- Environment variables:
+- Time and processes:
+
+Limits:
+- CPU:
+- Memory:
+- Wall clock:
+- Disk:
+- Process count:
+- Egress:
+
+Boundary crossings:
+- Inputs:
+- Outputs:
+- Validation and redaction:
+- Human approval:
+
+Cleanup and recovery:
+- Destroy or retain:
+- Exported artifacts:
+- Incident response:
+</code></pre>
+<h3>Checkpoint and durable state</h3>
+<pre><code class="language-text">State schema version:
+Run or goal ID:
+Objective:
+Constraints:
+Owner:
+Status: pending | active | blocked | complete | expired
+
+Plan:
+- Step:
+  Status:
+  Dependencies:
+  Evidence:
+
+Completed:
+Pending:
+Decisions:
+Approvals:
+Artifacts:
+Errors and retries:
+Budget remaining:
+Last verified external observation:
+Idempotency keys:
+Next action:
+Expiry:
+Migration or recovery handler:
+</code></pre>
+<h3>Voice and multimodal interaction specification</h3>
+<pre><code class="language-text"># Interaction spec: &lt;experience&gt;
+
+Input modalities: text | image | audio | video | screen
+Output modalities:
+Primary user and environment:
+
+Capture:
+- Device/source:
+- Resolution or sampling:
+- Consent and retention:
+
+Interpretation:
+- Transcription or vision model:
+- Uncertainty representation:
+- Embedded instructions treated as untrusted data:
+
+Interaction:
+- Turn detection or interruption:
+- Latency target:
+- Provisional versus committed output:
+
+Action:
+- Available tools:
+- Confirmation threshold:
+- Fallback when input is ambiguous:
+
+Verification and accessibility:
+- How the user can inspect or correct interpretation:
+- Alternative modality:
+- Audit evidence:
+</code></pre>
+<h3>Browser or computer-use task</h3>
+<pre><code class="language-text"># Computer-use task: &lt;name&gt;
+
+Goal and success state:
+Starting page or application:
+Allowed domains/windows:
+Allowed actions:
+Forbidden actions:
+
+Observe:
+- What screen state must be confirmed before acting?
+
+Act:
+- Click/type/scroll/navigation operations:
+- Rate and time limits:
+
+Confirm before:
+- Sending, purchasing, deleting, publishing, or changing permissions:
+
+Verification:
+- What visible or API-backed observation proves success?
+
+Recovery:
+- Unexpected page:
+- Login or MFA:
+- Ambiguous target:
+- Timeout:
+
+Evidence and cleanup:
+- Screenshot or trace:
+- Sensitive data handling:
+- Session teardown:
+</code></pre>
+<h2>Workflow, team, and protocol templates</h2>
+<h3>Workflow selection and specification</h3>
+<pre><code class="language-text"># Workflow: &lt;name&gt;
+
+User outcome:
+Why this topology:
+Alternative considered:
+
+Topology: sequential | branching | router | parallel | map-reduce | evaluator-optimizer | agent loop | event-driven | durable
+
+Stages:
+1. &lt;stage&gt;: input → output; owner; timeout; retry policy
+2. &lt;stage&gt;: input → output; owner; timeout; retry policy
+
+Contracts:
+- Input schema:
+- Output schema:
+- Join or aggregation rule:
+
+State:
+- Persisted fields:
+- Versioning:
+- Checkpoint boundaries:
+
+Authority and safety:
+- Side effects:
+- Approval gates:
+- Idempotency:
+
+Budgets and stopping:
+- Calls, tokens, cost, wall time:
+- Stop conditions:
+
+Evaluation:
+- Stage tests:
+- End-to-end acceptance:
+- Recovery tests:
+</code></pre>
+<h3>Multi-agent role and handoff contract</h3>
+<pre><code class="language-text"># Agent role: &lt;name&gt;
+
+Mission:
+Owns:
+Does not own:
+Required context:
+Available tools:
+Authority:
+
+Input contract:
+- Goal:
+- Evidence:
+- Constraints:
+- Metadata:
+
+Output contract:
+- Result:
+- Evidence and provenance:
+- Assumptions:
+- Open questions:
+- Confidence:
+- Status: complete | needs-input | blocked
+
+Handoff rules:
+- Transfer to &lt;agent/person&gt; when:
+- Do not transfer when:
+- Authorization check:
+- Conversation/history filter:
+
+Verification:
+- Receiving party checks:
+- Failure or rejection path:
+</code></pre>
+<h3>Agent democracy or society charter</h3>
+<pre><code class="language-text"># Agent society: &lt;name&gt;
+
+Purpose and scope:
+Members and roles:
+Human authority:
+
+Proposal lifecycle:
+1. Propose:
+2. Critique:
+3. Revise:
+4. Vote or decide:
+5. Execute:
+6. Audit:
+
+Decision rule:
+- Quorum:
+- Voting weight:
+- Tie or dissent handling:
+- Reputation and decay:
+- Human veto:
+
+Evidence requirements:
+- Claims:
+- Sources:
+- Independent checks:
+
+Safety:
+- Forbidden actions:
+- Approval gates:
+- Collusion or correlated-error test:
+
+Termination:
+- Stop conditions:
+- Budget:
+- Deadlock recovery:
+- Appeals and rollback:
+</code></pre>
+<h3>Protocol and integration decision record</h3>
+<pre><code class="language-text"># Integration: &lt;name&gt;
+
+Use case and boundary:
+Participants: model | agent | client | tool | data source | UI | human
+Protocol candidates: ACP | A2A | AG-UI | A2UI | MCP | HTTP/API | other
+
+Why a protocol is needed:
+Required operations and events:
+Identity and authorization:
+Session and state model:
+Streaming, cancellation, and retries:
+Schema and versioning:
+Trust and data classification:
+Observability:
+
+Decision:
+Chosen protocol and version:
+Rejected alternatives and reasons:
+Compatibility and migration plan:
+</code></pre>
+<h3>MCP server contract</h3>
+<pre><code class="language-text"># MCP server: &lt;name&gt;
+
+Purpose and owner:
+Server version:
+Transport:
+Identity and authorization:
+
+Tools:
+- Name:
+  Description:
+  Input schema:
+  Output schema:
+  Side effects:
+  Approval:
+
+Resources:
+- URI/name:
+  Data owner:
+  Freshness:
+  ACL:
+  Untrusted-content handling:
+
+Prompts or skills:
+- Name:
+  Intended use:
+  Parameters:
+
+Limits and safety:
+- Rate/cost/timeout:
+- Secret handling:
+- Logging and redaction:
+- Revocation:
+
+Evaluation:
+- Schema tests:
+- Authorization tests:
+- Injection tests:
+- Compatibility tests:
+</code></pre>
+<h2>Reliability, evaluation, and security templates</h2>
+<h3>Evaluation plan and case</h3>
+<pre><code class="language-text"># Evaluation: &lt;name&gt;
+
+Version and baseline:
+Owner:
+System configuration: model, prompt, skills, tools, retrieval, policy
+
+Task case ID:
+Input and authorized context:
+Expected outcome:
+Acceptance criteria:
+
+Layer: unit | retrieval | tool-use | trajectory | end-to-end | human review
+Assertions:
+- Schema:
+- Tool and arguments:
+- Authorization:
+- Evidence/citations:
+- State transition:
+- Cost/latency/budget:
+- Final outcome:
+
+Adversarial or recovery variation:
+Expected safe behavior:
+
+Actual result:
+Trace ID:
+Failure category:
+Severity:
+Root cause:
+Regression test added:
+</code></pre>
+<h3>Trace schema</h3>
+<pre><code class="language-json">{
+  &quot;trace_id&quot;: &quot;&lt;stable id&gt;&quot;,
+  &quot;run_id&quot;: &quot;&lt;goal or session id&gt;&quot;,
+  &quot;state_version&quot;: &quot;&lt;version&gt;&quot;,
+  &quot;parent_trace_id&quot;: null,
+  &quot;task&quot;: {&quot;goal&quot;: &quot;&lt;summary&gt;&quot;, &quot;risk&quot;: &quot;low|medium|high&quot;},
+  &quot;configuration&quot;: {
+    &quot;model&quot;: &quot;&lt;model/version&gt;&quot;,
+    &quot;effort&quot;: &quot;low|medium|high&quot;,
+    &quot;prompt_version&quot;: &quot;&lt;version&gt;&quot;,
+    &quot;style_version&quot;: &quot;&lt;version&gt;&quot;,
+    &quot;skill_versions&quot;: [],
+    &quot;tool_versions&quot;: []
+  },
+  &quot;context&quot;: [{&quot;source&quot;: &quot;&lt;id&gt;&quot;, &quot;authority&quot;: &quot;&lt;level&gt;&quot;, &quot;freshness&quot;: &quot;&lt;timestamp&gt;&quot;}],
+  &quot;events&quot;: [
+    {&quot;type&quot;: &quot;decision|tool_call|observation|approval|handoff|error|checkpoint&quot;, &quot;time&quot;: &quot;&lt;timestamp&gt;&quot;, &quot;data&quot;: {}}
+  ],
+  &quot;budgets&quot;: {&quot;tokens&quot;: 0, &quot;tool_calls&quot;: 0, &quot;wall_ms&quot;: 0, &quot;cost&quot;: 0.0},
+  &quot;outcome&quot;: {&quot;status&quot;: &quot;complete|needs_input|blocked|failed&quot;, &quot;evidence&quot;: [], &quot;errors&quot;: []}
+}
+</code></pre>
+<p>Redact secrets and sensitive content before storage. Retain enough context to reproduce decisions without retaining more data than the purpose requires.</p>
+<h3>Defensive red-team case</h3>
+<pre><code class="language-text"># Red-team case: &lt;name&gt;
+
+Authorization: toy harness or explicitly approved target
+Threat category: injection | authority confusion | poisoning | replay | exfiltration | unsafe action
+Fixture and harmless capability:
+
+Attack input:
+&lt;The controlled test fixture.&gt;
+
+Expected defense:
+- Untrusted content is labeled:
+- Policy is not replaced:
+- Unauthorized action is denied:
+- User is informed or asked:
+
+Evidence to collect:
+- Exact fixture:
+- Context labels:
+- Tool decision and arguments:
+- Authorization result:
+- Trace ID:
+- Final response:
+- Recovery and cleanup:
+
+Pass/fail:
+Severity if failed:
+Remediation:
+Regression test:
+</code></pre>
+<h3>Human oversight and approval policy</h3>
+<pre><code class="language-text"># Oversight policy: &lt;system&gt;
+
+Autonomy level: 0 answer | 1 recommend | 2 prepare | 3 reversible action | 4 consequential action with approval | 5 bounded autonomy
+
+Actions by risk:
+- Low/reversible:
+- Medium:
+- Consequential/irreversible:
+
+Approval requirements:
+- Who may approve:
+- What evidence must be shown:
+- Expiry of approval:
+- Delegation rules:
+
+Trust calibration:
+- What the user sees:
+- How uncertainty is expressed:
+- How to inspect tool calls and sources:
+
+Safety controls:
+- Least privilege:
+- Kill switch:
+- Rate and budget limits:
+- Audit retention:
+
+Escalation and incident response:
+- Ask when:
+- Pause when:
+- Contact:
+- Rollback:
+</code></pre>
+<h2>Resource, operations, and adaptation templates</h2>
+<h3>Hardware and model-fit worksheet</h3>
+<pre><code class="language-text"># Workload fit: &lt;task&gt;
+
+Quality target:
+Modalities: text | image | audio | video | code
+Concurrency:
+Context length:
+Output length:
+Tool or retrieval requirements:
+Latency target: p50 / p95
+Privacy or offline requirement:
+
+Candidate model:
+Parameter count and architecture:
+Quantization:
+Weights memory estimate:
+Runtime/KV-cache/context overhead:
+Total working memory estimate:
+
+Machine:
+CPU:
+GPU:
+VRAM:
+Unified/system memory:
+Memory bandwidth:
+Storage and thermal limits:
+
+Expected fit: yes | marginal | no
+Measured prompt processing:
+Measured generation rate:
+Quality result:
+Decision and fallback:
+</code></pre>
+<h3>Inference profile and effort policy</h3>
+<pre><code class="language-text"># Inference profile: &lt;task class&gt;
+
+Default effort: low | medium | high
+Reasoning/deliberation control: &lt;provider setting or approximation&gt;
+Model route:
+Input token budget:
+Output token budget:
+Tool-call budget:
+Wall-clock budget:
+Dollar budget:
+
+Use low effort when:
+&lt;classification, extraction, known lookup, or deterministic transformation conditions&gt;
+
+Escalate to medium when:
+&lt;ambiguity, validation failure, or one bounded recovery condition&gt;
+
+Escalate to high or human review when:
+&lt;novelty, conflicting evidence, adversarial risk, or consequential action&gt;
+
+User-facing answer contract:
+- Length:
+- Required evidence:
+- Format:
+
+Measure:
+- Success:
+- Cost:
+- Latency:
+- Recovery:
+- Safety:
+</code></pre>
+<h3>Latency and cost budget</h3>
+<pre><code class="language-text"># Run budget: &lt;workflow or agent&gt;
+
+Quality target:
+Maximum wall time:
+Maximum cost:
+Maximum input tokens:
+Maximum output tokens:
+Maximum model calls:
+Maximum tool calls:
+Maximum subagents:
+
+Expected cost/latency contributors:
+- Queueing:
+- Prompt construction:
+- Prefill:
+- Decoding:
+- Tools/network:
+- Retries:
+- Synthesis:
+
+Controls:
+- Cached prefixes:
+- Retrieval limits:
+- Model routing:
+- Parallel work:
+- Stop conditions:
+
+Observed p50/p95:
+Observed cost per successful outcome:
+Tail failure:
+Action if budget is exceeded:
+</code></pre>
+<h3>Deployment and AgentOps runbook</h3>
+<pre><code class="language-text"># Release/runbook: &lt;agent or workflow&gt;
+
+Versioned artifacts:
+- Application:
+- Model:
+- Prompt and style profile:
+- Skills and tools:
+- Retrieval index:
+- Policy:
+- Evaluation set:
+
+Pre-release gates:
+- [ ] Baseline comparison complete
+- [ ] Required evaluations pass
+- [ ] Security review complete
+- [ ] Cost and latency within budget
+- [ ] Approval and kill switch tested
+- [ ] Rollback artifact available
+
+Deployment:
+- Environment:
+- Cohort or traffic percentage:
+- Feature flag:
+- Migration:
+- Owner on call:
+
+Monitor:
+- Success and failure rate:
+- p50/p95 latency:
+- Cost:
+- Tool errors and retries:
+- Approval rate:
+- Safety incidents:
+- Drift or regression:
+
+Incident response:
+- Trigger:
+- Pause/kill action:
+- Evidence to capture:
+- User communication:
+- Rollback:
+- Follow-up evaluation:
+
+Retention and deletion:
+- Traces:
+- Checkpoints:
+- Artifacts:
+- Secrets and personal data:
+</code></pre>
+<h3>Fine-tuning or adaptation decision record</h3>
+<pre><code class="language-text"># Adaptation decision: &lt;behavior&gt;
+
+Observed gap:
+Representative examples and baseline:
+Is the target behavior stable? yes | no
+
+Diagnose the missing layer:
+- Current/changing information → retrieval
+- Temporary or unclear instruction → prompt/context
+- Missing action → tool or skill
+- Stable repeated behavior gap → adaptation candidate
+
+Alternatives tested:
+- Prompt and examples:
+- Schema/validator:
+- RAG:
+- Tool or skill:
+- Routing/model change:
+
+Adaptation option:
+Dataset owner and provenance:
+Positive, negative, edge, and holdout cases:
+Base model and version:
+Training configuration:
+Safety and regression risks:
+Serving cost and latency:
+Rollback plan:
+
+Promotion rule:
+&lt;What must improve without degrading factuality, safety, formatting, or unrelated tasks?&gt;
+</code></pre>
+<h3>Tool or framework comparison record</h3>
+<pre><code class="language-text"># Comparison: &lt;category&gt;
+
+Decision context:
+Required capabilities:
+Constraints: privacy, budget, deployment, ecosystem, team skill
+
+| Candidate | Best fit | Strengths | Trade-offs | Evidence date |
+|---|---|---|---|---|
+| &lt;name&gt; | &lt;use case&gt; | &lt;strengths&gt; | &lt;risks/cost&gt; | &lt;date&gt; |
+
+Evaluation dimensions:
+- Capability coverage:
+- Reliability and observability:
+- Security and permissions:
+- Latency and cost:
+- Portability and lock-in:
+- Maintenance and support:
+
+Decision:
+Chosen option:
+Why:
+Fallback:
+Review trigger:
+</code></pre>
+<h3>Source and evidence record</h3>
+<pre><code class="language-text"># Evidence record: &lt;claim or research question&gt;
+
+Claim or question:
+Importance:
+As-of date:
+
+Source:
+Title:
+Author or owner:
+URL/path:
+Published or updated:
+Retrieved:
+Authority:
+
+Supported claim:
+Exact location:
+Confidence: high | medium | low
+Limitations or conflicting evidence:
+Freshness/expiry:
+Access and retention classification:
+
+Used in:
+- PRD, prompt, RAG answer, evaluation, decision, or runbook:
+</code></pre>
+<h3>Sources and further reading (concept-note block)</h3>
+<p>Copyable block that closes concept, pattern, and protocol notes. One bullet per source; state the specific claim the source supports. All URLs must be live-checked on the date shown.</p>
+<pre><code class="language-markdown">## Sources and further reading
+
+- &lt;Author or org&gt;, &quot;&lt;Title&gt;,&quot; &lt;date&gt; — &lt;URL&gt; — &lt;what it grounds or one-line why it matters&gt;.
+- ... (prefer primary sources; for agent guidance prefer Anthropic/OpenAI engineering posts, papers, and practitioner archives over secondary blogs)
+
+All links verified &lt;YYYY-MM-DD&gt;.
+</code></pre>
+<h2>Template: Incident response runbook</h2>
+<pre><code class="language-text"># Incident response: &lt;agent or workflow&gt;
+
+Trigger:
+- What signals or thresholds fire this runbook?
+
+Severity: P0 (15min) | P1 (1hr) | P2 (4hr) | P3 (24hr)
+
+Immediate actions (within 1 min):
+1. Kill switch: halt all agent execution.
+2. Revoke API credentials / block outbound requests.
+3. Page on-call: &lt;name, channel&gt;.
+
+Quarantine:
+- Preserve: logs, conversation history, tool call records, prompt/model version.
+- Do NOT delete evidence.
+
+Rollback:
+- Revert to last known good: prompt version, model version, tool permissions, config.
+
+Trace forensics:
+1. What changed? (prompt, model, tool, retrieval, config)
+2. When did failure start?
+3. Single bad output or pattern?
+4. Did guardrails fire?
+5. Blast radius?
+6. Could this happen again?
+
+Communication:
+- Internal: &lt;channel, template&gt;
+- External / customer-facing: &lt;template, owner&gt;
+
+Postmortem:
+- Blameless postmortem within 48 hours.
+- Add regression eval case to golden set.
+- Update runbook with new failure mode.
+</code></pre>
+<h2>Template: Cost and TCO estimation</h2>
+<pre><code class="language-text"># TCO estimate: &lt;system&gt;
+
+Period: monthly | quarterly | annual
+
+Compute:
+| Component | Spec | Unit cost | Qty | Monthly |
+|---|---|---|---|---|
+| &lt;GPU or instance&gt; | &lt;type, count&gt; | &lt;$/hr&gt; | &lt;hours&gt; | &lt;cost&gt; |
+
+Model inference:
+| Model | Provider | Tokens in | Tokens out | Cost/M in | Cost/M out | Calls | Monthly |
+|---|---|---|---|---|---|---|---|
+| &lt;model&gt; | &lt;API or self-hosted&gt; | &lt;count&gt; | &lt;count&gt; | &lt;price&gt; | &lt;price&gt; | &lt;n&gt; | &lt;cost&gt; |
+
+Caching savings:
+- Cached prefix cost: &lt;1.25x writes, 0.1x reads&gt;
+- Estimated monthly savings: &lt;amount&gt;
+
+Storage and data:
+- Vector store: &lt;size, provider, cost&gt;
+- Object storage: &lt;GB, cost&gt;
+
+Operational overhead:
+- Observability platform: &lt;cost&gt;
+- Guardrails stack: &lt;cost&gt;
+- Engineering time: &lt;hours/mo @ rate&gt;
+
+Total estimated monthly cost: &lt;sum&gt;
+Break-even vs API: &lt;tokens/month threshold&gt;
+Self-hosting crossover: &lt;~3-5B tokens/month on flagship model&gt;
+</code></pre>
+<h2>Template: A/B test design</h2>
+<pre><code class="language-text"># A/B test: &lt;name&gt;
+
+Hypothesis:
+&lt;If we change X, then Y metric improves by Z% for users in segment W.&gt;
+
+Variants:
+| Variant | Change | Model/prompt/config |
+|---|---|---|
+| Control | Current production | &lt;version&gt; |
+| Treatment | &lt;proposed change&gt; | &lt;version&gt; |
+
+Primary metric:
+- &lt;metric&gt;: baseline &lt;value&gt;, MDE &lt;minimum detectable effect&gt;
+
+Secondary metrics:
+- &lt;metric 1&gt;: guard against regression
+- &lt;metric 2&gt;: cost, latency, or safety
+
+Sample size and duration:
+- Required N per variant: &lt;calculate from MDE and power&gt;
+- Run duration: &lt;days&gt; (min 1 full business cycle)
+
+Traffic split: &lt;percentage per variant&gt;
+
+Randomization:
+- Unit: user | session | request
+- Stratification: &lt;segment&gt;
+
+Guardrails (auto-kill if breached):
+- Safety incident rate &gt; &lt;threshold&gt;
+- p95 latency &gt; &lt;threshold&gt;
+- Cost &gt; &lt;budget&gt;
+
+Analysis plan:
+- Statistical test: &lt;Welsh t, Mann-Whitney, chi-squared&gt;
+- Multiple comparison correction: &lt;Bonferroni, Holm&gt;
+- Decision: ship treatment if primary metric significant + no guardrail breach
+</code></pre>
+<h2>Template: Evaluation benchmark design</h2>
+<pre><code class="language-text"># Benchmark: &lt;name&gt;
+
+Purpose:
+&lt;Evaluate model/prompt/system for &lt;capability&gt; on &lt;dataset/segment&gt;.&gt;
+
+Dataset:
+| Case ID | Input | Expected behavior | Layer | Difficulty |
+|---|---|---|---|---|
+| &lt;id&gt; | &lt;input&gt; | &lt;expected&gt; | unit/trajectory/e2e | easy/medium/hard |
+
+Size: &lt;N&gt; cases across &lt;M&gt; categories.
+
+Metrics:
+| Metric | Formula | Threshold | Source |
+|---|---|---|---|
+| &lt;metric&gt; | &lt;formula or tool&gt; | &lt;pass&gt; | eval framework |
+
+Adversarial variations:
+- Injection attempt: &lt;fixture&gt;
+- Context overflow: &lt;fixture&gt;
+- Tool misuse: &lt;fixture&gt;
+
+Execution:
+- Framework: promptfoo | DeepEval | lm-eval-harness | Braintrust
+- Runner: &lt;CLI command or pytest&gt;
+- Cadence: pre-commit | CI | weekly | pre-release
+- Environment: &lt;model, prompt version, retrieval config&gt;
+
+Decision rules:
+- Pass: all critical metrics above threshold
+- Regression: any critical metric drops &gt; &lt;X&gt;%
+- Ambiguous: rerun with increased sample size
+
+Artifacts to retain:
+- Trace IDs for failures
+- Expected vs actual output diffs
+- Model/prompt version at test time
+</code></pre>
+<blockquote>
+<p><strong>Canonical sources:</strong> The task brief template above is a compact version; the full canonical copy lives at <a href="../09%20Playbooks/Prompt%20Template.html">Prompt Template</a>. The RAG design worksheet template is a fill-in copy; the canonical version lives at <a href="../09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a>.</p>
+</blockquote>
+<h2>How to use the library</h2>
+<ol>
+<li>Start with the PRD or task brief so the desired outcome is explicit.</li>
+<li>Add repository instructions and a style profile only for stable, reusable guidance.</li>
+<li>Choose the agent, workflow, tool, sandbox, and protocol templates that match the actual authority boundary.</li>
+<li>Add a handoff or checkpoint whenever work can pause, change owners, retry, or resume later.</li>
+<li>Define evaluation, trace, security, budget, and rollback artifacts before production use.</li>
+<li>Before shipping, fill the incident response runbook, cost/TCO estimate, and A/B test design as needed for the deployment scope.</li>
+<li>Close concept and pattern notes with a <strong>Sources and further reading</strong> section (block under &quot;Source and evidence record&quot;); log any load-bearing claim in the <a href="../11%20Glossary%20and%20Sources/Sources.html">source registry</a>.</li>
+<li>Version templates and their filled instances when they change model behavior or operational decisions.</li>
+</ol>
+<h2>Related curriculum notes</h2>
+<p><a href="../00%20Start%20Here/Full%20Table%20of%20Contents.html">Full Table of Contents</a> · <a href="../03%20Context%20Knowledge%20Memory/Project%20Initialization%20and%20Instruction%20Files.html">Project Initialization and Instruction Files</a> · <a href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a> · <a href="../09%20Playbooks/Playbooks%20Hub.html">Playbooks Hub</a> · <a href="../09%20Playbooks/Prompt%20Template.html">Prompt Template</a> · <a href="../09%20Playbooks/Context%20Checklist.html">Context Checklist</a> · <a href="../09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> · <a href="../09%20Playbooks/Evaluation%20and%20Security%20Review.html">Evaluation and Security Review</a> · <a href="../09%20Playbooks/Mode%20and%20Topology%20Selector.html">Mode and Topology Selector</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="../11%20Glossary%20and%20Sources/Tool%20Comparison%20Index.html">Tool Comparison Index</a></strong> · <strong><a href="../">Home</a></strong> · <em>→ end of tour</em></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="../11%20Glossary%20and%20Sources/Tool%20Comparison%20Index.html">← Tool Comparison Index</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><span></span></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

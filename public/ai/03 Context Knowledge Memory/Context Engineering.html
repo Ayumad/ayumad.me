@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Prompt engineering asks “what should I say?” Context engineering asks “what should the model know at this exact moment?” It includes retrieval, memory, file sel">
+<title>Context engineering — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Context engineering</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, context-engineering, prompting</span></div>
+<h1>Context engineering</h1>
+<blockquote>
+<p>[!summary] The gist
+Context engineering is the practice of feeding an AI model exactly what it needs to know at the right moment — picking files, decisions, and reminders instead of dumping the entire project on the model. It turns a capable but unfocused model into one that responds as if it&#39;s been on the project for months. This note covers the hierarchy of context sources, practical controls, and budgeting.</p>
+</blockquote>
+<hr>
+<h2>Context hierarchy</h2>
+<pre><code class="language-text">GLOBAL       personal preferences and universal safety rules
+PROJECT      architecture, commands, conventions, stable constraints
+TASK         objective, acceptance criteria, current decisions
+RETRIEVED    relevant files, documents, records, evidence
+RUNTIME      tool results, test failures, approvals, subagent reports
+</code></pre>
+<p>The ideal context is the smallest set needed for the next good decision. Keep stable information in project instructions; keep yesterday’s incident in task context. Load skills and large references on demand.</p>
+<h2>Practical controls</h2>
+<ul>
+<li>Rank sources by authority and freshness.</li>
+<li>Label untrusted content as data, not instructions.</li>
+<li>Preserve provenance for retrieved evidence.</li>
+<li>Summarize completed work while retaining decisions and unresolved risks.</li>
+<li>Reserve tokens for tool output and recovery.</li>
+<li>Test retrieval and compression as part of the agent, not as a preprocessing detail.</li>
+</ul>
+<p>For large projects, use progressive disclosure: begin with a project map and task brief, retrieve only the relevant sections and tests, work in a bounded slice, then checkpoint the verified result. See <a href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a>.</p>
+<h2>Project context files</h2>
+<p>Repository-level files such as <code>AGENTS.md</code>, <code>CLAUDE.md</code>, and <code>GEMINI.md</code> are useful for stable architecture, commands, conventions, and safety rules. Keep incident-specific details, temporary experiments, and current bugs in task context instead of turning them into permanent instructions.</p>
+<p>See <a href="./Prompting%20for%20Agents.html">Prompting for Agents</a>, <a href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a>, <a href="./RAG.html">RAG</a>, and <a href="./Memory%20and%20Skills.html">Memory and Skills</a>.</p>
+<h2>Apply it deliberately</h2>
+<p>Select context by relevance, authority, freshness, and sensitivity. Keep a compact state of goal, decisions, evidence, and open questions; retrieve detail only for the next decision. Log selection so a failure can be reproduced, and treat retrieved text as evidence—not instructions that outrank policy.</p>
+<h2>What the field says</h2>
+<ul>
+<li><strong>Context rot is real:</strong> recall precision drops as token count rises across models. Attention is O(n²) over n tokens, models train mostly on shorter sequences, and every token depletes a finite &quot;attention budget&quot;—so context is a resource with diminishing returns, like working memory (Anthropic 2025).</li>
+<li><strong>Target the smallest set of high-signal tokens</strong> that maximizes the chance of the desired outcome. Minimal does not mean short: give enough stable instruction up front, then test and add only on observed failure modes (Anthropic 2025).</li>
+<li><strong>System-prompt altitude:</strong> specific enough to steer behavior, flexible enough not to hardcode brittle logic. Organize prompts into sections (<code>&lt;background_information&gt;</code>, <code>&lt;instructions&gt;</code>, tool guidance, output description) with XML tags or Markdown headers (Anthropic 2025).</li>
+<li><strong>Curate the tool set:</strong> minimal viable tools, token-efficient returns, unambiguous parameters. Few-shot examples should be <em>diverse and canonical</em>—not exhaustive edge-case laundry lists (Anthropic 2025).</li>
+<li><strong>Sub-agents condense context:</strong> a lead agent keeps a clean window while subagents explore with large budgets and return distilled summaries (often ~1–2k tokens). This is the architecture behind Anthropic&#39;s research system (Anthropic 2025).</li>
+</ul>
+<h2>Context-window budgeting</h2>
+<p>Context is a finite resource with a power-law cost curve: every token depletes attention budget, and the O(n²) pairwise-relationship cost in the transformer means the last tokens added cost more than the first. Budget context in three buckets:</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>Allocate</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Stable instructions</td>
+<td>10–20% of window</td>
+<td>System prompt, project rules, tool definitions</td>
+</tr>
+<tr>
+<td>Working evidence</td>
+<td>50–65% of window</td>
+<td>Retrieved chunks, task brief, code under edit</td>
+</tr>
+<tr>
+<td>Recovery reserve</td>
+<td>15–30% of window</td>
+<td>Tool outputs, error traces, final answer space</td>
+</tr>
+</tbody></table>
+<p>Average prompt tokens grew ~4× from early 2024 (1,500) to late 2025 (6,000) per Anthropic&#39;s data. Prompt caching (OpenAI automatic longest-prefix cache; Anthropic explicit breakpoints at 1.25× write cost) can save 40–60% on repeated-context workloads, making larger stable prefixes affordable. Dynamic tool injection (5–10 relevant tools per request vs all 64) saves ~735 tokens per omitted tool definition.</p>
+<h2>Compression techniques</h2>
+<p>When context exceeds the budget, three strategies apply—each with different quality trade-offs:</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>When to use</th>
+<th>Trade-off</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Summarization</strong></td>
+<td>Long completed work, conversation history, retrieved documents</td>
+<td>Preserves gist; loses nuance, exact values, edge-case details. Quality depends on the summarizer model.</td>
+</tr>
+<tr>
+<td><strong>Extraction</strong></td>
+<td>Need specific facts, code fragments, or structured data from source material</td>
+<td>Keeps exact fragments without paraphrasing; loses surrounding context that gives fragments meaning.</td>
+</tr>
+<tr>
+<td><strong>Eviction</strong></td>
+<td>Old tool outputs, superseded plans, stale error messages, low-signal tokens</td>
+<td>Lowest cost; permanently removes information. Use only when the fact is durable elsewhere or no longer relevant.</td>
+</tr>
+</tbody></table>
+<p>Teams report 50–70% token reduction with minimal quality loss when compressed context retains key information. Anthropic&#39;s compaction mechanism (in the Claude Agent SDK) enables long-running agents to avoid exhausting context but is not sufficient alone—agents still try to one-shot tasks or declare premature completion, requiring additional harness-level guardrails.</p>
+<p><strong>Best practice:</strong> compress bottom-up—evict stale runtime output first, extract key facts from completed work second, and summarize only what cannot be reduced further. Always preserve decisions, open risks, and the current goal verbatim.</p>
+<h2>Contamination and poisoning defenses</h2>
+<p>Retrieved content, tool outputs, and user-provided material can carry adversarial instructions (see <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>). Defense-in-depth:</p>
+<ul>
+<li><strong>Label untrusted content as data, not instructions.</strong> Wrap retrieved text in explicit markers (e.g., <code>&lt;external_content&gt;…&lt;/external_content&gt;</code>) and instruct the model to treat it as evidence, never as directives.</li>
+<li><strong>Taint-aware handling.</strong> Track the trust level of every context element. Untrusted-sourced text must not override safety policy or authorization rules regardless of how confidently it is phrased.</li>
+<li><strong>Provenance on every fact.</strong> Record source, timestamp, confidence, and access policy with each retrieved chunk. When a decision depends on external evidence, surface the provenance to the model and the human reviewer.</li>
+<li><strong>Separate authority layers.</strong> Security policy, user instructions, and retrieved data occupy different slots in the context hierarchy. A style or task request must never silently weaken a safety rule.</li>
+<li><strong>Red-team retrieval.</strong> Test whether adversarial documents in the corpus can cause the agent to follow injected instructions. OWASP Top 10 for LLM Applications (2025) lists indirect prompt injection as a top risk.</li>
+</ul>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Anthropic, &quot;Effective context engineering for AI agents,&quot; Sep 29, 2025 — <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a> — the primary source for the fields above.</li>
+<li>Anthropic, &quot;Building effective agents,&quot; Dec 19, 2024 — <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a></li>
+<li>Anthropic, &quot;Introducing Contextual Retrieval,&quot; Sep 2024 — <a href="https://www.anthropic.com/engineering/contextual-retrieval">https://www.anthropic.com/engineering/contextual-retrieval</a> — retrieval-side context curation.</li>
+<li>Huyen, <em>AI Engineering</em> (O&#39;Reilly, 2025) — <a href="https://www.oreilly.com/library/view/ai-engineering/9781098166298/">https://www.oreilly.com/library/view/ai-engineering/9781098166298/</a></li>
+<li>Anthropic, &quot;Effective harnesses for long-running agents,&quot; Nov 2025 — <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents</a> — compaction limitations, initializer+coding-agent pattern.</li>
+<li>OWASP, &quot;Top 10 for LLM Applications,&quot; 2025 — <a href="https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/">https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/</a> — indirect prompt injection as a top risk.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="../02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Prompting%20for%20Agents.html">Prompting for Agents</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="../02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">← Computer-Use and Browser Agents</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Prompting%20for%20Agents.html">Prompting for Agents →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

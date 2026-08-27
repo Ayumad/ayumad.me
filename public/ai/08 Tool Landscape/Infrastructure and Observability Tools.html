@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="| Category | Examples | Design question | |||| | Sandboxes | E2B, Daytona, Modal, Docker, microVMs | What can an agent destroy or reach? | | Browser automation ">
+<title>Infrastructure and observability tools — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Infrastructure and observability tools</h1>
+<div class="meta"><span>current-snapshot</span><span>updated 2026-08-27</span><span>ai-engineering, sandboxes, browsers, gateways, observability</span></div>
+<h1>Infrastructure and observability tools</h1>
+<blockquote>
+<p>[!summary] The gist
+Production agents need sandboxes for safe code execution, browser tools for web interaction, gateways for model routing, and observability stacks for tracing failures. This guide covers each category: execution and browser environments, model routing with LiteLLM and OpenRouter, self-hosted vs hosted observability, four-layer guardrails architectures, prompt management, and serving platforms from Replicate to Modal. Each section includes comparison tables and selection heuristics so you can pick the right pieces for your stack.</p>
+</blockquote>
+<hr>
+<h2>Execution and browser environments</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+<th>Design question</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sandboxes</td>
+<td>E2B, Daytona, Modal, Docker, microVMs</td>
+<td>What can an agent destroy or reach?</td>
+</tr>
+<tr>
+<td>Browser automation</td>
+<td>Playwright, Browser Use, Stagehand</td>
+<td>Is the page data or an instruction?</td>
+</tr>
+<tr>
+<td>Web extraction</td>
+<td>Firecrawl</td>
+<td>How are provenance, robots, and freshness handled?</td>
+</tr>
+</tbody></table>
+<h2>Model routing</h2>
+<p>LiteLLM and OpenRouter can centralize provider access, model routing, fallbacks, budgets, and usage accounting. They add another policy and dependency boundary, so keep provider identity, data handling, and failure behavior visible.</p>
+<h2>Observability</h2>
+<p>LangSmith, Langfuse, Braintrust, Arize Phoenix, and OpenTelemetry-oriented instrumentation help trace model calls, retrieval, tools, state transitions, latency, cost, and evaluations. A chat transcript alone cannot explain a long-running agent failure.</p>
+<h3>Self-hosted vs hosted observability</h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Hosted (LangSmith, Braintrust)</th>
+<th>Self-hosted (Langfuse, OTel)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Setup effort</td>
+<td>Low — SaaS, managed infrastructure</td>
+<td>Higher — deploy, scale, maintain</td>
+</tr>
+<tr>
+<td>Cost model</td>
+<td>Seat-based + trace-based pricing</td>
+<td>No license cost; infra cost only</td>
+</tr>
+<tr>
+<td>Data control</td>
+<td>Provider holds traces (verify DPA)</td>
+<td>Full data sovereignty</td>
+</tr>
+<tr>
+<td>Vendor lock-in</td>
+<td>Medium — proprietary trace formats</td>
+<td>Low — OTel portable, MIT license</td>
+</tr>
+<tr>
+<td>Feature depth</td>
+<td>Managed evals, dashboards, team features</td>
+<td>BYO dashboards, more flexibility</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Teams wanting fast onboarding, managed evals</td>
+<td>Regulated industries, cost-sensitive teams at scale</td>
+</tr>
+</tbody></table>
+<p>Langfuse (MIT, acquired by ClickHouse Jan 2026 for $400M Series D) tracks every LLM call cost and ships with OpenAI/Anthropic/Google model prices. Unit-based pricing with unlimited users; self-hosted has no license cost. LangSmith (proprietary) auto-records token usage/costs for major providers; seat-based + trace-based pricing; caveat: evaluators auto-upgrade traces to extended retention.</p>
+<h2>Guardrails tools</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Approach</th>
+<th>Latency</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NVIDIA NeMo Guardrails (Apache 2.0)</td>
+<td>Colang DSL for dialog rails across 5 pipeline stages</td>
+<td>&lt;50ms/GPU check</td>
+<td>Conversation flow governance, tool-use allowlists</td>
+</tr>
+<tr>
+<td>Guardrails AI</td>
+<td>Python validators, 50+ Hub validators (PII, toxicity, JSON schema)</td>
+<td>50–200ms/validation</td>
+<td>Structured output validation, re-ask loops</td>
+</tr>
+<tr>
+<td>Llama Guard 3/4 (Meta, Apache 2.0)</td>
+<td>Open-weight safety classifier; Llama Guard 4 (12B, Apr 2025) multimodal</td>
+<td>Fast (model inference)</td>
+<td>Content classification, ~1/3 false-positive rate of GPT-4</td>
+</tr>
+<tr>
+<td>LLM Guard (open-source)</td>
+<td>Fast first-layer scanner for injection/jailbreak/secrets</td>
+<td>Single-digit ms</td>
+<td>Cheap gate before expensive guardrail layers</td>
+</tr>
+</tbody></table>
+<p><strong>Four-layer guardrails architecture:</strong> (1) Input guardrails (5–50ms: Prompt Guard 2, Azure Prompt Shields, Presidio PII), (2) Output guardrails (toxicity, PII, schema validation, grounding), (3) Behavioral/dialog guardrails (NeMo Colang DSL, tool-use allowlists), (4) Retrieval/tool guardrails (document trust scoring, sandboxed execution). Layer 1 (LLM Guard, single-digit ms) acts as a cheap gate before expensive layers. Regulatory context: EU AI Act GPAI obligations active Aug 2, 2025; high-risk obligations Aug 2, 2026; NIST AI 600-1 enterprise reference; OWASP Top 10 for LLM Applications 2025.</p>
+<p><strong>Sources:</strong> NeMo vs Llama Guard vs Guardrails AI — <a href="https://particula.tech/blog/ai-guardrails-compared-nemo-guardrails-ai-llama-guard">https://particula.tech/blog/ai-guardrails-compared-nemo-guardrails-ai-llama-guard</a> · AI Guardrails implementation — <a href="https://bigdataboutique.com/blog/ai-guardrails-implementing-safety-production-llm-apps">https://bigdataboutique.com/blog/ai-guardrails-implementing-safety-production-llm-apps</a></p>
+<h2>Prompt management tools</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LangSmith Hub</td>
+<td>Version-controlled prompt repository, A/B testing, community templates</td>
+<td>Teams using LangChain ecosystem</td>
+</tr>
+<tr>
+<td>PromptLayer</td>
+<td>Prompt versioning, usage analytics, collaborative editing</td>
+<td>Small teams wanting prompt observability</td>
+</tr>
+</tbody></table>
+<p>Prompt management belongs in the control plane alongside model selection and tool schemas. Version-control prompts, run regression evals before promotion, and track which prompt version handled which request.</p>
+<h2>Serving and deployment platforms</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Approach</th>
+<th>Best for</th>
+<th>Limitations</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Replicate</td>
+<td>Cog containers, model marketplace</td>
+<td>Lowest-friction model-to-API (predict.py + cog push)</td>
+<td>No gateway/eval/guardrails</td>
+</tr>
+<tr>
+<td>BentoML</td>
+<td>Python-first packaging (Bento format), BentoCloud or self-host</td>
+<td>Full runtime control, OSS without lock-in</td>
+<td>More setup than Replicate</td>
+</tr>
+<tr>
+<td>Ray Serve (2.58.0)</td>
+<td>Framework-agnostic, model composition, dynamic batching</td>
+<td>Multi-node/multi-GPU, fractional GPUs</td>
+<td>Operational complexity</td>
+</tr>
+<tr>
+<td>Modal</td>
+<td>Serverless GPU FaaS, Python-native</td>
+<td>Batch/custom compute, second-level cold starts</td>
+<td>No native gateway/observability/guardrails; per-second billing compounds</td>
+</tr>
+<tr>
+<td>Together AI</td>
+<td>Managed open-model inference</td>
+<td>Production OSS model serving</td>
+<td>Provider dependency</td>
+</tr>
+<tr>
+<td>Fireworks</td>
+<td>Sub-100ms TTFT optimization</td>
+<td>Lowest-latency inference</td>
+<td>Provider dependency</td>
+</tr>
+</tbody></table>
+<p><strong>Selection heuristic:</strong> Together AI for managed open-model inference; Fireworks for lowest-latency; Anyscale for Ray-native enterprise; Replicate for one-click; BentoML for OSS-first; Modal for custom compute.</p>
+<p><strong>Sources:</strong> Ray Serve docs — <a href="https://docs.ray.io/en/latest/serve/index.html">https://docs.ray.io/en/latest/serve/index.html</a> · Modal alternatives — <a href="https://futureagi.com/blog/best-modal-llm-serving-alternatives-2026/">https://futureagi.com/blog/best-modal-llm-serving-alternatives-2026/</a></p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>E2B docs — <a href="https://e2b.dev/docs">https://e2b.dev/docs</a> — sandbox execution for agents.</li>
+<li>Daytona docs — <a href="https://www.daytona.io/docs">https://www.daytona.io/docs</a> — development environment management.</li>
+<li>Modal docs — <a href="https://modal.com/docs">https://modal.com/docs</a> — serverless GPU compute.</li>
+<li>Playwright docs — <a href="https://playwright.dev/docs/intro">https://playwright.dev/docs/intro</a> — browser automation.</li>
+<li>Browser Use docs — <a href="https://docs.browser-use.com/">https://docs.browser-use.com/</a> — AI-driven browser interaction.</li>
+<li>Stagehand docs — <a href="https://docs.stagehand.dev/">https://docs.stagehand.dev/</a> — web automation.</li>
+<li>Firecrawl docs — <a href="https://docs.firecrawl.dev/">https://docs.firecrawl.dev/</a> — web extraction.</li>
+<li>LiteLLM docs — <a href="https://docs.litellm.ai/">https://docs.litellm.ai/</a> — multi-provider gateway.</li>
+<li>OpenRouter docs — <a href="https://openrouter.ai/docs">https://openrouter.ai/docs</a> — managed routing.</li>
+<li>LangSmith docs — <a href="https://docs.langchain.com/langsmith/home">https://docs.langchain.com/langsmith/home</a> — hosted observability.</li>
+<li>Langfuse docs — <a href="https://langfuse.com/docs">https://langfuse.com/docs</a> — open-source observability.</li>
+<li>Braintrust docs — <a href="https://www.braintrust.dev/docs">https://www.braintrust.dev/docs</a> — eval and observability platform.</li>
+<li>Arize Phoenix — <a href="https://phoenix.arize.com/">https://phoenix.arize.com/</a> — LLM observability.</li>
+<li>OpenTelemetry GenAI conventions — <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">https://opentelemetry.io/docs/specs/semconv/gen-ai/</a> — vendor-neutral tracing.</li>
+<li>NeMo vs Llama Guard vs Guardrails AI — <a href="https://particula.tech/blog/ai-guardrails-compared-nemo-guardrails-ai-llama-guard">https://particula.tech/blog/ai-guardrails-compared-nemo-guardrails-ai-llama-guard</a> — guardrails comparison.</li>
+<li>AI Guardrails implementation — <a href="https://bigdataboutique.com/blog/ai-guardrails-implementing-safety-production-llm-apps">https://bigdataboutique.com/blog/ai-guardrails-implementing-safety-production-llm-apps</a> — production guardrails patterns.</li>
+<li>Ray Serve docs — <a href="https://docs.ray.io/en/latest/serve/index.html">https://docs.ray.io/en/latest/serve/index.html</a> — distributed serving.</li>
+<li>Modal alternatives — <a href="https://futureagi.com/blog/best-modal-llm-serving-alternatives-2026/">https://futureagi.com/blog/best-modal-llm-serving-alternatives-2026/</a> — serving platform comparison.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Agent%20Runtimes%20and%20Frameworks.html">Agent Runtimes and Frameworks</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="../09%20Playbooks/Playbooks%20Hub.html">Playbooks Hub</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Agent%20Runtimes%20and%20Frameworks.html">← Agent Runtimes and Frameworks</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="../09%20Playbooks/Playbooks%20Hub.html">Playbooks Hub →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

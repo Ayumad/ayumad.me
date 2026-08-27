@@ -17,7 +17,8 @@
     "spotify:auth": "node scripts/spotify-auth.mjs",
     "spotify:push-env": "node scripts/spotify-push-env.mjs",
     "spotify:detect": "tsx scripts/detect-albums.mjs",
-    "spotify:rate": "tsx scripts/rate-album.ts"
+    "spotify:rate": "tsx scripts/rate-album.ts",
+    "ai:build": "node scripts/build-ai-section.mjs"
   },
   "dependencies": {
     "marked": "^15.0.12",

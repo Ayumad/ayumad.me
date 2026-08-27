@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Agent quality is more than the final answer. Evaluate the trajectory: context selected, tools called, arguments, permissions, retries, latency, cost, evidence, ">
+<title>Reliability, evaluation, and observability — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Reliability, evaluation, and observability</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, reliability, evals, observability, agentops</span></div>
+<h1>Reliability, evaluation, and observability</h1>
+<h2>Reliability controls</h2>
+<ul>
+<li>Typed schemas and deterministic validation.</li>
+<li>Allowlisted tools and explicit authority boundaries.</li>
+<li>Timeouts, retry budgets, backoff, and idempotency keys.</li>
+<li>Checkpoints, resumability, compensating actions, and human approval.</li>
+<li>Fallback models/providers and graceful degradation.</li>
+<li>Evidence requirements and honest uncertainty reporting.</li>
+</ul>
+<h2>Evaluation layers — canonical source</h2>
+<p>The detailed evaluation-layer table (Unit, Tool-use, Retrieval, Trajectory, End-to-end, Human) and guidance on LLM-as-judge calibration, versioned datasets, and deterministic assertions lives in <a href="./Evaluation%20Engineering.html">Evaluation Engineering</a>. That note is the canonical reference for building and running eval systems. Use it when you need to design test cases, select metrics by task type, or choose between open-source and commercial eval frameworks.</p>
+<h2>Observability and tracing — canonical source</h2>
+<p>Trace fields (correlation IDs, model/prompt/tool versions, token usage, latency, cost, approvals), OTel GenAI instrumentation, alerting thresholds, dashboard patterns, and drift monitoring all live in <a href="./Observability.html">Observability</a>. That note is the canonical reference for making agent trajectories diagnosable and replayable. Use it when you need to set up tracing, configure alerting, or build dashboards.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>OpenTelemetry GenAI semantic conventions — <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">https://opentelemetry.io/docs/specs/semconv/gen-ai/</a> — the shared attribute vocabulary for LLM traces (verified 2026-08-27).</li>
+<li>OpenAI, &quot;A practical guide to building agents&quot; — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a> — evaluation and production guidance (verified 2026-08-27).</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Study sequence</h2>
+<p>Use <a href="./Evaluation%20Engineering.html">Evaluation Engineering</a> to turn acceptance criteria into versioned tests, <a href="./Observability.html">Observability</a> to make trajectories diagnosable, and <a href="./Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a> to place human authority at consequential boundaries.</p>
+<hr>
+<blockquote>
+<p><strong>← <a href="../05%20Protocols%20and%20Tools/Agent%20Protocols.html">Agent Protocols</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Evaluation%20Engineering.html">Evaluation Engineering</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="../05%20Protocols%20and%20Tools/Agent%20Protocols.html">← Agent Protocols</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Evaluation%20Engineering.html">Evaluation Engineering →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Computer-use agents operate an untrusted visual environment. Prefer semantic APIs, isolate sessions, ground actions in fresh UI state, and gate consequential cl">
+<title>Computer-use and browser agents — AI Engineering</title>
+<link rel="stylesheet" href="../ai.css">
+</head><body>
+<main>
+<article>
+<h1>Computer-use and browser agents</h1>
+<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, computer-use, browser, sandbox, permissions</span></div>
+<h1>Computer-use and browser agents</h1>
+<blockquote>
+<p>[!summary] The gist
+Computer-use agents operate an untrusted visual environment. Prefer semantic APIs, isolate sessions, ground actions in fresh UI state, and gate consequential clicks at the point of execution.
+This note explains how these agents work, what dangers to watch for, and how to keep them from causing harm.</p>
+</blockquote>
+<hr>
+<p>Computer use lets an agent work through an application&#39;s visible interface: screenshots, accessibility trees, DOM state, mouse/keyboard events, and browser automation. It is powerful precisely because the surface is general; that also makes it a high-risk execution environment.</p>
+<h2>Provider paradigms</h2>
+<p>Two dominant approaches have emerged for giving models the ability to interact with computer interfaces:</p>
+<p><strong>Anthropic Computer Use</strong> provides a <code>computer_toolset</code> of 17 member tools (screenshot, left_click, type, zoom, etc.) with ~4,500 input tokens of overhead per request. Screenshots are billed at vision pricing, so each iteration adds significant cost. Anthropic added a classifier-based prompt-injection defense that scans screenshots for embedded instructions before the model reasons over them—critical because web pages and documents can contain text that looks like user directives. This defense can be opted out for headless use cases where the screenshot content is trusted. Notably, Computer Use is not available in Claude Managed Agents.</p>
+<p><strong>OpenAI Computer-Using Agent (CUA)</strong> combines GPT-4o vision with reinforcement learning. It achieves state-of-the-art results: OSWorld 38.1% (vs. 22.0% prior SOTA; human baseline 72.4%), WebArena 58.1%, and WebVoyager 87.0%. CUA uses a Perception-Reasoning-Action loop—screenshots feed chain-of-thought reasoning, which produces mouse/keyboard actions. Test-time scaling applies: more steps yield better performance. CUA seeks user confirmation for sensitive actions (login, CAPTCHA), acknowledging that some operations are not safe to automate.</p>
+<h2>DOM-native vs. vision-driven pipelines</h2>
+<p>The choice between reading the DOM and taking screenshots has profound cost and accuracy implications:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>DOM-native</th>
+<th>Vision (screenshot)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Accuracy</td>
+<td>~81.4%</td>
+<td>40–66%</td>
+</tr>
+<tr>
+<td>Time per task</td>
+<td>~0.9 min</td>
+<td>6–12 min</td>
+</tr>
+<tr>
+<td>Cost per task</td>
+<td>~$0.12</td>
+<td>$0.50–$3.00</td>
+</tr>
+<tr>
+<td>Information fidelity</td>
+<td>100% (structured)</td>
+<td>~60% (pixels) → ~40% (OCR) → ~30% (interpretation)</td>
+</tr>
+<tr>
+<td>Compute</td>
+<td>1x</td>
+<td>10–100x</td>
+</tr>
+<tr>
+<td>Frame encoding</td>
+<td>Instant</td>
+<td>1–3s per frame</td>
+</tr>
+</tbody></table>
+<p>Vision pipelines lose information at every stage: HTML structure → screenshot pixels (<del>60% fidelity) → OCR extraction (</del>40%) → model interpretation (~30%). DOM-native agents preserve the full hierarchy and avoid hallucination from flattened page structure.</p>
+<p>However, DOM access itself has trade-offs. Chrome DevTools Protocol (CDP) was designed for debugging, not production: it exposes WebSocket connections, leaves detectable JavaScript objects, sets the <code>navigator.webdriver</code> flag (triggering anti-bot detection), and includes synchronous blocking commands. Chrome Extension APIs offer a cleaner alternative: sandboxed execution, no WebSocket exposure, real browser fingerprint, and session persistence across crashes.</p>
+<h2>Sensitive-action confirmation gates</h2>
+<p>Agent-driven UI automation must distinguish between read-only observation and consequential mutation. Require explicit human confirmation immediately before:</p>
+<ul>
+<li>Sending messages, emails, or form submissions</li>
+<li>Purchases, financial transfers, or payment changes</li>
+<li>Permission changes, account modifications, or deletions</li>
+<li>Security-sensitive operations (password changes, CAPTCHAs)</li>
+</ul>
+<p>CAPTCHAs, password changes, and security barriers are not automation challenges to bypass—they are intentional human-verification checkpoints.</p>
+<h2>Recovery from failed actions</h2>
+<p>Vision-driven browsing is inherently fragile: a page may have loaded differently than expected, a click may have landed on the wrong element, or a popup may have obscured the target. Recovery patterns:</p>
+<ol>
+<li><strong>Re-ground before retrying</strong> — take a fresh screenshot or re-read the DOM; never assume the previous observation is still valid.</li>
+<li><strong>State verification</strong> — after each action, check an authoritative source (URL bar, database record, API response) rather than trusting the visual result.</li>
+<li><strong>Idempotent actions</strong> — design tool calls so that repeating them does not create duplicate side effects.</li>
+<li><strong>Graceful degradation</strong> — if vision-based interaction fails repeatedly, fall back to a semantic API or escalate to a human.</li>
+</ol>
+<h2>Safe operating loop</h2>
+<ol>
+<li>Read current visible state; do not assume a screen is unchanged.</li>
+<li>Identify the specific target and intended effect.</li>
+<li>Check policy, account scope, and whether confirmation is required.</li>
+<li>Act once, then verify the authoritative result (not just that a click occurred).</li>
+<li>Record the observation, action, result, and any approval.</li>
+</ol>
+<p>Isolate browser profiles and downloads, limit network and credential exposure, and avoid using an interactive personal session for untrusted browsing.</p>
+<h2>Sources and further reading</h2>
+<ul>
+<li>Anthropic Computer Use Tool Docs, 2026 — <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool</a> — toolset, token overhead, classifier-based injection defense.</li>
+<li>OpenAI Computer-Using Agent, Jan 2025 — <a href="https://openai.com/index/computer-using-agent/">https://openai.com/index/computer-using-agent/</a> — CUA paradigm, OSWorld/WebArena benchmarks, perception-reasoning-action loop.</li>
+<li>Retriever AI, &quot;Why rtrvr reads the DOM instead of screenshots,&quot; 2026 — <a href="https://rtrvr.ai/blog/dom-intelligence-architecture">https://rtrvr.ai/blog/dom-intelligence-architecture</a> — DOM-native vs. vision pipeline fidelity and cost data.</li>
+</ul>
+<p>All links verified 2026-08-27.</p>
+<h2>Related</h2>
+<p><a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> · <a href="../06%20Reliability%20and%20Security/Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a> · <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a></p>
+<hr>
+<blockquote>
+<p><strong>← <a href="./Voice%20and%20Audio%20Agents.html">Voice and Audio Agents</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="../03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a> →</strong></p>
+</blockquote>
+
+</article>
+
+<nav class="bar" id="section-nav"><a rel="prev" href="./Voice%20and%20Audio%20Agents.html">← Voice and Audio Agents</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="../03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering →</a></nav>
+</main>
+<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</body></html>
