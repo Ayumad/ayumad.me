@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Metrics tell what changed, logs capture events, and traces reveal the full agent trajectory; together they make probabilistic systems diagnosable and replayable">
 <title>Observability — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/06 Reliability and Security/Observability</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Observability</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, observability, tracing, logs, metrics</span></div>
+<article class="md">
+<h1 class="crt-title">Observability</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, observability, tracing, logs, metrics</span></div>
 <h1>Observability</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -47,7 +53,7 @@ Observability records everything your agent does during a request, like a black 
 <h2>Standard signals and tooling</h2>
 <ul>
 <li><strong>OpenTelemetry GenAI semantic conventions</strong> standardize span and event attributes for LLM calls, retrieval, and agents, making traces portable across backends — see the <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">specification</a> (verified 2026-08-27).</li>
-<li>Managed platforms (LangSmith, Langfuse, Braintrust, Arize Phoenix) implement traces, evals, and replay out of the box; see <a href="../08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a>.</li>
+<li>Managed platforms (LangSmith, Langfuse, Braintrust, Arize Phoenix) implement traces, evals, and replay out of the box; see <a href="/ai/08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a>.</li>
 <li>Instrument before you need it: capture model/prompt/tool/context versions on every span so a production failure can be replayed identically in evaluation (OpenAI 2025; OTel GenAI conventions).</li>
 </ul>
 <h2>OpenTelemetry GenAI: span walkthrough</h2>
@@ -96,18 +102,19 @@ Observability records everything your agent does during a request, like a black 
 <li>Dev.to/Kuldeep Paul, &quot;Managing AI Agent Drift Over Time&quot; (2026) — <a href="https://dev.to/kuldeep_paul/managing-ai-agent-drift-over-time-a-practical-framework-for-reliability-evals-and-observability-1fk8">https://dev.to/kuldeep_paul/managing-ai-agent-drift-over-time-a-practical-framework-for-reliability-evals-and-observability-1fk8</a> — NIST AI RMF mapping, RAG eval metrics.</li>
 <li>APXML, &quot;Monitor RAG Retrieval Drift&quot; — <a href="https://apxml.com/courses/optimizing-rag-for-production/chapter-6-advanced-rag-evaluation-monitoring/monitoring-retrieval-drift-rag">https://apxml.com/courses/optimizing-rag-for-production/chapter-6-advanced-rag-evaluation-monitoring/monitoring-retrieval-drift-rag</a> — retrieval accuracy benchmarks.</li>
 <li>OpenAI, &quot;A practical guide to building agents,&quot; 2025 — <a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf</a> — observability as a design requirement.</li>
-<li>Tool docs indexed in <a href="../11%20Glossary%20and%20Sources/Sources.html">Sources</a> and <a href="../08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a>.</li>
+<li>Tool docs indexed in <a href="/ai/11%20Glossary%20and%20Sources/Sources.html">Sources</a> and <a href="/ai/08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a>.</li>
 </ul>
 <p>All links verified 2026-08-27.</p>
-<p><a href="./Evaluation%20Engineering.html">Evaluation Engineering</a> · <a href="../07%20Operations%20and%20Economics/Deployment%20and%20AgentOps.html">Deployment and AgentOps</a> · <a href="../07%20Operations%20and%20Economics/Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a></p>
+<p><a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> · <a href="/ai/07%20Operations%20and%20Economics/Deployment%20and%20AgentOps.html">Deployment and AgentOps</a> · <a href="/ai/07%20Operations%20and%20Economics/Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Evaluation%20Engineering.html">Evaluation Engineering</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Security%20and%20Jailbreaking.html">Security and Jailbreaking</a> →</strong></p>
+<p><strong>← <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Evaluation%20Engineering.html">← Evaluation Engineering</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Security%20and%20Jailbreaking.html">Security and Jailbreaking →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">← Evaluation Engineering</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 06 Reliability and Security/Observability.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

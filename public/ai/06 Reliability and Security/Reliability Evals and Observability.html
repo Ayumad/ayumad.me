@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Agent quality is more than the final answer. Evaluate the trajectory: context selected, tools called, arguments, permissions, retries, latency, cost, evidence, ">
 <title>Reliability, evaluation, and observability — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/06 Reliability and Security/Reliability Evals and Observability</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Reliability, evaluation, and observability</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, reliability, evals, observability, agentops</span></div>
+<article class="md">
+<h1 class="crt-title">Reliability, evaluation, and observability</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, reliability, evals, observability, agentops</span></div>
 <h1>Reliability, evaluation, and observability</h1>
 <h2>Reliability controls</h2>
 <ul>
@@ -21,9 +27,9 @@
 <li>Evidence requirements and honest uncertainty reporting.</li>
 </ul>
 <h2>Evaluation layers — canonical source</h2>
-<p>The detailed evaluation-layer table (Unit, Tool-use, Retrieval, Trajectory, End-to-end, Human) and guidance on LLM-as-judge calibration, versioned datasets, and deterministic assertions lives in <a href="./Evaluation%20Engineering.html">Evaluation Engineering</a>. That note is the canonical reference for building and running eval systems. Use it when you need to design test cases, select metrics by task type, or choose between open-source and commercial eval frameworks.</p>
+<p>The detailed evaluation-layer table (Unit, Tool-use, Retrieval, Trajectory, End-to-end, Human) and guidance on LLM-as-judge calibration, versioned datasets, and deterministic assertions lives in <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a>. That note is the canonical reference for building and running eval systems. Use it when you need to design test cases, select metrics by task type, or choose between open-source and commercial eval frameworks.</p>
 <h2>Observability and tracing — canonical source</h2>
-<p>Trace fields (correlation IDs, model/prompt/tool versions, token usage, latency, cost, approvals), OTel GenAI instrumentation, alerting thresholds, dashboard patterns, and drift monitoring all live in <a href="./Observability.html">Observability</a>. That note is the canonical reference for making agent trajectories diagnosable and replayable. Use it when you need to set up tracing, configure alerting, or build dashboards.</p>
+<p>Trace fields (correlation IDs, model/prompt/tool versions, token usage, latency, cost, approvals), OTel GenAI instrumentation, alerting thresholds, dashboard patterns, and drift monitoring all live in <a href="/ai/06%20Reliability%20and%20Security/Observability.html">Observability</a>. That note is the canonical reference for making agent trajectories diagnosable and replayable. Use it when you need to set up tracing, configure alerting, or build dashboards.</p>
 <h2>Sources and further reading</h2>
 <ul>
 <li>OpenTelemetry GenAI semantic conventions — <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/">https://opentelemetry.io/docs/specs/semconv/gen-ai/</a> — the shared attribute vocabulary for LLM traces (verified 2026-08-27).</li>
@@ -31,15 +37,16 @@
 </ul>
 <p>All links verified 2026-08-27.</p>
 <h2>Study sequence</h2>
-<p>Use <a href="./Evaluation%20Engineering.html">Evaluation Engineering</a> to turn acceptance criteria into versioned tests, <a href="./Observability.html">Observability</a> to make trajectories diagnosable, and <a href="./Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a> to place human authority at consequential boundaries.</p>
+<p>Use <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> to turn acceptance criteria into versioned tests, <a href="/ai/06%20Reliability%20and%20Security/Observability.html">Observability</a> to make trajectories diagnosable, and <a href="/ai/06%20Reliability%20and%20Security/Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a> to place human authority at consequential boundaries.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="../05%20Protocols%20and%20Tools/Agent%20Protocols.html">Agent Protocols</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Evaluation%20Engineering.html">Evaluation Engineering</a> →</strong></p>
+<p><strong>← <a href="/ai/05%20Protocols%20and%20Tools/Agent%20Protocols.html">Agent Protocols</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="../05%20Protocols%20and%20Tools/Agent%20Protocols.html">← Agent Protocols</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Evaluation%20Engineering.html">Evaluation Engineering →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/05%20Protocols%20and%20Tools/Agent%20Protocols.html">← Agent Protocols</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 06 Reliability and Security/Reliability Evals and Observability.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

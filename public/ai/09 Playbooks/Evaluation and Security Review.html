@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="[ ] Define userlevel success and unacceptable failure. [ ] Create representative happypath, edge, adversarial, and recovery cases. [ ] Test tool schemas, author">
 <title>Evaluation and security review — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/09 Playbooks/Evaluation and Security Review</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Evaluation and security review</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, evals, security, release</span></div>
+<article class="md">
+<h1 class="crt-title">Evaluation and security review</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, evals, security, release</span></div>
 <h1>Evaluation and security review</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -22,7 +28,7 @@ Before an AI system ships, it has to be checked for quality and for harm. This i
 <li><input disabled="" type="checkbox"> Create representative happy-path, edge, adversarial, and recovery cases.</li>
 <li><input disabled="" type="checkbox"> Test tool schemas, authorization, timeouts, retries, and idempotency.</li>
 <li><input disabled="" type="checkbox"> Test retrieval relevance, provenance, ACL enforcement, and stale data.</li>
-<li><input disabled="" type="checkbox"> Run harmless indirect-injection, tool-output, memory-poisoning, and cross-agent tests from <a href="../06%20Reliability%20and%20Security/Defensive%20Red-Team%20Labs.html">Defensive Red-Team Labs</a>.</li>
+<li><input disabled="" type="checkbox"> Run harmless indirect-injection, tool-output, memory-poisoning, and cross-agent tests from <a href="/ai/06%20Reliability%20and%20Security/Defensive%20Red-Team%20Labs.html">Defensive Red-Team Labs</a>.</li>
 <li><input disabled="" type="checkbox"> Confirm secrets are brokered, redacted, rotated, and absent from fixtures.</li>
 <li><input disabled="" type="checkbox"> Verify sandbox filesystem, network, package, and credential boundaries.</li>
 <li><input disabled="" type="checkbox"> Inspect traces, cost, latency, approval rate, and failure ownership.</li>
@@ -101,15 +107,16 @@ Before an AI system ships, it has to be checked for quality and for harm. This i
 </tbody></table>
 <p>Promote only when the required tests pass, residual risks are documented, and rollback is proven. A high average score does not excuse a single catastrophic authority failure.</p>
 <h2>Related</h2>
-<p>See <a href="../06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> for the eval framework deep-dive and <a href="../06%20Reliability%20and%20Security/Defensive%20Red-Team%20Labs.html">Defensive Red-Team Labs</a> for the red-teaming methodology and lab setup.</p>
+<p>See <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> for the eval framework deep-dive and <a href="/ai/06%20Reliability%20and%20Security/Defensive%20Red-Team%20Labs.html">Defensive Red-Team Labs</a> for the red-teaming methodology and lab setup.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./RAG%20Design%20Worksheet.html">RAG Design Worksheet</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Learning%20Projects.html">Learning Projects</a> →</strong></p>
+<p><strong>← <a href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/09%20Playbooks/Learning%20Projects.html">Learning Projects</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./RAG%20Design%20Worksheet.html">← RAG Design Worksheet</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Learning%20Projects.html">Learning Projects →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">← RAG Design Worksheet</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/09%20Playbooks/Learning%20Projects.html">Learning Projects →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 09 Playbooks/Evaluation and Security Review.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="An LLM is a learned function that maps a sequence of tokens and other inputs to a probability distribution over possible next tokens or structured outputs. In p">
 <title>What is an LLM? — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/01 Foundations/What Is an LLM</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>What is an LLM?</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, models, llm</span></div>
+<article class="md">
+<h1 class="crt-title">What is an LLM?</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, models, llm</span></div>
 <h1>What is an LLM?</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -93,7 +99,7 @@ An LLM is autocomplete at scale. It predicts the next word based on patterns fro
 <td>Open</td>
 </tr>
 </tbody></table>
-<p>Parameter counts are approximate; MoE models store more parameters than they activate per token (see <a href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>).</p>
+<p>Parameter counts are approximate; MoE models store more parameters than they activate per token (see <a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>).</p>
 <h2>Evaluation benchmarks</h2>
 <p>Common benchmarks and why single numbers mislead:</p>
 <table>
@@ -132,7 +138,7 @@ An LLM is autocomplete at scale. It predicts the next word based on patterns fro
 </tbody></table>
 <p><strong>Why single numbers mislead:</strong> (a) Saturation—top models cluster near ceiling. (b) Prompt sensitivity—same model scores vary 4–5% across formats. (c) No single benchmark covers all capabilities. (d) Contamination—training data may contain benchmark questions. (e) Arena shows rankings shift by task type.</p>
 <h2>What is not built in</h2>
-<p>An LLM does not automatically possess current web access, private files, durable memory, a todo list, authentication, safe execution, or a goal that persists after the request. Engineers add these around the model through a <a href="../02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>.</p>
+<p>An LLM does not automatically possess current web access, private files, durable memory, a todo list, authentication, safe execution, or a goal that persists after the request. Engineers add these around the model through a <a href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>.</p>
 <h2>Useful distinctions</h2>
 <table>
 <thead>
@@ -175,8 +181,8 @@ An LLM is autocomplete at scale. It predicts the next word based on patterns fro
 <p>Karpathy&#39;s &quot;two-file&quot; mental model: an LLM is <strong>parameters</strong> (the learned weights) plus <strong>the code</strong> that runs them. Everything a model &quot;knows&quot; was selected during training—so a capability gap is usually a training fact, not a prompt bug.</p>
 <ul>
 <li><strong>Pretraining:</strong> predict the next token over web-scale text. This yields broad language and world knowledge but no instruction-following. Loss falls as a power law with model size, data, and compute (Kaplan et al. 2020), and compute-optimal training shifts the balance toward more data per parameter (Hoffmann et al. 2022, &quot;Chinchilla&quot;).</li>
-<li><strong>Post-training:</strong> supervised fine-tuning shapes output format, and preference/RL alignment tunes behavior against human judgments. Alignment changes behavior; it is <strong>not</strong> a security boundary (see <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
-<li><strong>Architecture:</strong> the transformer&#39;s attention mechanism (Vaswani et al. 2017) lets every token attend to every other token; most chat models are autoregressive decoder-only transformers that emit one token at a time. Mixture-of-experts models store more parameters than they activate per token (see <a href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>). Chain-of-thought-style reasoning emerges at sufficient scale (Wei et al. 2022; see <a href="../03%20Context%20Knowledge%20Memory/Prompting%20for%20Agents.html">Prompting for Agents</a>).</li>
+<li><strong>Post-training:</strong> supervised fine-tuning shapes output format, and preference/RL alignment tunes behavior against human judgments. Alignment changes behavior; it is <strong>not</strong> a security boundary (see <a href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
+<li><strong>Architecture:</strong> the transformer&#39;s attention mechanism (Vaswani et al. 2017) lets every token attend to every other token; most chat models are autoregressive decoder-only transformers that emit one token at a time. Mixture-of-experts models store more parameters than they activate per token (see <a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>). Chain-of-thought-style reasoning emerges at sufficient scale (Wei et al. 2022; see <a href="/ai/03%20Context%20Knowledge%20Memory/Prompting%20for%20Agents.html">Prompting for Agents</a>).</li>
 </ul>
 <h2>Scaling laws: practical implications</h2>
 <p>Kaplan et al. (2020) showed loss falls as a power law with model size, dataset size, and compute. The key practical implication: doubling parameters without proportionally more data yields diminishing returns. Chinchilla (Hoffmann et al. 2022) showed compute-optimal training shifts the balance toward more tokens per parameter—many &quot;large&quot; models were actually undertrained. This means a well-trained 70B model can outperform a poorly-trained 200B model. For practitioners, scaling laws predict the minimum data and compute needed for a target performance level, and they explain why simply making a model bigger without more data rarely helps.</p>
@@ -209,15 +215,16 @@ An LLM is autocomplete at scale. It predicts the next word based on patterns fro
 </ul>
 <p>All links verified 2026-08-27.</p>
 <h2>Related</h2>
-<p><a href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> · <a href="./Structured%20Outputs%20and%20Tool%20Calling.html">Structured Outputs and Tool Calling</a> · <a href="../02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a></p>
+<p><a href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> · <a href="/ai/01%20Foundations/Structured%20Outputs%20and%20Tool%20Calling.html">Structured Outputs and Tool Calling</a> · <a href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Foundations%20Hub.html">Foundations Hub</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> →</strong></p>
+<p><strong>← <a href="/ai/01%20Foundations/Foundations%20Hub.html">Foundations Hub</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Foundations%20Hub.html">← Foundations Hub</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/01%20Foundations/Foundations%20Hub.html">← Foundations Hub</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 01 Foundations/What Is an LLM.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

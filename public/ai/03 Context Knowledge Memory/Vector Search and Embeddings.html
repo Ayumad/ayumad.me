@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="How retrieval embeddings are actually trained (contrastive objectives, SimCSE, task-prefix conditioning), what ANN indexes do under the hood (HNSW/IVF/PQ mechan">
 <title>Vector search and embeddings — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/03 Context Knowledge Memory/Vector Search and Embeddings</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Vector search and embeddings</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, retrieval, embeddings, vector-search, ann</span></div>
+<article class="md">
+<h1 class="crt-title">Vector search and embeddings</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, retrieval, embeddings, vector-search, ann</span></div>
 <h1>Vector search and embeddings</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -24,7 +30,7 @@ Embeddings turn text into numerical coordinates where similar meanings sit close
 <li><strong>Modern embedders stack stages</strong>: nomic-embed-text-v1 starts from a long-context BERT and runs an unsupervised contrastive stage on weakly related pairs (forum Q&amp;A, title–body pairs), then a finetuning stage on labeled search-query/answer data with hard-example mining. It is a text encoder only as an embedding model — 8,192-token context, MTEB 62.39 — tuned per the official model card.</li>
 </ul>
 <p><strong>Task prefixes are the secret sauce.</strong> nomic (and several peers) require a small instruction prefix so one model can serve many geometries: documents embed as <code>search_document: &lt;text&gt;</code>, queries as <code>search_query: &lt;text&gt;</code>. Mixing modes without prefixes measurably degrades retrieval — a cheap, often-missed lever.</p>
-<p><strong>Dimension guidance:</strong> retrieval embedders commonly run 300–3,000+ dimensions (BGE at 1,024, ada-002 at 3,072 — see <a href="../01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> for the full lineage). Every dimension costs ~4 bytes (float32) per vector and slows brute-force scans, and more dimensions do not automatically mean better retrieval for a personal corpus. Size the model to the corpus, not the shiny leaderboard.</p>
+<p><strong>Dimension guidance:</strong> retrieval embedders commonly run 300–3,000+ dimensions (BGE at 1,024, ada-002 at 3,072 — see <a href="/ai/01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> for the full lineage). Every dimension costs ~4 bytes (float32) per vector and slows brute-force scans, and more dimensions do not automatically mean better retrieval for a personal corpus. Size the model to the corpus, not the shiny leaderboard.</p>
 <h2>ANN index internals: why vector DBs aren&#39;t just arrays</h2>
 <p>Brute-force kNN is exact but O(n·d) per query. Vector DBs use <strong>approximate nearest neighbor (ANN)</strong> structures that trade a little recall for orders of magnitude less search time:</p>
 <table>
@@ -57,7 +63,7 @@ Embeddings turn text into numerical coordinates where similar meanings sit close
 </tbody></table>
 <p>Counterintuitive but true for personal scale: <strong>at ~10K–1M chunks the index choice moves retrieval quality far less than embeddings and chunking do.</strong> ANN-Benchmarks (Aumüller, Bernhardsson &amp; Faithfull) compares implementations on a precision-performance frontier precisely because, tuned properly, they all sit on the same curve. Pick the index the store ships with; spend the tuning budget on chunking and metadata filters instead.</p>
 <h2>Similarity is not relevance</h2>
-<p>Top-k cosine returns <em>related</em> chunks, not necessarily <em>answers</em>. Embedding recall finds the candidate set; reranking and prompt construction decide whether the answer is right. Two mitigations, both built out in <a href="./RAG.html">RAG</a>:</p>
+<p>Top-k cosine returns <em>related</em> chunks, not necessarily <em>answers</em>. Embedding recall finds the candidate set; reranking and prompt construction decide whether the answer is right. Two mitigations, both built out in <a href="/ai/03%20Context%20Knowledge%20Memory/RAG.html">RAG</a>:</p>
 <ol>
 <li><strong>Rerankers</strong> — cross-encoders or late-interaction models (e.g. ColBERT) that re-score the shortlist with full token-level comparison.</li>
 <li><strong>Query-side care</strong> — hybrid keyword + vector fusion (RRF), query rewriting, and the fact that exact identifiers, error codes, and numbers are terrible embedding queries (they want BM25).</li>
@@ -82,20 +88,21 @@ Embeddings turn text into numerical coordinates where similar meanings sit close
 <p>All links verified 2026-08-27.</p>
 <h2>Related</h2>
 <ul>
-<li><a href="./RAG.html">RAG</a> — end-to-end retrieval pipeline, hybrid search, rerankers, vector-store comparison table.</li>
-<li><a href="../01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> — embedding fundamentals, static vs contextual embeddings, cosine-similarity math.</li>
-<li><a href="./Memory%20and%20Skills.html">Memory and Skills</a> — embeddings as agent archival recall.</li>
-<li><a href="./Context%20Engineering.html">Context Engineering</a> — what to do with retrieved context once you have it.</li>
-<li><a href="../09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> — worked embedding-model and vector-store decisions.</li>
+<li><a href="/ai/03%20Context%20Knowledge%20Memory/RAG.html">RAG</a> — end-to-end retrieval pipeline, hybrid search, rerankers, vector-store comparison table.</li>
+<li><a href="/ai/01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a> — embedding fundamentals, static vs contextual embeddings, cosine-similarity math.</li>
+<li><a href="/ai/03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills</a> — embeddings as agent archival recall.</li>
+<li><a href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a> — what to do with retrieved context once you have it.</li>
+<li><a href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> — worked embedding-model and vector-store decisions.</li>
 </ul>
 <hr>
 <blockquote>
-<p><strong>← <a href="./RAG.html">RAG</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a> →</strong></p>
+<p><strong>← <a href="/ai/03%20Context%20Knowledge%20Memory/RAG.html">RAG</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/03%20Context%20Knowledge%20Memory/Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./RAG.html">← RAG</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/03%20Context%20Knowledge%20Memory/RAG.html">← RAG</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/03%20Context%20Knowledge%20Memory/Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 03 Context Knowledge Memory/Vector Search and Embeddings.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

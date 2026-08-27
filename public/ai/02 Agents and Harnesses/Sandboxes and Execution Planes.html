@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CP">
 <title>Sandboxes and execution planes — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/02 Agents and Harnesses/Sandboxes and Execution Planes</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Sandboxes and execution planes</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, security, sandbox, infrastructure</span></div>
+<article class="md">
+<h1 class="crt-title">Sandboxes and execution planes</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, security, sandbox, infrastructure</span></div>
 <h1>Sandboxes and execution planes</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -19,7 +25,7 @@ This note explains how to design that safe workspace, how to hand the agent only
 <hr>
 <h2>Control plane versus execution plane</h2>
 <p>Keep policy, credentials, approvals, and durable state in a trusted control plane. Run generated code, untrusted files, browser sessions, and transient dependencies in an execution plane with a small, explicit interface back to the controller. The controller decides what may be mounted, reached, exported, or retained.</p>
-<p>Make the execution environment disposable by default and set resource/time/network limits outside the model. Inspect generated artifacts before promotion. See <a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for choosing the actual isolation technology.</p>
+<p>Make the execution environment disposable by default and set resource/time/network limits outside the model. Inspect generated artifacts before promotion. See <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for choosing the actual isolation technology.</p>
 <p>Agents that can run code need a computer they can safely break. A sandbox is a disposable or strongly isolated execution environment with bounded filesystem, CPU, memory, packages, credentials, and network access.</p>
 <h2>Reference architecture</h2>
 <pre><code class="language-text">CONTROL PLANE                         EXECUTION PLANE
@@ -53,7 +59,7 @@ credentials broker · traces    →      files · shell · packages · tests
 <li><strong>MicroVM (Firecracker):</strong> ~100–200ms boot, &lt;5 MiB overhead, full kernel isolation—but requires custom orchestration.</li>
 <li><strong>Full VM:</strong> strongest isolation but slowest startup (seconds to minutes).</li>
 </ul>
-<p>The trade-off is linear: more isolation buys more safety at the cost of more latency and resource consumption. Choose based on the threat model—trusted internal tools may need only process isolation, while LLM-generated code executing arbitrary operations warrants microVM or stronger boundaries. See <a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for technology-specific trade-offs.</p>
+<p>The trade-off is linear: more isolation buys more safety at the cost of more latency and resource consumption. Choose based on the threat model—trusted internal tools may need only process isolation, while LLM-generated code executing arbitrary operations warrants microVM or stronger boundaries. See <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> for technology-specific trade-offs.</p>
 <h2>Boundaries to specify</h2>
 <ul>
 <li>What files can be read or written?</li>
@@ -62,7 +68,7 @@ credentials broker · traces    →      files · shell · packages · tests
 <li>What survives teardown?</li>
 <li>Which actions require human approval?</li>
 </ul>
-<p>Related infrastructure appears in <a href="../08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a> and the security review in <a href="../09%20Playbooks/Evaluation%20and%20Security%20Review.html">Evaluation and Security Review</a>.</p>
+<p>Related infrastructure appears in <a href="/ai/08%20Tool%20Landscape/Infrastructure%20and%20Observability%20Tools.html">Infrastructure and Observability Tools</a> and the security review in <a href="/ai/09%20Playbooks/Evaluation%20and%20Security%20Review.html">Evaluation and Security Review</a>.</p>
 <h2>Sources and further reading</h2>
 <ul>
 <li>E2B Documentation, 2026 — <a href="https://docs.e2b.dev/">https://docs.e2b.dev/</a> — Firecracker-based cloud sandboxes, SDK, cold-start &lt;200ms.</li>
@@ -72,12 +78,13 @@ credentials broker · traces    →      files · shell · packages · tests
 <p>All links verified 2026-08-27.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Agent%20Harness.html">Agent Harness</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> →</strong></p>
+<p><strong>← <a href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Agent%20Harness.html">← Agent Harness</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Sandboxing%20Infrastructure.html">Sandboxing Infrastructure →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">← Agent Harness</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Sandboxes and Execution Planes.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

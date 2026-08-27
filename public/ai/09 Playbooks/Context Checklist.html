@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="[ ] What is the next decision the model must make? [ ] What is the minimum evidence needed for that decision? [ ] Which instructions are authoritative, and whic">
 <title>Context checklist — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/09 Playbooks/Context Checklist</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Context checklist</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, context-engineering, checklist</span></div>
+<article class="md">
+<h1 class="crt-title">Context checklist</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, context-engineering, checklist</span></div>
 <h1>Context checklist</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -42,15 +48,16 @@ Bad context is why agents waste turns: the model guesses, fills blanks, and some
 <p><strong>Bad context:</strong> &quot;Fix the bug.&quot; — no files, no error message, no reproduction steps, no authority scope. The model must guess or ask, wasting a turn.</p>
 <p><strong>Good context:</strong> &quot;The <code>process_invoice()</code> function in <code>src/billing.py</code> raises <code>ValueError</code> on line 142 when <code>invoice.total</code> is <code>None</code>. Reproduction: run <code>pytest tests/test_billing.py::test_none_total</code>. You may change parsing logic but not the database schema. Stop when the test passes.&quot;</p>
 <p>The difference: the good version names the decision (fix the bug), provides minimum evidence (file, line, error, repro), scopes authority (parsing only), and states a stopping condition (test passes).</p>
-<p>For deeper context-engineering theory, see <a href="../03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a>.</p>
+<p>For deeper context-engineering theory, see <a href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a>.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Prompt%20Template.html">Prompt Template</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> →</strong></p>
+<p><strong>← <a href="/ai/09%20Playbooks/Prompt%20Template.html">Prompt Template</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Prompt%20Template.html">← Prompt Template</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./RAG%20Design%20Worksheet.html">RAG Design Worksheet →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/09%20Playbooks/Prompt%20Template.html">← Prompt Template</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 09 Playbooks/Context Checklist.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

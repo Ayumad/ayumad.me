@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="The most reliable agent prompts specify outcomes and invariants, not a screenplay of implementation steps.">
 <title>Prompting for agents — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/03 Context Knowledge Memory/Prompting for Agents</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Prompting for agents</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, prompting, task-specification</span></div>
+<article class="md">
+<h1 class="crt-title">Prompting for agents</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, prompting, task-specification</span></div>
 <h1>Prompting for agents</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -38,7 +44,7 @@ Verification: Run the auth suite, new reset tests, and linting; report failures 
 <li>State stopping conditions, budget limits, and when to ask.</li>
 <li>Tell the agent how to report uncertainty and evidence.</li>
 </ul>
-<p>Use <a href="../09%20Playbooks/Prompt%20Template.html">Prompt Template</a> for a reusable blank form.</p>
+<p>Use <a href="/ai/09%20Playbooks/Prompt%20Template.html">Prompt Template</a> for a reusable blank form.</p>
 <h2>Practice and limits</h2>
 <p>Treat the prompt as an executable task brief: goal, context, constraints, definition of done, and verification. Stable policy belongs before volatile task data; permissions, secret handling, validation, and side effects belong in the harness, not merely in prose. Test prompt changes with a fixed evaluation set because clarity can still regress cost, safety, or tool choice.</p>
 <h2>Evidence behind the guidance</h2>
@@ -46,7 +52,7 @@ Verification: Run the auth suite, new reset tests, and linting; report failures 
 <li><strong>Chain-of-thought (Wei et al. 2022):</strong> a few demonstrations with intermediate reasoning steps significantly improve multi-step arithmetic, symbolic, and commonsense reasoning—and the capability <em>emerges at sufficient model scale</em>. CoT is a lever for capable models, not a fix for small ones.</li>
 <li><strong>Anthropic&#39;s guidance (2024–2025):</strong> keep instructions clear and specific, provide examples, organize prompts into sections, and start minimal—test against failures, then add detail only where needed.</li>
 <li><strong>Examples are &quot;pictures worth a thousand words&quot;:</strong> diverse, canonical examples portray expected behavior better than exhaustive rule lists (Anthropic 2025).</li>
-<li><strong>A prompt is not a security boundary.</strong> Never rely on prose to enforce authority; permission, validation, and side-effect control belong in the harness (see <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
+<li><strong>A prompt is not a security boundary.</strong> Never rely on prose to enforce authority; permission, validation, and side-effect control belong in the harness (see <a href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>).</li>
 </ul>
 <h2>Few-shot vs zero-shot trade-offs</h2>
 <table>
@@ -142,7 +148,7 @@ Verification: Run the auth suite, new reset tests, and linting; report failures 
 <li><strong>Regression safety.</strong> A prompt that improves style but degrades factuality or safety has regressed. Test style and effort against the same safety and factuality cases.</li>
 <li><strong>Human evaluation for subjective tasks.</strong> For open-ended generation, use a structured rubric (clarity, completeness, audience fit, tone adherence) with 2–3 evaluators and inter-rater reliability checks.</li>
 </ol>
-<p>See <a href="../06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> for the full evaluation framework.</p>
+<p>See <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a> for the full evaluation framework.</p>
 <h2>Sources and further reading</h2>
 <ul>
 <li>Wei et al., &quot;Chain-of-Thought Prompting Elicits Reasoning in Large Language Models,&quot; 2022 — <a href="https://arxiv.org/abs/2201.11903">https://arxiv.org/abs/2201.11903</a></li>
@@ -153,12 +159,13 @@ Verification: Run the auth suite, new reset tests, and linting; report failures 
 <p>All links verified 2026-08-27.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Context%20Engineering.html">Context Engineering</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Memory%20and%20Skills.html">Memory and Skills</a> →</strong></p>
+<p><strong>← <a href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Context%20Engineering.html">← Context Engineering</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Memory%20and%20Skills.html">Memory and Skills →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">← Context Engineering</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 03 Context Knowledge Memory/Prompting for Agents.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

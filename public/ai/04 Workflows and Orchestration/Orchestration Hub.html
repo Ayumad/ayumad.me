@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Orchestration is the control plane for work that spans steps, agents, tools, queues, schedules, retries, and people. It turns a clever loop into a system that c">
 <title>Workflows and orchestration — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/04 Workflows and Orchestration/Orchestration Hub</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Workflows and orchestration</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, orchestration, workflows, map-of-content</span></div>
+<article class="md">
+<h1 class="crt-title">Workflows and orchestration</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, orchestration, workflows, map-of-content</span></div>
 <h1>Workflows and orchestration</h1>
 <pre><code class="language-mermaid">flowchart LR
   Trigger --&gt; Router
@@ -69,11 +75,11 @@
 <td>High — battle-tested in financial systems.</td>
 </tr>
 </tbody></table>
-<p>See <a href="./Workflow%20Patterns.html">Workflow Patterns</a> for topology selection and <a href="./Multi-Agent%20Systems.html">Multi-Agent Systems</a> for multi-agent coordination.</p>
+<p>See <a href="/ai/04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns</a> for topology selection and <a href="/ai/04%20Workflows%20and%20Orchestration/Multi-Agent%20Systems.html">Multi-Agent Systems</a> for multi-agent coordination.</p>
 <h2>Cost awareness across multi-step runs</h2>
 <p>Multi-step orchestration multiplies LLM cost. A single agent loop at 2k tokens per step across 10 steps is 20k tokens; a supervisor-worker system with 5 parallel subagents each spending 10k tokens hits 50k+ tokens per invocation. Budget controls: per-step and per-run token ceilings, max-retry limits, hard timeouts. Durable execution (Temporal, LangGraph checkpointing) avoids wasted spend by resuming from checkpoints rather than replaying entire runs.</p>
 <h2>Error recovery</h2>
-<p>Agent workflows fail non-deterministically. Orchestration must handle: transient LLM API errors (exponential backoff with jitter, never retry 400/401/404), tool failures (circuit breaker to stop calling a failing service), state loss (checkpoint serialization at each step), and unbounded loops (hard cap ~5 iterations with escalation). Durable execution engines provide engine-guaranteed idempotency — the journal is the audit trail. For compensation when partial work has side effects, the saga pattern (compensating transactions) or durable execution (replay from journal) are standard approaches. See <a href="./Workflow%20Patterns.html">Workflow Patterns</a> § Error recovery for the detailed pattern catalog.</p>
+<p>Agent workflows fail non-deterministically. Orchestration must handle: transient LLM API errors (exponential backoff with jitter, never retry 400/401/404), tool failures (circuit breaker to stop calling a failing service), state loss (checkpoint serialization at each step), and unbounded loops (hard cap ~5 iterations with escalation). Durable execution engines provide engine-guaranteed idempotency — the journal is the audit trail. For compensation when partial work has side effects, the saga pattern (compensating transactions) or durable execution (replay from journal) are standard approaches. See <a href="/ai/04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns</a> § Error recovery for the detailed pattern catalog.</p>
 <h2>Sources and further reading</h2>
 <ul>
 <li>LangChain, LangGraph Overview — <a href="https://docs.langchain.com/oss/python/langgraph/overview">https://docs.langchain.com/oss/python/langgraph/overview</a> — graph-based orchestration, durable state, v1.0 Oct 2025.</li>
@@ -89,12 +95,13 @@
 <p>All links verified 2026-08-27.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Workflow%20Patterns.html">Workflow Patterns</a> →</strong></p>
+<p><strong>← <a href="/ai/03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">← Behavior and Communication Controls</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Workflow%20Patterns.html">Workflow Patterns →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">← Behavior and Communication Controls</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 04 Workflows and Orchestration/Orchestration Hub.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Freeform text is difficult for software to validate. Structured output constrains a response to a schema, while tool calling lets a model request an operation w">
 <title>Structured outputs and tool calling — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/01 Foundations/Structured Outputs and Tool Calling</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Structured outputs and tool calling</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, structured-output, tools</span></div>
+<article class="md">
+<h1 class="crt-title">Structured outputs and tool calling</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, structured-output, tools</span></div>
 <h1>Structured outputs and tool calling</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -39,7 +45,7 @@ Models produce freeform text, but software needs structured data. Structured out
 <h2>Constrained decoding</h2>
 <p>Instead of sampling freeform text and repairing it later, constrain sampling itself: mask the vocabulary so only tokens valid under a regular expression or grammar can be emitted. Outlines-style finite-state-machine-guided generation adds little to no overhead and turns malformed output from a validation problem into a design-impossible event (Willard &amp; Louf 2023).</p>
 <h2>Tool calling in practice</h2>
-<p>Frontier models are post-trained to emit structured tool calls—typed arguments, and with several providers, parallel calls in one response. The provider API returns machine-readable calls, but the harness remains responsible for validation, authorization, and execution (see <a href="../02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>). Keep schemas narrow and descriptive: if a human engineer cannot say which tool fits a situation, a model will not do better (Anthropic 2025).</p>
+<p>Frontier models are post-trained to emit structured tool calls—typed arguments, and with several providers, parallel calls in one response. The provider API returns machine-readable calls, but the harness remains responsible for validation, authorization, and execution (see <a href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>). Keep schemas narrow and descriptive: if a human engineer cannot say which tool fits a situation, a model will not do better (Anthropic 2025).</p>
 <h2>JSON-schema example</h2>
 <p>A realistic tool schema constrains the model to emit exactly the fields the harness expects:</p>
 <pre><code class="language-json">{
@@ -85,15 +91,16 @@ Models produce freeform text, but software needs structured data. Structured out
 </ul>
 <p>All links verified 2026-08-27.</p>
 <h2>Related</h2>
-<p><a href="../02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a> · <a href="../05%20Protocols%20and%20Tools/MCP.html">MCP</a> · <a href="../06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a></p>
+<p><a href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a> · <a href="/ai/05%20Protocols%20and%20Tools/MCP.html">MCP</a> · <a href="/ai/06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Context%20Windows%20and%20Inference.html">Context Windows and Inference</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a> →</strong></p>
+<p><strong>← <a href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Context%20Windows%20and%20Inference.html">← Context Windows and Inference</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">← Context Windows and Inference</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 01 Foundations/Structured Outputs and Tool Calling.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

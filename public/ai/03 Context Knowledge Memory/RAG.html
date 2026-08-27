@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="RAG retrieves relevant external evidence and places it into model context at answer time. It is usually preferable to finetuning when knowledge changes or is pr">
 <title>Retrieval-augmented generation (RAG) — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/03 Context Knowledge Memory/RAG</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Retrieval-augmented generation (RAG)</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, rag, retrieval, embeddings</span></div>
+<article class="md">
+<h1 class="crt-title">Retrieval-augmented generation (RAG)</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, rag, retrieval, embeddings</span></div>
 <h1>Retrieval-augmented generation (RAG)</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -207,10 +213,10 @@ def rrf_score(rank, k=60):
 </ol>
 <h2>RAG versus fine-tuning</h2>
 <p><code>Changing knowledge → RAG</code> · <code>Changing behavior/style → fine-tuning</code> · <code>Both → combine them deliberately</code>.</p>
-<p>Related: <a href="./Memory%20and%20Skills.html">Memory and Skills</a> · <a href="./Context%20Engineering.html">Context Engineering</a> · <a href="../06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a>.</p>
+<p>Related: <a href="/ai/03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills</a> · <a href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a> · <a href="/ai/06%20Reliability%20and%20Security/Reliability%20Evals%20and%20Observability.html">Reliability Evals and Observability</a>.</p>
 <h2>Practice and evaluation</h2>
 <p>Start with a small authoritative corpus and inspect actual queries before tuning a complex pipeline. Evaluate hit@K/MRR, source coverage, citation correctness, faithfulness, access control, and correct abstention. RAG serves changing facts; memory serves retained experience; skills serve reusable procedures.</p>
-<p>For the machinery under this pipeline — how embedding models are trained, ANN index internals (HNSW/IVF/PQ), similarity-vs-relevance, and the local Ollama + ChromaDB stack — see <a href="./Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings</a>.</p>
+<p>For the machinery under this pipeline — how embedding models are trained, ANN index internals (HNSW/IVF/PQ), similarity-vs-relevance, and the local Ollama + ChromaDB stack — see <a href="/ai/03%20Context%20Knowledge%20Memory/Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings</a>.</p>
 <h2>Evidence base</h2>
 <ul>
 <li><strong>RAG&#39;s origin (Lewis et al. 2020):</strong> combine parametric memory (the model&#39;s weights) with non-parametric memory (retrievable documents). The paper&#39;s recipe produced strong gains on knowledge-intensive NLP tasks and is the canonical citation for the pattern.</li>
@@ -235,12 +241,13 @@ def rrf_score(rank, k=60):
 <p>All links verified 2026-08-27.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Skills%2C%20Tools%2C%20and%20Capability%20Management.html">Skills, Tools, and Capability Management</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings</a> →</strong></p>
+<p><strong>← <a href="/ai/03%20Context%20Knowledge%20Memory/Skills%2C%20Tools%2C%20and%20Capability%20Management.html">Skills, Tools, and Capability Management</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/03%20Context%20Knowledge%20Memory/Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Skills%2C%20Tools%2C%20and%20Capability%20Management.html">← Skills, Tools, and Capability Management</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/03%20Context%20Knowledge%20Memory/Skills%2C%20Tools%2C%20and%20Capability%20Management.html">← Skills, Tools, and Capability Management</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/03%20Context%20Knowledge%20Memory/Vector%20Search%20and%20Embeddings.html">Vector Search and Embeddings →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 03 Context Knowledge Memory/RAG.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

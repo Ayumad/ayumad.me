@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Sandbox choice follows the threat model: processes suit trusted code, containers provide moderate isolation, and microVMs or VMs suit generated or arbitrary unt">
 <title>Sandboxing infrastructure — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/02 Agents and Harnesses/Sandboxing Infrastructure</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Sandboxing infrastructure</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, sandbox, containers, microvms, execution</span></div>
+<article class="md">
+<h1 class="crt-title">Sandboxing infrastructure</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, sandbox, containers, microvms, execution</span></div>
 <h1>Sandboxing infrastructure</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -17,7 +23,7 @@ Sandbox choice follows the threat model: processes suit trusted code, containers
 This note compares the different types of isolation technology available: from lightweight process separation to full virtual machines. It also covers cloud services that rent you ready-made sandboxes.</p>
 </blockquote>
 <hr>
-<p>There is no universally best sandbox. Select an isolation boundary based on what executes, the data and credentials it can reach, the blast radius of compromise, compatibility requirements, and startup/operating cost. For the architectural principle of separating policy from execution, see <a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>.</p>
+<p>There is no universally best sandbox. Select an isolation boundary based on what executes, the data and credentials it can reach, the blast radius of compromise, compatibility requirements, and startup/operating cost. For the architectural principle of separating policy from execution, see <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>.</p>
 <table>
 <thead>
 <tr>
@@ -98,7 +104,7 @@ This note compares the different types of isolation technology available: from l
   package_install: false    # no pip/npm install
   file_mounts: []           # no host filesystem access
 </code></pre>
-<p>Destroy the environment after the job unless durable state is deliberately promoted through a validated boundary (see <a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>).</p>
+<p>Destroy the environment after the job unless durable state is deliberately promoted through a validated boundary (see <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>).</p>
 <h2>Sources and further reading</h2>
 <ul>
 <li>Northflank, &quot;Kata Containers vs Firecracker vs gVisor,&quot; Jan 2026 — <a href="https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor">https://northflank.com/blog/kata-containers-vs-firecracker-vs-gvisor</a> — technology comparison, isolation hierarchy, startup costs.</li>
@@ -107,15 +113,16 @@ This note compares the different types of isolation technology available: from l
 </ul>
 <p>All links verified 2026-08-27.</p>
 <h2>Related</h2>
-<p><a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a> · <a href="./Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a> · <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a></p>
+<p><a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a> · <a href="/ai/02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a> · <a href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Planning%20State%20and%20Persistence.html">Planning State and Persistence</a> →</strong></p>
+<p><strong>← <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/02%20Agents%20and%20Harnesses/Planning%20State%20and%20Persistence.html">Planning State and Persistence</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Sandboxes%20and%20Execution%20Planes.html">← Sandboxes and Execution Planes</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Planning%20State%20and%20Persistence.html">Planning State and Persistence →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">← Sandboxes and Execution Planes</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/02%20Agents%20and%20Harnesses/Planning%20State%20and%20Persistence.html">Planning State and Persistence →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Sandboxing Infrastructure.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="The harness is the machinery that makes an agent useful and governable. It translates user intent into context, exposes tools, executes actions, manages state, ">
 <title>Agent harness — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/02 Agents and Harnesses/Agent Harness</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Agent harness</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, harness, runtime</span></div>
+<article class="md">
+<h1 class="crt-title">Agent harness</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, harness, runtime</span></div>
 <h1>Agent harness</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -68,7 +74,7 @@ Two teams can use the same AI model and get wildly different results depending o
   &quot;observation&quot;: &quot;test_parse failed; retrying after fixing import&quot;
 }
 </code></pre>
-<p>Traces make every decision inspectable. They are the foundation of trajectory evaluation (see <a href="../06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a>).</p>
+<p>Traces make every decision inspectable. They are the foundation of trajectory evaluation (see <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a>).</p>
 <h2>Harness design patterns</h2>
 <ul>
 <li><strong>Thin harness:</strong> minimal orchestration—model selects tools, harness validates and executes, context manager compacts. Best for simple, well-scoped tasks where the model&#39;s judgment is sufficient. Lower engineering cost, less control over failure modes.</li>
@@ -76,7 +82,7 @@ Two teams can use the same AI model and get wildly different results depending o
 <li><strong>Hybrid:</strong> thin harness for the core loop, framework features (approval gates, checkpoints) added only where the threat model demands them. Anthropic&#39;s production guidance recommends starting thin and adding structure only where task complexity or risk justifies it.</li>
 </ul>
 <h2>Control versus execution</h2>
-<p>Keep orchestration, credentials, policy, and durable state in a control plane; run generated code and untrusted data in an execution plane. See <a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>.</p>
+<p>Keep orchestration, credentials, policy, and durable state in a control plane; run generated code and untrusted data in an execution plane. See <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a>.</p>
 <h2>Why the harness is the product</h2>
 <ul>
 <li>Anthropic&#39;s survey of dozens of production teams found the most successful agents use <strong>simple, composable patterns</strong>—with the complexity concentrated in the harness (context, tools, guardrails), not the prompt (Anthropic 2024).</li>
@@ -95,15 +101,16 @@ Two teams can use the same AI model and get wildly different results depending o
 </ul>
 <p>All links verified 2026-08-27.</p>
 <h2>Related</h2>
-<p><a href="./What%20Is%20an%20Agent.html">What Is an Agent</a> · <a href="./Planning%20State%20and%20Persistence.html">Planning State and Persistence</a> · <a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a></p>
+<p><a href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a> · <a href="/ai/02%20Agents%20and%20Harnesses/Planning%20State%20and%20Persistence.html">Planning State and Persistence</a> · <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./What%20Is%20an%20Agent.html">What Is an Agent</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a> →</strong></p>
+<p><strong>← <a href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./What%20Is%20an%20Agent.html">← What Is an Agent</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">← What Is an Agent</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/02%20Agents%20and%20Harnesses/Sandboxes%20and%20Execution%20Planes.html">Sandboxes and Execution Planes →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 02 Agents and Harnesses/Agent Harness.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Each stage has a question, a set of notes, and a small exercise. Do not skip the exercises: agent engineering is learned by observing loops and failure modes, n">
 <title>AI Engineering from zero to production — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/00 Start Here/AI Engineering Curriculum</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>AI Engineering from zero to production</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, curriculum, learning-path</span></div>
+<article class="md">
+<h1 class="crt-title">AI Engineering from zero to production</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, curriculum, learning-path</span></div>
 <h1>AI Engineering from zero to production</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -17,55 +23,56 @@ This curriculum teaches AI engineering as a hands-on craft. It starts with model
 </blockquote>
 <hr>
 <h2>Unit 1 — Models, inference, and hardware (~8–10h)</h2>
-<p>Read <a href="../01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a>, <a href="../01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a>, <a href="../01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>, and <a href="../01%20Foundations/Structured%20Outputs%20and%20Tool%20Calling.html">Structured Outputs and Tool Calling</a>.</p>
+<p>Read <a href="/ai/01%20Foundations/What%20Is%20an%20LLM.html">What Is an LLM</a>, <a href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a>, <a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>, and <a href="/ai/01%20Foundations/Structured%20Outputs%20and%20Tool%20Calling.html">Structured Outputs and Tool Calling</a>.</p>
 <p>Exercise: estimate the memory needs of a 14B and 32B model at two quantizations, then compare free-text output with a strict JSON schema.</p>
 <blockquote>
 <p><strong>Skip if:</strong> You already know VRAM math and quantization trade-offs well; jump to Unit 2.</p>
 </blockquote>
 <h2>Unit 2 — Instructions and capabilities (~10–12h)</h2>
-<p>Read <a href="../03%20Context%20Knowledge%20Memory/Prompting%20for%20Agents.html">Prompting for Agents</a>, <a href="../03%20Context%20Knowledge%20Memory/Project%20Initialization%20and%20Instruction%20Files.html">Project Initialization and Instruction Files</a>, <a href="../03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a>, <a href="../03%20Context%20Knowledge%20Memory/Skills%2C%20Tools%2C%20and%20Capability%20Management.html">Skills, Tools, and Capability Management</a>, and <a href="../05%20Protocols%20and%20Tools/MCP.html">MCP</a>. Use <a href="../09%20Playbooks/Prompt%20Template.html">Prompt Template</a>.</p>
+<p>Read <a href="/ai/03%20Context%20Knowledge%20Memory/Prompting%20for%20Agents.html">Prompting for Agents</a>, <a href="/ai/03%20Context%20Knowledge%20Memory/Project%20Initialization%20and%20Instruction%20Files.html">Project Initialization and Instruction Files</a>, <a href="/ai/03%20Context%20Knowledge%20Memory/Behavior%20and%20Communication%20Controls.html">Behavior and Communication Controls</a>, <a href="/ai/03%20Context%20Knowledge%20Memory/Skills%2C%20Tools%2C%20and%20Capability%20Management.html">Skills, Tools, and Capability Management</a>, and <a href="/ai/05%20Protocols%20and%20Tools/MCP.html">MCP</a>. Use <a href="/ai/09%20Playbooks/Prompt%20Template.html">Prompt Template</a>.</p>
 <p>Exercise: initialize a small project with a PRD, repository instruction file, and behavior/style profile; then design one typed read-only tool and one skill that teaches when to use it, stating permissions, effort level, output contract, and stop conditions.</p>
 <h2>Unit 3 — Context, retrieval, and memory (~10–12h)</h2>
-<p>Read <a href="../03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a>, <a href="../03%20Context%20Knowledge%20Memory/Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a>, <a href="../03%20Context%20Knowledge%20Memory/RAG.html">RAG</a>, and <a href="../03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills</a>. Use <a href="../09%20Playbooks/Context%20Checklist.html">Context Checklist</a> and <a href="../09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a>.</p>
+<p>Read <a href="/ai/03%20Context%20Knowledge%20Memory/Context%20Engineering.html">Context Engineering</a>, <a href="/ai/03%20Context%20Knowledge%20Memory/Large%20Project%20Navigation%20and%20Context%20Scaling.html">Large Project Navigation and Context Scaling</a>, <a href="/ai/03%20Context%20Knowledge%20Memory/RAG.html">RAG</a>, and <a href="/ai/03%20Context%20Knowledge%20Memory/Memory%20and%20Skills.html">Memory and Skills</a>. Use <a href="/ai/09%20Playbooks/Context%20Checklist.html">Context Checklist</a> and <a href="/ai/09%20Playbooks/RAG%20Design%20Worksheet.html">RAG Design Worksheet</a>.</p>
 <p>Exercise: build a one-page project map and targeted context packet, then create a tiny retrieval set, inspect source coverage and a wrong chunk, and decide whether each durable item belongs in RAG, memory, or a skill.</p>
 <h2>Unit 4 — Agents and execution (~10–12h)</h2>
-<p>Read <a href="../02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a>, <a href="../02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>, <a href="../02%20Agents%20and%20Harnesses/Planning%20State%20and%20Persistence.html">Planning State and Persistence</a>, <a href="../02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a>, and <a href="../02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a>.</p>
+<p>Read <a href="/ai/02%20Agents%20and%20Harnesses/What%20Is%20an%20Agent.html">What Is an Agent</a>, <a href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a>, <a href="/ai/02%20Agents%20and%20Harnesses/Planning%20State%20and%20Persistence.html">Planning State and Persistence</a>, <a href="/ai/02%20Agents%20and%20Harnesses/Sandboxing%20Infrastructure.html">Sandboxing Infrastructure</a>, and <a href="/ai/02%20Agents%20and%20Harnesses/Computer-Use%20and%20Browser%20Agents.html">Computer-Use and Browser Agents</a>.</p>
 <p>Exercise: implement or diagram <code>observe → decide → act → observe</code> around a read-only calculator, then add an approval gate and a disposable execution boundary.</p>
 <h2>Unit 5 — Multimodality (~8–10h)</h2>
-<p>Read <a href="../02%20Agents%20and%20Harnesses/Voice%20and%20Audio%20Agents.html">Voice and Audio Agents</a> and <a href="../02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a>.</p>
+<p>Read <a href="/ai/02%20Agents%20and%20Harnesses/Voice%20and%20Audio%20Agents.html">Voice and Audio Agents</a> and <a href="/ai/02%20Agents%20and%20Harnesses/Vision%20and%20Multimodal%20Input%20Engineering.html">Vision and Multimodal Input Engineering</a>.</p>
 <p>Exercise: map a voice or screenshot task into capture, interpretation, verification, and action; mark where noisy input must become a confirmation.</p>
 <blockquote>
 <p><strong>Skip if:</strong> Your agents are text-only and will remain so; voice and vision can be deferred.</p>
 </blockquote>
 <h2>Unit 6 — Workflows and agent teams (~10–12h)</h2>
-<p>Read <a href="../04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns</a>, <a href="../04%20Workflows%20and%20Orchestration/Orchestration%20Hub.html">Orchestration Hub</a>, <a href="../04%20Workflows%20and%20Orchestration/Multi-Agent%20Systems.html">Multi-Agent Systems</a>, and <a href="../04%20Workflows%20and%20Orchestration/Agent%20Democracies.html">Agent Democracies</a>. Use <a href="../09%20Playbooks/Mode%20and%20Topology%20Selector.html">Mode and Topology Selector</a>.</p>
+<p>Read <a href="/ai/04%20Workflows%20and%20Orchestration/Workflow%20Patterns.html">Workflow Patterns</a>, <a href="/ai/04%20Workflows%20and%20Orchestration/Orchestration%20Hub.html">Orchestration Hub</a>, <a href="/ai/04%20Workflows%20and%20Orchestration/Multi-Agent%20Systems.html">Multi-Agent Systems</a>, and <a href="/ai/04%20Workflows%20and%20Orchestration/Agent%20Democracies.html">Agent Democracies</a>. Use <a href="/ai/09%20Playbooks/Mode%20and%20Topology%20Selector.html">Mode and Topology Selector</a>.</p>
 <p>Exercise: express one task as a deterministic workflow, one bounded agent loop, and a supervisor-plus-specialists team; explain why the simplest adequate version wins.</p>
 <h2>Unit 7 — Protocols and ecosystem (~8–10h)</h2>
-<p>Read <a href="../05%20Protocols%20and%20Tools/Agent%20Protocols.html">Agent Protocols</a> and <a href="../08%20Tool%20Landscape/Tool%20Landscape%20Hub.html">Tool Landscape Hub</a>.</p>
+<p>Read <a href="/ai/05%20Protocols%20and%20Tools/Agent%20Protocols.html">Agent Protocols</a> and <a href="/ai/08%20Tool%20Landscape/Tool%20Landscape%20Hub.html">Tool Landscape Hub</a>.</p>
 <p>Exercise: classify an integration as model, tool, skill, MCP server, agent, client, protocol, or orchestration runtime; identify the identity and permission boundary.</p>
 <blockquote>
 <p><strong>Skip if:</strong> You are building a single-agent system without external tool servers; revisit when adding integrations.</p>
 </blockquote>
 <h2>Unit 8 — Resource engineering (~8–10h)</h2>
-<p>Read <a href="../07%20Operations%20and%20Economics/Local%20Subscription%20API.html">Local Subscription API</a> and <a href="../07%20Operations%20and%20Economics/Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a>.</p>
+<p>Read <a href="/ai/07%20Operations%20and%20Economics/Local%20Subscription%20API.html">Local Subscription API</a> and <a href="/ai/07%20Operations%20and%20Economics/Latency%20and%20Cost%20Engineering.html">Latency and Cost Engineering</a>.</p>
 <p>Exercise: give an agent a token, tool-call, runtime, subagent, and dollar budget; make a routing rule that sends easy work to cheaper execution.</p>
 <blockquote>
 <p><strong>Skip if:</strong> You are prototyping on a single API key with no cost concerns yet; return before going to production.</p>
 </blockquote>
 <h2>Unit 9 — Evaluation, operations, and governance (~10–12h)</h2>
-<p>Read <a href="../06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a>, <a href="../06%20Reliability%20and%20Security/Observability.html">Observability</a>, <a href="../07%20Operations%20and%20Economics/Deployment%20and%20AgentOps.html">Deployment and AgentOps</a>, <a href="../06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>, and <a href="../06%20Reliability%20and%20Security/Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a>.</p>
+<p>Read <a href="/ai/06%20Reliability%20and%20Security/Evaluation%20Engineering.html">Evaluation Engineering</a>, <a href="/ai/06%20Reliability%20and%20Security/Observability.html">Observability</a>, <a href="/ai/07%20Operations%20and%20Economics/Deployment%20and%20AgentOps.html">Deployment and AgentOps</a>, <a href="/ai/06%20Reliability%20and%20Security/Security%20and%20Jailbreaking.html">Security and Jailbreaking</a>, and <a href="/ai/06%20Reliability%20and%20Security/Human%20Oversight%20and%20Trust%20Engineering.html">Human Oversight and Trust Engineering</a>.</p>
 <p>Exercise: create five trajectory tests, one prompt-injection test, a trace schema, a staged rollout, and a human approval policy for one consequential action.</p>
 <h2>Unit 10 — Adaptation and capstone (~12–15h)</h2>
-<p>Read <a href="../01%20Foundations/Fine-Tuning%20Decision%20Framework.html">Fine-Tuning Decision Framework</a>, then use <a href="../09%20Playbooks/Learning%20Projects.html">Learning Projects</a>, <a href="../11%20Glossary%20and%20Sources/Pattern%20Catalog.html">Pattern Catalog</a>, and <a href="../12%20Templates/Template%20Library.html">Template Library</a>.</p>
+<p>Read <a href="/ai/01%20Foundations/Fine-Tuning%20Decision%20Framework.html">Fine-Tuning Decision Framework</a>, then use <a href="/ai/09%20Playbooks/Learning%20Projects.html">Learning Projects</a>, <a href="/ai/11%20Glossary%20and%20Sources/Pattern%20Catalog.html">Pattern Catalog</a>, and <a href="/ai/12%20Templates/Template%20Library.html">Template Library</a>.</p>
 <p>Build a bounded research or automation agent with evidence, structured outputs, capability scoping, a disposable sandbox, approvals, traces, evaluation cases, cost limits, and a written rollback/incident response plan. Use the template library to document each artifact.</p>
 <hr>
 <blockquote>
-<p><strong>← <a href="../">AI_Home</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Full%20Table%20of%20Contents.html">Full Table of Contents</a> →</strong></p>
+<p><strong>← <a href="/ai/">AI_Home</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/00%20Start%20Here/Full%20Table%20of%20Contents.html">Full Table of Contents</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><span></span><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Full%20Table%20of%20Contents.html">Full Table of Contents →</a></nav>
+<nav class="bar" id="section-nav"><span></span><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/00%20Start%20Here/Full%20Table%20of%20Contents.html">Full Table of Contents →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 00 Start Here/AI Engineering Curriculum.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>

@@ -4,12 +4,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Agent responsiveness and unit economics improve by reducing tokens and calls, caching stable prefixes, routing work to the cheapest adequate model, parallelizin">
 <title>Latency and cost engineering — AI Engineering</title>
-<link rel="stylesheet" href="../ai.css">
+<link rel="stylesheet" href="/ai/ai.css">
 </head><body>
+<header class="topbar">
+  <span class="brand"><span class="brand-dot"></span>AYUMAD/AI</span>
+  <span class="crumbs">~/ai/07 Operations and Economics/Latency and Cost Engineering</span>
+  <span id="status">66 notes · <b>public</b></span>
+</header>
+<div class="page">
 <main>
-<article>
-<h1>Latency and cost engineering</h1>
-<div class="meta"><span>evergreen</span><span>updated 2026-08-27</span><span>ai-engineering, latency, cost, caching, routing</span></div>
+<article class="md">
+<h1 class="crt-title">Latency and cost engineering</h1>
+<div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, latency, cost, caching, routing</span></div>
 <h1>Latency and cost engineering</h1>
 <blockquote>
 <p>[!summary] The gist
@@ -32,8 +38,8 @@ Latency and cost engineering treats response time and spending as explicit desig
 <h2>Mechanisms with evidence</h2>
 <ul>
 <li><strong>Speculative decoding (Leviathan et al. 2022):</strong> a draft model proposes tokens and the target verifies them in parallel, raising tokens/s <strong>without changing the output distribution</strong>—a pure latency lever for decode-bound agents.</li>
-<li><strong>Prompt caching:</strong> stable prefixes (system prompt, tool schemas, examples) are processed once and reused; cacheable prefixes belong <em>before</em> volatile conversation and retrieval context (Anthropic 2025; coordinates with <a href="../01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a>).</li>
-<li><strong>Quantization and MoE:</strong> fewer bytes per weight (<a href="../01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>) and routing to active experts cut per-token cost at the platform layer.</li>
+<li><strong>Prompt caching:</strong> stable prefixes (system prompt, tool schemas, examples) are processed once and reused; cacheable prefixes belong <em>before</em> volatile conversation and retrieval context (Anthropic 2025; coordinates with <a href="/ai/01%20Foundations/Context%20Windows%20and%20Inference.html">Context Windows and Inference</a>).</li>
+<li><strong>Quantization and MoE:</strong> fewer bytes per weight (<a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a>) and routing to active experts cut per-token cost at the platform layer.</li>
 <li><strong>Route by difficulty:</strong> classification and extraction go to small/cheap models; ambiguous decisions to frontier reasoning—the default pattern in OpenAI&#39;s agent guide and Huyen&#39;s routing treatment.</li>
 </ul>
 <h2>Worked cost model</h2>
@@ -88,15 +94,16 @@ Latency and cost engineering treats response time and spending as explicit desig
 <li>GingerLabs pricing — <a href="https://www.gingerlabs.ai/resources/cloud-gpu-pricing">https://www.gingerlabs.ai/resources/cloud-gpu-pricing</a> — GPU pricing snapshots.</li>
 </ul>
 <p>All links verified 2026-08-27.</p>
-<p><a href="../01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a> · <a href="../02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a> · <a href="../06%20Reliability%20and%20Security/Observability.html">Observability</a></p>
+<p><a href="/ai/01%20Foundations/Local%20AI%20Hardware%20and%20Inference.html">Local AI Hardware and Inference</a> · <a href="/ai/02%20Agents%20and%20Harnesses/Agent%20Harness.html">Agent Harness</a> · <a href="/ai/06%20Reliability%20and%20Security/Observability.html">Observability</a></p>
 <hr>
 <blockquote>
-<p><strong>← <a href="./Operations%20and%20Economics%20Hub.html">Operations and Economics Hub</a></strong> · <strong><a href="../">Home</a></strong> · <strong><a href="./Local%20Subscription%20API.html">Local Subscription API</a> →</strong></p>
+<p><strong>← <a href="/ai/07%20Operations%20and%20Economics/Operations%20and%20Economics%20Hub.html">Operations and Economics Hub</a></strong> · <strong><a href="/ai/">Home</a></strong> · <strong><a href="/ai/07%20Operations%20and%20Economics/Local%20Subscription%20API.html">Local Subscription API</a> →</strong></p>
 </blockquote>
 
 </article>
 
-<nav class="bar" id="section-nav"><a rel="prev" href="./Operations%20and%20Economics%20Hub.html">← Operations and Economics Hub</a><span class="sep">·</span><a href="../">Home</a><span class="sep">·</span><a rel="next" href="./Local%20Subscription%20API.html">Local Subscription API →</a></nav>
+<nav class="bar" id="section-nav"><a rel="prev" href="/ai/07%20Operations%20and%20Economics/Operations%20and%20Economics%20Hub.html">← Operations and Economics Hub</a><span class="sep">·</span><a rel="home" href="/ai/">Home</a><span class="sep">·</span><a rel="next" href="/ai/07%20Operations%20and%20Economics/Local%20Subscription%20API.html">Local Subscription API →</a></nav>
 </main>
-<footer>Part of <a href="https://ayumad.me">ayumad.me</a> — AI Engineering curriculum, mirrored from the Obsidian vault · <a href="./">index</a></footer>
+</div>
+<footer><span class="ps">❯</span><span class="foot-path">cat 07 Operations and Economics/Latency and Cost Engineering.md</span><a href="/ai/">index</a><a href="https://ayumad.me">ayumad.me</a></footer>
 </body></html>
