@@ -252,7 +252,14 @@ function renderTreeIndex() {
 }
 
 function pageHtml(r) {
-  const bodyHtml = marked.parse(resolveWikilinks(r.body, r.rel), { gfm: true, breaks: false });
+  // The emitted <h1> below already comes from the body's first H1 (see title
+  // derivation) — drop that heading from the body so titles never render twice.
+  let bodyText = r.body.replace(/^\n+/, "");
+  const h1m = /^#\s+(.+?)\s*$/m.exec(bodyText);
+  if (h1m && h1m[1].trim() === r.title) {
+    bodyText = bodyText.replace(/^#\s+[^\n]*\n?/, "").replace(/^\n+/, "");
+  }
+  const bodyHtml = marked.parse(resolveWikilinks(bodyText, r.rel), { gfm: true, breaks: false });
   const prev = r.meta.prev ? resolveTarget(r.meta.prev) : null;
   const next = r.meta.next ? resolveTarget(r.meta.next) : null;
   const nav = [

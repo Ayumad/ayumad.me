@@ -16,7 +16,6 @@
 <article class="md">
 <h1 class="crt-title">Agents and harnesses</h1>
 <div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, agents, harnesses, map-of-content</span></div>
-<h1>Agents and harnesses</h1>
 <h2>Why the distinction matters</h2>
 <p>The model (the &quot;brain&quot;) is only one component. Two teams can ship the same model with wildly different reliability, cost, and safety profiles depending on how they build the harness—the context manager, tool router, planner, retry logic, sandbox, and approval gates that surround it. Anthropic&#39;s production surveys found that the most successful agents use simple, composable harness patterns; the complexity lives in the runtime, not the prompt. Understanding where the agent loop ends and the harness begins lets you diagnose failures precisely: a wrong answer may be a prompt problem, but a dropped tool call, an un-retried timeout, or an un-sandboxed side effect is a harness problem.</p>
 <p>The child notes below explore the trade-offs at each layer of this stack.</p>

@@ -16,7 +16,6 @@
 <article class="md">
 <h1 class="crt-title">Latency and cost engineering</h1>
 <div class="fm"><span><b>status</b> evergreen</span><span><b>updated</b> 2026-08-27</span><span><b>tags</b> ai-engineering, latency, cost, caching, routing</span></div>
-<h1>Latency and cost engineering</h1>
 <blockquote>
 <p>[!summary] The gist
 Latency and cost engineering treats response time and spending as explicit design constraints. An agent&#39;s wait time adds up from queueing, prompt construction, model decoding, tool calls, retries, and synthesis — and cost follows the same path. This note covers the controls that matter most: generating fewer tokens, caching stable prefixes, routing by difficulty, parallelizing independent work, and streaming. It walks through budget mechanics, a worked cost model showing 89% savings from prompt caching, gateway routing with LiteLLM and OpenRouter, batch inference discounts, and per-request token budgets that keep autonomous runs from spiraling.</p>
