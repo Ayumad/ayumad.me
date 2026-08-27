@@ -280,19 +280,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:14
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:5px;border:2px solid var(--bg)}
 ::-webkit-scrollbar-track{background:transparent}
 
-/* ---------- CRT atmosphere (same as vault) ---------- */
-body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0px,rgba(0,0,0,.14) 1px,transparent 1px,transparent 4px);
-  animation:scanlines 12s linear infinite;mix-blend-mode:multiply}
-body::after{content:"";position:fixed;inset:-100%;z-index:998;pointer-events:none;opacity:.05;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  animation:grain 7s steps(10) infinite}
-@keyframes scanlines{from{background-position:0 0}to{background-position:0 100%}}
-@keyframes grain{0%,100%{transform:translate(0)}10%{transform:translate(-5%,-5%)}20%{transform:translate(-10%,5%)}30%{transform:translate(5%,-10%)}40%{transform:translate(-5%,15%)}50%{transform:translate(-10%,5%)}60%{transform:translate(15%)}70%{transform:translateY(10%)}80%{transform:translate(-15%)}90%{transform:translate(10%,5%)}}
-@keyframes flicker{0%,100%{opacity:1}48%{opacity:.985}50%{opacity:.96}52%{opacity:.99}}
-.crt-title{animation:flicker 4s infinite}
+/* ---------- CRT atmosphere removed (2026-08-27): no scanlines/grain overlays.
+   Kept: dark terminal tokens, mono stack, phos/cyan accents — the visual style. */
+
 @media (prefers-reduced-motion: reduce){
-  body::before,body::after,.crt-title{animation:none}
   *{transition:none!important}
 }
 
