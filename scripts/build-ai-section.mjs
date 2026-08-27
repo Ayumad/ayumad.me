@@ -406,7 +406,7 @@ footer a:hover{color:var(--phos)}
   .tb-btn{padding:3px 6px;font-size:10.5px}
   .tb-search{min-width:100px;max-width:130px}
 }
-@media print{body::before,body::after,.topbar,footer{display:none}body{background:#fff;color:#000}.page{max-width:none}}`;
+@media print{body{background:#fff;color:#000}.page{max-width:none}.topbar,footer{display:none}}`;
 
 function renderTreeIndex() {
   // folder → [notes in reading order (folder-major, title order)]
