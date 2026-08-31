@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-08-30",
+  "summary": "Session journal for 2026-08-30: school snapshot tool, Canvas calendar discovery, task rescheduling, cron sync failures.",
+  "highlights": [
+   "**School snapshot tool landed.** \"todo school\" now pulls all 66 Canvas assignments from the school calendar import — no Canvas API token needed. Semester arc visible at a glance.",
+   "**Google Tasks housekeeping.** 6 tasks pushed to Sep 3; clean slate for the weekend.",
+   "**Reminders sync is broken.** The Apple↔Google Tasks sync cron failed ~95% of the day. Only one successful run at 9:15 PM. Needs root-cause investigation."
+  ]
+ },
+ {
   "date": "2026-08-29",
   "summary": "Session journal for 2026-08-29: quiet day — routine cron only, no user sessions, Reminders sync intermittently failing again.",
   "highlights": [
