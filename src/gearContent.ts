@@ -152,5 +152,6 @@ export const gearCategories = fullGearCategories
     ...category,
     items: category.items
       .filter((item) => !excludedPublicItems.has(item.name))
-      .map((item) => publicItemOverrides.get(item.name) ?? item),
+      .map((item) => publicItemOverrides.get(item.name) ?? item)
+      .sort((left, right) => left.name.localeCompare(right.name)),
   }));
