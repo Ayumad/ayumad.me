@@ -1446,6 +1446,15 @@ main {
     var(--surface);
 }
 
+.art-gear {
+  --art: var(--cyan);
+  background:
+    linear-gradient(90deg, transparent 49.7%, color-mix(in srgb, var(--cyan) 12%, transparent) 50%, transparent 50.3%) 0 0 / 28px 28px,
+    linear-gradient(0deg, transparent 49.7%, color-mix(in srgb, var(--cyan) 12%, transparent) 50%, transparent 50.3%) 0 0 / 28px 28px,
+    radial-gradient(circle, color-mix(in srgb, var(--violet) 38%, transparent) 0 0.65px, transparent 0.9px) 0 0 / 7px 7px,
+    var(--surface);
+}
+
 .art-now {
   background:
     repeating-linear-gradient(
@@ -1828,11 +1837,26 @@ main {
   gap: 48px;
 }
 
+.gear-category-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
 .gear-category h2 {
-  margin: 0 0 20px;
+  margin: 0;
   font: 900 clamp(1.5rem, 3vw, 2.5rem)/1 var(--mono);
   letter-spacing: -0.06em;
   text-transform: uppercase;
+}
+
+.gear-category-heading span {
+  color: var(--muted);
+  font: 600 0.6rem/1 var(--mono);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .gear-table {
@@ -1886,6 +1910,16 @@ main {
   color: var(--cyan);
 }
 
+.gear-status-lent,
+.gear-status-stored {
+  color: var(--muted);
+}
+
+.gear-status-available,
+.gear-status-sale-planned {
+  color: var(--violet);
+}
+
 .gear-status-archived {
   color: var(--muted);
 }
@@ -1920,6 +1954,20 @@ main {
   margin: 24px 0 0;
   color: var(--soft);
   line-height: 1.55;
+}
+
+.gear-detail-note {
+  max-width: 78ch;
+  margin: 0 0 38px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 68%, transparent);
+}
+
+.gear-detail-note > p:last-child {
+  margin: 24px 0 0;
+  color: var(--soft);
+  line-height: 1.65;
 }
 
 .gear-detail-status {

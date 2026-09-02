@@ -6,6 +6,7 @@ export type AsciiSceneName =
   | "work"
   | "projects"
   | "systems"
+  | "gear"
   | "now"
   | "about"
   | "contact";
@@ -224,6 +225,38 @@ function renderSystems(frame: number) {
   return buffer;
 }
 
+function renderGear(frame: number) {
+  const buffer = createBuffer();
+  const packet = (frame % 72) / 71;
+  const selection = Math.floor(frame / 9) % 4;
+  const stations = [
+    { left: 1, top: 3, right: 15, bottom: 8, label: "DESK", detail: "5080 / OLED" },
+    { left: 32, top: 3, right: 46, bottom: 8, label: "FIELD", detail: "M4 / X100VI" },
+    { left: 1, top: 14, right: 15, bottom: 19, label: "HOME", detail: "P520 / ZFS" },
+    { left: 32, top: 14, right: 46, bottom: 19, label: "PLAY", detail: "DECK / SWITCH" },
+  ];
+
+  write(buffer, 17, 1, "LOADOUT");
+  write(buffer, 19, 3, "97 CORE");
+  write(buffer, 17, 20, "FIELD NOTES");
+  stations.forEach((station, index) => {
+    box(buffer, station.left, station.top, station.right, station.bottom, station.label);
+    write(buffer, station.left + Math.max(1, Math.floor((station.right - station.left - station.detail.length) / 2)), station.bottom - 1, station.detail);
+    if (index === selection) put(buffer, station.left + 1, station.top + 1, "●");
+  });
+  line(buffer, { x: 15, y: 5 }, { x: 20, y: 5 }, "─");
+  line(buffer, { x: 28, y: 5 }, { x: 32, y: 5 }, "─");
+  line(buffer, { x: 15, y: 16 }, { x: 20, y: 16 }, "─");
+  line(buffer, { x: 28, y: 16 }, { x: 32, y: 16 }, "─");
+  line(buffer, { x: 24, y: 6 }, { x: 24, y: 15 }, "│");
+  movingPoint(buffer, { x: 16, y: 5 }, { x: 31, y: 16 }, packet, "◆");
+  movingPoint(buffer, { x: 31, y: 16 }, { x: 16, y: 5 }, 1 - packet, "○");
+  write(buffer, 21, 10, "KEEP");
+  write(buffer, 21, 12, "TUNE");
+  addDither(buffer, frame);
+  return buffer;
+}
+
 function renderNow(frame: number) {
   const buffer = createBuffer();
   const active = spinner[Math.floor(frame / 4) % spinner.length];
@@ -316,6 +349,7 @@ const renderers: Record<AsciiSceneName, (frame: number) => Buffer> = {
   work: renderWork,
   projects: renderProjects,
   systems: renderSystems,
+  gear: renderGear,
   now: renderNow,
   about: renderAbout,
   contact: renderContact,

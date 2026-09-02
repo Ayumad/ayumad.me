@@ -75,12 +75,16 @@ describe("Ayumad.me", () => {
   it("renders Gear and the merged About contact section", () => {
     renderAt("/gear");
     expect(screen.getByRole("heading", { name: "Gear" })).toBeInTheDocument();
-    expect(screen.getByText("Mac mini")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open Mac mini gear page" })).toHaveAttribute("href", "/gear/computers-mac-mini");
+    expect(screen.getByText("28 products")).toBeInTheDocument();
+    expect(screen.queryByText("Accessories & Network")).not.toBeInTheDocument();
+    expect(screen.getByText("Apple Mac mini (M4, 2024)")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open Apple Mac mini (M4, 2024) gear page" })).toHaveAttribute("href", "/gear/computers-apple-mac-mini-m4-2024");
+    expect(document.querySelector('[data-ascii-scene="gear"]')).toBeInTheDocument();
 
-    renderAt("/gear/computers-mac-mini");
-    expect(screen.getByRole("heading", { name: "Mac mini" })).toBeInTheDocument();
-    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Always-on Hermes server, Tailscale node");
+    renderAt("/gear/computers-apple-mac-mini-m4-2024");
+    expect(screen.getByRole("heading", { name: "Apple Mac mini (M4, 2024)" })).toBeInTheDocument();
+    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Hermes client / daily workstation");
+    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("machine Hermes runs from today");
     expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes");
 
     renderAt("/about");

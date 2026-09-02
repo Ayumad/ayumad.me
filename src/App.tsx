@@ -161,7 +161,7 @@ function RouteEffects() {
   const meta = post
     ? { title: `${post.title} — Ayumad.me`, description: post.summary }
     : gear
-      ? { title: `${gear.item.name} — Gear — Ayumad.me`, description: `${gear.item.name}: ${gear.item.role}.` }
+      ? { title: `${gear.item.name} — Gear — Ayumad.me`, description: `${gear.item.name}: ${gear.item.role ?? gear.item.note}` }
     : pageMeta[location.pathname] ?? {
         title: "Not found — Ayumad.me",
         description: "The requested page could not be found.",
@@ -448,14 +448,14 @@ function HermesPage() {
 }
 
 function GearPage() {
-  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description="The devices, speakers, cameras, and tools I use." scene="about" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><h2>{category.category}</h2><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={`${category.category}-${item.name}`}><Link className="gear-name" to={`/gear/${gearSlug(category.category, item.name)}`} aria-label={`Open ${item.name} gear page`}>{item.name}</Link><span className="gear-role">{item.role}</span><span className={`gear-status gear-status-${item.status}`}>{item.status}</span></div>)}</div></motion.section>)}</div></section>;
+  const productCount = gearCategories.reduce((count, category) => count + category.items.length, 0);
+  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description={`A working index of the ${productCount} core devices and tools in my loadout. I leave smaller accessories and network hardware out; open a field note for the role, configuration, or reason each system stays.`} scene="gear" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><div className="gear-category-heading"><h2>{category.category}</h2><span>{category.items.length} products</span></div><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={`${category.category}-${item.name}`}><Link className="gear-name" to={`/gear/${gearSlug(category.category, item.name)}`} aria-label={`Open ${item.name} gear page`}>{item.name}</Link><span className="gear-role">{item.role ?? "Open field note"}</span><span className={`gear-status gear-status-${item.status}`}>{item.status.replace("-", " ")}</span></div>)}</div></motion.section>)}</div></section>;
 }
 
 const relatedGearPages: Record<string, { label: string; to: string }[]> = {
-  [gearSlug("Computers", "Mac mini")]: [{ label: "Read the Hermes case study", to: "/projects/hermes" }],
-  [gearSlug("Computers", "ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
-  [gearSlug("Computers", "Panasonic CF-SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
-  [gearSlug("Software", "Hermes Agent")]: [{ label: "Open the Hermes case study", to: "/projects/hermes" }],
+  [gearSlug("Computers", "Apple Mac mini (M4, 2024)")]: [{ label: "Read the Hermes case study", to: "/projects/hermes" }],
+  [gearSlug("Computers", "Lenovo ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
+  [gearSlug("Computers", "Panasonic Let's Note SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
 };
 
 function GearDetailPage() {
@@ -463,7 +463,7 @@ function GearDetailPage() {
   const gear = slug ? findGearItem(slug) : undefined;
   if (!gear) return <NotFoundPage />;
   const related = relatedGearPages[gearSlug(gear.category, gear.item.name)] ?? [];
-  return <section className="section-shell page-section gear-detail-page"><Link className="article-back" to="/gear">← All gear</Link><SectionHeading index="02 / GEAR" label={gear.category} title={gear.item.name} description={gear.item.role} scene="about" /><div className="gear-detail-grid"><div><p className="label">Status</p><p className={`gear-detail-status gear-status-${gear.item.status}`}>{gear.item.status}</p></div><div><p className="label">Category</p><p>{gear.category}</p></div><div><p className="label">Related pages</p>{related.length ? <ul className="gear-related-links">{related.map((link) => <li key={link.to}><Link className="text-link" to={link.to}>{link.label} ↗</Link></li>)}</ul> : <p className="gear-detail-muted">No dedicated notes yet.</p>}</div></div><Link className="button" to="/gear">Back to Gear</Link></section>;
+  return <section className="section-shell page-section gear-detail-page"><Link className="article-back" to="/gear">← All gear</Link><SectionHeading index="02 / GEAR" label={gear.category} title={gear.item.name} description={gear.item.role ?? gear.item.note} scene="gear" /><div className="gear-detail-grid"><div><p className="label">Status</p><p className={`gear-detail-status gear-status-${gear.item.status}`}>{gear.item.status.replace("-", " ")}</p></div><div><p className="label">Category</p><p>{gear.category}</p></div><div><p className="label">Related pages</p>{related.length ? <ul className="gear-related-links">{related.map((link) => <li key={link.to}><Link className="text-link" to={link.to}>{link.label} ↗</Link></li>)}</ul> : <p className="gear-detail-muted">No dedicated notes yet.</p>}</div></div><article className="gear-detail-note"><p className="label">Field note</p><p>{gear.item.note}</p></article><Link className="button" to="/gear">Back to Gear</Link></section>;
 }
 
 function JournalPage() {

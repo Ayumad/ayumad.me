@@ -1,3 +1,5 @@
+import { gearCategories as loadoutCategories } from "./gearContent";
+
 export type ProjectStatus = "completed" | "in-progress" | "planned";
 
 export interface NavItem {
@@ -43,8 +45,9 @@ export interface HermesSection {
 
 export interface GearItem {
   name: string;
-  role: string;
-  status: "active" | "archived" | "sold";
+  note: string;
+  role?: string;
+  status: "active" | "available" | "lent" | "sale-planned" | "stored";
 }
 
 export interface GearCategory {
@@ -336,69 +339,7 @@ export const hermesSections: HermesSection[] = [
   },
 ];
 
-export const gearCategories: GearCategory[] = [
-  {
-    category: "Computers",
-    items: [
-      { name: "Mac mini", role: "Always-on Hermes server, Tailscale node", status: "active" },
-      { name: "ThinkStation P520", role: "Proxmox host, ZFS storage, GPU passthrough", status: "active" },
-      { name: "RTX 5080 Desktop", role: "Primary desktop, 4K OLED, gaming", status: "active" },
-      { name: "Zephyrus G14", role: "Portable, RTX 5070 Ti", status: "active" },
-      { name: "Panasonic CF-SV1", role: "Arch Linux + Hyprland daily driver", status: "active" },
-      { name: "Lenovo X220t", role: "NixOS learning machine", status: "active" },
-    ],
-  },
-  {
-    category: "Audio — Desktop",
-    items: [
-      { name: "WiiM Ultra", role: "Network streamer / DAC", status: "active" },
-      { name: "Aiyima ZA3", role: "Desktop amplifier", status: "active" },
-      { name: "KEF Q150", role: "Desktop speakers (pair)", status: "active" },
-      { name: "SVS SB-1000 Pro", role: "Desktop subwoofer", status: "active" },
-      { name: "FiiO K13 R2R", role: "Headphone DAC/amp", status: "active" },
-    ],
-  },
-  {
-    category: "Audio — Living Room",
-    items: [
-      { name: "Yamaha RX-V677", role: "AV receiver", status: "active" },
-      { name: "KEF Q150", role: "Living room speakers (pair)", status: "active" },
-      { name: "SVS Kube 12b", role: "Living room subwoofer", status: "active" },
-    ],
-  },
-  {
-    category: "Headphones & IEMs",
-    items: [
-      { name: "Moondrop Dusk", role: "IEM — reference tuning", status: "active" },
-      { name: "Moondrop Daybreak", role: "IEM — comparison", status: "active" },
-      { name: "Truthear Zero:RED", role: "IEM — budget reference", status: "active" },
-    ],
-  },
-  {
-    category: "Cameras",
-    items: [
-      { name: "Fujifilm X-T4", role: "Primary camera, 18-55mm kit", status: "active" },
-      { name: "Fujifilm X100VI", role: "Compact carry camera", status: "active" },
-    ],
-  },
-  {
-    category: "Networking",
-    items: [
-      { name: "Tailscale", role: "Mesh VPN — all devices connected", status: "active" },
-      { name: "Ubiquiti", role: "Router / AP", status: "active" },
-    ],
-  },
-  {
-    category: "Software",
-    items: [
-      { name: "Obsidian", role: "Git-backed knowledge vault", status: "active" },
-      { name: "Proxmox VE", role: "Hypervisor on P520", status: "active" },
-      { name: "Arch Linux", role: "Daily driver on CF-SV1", status: "active" },
-      { name: "NixOS", role: "Learning on X220t", status: "active" },
-      { name: "Hermes Agent", role: "AI agent — daily ops", status: "active" },
-    ],
-  },
-];
+export const gearCategories = loadoutCategories;
 
 export function gearSlug(category: string, name: string) {
   return `${category}-${name}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
