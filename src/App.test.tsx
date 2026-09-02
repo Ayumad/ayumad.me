@@ -75,8 +75,11 @@ describe("Ayumad.me", () => {
   it("renders Gear and the merged About contact section", () => {
     renderAt("/gear");
     expect(screen.getByRole("heading", { name: "Gear" })).toBeInTheDocument();
-    expect(screen.getByText("28 products")).toBeInTheDocument();
+    expect(screen.getByText("27 products")).toBeInTheDocument();
     expect(screen.queryByText("Accessories & Network")).not.toBeInTheDocument();
+    expect(screen.queryByText("AMD Radeon RX 6600 8 GB")).not.toBeInTheDocument();
+    expect(screen.queryByText("NVIDIA GeForce RTX 2060 6 GB")).not.toBeInTheDocument();
+    expect(screen.getByText("Engineering Desktop (Radeon RX 6600)")).toBeInTheDocument();
     expect(screen.getByText("Apple Mac mini (M4, 2024)")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open Apple Mac mini (M4, 2024) gear page" })).toHaveAttribute("href", "/gear/computers-apple-mac-mini-m4-2024");
     expect(document.querySelector('[data-ascii-scene="gear"]')).toBeInTheDocument();

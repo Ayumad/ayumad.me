@@ -237,7 +237,7 @@ function renderGear(frame: number) {
   ];
 
   write(buffer, 17, 1, "LOADOUT");
-  write(buffer, 19, 3, "97 CORE");
+  write(buffer, 19, 3, "96 CORE");
   write(buffer, 17, 20, "FIELD NOTES");
   stations.forEach((station, index) => {
     box(buffer, station.left, station.top, station.right, station.bottom, station.label);

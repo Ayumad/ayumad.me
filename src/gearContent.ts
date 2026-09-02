@@ -141,5 +141,16 @@ const fullGearCategories: GearCategory[] = [
 ];
 
 const excludedPublicCategories = new Set(["Accessories & Network"]);
+const excludedPublicItems = new Set(["NVIDIA GeForce RTX 2060 6 GB"]);
+const publicItemOverrides = new Map<string, GearItem>([
+  ["AMD Radeon RX 6600 8 GB", item("Engineering Desktop (Radeon RX 6600)", "The engineering desktop is built around the owned Radeon RX 6600 8 GB. Its NVMe, Windows reinstall, and SolidWorks/KiCad/LTspice setup are the next pass; the exact host chassis, CPU, and board partner still need a physical check.", "Engineering workstation")],
+]);
 
-export const gearCategories = fullGearCategories.filter(({ category }) => !excludedPublicCategories.has(category));
+export const gearCategories = fullGearCategories
+  .filter(({ category }) => !excludedPublicCategories.has(category))
+  .map((category) => ({
+    ...category,
+    items: category.items
+      .filter((item) => !excludedPublicItems.has(item.name))
+      .map((item) => publicItemOverrides.get(item.name) ?? item),
+  }));
