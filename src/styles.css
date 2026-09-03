@@ -12,8 +12,8 @@
   --secondary: var(--cyan);
   --violet: #777fc4;
   --ink: #020606;
-  --mono: "SF Mono", "SFMono-Regular", "Cascadia Mono", "Roboto Mono", "Courier New", monospace;
-  --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --display: var(--sans);
   --max: 1460px;
   --header: 72px;
