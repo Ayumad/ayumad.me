@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-09-02",
+  "summary": "Session journal for 2026-09-02: quiet day — routine cron only, one POLS 15 class, Reminders sync intermittent failures continue.",
+  "highlights": [
+   "**Quiet day** — one class, routine cron operations, no user-initiated Hermes sessions.",
+   "**Reminders sync** continues its intermittent failure pattern (~48 failures today across ~180 runs); the sync token issue is still unresolved.",
+   "**Six overdue tasks** remain from Aug 28–30 — hardware/setup tasks that may be blocked or reschedulable.",
+   "**No Codex activity** today."
+  ]
+ },
+ {
   "date": "2026-09-01",
   "summary": "Session journal for 2026-09-01: EchoSphere audit deep-dive (§11 viability sweep, company research §9, build plan PDF to Drive), Sketch3D iOS app (Swift + Apple Pencil Pro, Xcode install started).",
   "highlights": [
