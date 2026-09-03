@@ -10,6 +10,7 @@ export const nowEntries: NowEntry[] = [
     description:
       "Cleaning up the vault structure, restoring the plugin stack, and keeping the active knowledge layer separate from historical material.",
     detail: "Obsidian · Git · agent-defined structure",
+    projectSlug: "vault-refactor",
   },
   {
     label: "Building",
@@ -18,6 +19,7 @@ export const nowEntries: NowEntry[] = [
     description:
       "Running Hermes from a headless Mac mini with scheduled briefs, prompts, session notes, and multi-model routing.",
     detail: "Mac mini · Mnemosyne · Tailscale · OpenCode Go",
+    projectSlug: "hermes-agent",
   },
   {
     label: "Building",
@@ -26,6 +28,7 @@ export const nowEntries: NowEntry[] = [
     description:
       "Building a local-first signal workstation for CRT displays, oscilloscope views, media playback, and interactive test patterns.",
     detail: "Signal processing · browser media · EmulatorJS · local-first",
+    projectSlug: "crt-lab",
     link: { label: "Open CRT Lab live site", href: "https://crt-lab-xi.vercel.app/" },
   },
   {
@@ -35,6 +38,7 @@ export const nowEntries: NowEntry[] = [
     description:
       "Indexing the Obsidian vault so Hermes can answer questions from my own notes without exposing private material.",
     detail: "Python · RAG · Embeddings · Obsidian",
+    projectSlug: "rag-assistant",
   },
   {
     label: "Learning",
@@ -67,5 +71,6 @@ export const nowEntries: NowEntry[] = [
     description:
       "Exploring wake-word detection, local speech-to-text, and text-to-speech for a future Hermes interface.",
     detail: "Whisper · Piper · wake word · local inference",
+    projectSlug: "voice-assistant",
   },
 ];

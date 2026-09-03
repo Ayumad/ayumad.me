@@ -62,7 +62,11 @@ describe("Ayumad.me", () => {
     expect(screen.getAllByRole("heading", { name: "Hermes Agent" })).toHaveLength(2);
     expect(screen.getByRole("heading", { name: "The layers underneath" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "CRT Lab", level: 3 })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open CRT Lab live site ↗" })).toHaveAttribute("href", "https://crt-lab-xi.vercel.app/");
+    expect(screen.getByRole("link", { name: "Open My Obsidian Vault project" })).toHaveAttribute("href", "/projects/vault-refactor");
+    expect(screen.getByRole("link", { name: "Open Hermes Agent project" })).toHaveAttribute("href", "/projects/hermes-agent");
+    expect(screen.getByRole("link", { name: "Open CRT Lab project" })).toHaveAttribute("href", "/projects/crt-lab");
+    expect(screen.getByRole("link", { name: "Open RAG Assistant project" })).toHaveAttribute("href", "/projects/rag-assistant");
+    expect(screen.getByRole("link", { name: "Open Voice Assistant project" })).toHaveAttribute("href", "/projects/voice-assistant");
     expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "AI + Notes" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();

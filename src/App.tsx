@@ -440,7 +440,11 @@ function ProjectsPage() {
       <SectionHeading index="01" label="Projects" title="Projects" description="Current work, systems, and experiments in one place." scene="projects" />
       <section className="project-current" aria-labelledby="current-focus-title">
         <div className="section-title"><p className="label">Current focus</p><h2 id="current-focus-title">What I am working on</h2><p>Updated {nowUpdated}.</p></div>
-        <div className="now-list">{nowEntries.map((entry, index) => <motion.article className="now-row" key={entry.title} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><div className="now-end"><code>{entry.detail}</code>{entry.link ? <a className="now-link" href={entry.link.href} target="_blank" rel="noreferrer">{entry.link.label} ↗</a> : null}</div></motion.article>)}</div>
+        <div className="now-list">{nowEntries.map((entry, index) => {
+          const content = <><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><div className="now-end"><code>{entry.detail}</code>{entry.projectSlug ? <span className="now-project-link">View project <span aria-hidden="true">↗</span></span> : entry.link ? <a className="now-link" href={entry.link.href} target="_blank" rel="noreferrer">{entry.link.label} ↗</a> : null}</div></>;
+          const animation = { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.2 }, transition: { delay: index * 0.04 } };
+          return entry.projectSlug ? <motion.div key={entry.title} {...animation}><Link className="now-row now-row-link" to={`/projects/${entry.projectSlug}`} aria-label={`Open ${entry.title} project`}>{content}</Link></motion.div> : <motion.article className="now-row" key={entry.title} {...animation}>{content}</motion.article>;
+        })}</div>
       </section>
       <section className="projects-context" aria-labelledby="projects-context-title">
         <div className="section-title"><p className="label">Context</p><h2 id="projects-context-title">The areas underneath</h2><p>The old Work page belonged here all along: the projects make more sense when the surrounding systems stay visible.</p></div>

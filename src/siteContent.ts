@@ -77,6 +77,7 @@ export interface NowEntry {
   title: string;
   description: string;
   detail: string;
+  projectSlug?: string;
   link?: { label: string; href: string };
 }
 
