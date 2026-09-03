@@ -523,7 +523,7 @@ function NotFoundPage() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="footer-texture" aria-hidden="true">░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░</div><div className="section-shell footer-inner"><p>AYUMAD.ME</p><p>2026</p><a href="mailto:hello@ayumad.me">Email ↗</a></div></footer>;
+  return <footer className="site-footer"><div className="footer-texture" aria-hidden="true">░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░</div><div className="section-shell footer-inner"><p>AYUMAD.ME</p><p>2026</p><a href="mailto:Ayumadbro123@gmail.com">Email ↗</a></div></footer>;
 }
 
 function LegacyWriteupRedirect() {

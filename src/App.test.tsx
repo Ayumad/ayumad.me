@@ -95,8 +95,9 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Want to talk?" })).toBeInTheDocument();
     expect(screen.getByText(/moving from India to the US/i)).toBeInTheDocument();
     expect(document.querySelector(".contact-stack")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Emailhello@ayumad\.me/ })).toHaveAttribute("href", "mailto:hello@ayumad.me");
+    expect(screen.getByRole("link", { name: /EmailAyumadbro123@gmail\.com/ })).toHaveAttribute("href", "mailto:Ayumadbro123@gmail.com");
     expect(screen.getByRole("link", { name: /LinkedInin\/ayush-madhukar/ })).toHaveAttribute("href", "https://www.linkedin.com/in/ayush-madhukar-6021a0249/");
+    expect(screen.getByRole("link", { name: /X@Ayumadbro/ })).toHaveAttribute("href", "https://x.com/Ayumadbro");
     expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Genre mix" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Album Elo board" })).toBeInTheDocument();

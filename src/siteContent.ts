@@ -376,9 +376,10 @@ export const aboutContent: AboutContent = {
 };
 
 export const socialLinks: SocialLink[] = [
-  { label: "Email", href: "mailto:hello@ayumad.me", handle: "hello@ayumad.me" },
+  { label: "Email", href: "mailto:Ayumadbro123@gmail.com", handle: "Ayumadbro123@gmail.com" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ayush-madhukar-6021a0249/", handle: "in/ayush-madhukar", external: true },
   { label: "GitHub", href: "https://github.com/ayumad", handle: "@ayumad", external: true },
+  { label: "X", href: "https://x.com/Ayumadbro", handle: "@Ayumadbro", external: true },
 ];
 
 export const pageMeta: Record<string, { title: string; description: string }> = {
