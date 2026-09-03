@@ -6,7 +6,7 @@ stage: in-progress
 status_note: Personal system · active refactor
 year: 2026
 stack: Obsidian, Git, GitHub, Hermes
-order: 2
+order: 5
 ---
 
 ## Problem

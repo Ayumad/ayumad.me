@@ -4688,6 +4688,50 @@ main {
 }
 
 /* Project article overhaul */
+.project-status-jumps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: clamp(38px, 6vw, 72px) 0 18px;
+}
+
+.project-status-jumps a {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 0 14px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 64%, transparent);
+  color: var(--text);
+  text-decoration: none;
+  font: 700 0.66rem/1 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
+}
+
+.project-status-jumps a:hover,
+.project-status-jumps a:focus-visible {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 8%, var(--surface));
+  color: var(--cyan);
+}
+
+.project-status-jumps small {
+  color: var(--muted);
+  font: 600 0.58rem/1 var(--mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.project-status-jumps i {
+  color: var(--cyan);
+  font-style: normal;
+  font-size: 0.9rem;
+}
+
+.project-status-group { scroll-margin-top: 108px; }
 .project-status-overview {
   display: grid;
   margin: clamp(42px, 7vw, 86px) 0 18px;

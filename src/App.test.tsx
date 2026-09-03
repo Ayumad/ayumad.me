@@ -66,8 +66,13 @@ describe("Ayumad.me", () => {
     expect(projectArticles.filter((project) => project.stage === "deployed")).toHaveLength(5);
     expect(projectArticles.filter((project) => project.stage === "in-progress")).toHaveLength(5);
     expect(projectArticles.filter((project) => project.stage === "planned")).toHaveLength(2);
-    expect(screen.getAllByText("05 projects")).toHaveLength(2);
-    expect(screen.getByText("02 projects")).toBeInTheDocument();
+    const lifecycleNav = screen.getByRole("navigation", { name: "Project lifecycle sections" });
+    expect(within(lifecycleNav).getByRole("link", { name: /Jump to Deployed \/ Shipped projects/i })).toHaveAttribute("href", "#project-deployed");
+    expect(within(lifecycleNav).getByRole("link", { name: /Jump to In Progress projects/i })).toHaveAttribute("href", "#project-in-progress");
+    expect(within(lifecycleNav).getByRole("link", { name: /Jump to Planned projects/i })).toHaveAttribute("href", "#project-planned");
+    expect(document.getElementById("project-deployed")).toBeInTheDocument();
+    expect(document.getElementById("project-in-progress")).toBeInTheDocument();
+    expect(document.getElementById("project-planned")).toBeInTheDocument();
     projectArticles.forEach((project) => {
       expect(screen.getByRole("link", { name: `Read ${project.title} project article` })).toHaveAttribute(
         "href",

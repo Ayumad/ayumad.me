@@ -434,18 +434,18 @@ function ProjectDetailRoute() {
 }
 
 function ProjectsPage() {
-  const groups: { stage: ProjectStage; label: string; description: string; count: string }[] = [
-    { stage: "deployed", label: "Deployed / Shipped", description: "Public work with a live surface or released source.", count: "05" },
-    { stage: "in-progress", label: "In Progress", description: "Active systems and prototypes being built now.", count: "05" },
-    { stage: "planned", label: "Planned", description: "Forward-looking concepts that are not released.", count: "02" },
+  const groups: { stage: ProjectStage; label: string; jumpLabel: string; description: string }[] = [
+    { stage: "deployed", label: "Deployed / Shipped", jumpLabel: "Completed", description: "Public work with a live surface or released source." },
+    { stage: "in-progress", label: "In Progress", jumpLabel: "In progress", description: "Active systems and prototypes being built now." },
+    { stage: "planned", label: "Planned", jumpLabel: "Planned", description: "Forward-looking concepts that are not released." },
   ];
   return (
     <section className="section-shell page-section">
       <SectionHeading index="01" label="Projects" title="Projects" description="A status-driven index of the systems, tools, and experiments worth following." scene="projects" />
-      <div className="project-status-overview" aria-label="Project status counts">{groups.map((group) => <div key={group.stage}><span>{group.count}</span><p>{group.label}</p></div>)}</div>
+      <nav className="project-status-jumps" aria-label="Project lifecycle sections">{groups.map((group) => <a key={group.stage} href={`#project-${group.stage}`} aria-label={`Jump to ${group.label} projects`}><span>{group.jumpLabel}</span><small>{projectsByStage(group.stage).length} entries</small><i aria-hidden="true">↓</i></a>)}</nav>
       <div className="project-status-groups">{groups.map((group) => {
         const entries = projectsByStage(group.stage);
-        return <section className={`project-status-group project-status-group-${group.stage}`} key={group.stage} aria-labelledby={`project-${group.stage}-title`}><header className="project-status-header"><div><p className="label">{group.count} projects</p><h2 id={`project-${group.stage}-title`}>{group.label}</h2><p>{group.description}</p></div><span className="project-status-count">{entries.length.toString().padStart(2, "0")}</span></header><div className="project-list">{entries.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></section>;
+        return <section className={`project-status-group project-status-group-${group.stage}`} id={`project-${group.stage}`} key={group.stage} aria-labelledby={`project-${group.stage}-title`}><header className="project-status-header"><div><p className="label">Lifecycle</p><h2 id={`project-${group.stage}-title`}>{group.label}</h2><p>{group.description}</p></div></header><div className="project-list">{entries.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></section>;
       })}</div>
     </section>
   );

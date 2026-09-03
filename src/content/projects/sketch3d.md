@@ -6,7 +6,7 @@ stage: in-progress
 status_note: Prototype · awaiting full iOS build
 year: 2026
 stack: SwiftUI, SceneKit, PencilKit, Apple Pencil, iPadOS
-order: 5
+order: 2
 ---
 
 ## Problem
