@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
-import { projects, socialLinks } from "./siteContent";
+import { socialLinks } from "./siteContent";
+import { projectArticles } from "./projectContent";
 
 function renderAt(path: string) {
   window.history.replaceState({}, "", path);
@@ -54,53 +55,53 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("button", { name: "Randomize" }).querySelector(".scope-icon-shuffle")).toBeInTheDocument();
   });
 
-  it("combines current work, projects, and systems on Projects", () => {
+  it("groups the curated projects by lifecycle and makes every card a link", () => {
     renderAt("/projects");
 
     expect(screen.getByRole("heading", { name: "Projects" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "What I am working on" })).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { name: "Hermes Agent" })).toHaveLength(2);
-    expect(screen.getByRole("heading", { name: "The layers underneath" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "CRT Lab", level: 3 })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open My Obsidian Vault project" })).toHaveAttribute("href", "/projects/vault-refactor");
-    expect(screen.getByRole("link", { name: "Open Hermes Agent project" })).toHaveAttribute("href", "/projects/hermes-agent");
-    expect(screen.getByRole("link", { name: "Open CRT Lab project" })).toHaveAttribute("href", "/projects/crt-lab");
-    expect(screen.getByRole("link", { name: "Open RAG Assistant project" })).toHaveAttribute("href", "/projects/rag-assistant");
-    expect(screen.getByRole("link", { name: "Open Voice Assistant project" })).toHaveAttribute("href", "/projects/voice-assistant");
-    expect(screen.getByText("Mac mini / Hermes")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "AI + Notes" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Homelab" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Audio", level: 2 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Voice Assistant", level: 2 })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Ayumad.me" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "CRT Lab", level: 2 })).toBeInTheDocument();
-    projects.forEach((project) => {
-      expect(screen.getByRole("link", { name: `View ${project.title} project` })).toHaveAttribute(
+    expect(screen.getByRole("heading", { name: "Deployed / Shipped" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "In Progress" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Planned" })).toBeInTheDocument();
+    expect(projectArticles).toHaveLength(12);
+    expect(projectArticles.filter((project) => project.stage === "deployed")).toHaveLength(5);
+    expect(projectArticles.filter((project) => project.stage === "in-progress")).toHaveLength(5);
+    expect(projectArticles.filter((project) => project.stage === "planned")).toHaveLength(2);
+    expect(screen.getAllByText("05 projects")).toHaveLength(2);
+    expect(screen.getByText("02 projects")).toBeInTheDocument();
+    projectArticles.forEach((project) => {
+      expect(screen.getByRole("link", { name: `Read ${project.title} project article` })).toHaveAttribute(
         "href",
         `/projects/${project.slug}`,
       );
     });
+    expect(screen.queryByText("Owlbot")).not.toBeInTheDocument();
+    expect(screen.queryByText("DeluluBot")).not.toBeInTheDocument();
+    expect(screen.queryByText("Audio Visualization")).not.toBeInTheDocument();
   });
 
   it("renders a project detail page", () => {
     renderAt("/projects/crt-lab");
 
     expect(screen.getByRole("heading", { name: "CRT Lab" })).toBeInTheDocument();
-    expect(screen.getByText(/CRT Lab treats whatever you have as an input signal/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open live app ↗" })).toHaveAttribute(
+    expect(screen.getByRole("heading", { name: "Problem" })).toBeInTheDocument();
+    expect(screen.getByText(/CRT Lab treats every input as a source bay/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Live V1 ↗" })).toHaveAttribute(
       "href",
       "https://crt-lab-xi.vercel.app/",
     );
     expect(screen.getByRole("link", { name: "← All projects" })).toHaveAttribute("href", "/projects");
   });
 
-  it("renders Hermes as a nested project case study", () => {
+  it("renders deployed, active, and planned project articles", () => {
     renderAt("/projects/hermes");
 
-    expect(screen.getByRole("heading", { name: "Hermes" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "What Hermes Does" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Memory System" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /All projects/i })).toHaveAttribute("href", "/projects");
+    expect(window.location.pathname).toBe("/projects/hermes-agent");
+    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Architecture and workflow" })).toBeInTheDocument();
+
+    renderAt("/projects/album-ranking-app");
+    expect(screen.getByRole("heading", { name: "Album Ranking App" })).toBeInTheDocument();
+    expect(screen.getByText(/there is no standalone app/i)).toBeInTheDocument();
   });
 
   it("renders Gear and the merged About contact section", () => {
@@ -119,7 +120,7 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Apple Mac mini (M4, 2024)" })).toBeInTheDocument();
     expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Hermes client / daily workstation");
     expect(document.querySelector(".gear-detail-page")?.textContent).toContain("machine Hermes runs from today");
-    expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes");
+    expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes-agent");
 
     renderAt("/about");
     expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
@@ -165,7 +166,7 @@ describe("Ayumad.me", () => {
     window.history.replaceState({}, "", "/");
     window.location.hash = "#/hermes";
     render(<App />);
-    expect(window.location.pathname).toBe("/projects/hermes");
+    expect(window.location.pathname).toBe("/projects/hermes-agent");
   });
 
   it("renders a useful not-found route with a clean home link", () => {

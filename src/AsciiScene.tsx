@@ -168,11 +168,11 @@ function renderProjects(frame: number) {
   const active = spinner[Math.floor(frame / 4) % spinner.length];
   const scanRow = 4 + (Math.floor(frame / 5) % 15);
   const entries = [
-    ["2023", "OWLBOT", "●"],
-    ["2023", "DELULUBOT", "●"],
-    ["2024", "AUDIO VIS", "●"],
-    ["NOW", "HOMELAB", active],
-    ["NOW", "HERMES", active],
+    ["LIVE", "CRT LAB", "●"],
+    ["LIVE", "AI CURRIC", "●"],
+    ["LIVE", "G14 CTRL", "●"],
+    ["BUILD", "HERMES", active],
+    ["PLAN", "ALBUM APP", "○"],
   ];
 
   write(buffer, 2, 1, "YEAR");
@@ -193,7 +193,7 @@ function renderProjects(frame: number) {
     if ((x + frame) % 3 === 0) put(buffer, x, scanRow, "·");
   }
   write(buffer, 2, 20, `BUILD ${active}`);
-  write(buffer, 34, 20, "5 TARGETS");
+  write(buffer, 34, 20, "12 ARTICLES");
   addDither(buffer, frame);
   return buffer;
 }

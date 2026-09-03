@@ -195,17 +195,16 @@ mode are CSS post-processes rather than falsely presented WebGL simulations.
 
 ## 4. Global structure
 
-The site is a React single-page application using hash routes:
+The site is a React single-page application using clean browser routes with
+React Router and a Vercel SPA fallback:
 
 | Index | Label | Route |
 | --- | --- | --- |
-| 00 | Home | `#/` |
-| 01 | Work | `#/showcase` |
-| 02 | Projects | `#/projects` |
-| 03 | Systems | `#/systems` |
-| 04 | Now | `#/now` |
-| 05 | About | `#/about` |
-| 06 | Contact | `#/contact` |
+| 00 | Home | `/` |
+| 01 | Projects | `/projects` |
+| 02 | Gear | `/gear` |
+| 03 | Journal | `/journal` |
+| 04 | About | `/about` |
 
 Every route uses the same shell:
 
@@ -459,82 +458,34 @@ generic cards.
 
 ## 7. Projects
 
-Route heading:
+Projects are Markdown-backed articles under `src/content/projects/`, parsed by
+`src/projectContent.ts`. Required frontmatter is `title`, `slug`, `summary`,
+`stage`, `status_note`, `year`, `stack`, and `order`; duplicate slugs or invalid
+stages fail the build. `ProjectStage` is restricted to `deployed`,
+`in-progress`, or `planned`.
 
-- Index: `02`
-- Title: `Projects`
-- Description: “Selected software, hardware, and research projects.”
+The page is organized into three explicit groups with counts: `05 Deployed /
+Shipped`, `05 In Progress`, and `02 Planned`. Every row is a full-card,
+keyboard-accessible link with a lifecycle badge and availability note. Detail
+pages use Journal typography, a compact facts area, Markdown case-study
+sections, and internal/live/source actions.
 
-The header scene is a generated project/build timeline. Completed projects have
-solid status points; active projects use a rotating character; a dithered scan
-line moves through the build list.
+The curated inventory is:
 
-Project rows include an index, status, year, large title, summary, stack tags,
-and a native expandable `details` story.
+- Deployed / shipped: CRT Lab, AI Engineering Curriculum, G14 Controls,
+  Ayumad.me, XY / Vector Renderer.
+- In progress: Hermes Agent, Vault Refactor, Homelab, Obsidian RAG Assistant,
+  Sketch·3D.
+- Planned: Album Ranking App, Voice Assistant.
 
-### Owlbot
+Daily Brief is folded into Hermes. Owlbot, DeluluBot, Audio Visualization,
+collaboration/client work, and thin private or idea-list notes are redirected to
+`/projects` rather than presented as standalone case studies. Hermes legacy
+routes (`/projects/hermes`, `/hermes`, and `/projects/daily-brief`) redirect to
+`/projects/hermes-agent`.
 
-- Status: completed
-- Year: 2023
-- Summary: “An AI chatbot built to help Foothill College students find their
-  way.”
-- Story: “Owlbot handles common questions about admissions, financial aid,
-  course registration, and campus resources. The interesting problem was not
-  only matching questions—it was translating a sprawling institutional
-  knowledge base into answers students could actually use.”
-- Stack: `Python`, `NLP`, `FAQ matching`
-
-### DeluluBot
-
-- Status: completed
-- Year: 2023
-- Summary: “An emotion-aware chatbot built during CalHacks 10.0.”
-- Story: “We built DeluluBot at CalHacks 10.0. It detects sentiment and changes
-  its response style. It was a short hackathon build and an early test of how
-  much tone changes the way a chatbot feels to use.”
-- Stack: `Python`, `Sentiment analysis`, `CalHacks`
-
-### Audio Visualization
-
-- Status: completed
-- Year: 2024
-- Summary: “Cymatics and machine learning turned into a visual study of sound.”
-- Story: “I combined Chladni-style pattern generation with machine learning to
-  make audio visible. The project let me work on signal processing, computer
-  vision, and music in the same place.”
-- Stack: `Python`, `TensorFlow`, `Audio processing`
-
-### Homelab Build
-
-- Status: in progress
-- Year: Now
-- Summary: “A P520 running Proxmox for storage, local AI, media, and services.”
-- Story: “The ThinkStation P520 has a 4TB ZFS pool and a GPU-passthrough VM. I
-  am separating core services from the Docker experiments so I can change one
-  part without taking everything else down.”
-- Stack: `Proxmox VE`, `ZFS`, `GPU passthrough`, `Docker`
-
-### Hermes Remote
-
-- Status: in progress
-- Year: Now
-- Summary: “One Hermes server on a Mac mini, available from the rest of my
-  devices.”
-- Story: “I am moving Hermes off each client and onto a headless Mac mini.
-  Desktop and mobile clients connect through Tailscale, so the tools and memory
-  live in one place instead of being rebuilt on every machine.”
-- Stack: `Hermes`, `Tailscale`, `macOS`, `Remote clients`
-
-Future/archive panel:
-
-- Listening history
-- Film log
-- Game activity
-- Reading log
-- Gear notes
-- Project archive
-
-Every item is visibly labeled `Planned`.
+Articles distinguish shipped behavior from roadmap items and apply the vault’s
+privacy screen. Planned articles must not imply that proposed components exist.
 
 ## 8. Systems
 
@@ -775,23 +726,23 @@ Requirements:
 - Oscilloscope controls use real labels, inputs, outputs, and button states.
 - Every exposed adjustment has a native keyboard-accessible control.
 - Audio state uses `aria-pressed` and begins off.
-- Native `details`/`summary` powers project expansion.
+- Project cards are full-card links and detail pages render validated Markdown.
 - External GitHub links use `rel="noreferrer"`.
 - Reduced motion is respected in Motion, canvas, ASCII scenes, and the
   oscilloscope.
 
 ## 16. SEO and document metadata
 
-- Per-route title and description are updated when the hash route changes.
-- Canonical URL is updated to `https://ayumad.me/#/route`.
+- Per-route title and description are updated when the browser route changes.
+- Canonical URL is updated to `https://ayumad.me/route`.
 - Base HTML includes author, theme color, Open Graph, and X/Twitter metadata.
 - Local `favicon.png` and `og.png`; no hotlinked artwork.
 - The 128×128 favicon uses a near-black field, cyan pixel `A`, sparse
   right-edge density trail, and dark clipped corner rules. It must remain
   recognizable when reduced to 16×16 and should be cache-busted when replaced.
 - `robots.txt` allows crawling.
-- `sitemap.xml` lists the canonical root.
-- A styled 404 exists for unknown hash routes.
+- `sitemap.xml` lists all twelve project articles and public top-level routes.
+- A styled 404 exists for unknown clean routes.
 - Vercel adds immutable caching for hashed assets plus `nosniff` and strict
   referrer headers.
 
@@ -810,8 +761,8 @@ Stack:
 - Web Audio API
 - Canvas 2D
 
-There is no router dependency. A small hash-path hook listens for
-`hashchange`, and a local link component emits `#/path` URLs.
+React Router owns clean browser routes; legacy hash paths are migrated on load
+and Vercel rewrites unknown frontend paths to the Vite entry point.
 
 File map:
 
@@ -819,8 +770,9 @@ File map:
 | --- | --- |
 | `src/main.tsx` | React root and error boundary |
 | `src/App.tsx` | shell, routing, page composition, theme, metadata |
-| `src/siteContent.ts` | typed navigation, work, projects, systems, about, links |
-| `src/nowData.ts` | hand-maintained Now entries and update date |
+| `src/siteContent.ts` | typed navigation, home, gear, about, and links |
+| `src/projectContent.ts` | Markdown project loader, validation, and stage grouping |
+| `src/content/projects/*.md` | curated project articles and frontmatter |
 | `src/AsciiOscilloscope.tsx` | homepage vector renderer, controls, Fourier audio |
 | `src/AsciiScene.tsx` | six generated subpage heading scenes |
 | `src/ParticleField.tsx` | low-density background canvas |
@@ -837,18 +789,16 @@ File map:
 Typed content models:
 
 - `NavItem`
-- `ShowcaseTopic`
-- `Project`
-- `SystemLayer`
-- `NowEntry`
+- `ProjectArticle`
+- `ProjectStage`
 - `SocialLink`
 - `HomeContent`
 - `AboutContent`
 
-Project status is restricted to:
+Project stage is restricted to:
 
 ```ts
-type ProjectStatus = "completed" | "in-progress" | "planned";
+type ProjectStage = "deployed" | "in-progress" | "planned";
 ```
 
 ## 18. Validation and release
@@ -881,7 +831,9 @@ Current automated coverage checks:
   across all four multiplier settings;
 - every route and primary heading;
 - all six generated route scenes;
-- project details and system inventory;
+- project status grouping/counts, full-card links, and representative Markdown articles;
+- project frontmatter validation, duplicate-slug rejection, redirects, metadata,
+  and absence of removed projects;
 - unknown-route handling;
 - theme persistence;
 - all five renderer values, persistence, and route-scene conversion;
@@ -905,9 +857,9 @@ public API integrations are required.
 
 Common edits:
 
-- Routine current-status update: edit `src/nowData.ts`.
-- Project, system, bio, contact, or navigation update: edit
-  `src/siteContent.ts`.
+- Project update: add or edit a Markdown file under `src/content/projects/` and
+  preserve the required frontmatter/status semantics.
+- Home, gear, bio, contact, or navigation update: edit `src/siteContent.ts`.
 - Page structure: edit `src/App.tsx`.
 - Theme/layout: edit `src/styles.css`.
 - Renderer choices/context: edit `src/renderMode.ts`; conversion behavior lives

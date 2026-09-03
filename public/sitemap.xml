@@ -10,11 +10,19 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url><loc>https://ayumad.me/projects/crt-lab</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ayumad.me/projects/ai-engineering-curriculum</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ayumad.me/projects/g14-controls</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/ayumad-me</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/xy-vector-renderer</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/hermes-agent</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ayumad.me/projects/vault-refactor</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/homelab</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/rag-assistant</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/sketch3d</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ayumad.me/projects/album-ranking-app</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ayumad.me/projects/voice-assistant</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url>
-    <loc>https://ayumad.me/projects/hermes</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>  <url>
     <loc>https://ayumad.me/renderer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

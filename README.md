@@ -41,14 +41,21 @@ The development site runs at `http://localhost:3000`.
 
 Most site copy and structured content lives in:
 
-- `src/siteContent.ts` — navigation, projects, systems, gear, about, and links
-- `src/nowData.ts` — the current-focus content embedded in Projects
+- `src/siteContent.ts` — navigation, home, gear, about, and links
+- `src/projectContent.ts` — typed Markdown loader, frontmatter validation, and lifecycle grouping
+- `src/content/projects/*.md` — one evidence-based article per curated project
 - `src/content/journal/*.md` — curated public articles with validated frontmatter
 - `src/App.tsx` — route composition and shared interface behavior
 - `src/styles.css` — themes, responsive layout, and visual system
 - `resources.md` — complete design, content, architecture, and rebuild specification
 - `renderer-plan.md` — copy-paste blueprint for rebuilding the homepage
   renderer as a dedicated audiovisual tool
+
+Project frontmatter requires `title`, `slug`, `summary`, `stage`, `status_note`,
+`year`, `stack`, and `order`. Stages are `deployed`, `in-progress`, or `planned`;
+duplicate slugs and invalid stages fail the build. Planned articles must keep
+future behavior in the future tense. Keep private vault details and
+collaborator-only work out of public Markdown.
 
 The site uses clean browser routes. Vercel rewrites unknown frontend paths to
 the Vite entry point while preserving the existing `/api/*` endpoints and

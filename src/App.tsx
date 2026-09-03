@@ -22,7 +22,6 @@ import RendererPage from "./RendererPage";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
 import TasteSection from "./TastePage";
-import { nowEntries, nowUpdated } from "./nowData";
 import {
   isRenderMode,
   RenderModeContext,
@@ -39,17 +38,12 @@ import {
   gearCategories,
   findGearItem,
   gearSlug,
-  hermesSections,
   homeContent,
   navItems,
   pageMeta,
-  projects,
-  showcaseTopics,
   socialLinks,
-  systemLayers,
-  type Project,
-  type ProjectStatus,
 } from "./siteContent";
+import { findProjectArticle, projectsByStage, type ProjectArticle, type ProjectStage } from "./projectContent";
 
 const contactField = String.raw`
   ┌─────────────────────────────────────────────┐
@@ -142,7 +136,7 @@ function migrateLegacyHash() {
   const oldPath = hash.slice(1).split("#")[0];
   let nextPath = oldPath;
   if (["/showcase", "/systems", "/now"].includes(oldPath)) nextPath = "/projects";
-  if (oldPath === "/hermes") nextPath = "/projects/hermes";
+  if (oldPath === "/hermes") nextPath = "/projects/hermes-agent";
   if (oldPath === "/contact") nextPath = "/about#contact";
   if (oldPath === "/writeups" || oldPath === "/blog") nextPath = "/journal";
   if (oldPath.startsWith("/writeups/")) nextPath = oldPath.replace("/writeups/", "/journal/");
@@ -159,8 +153,9 @@ function RouteEffects() {
     ? findGearItem(location.pathname.slice("/gear/".length))
     : undefined;
   const project = location.pathname.startsWith("/projects/")
-    ? projects.find((entry) => entry.slug === location.pathname.slice("/projects/".length))
+    ? findProjectArticle(location.pathname.slice("/projects/".length))
     : undefined;
+  const hasProject = Boolean(project);
   const meta = project
     ? { title: `${project.title} — Ayumad.me`, description: project.summary }
     : post
@@ -178,10 +173,13 @@ function RouteEffects() {
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
     document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title);
     document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description);
+    const image = hasProject ? "" : "https://ayumad.me/og.png?v=2";
+    document.querySelector('meta[property="og:image"]')?.setAttribute("content", image);
+    document.querySelector('meta[name="twitter:image"]')?.setAttribute("content", image);
     document.querySelector('meta[property="og:url"]')?.setAttribute("content", `https://ayumad.me${location.pathname}`);
     document.querySelector('link[rel="canonical"]')?.setAttribute("href", `https://ayumad.me${location.pathname}`);
     window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-  }, [location.pathname, meta.description, meta.title, reducedMotion]);
+  }, [hasProject, location.pathname, meta.description, meta.title, reducedMotion]);
 
   return null;
 }
@@ -370,57 +368,60 @@ function HomePage() {
         <div className="current-art" aria-hidden="true"><span>░░▒▒▓▓████</span><span>░▒▓█▓▒░</span><span>████▓▓▒▒░░</span></div>
         <div><p className="label">Current</p><h2>{homeContent.current.title}</h2></div>
         <p>{homeContent.current.description}</p>
-        <Link className="text-link" to="/projects/hermes">Hermes <span aria-hidden="true">↗</span></Link>
+        <Link className="text-link" to="/projects/hermes-agent">Hermes <span aria-hidden="true">↗</span></Link>
       </section>
     </>
   );
 }
 
-function statusLabel(status: ProjectStatus) {
-  if (status === "in-progress") return "In progress";
-  if (status === "planned") return "Planned";
-  return "Completed";
+function statusLabel(stage: ProjectStage) {
+  if (stage === "in-progress") return "In progress";
+  if (stage === "planned") return "Planned";
+  return "Deployed / shipped";
 }
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({ project, index }: { project: ProjectArticle; index: number }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
-      <Link className={`project-row ${project.featured ? "project-row-featured" : ""}`} to={`/projects/${project.slug}`} aria-label={`View ${project.title} project`}>
+      <Link className={`project-row project-row-${project.stage} ${project.featured ? "project-row-featured" : ""}`} to={`/projects/${project.slug}`} aria-label={`Read ${project.title} project article`}>
         <div className="project-index" aria-hidden="true"><span>0{index + 1}</span><i>░▒▓█</i></div>
         <div className="project-main">
-          <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span><span>{project.year}</span></div>
+          <div className="project-meta"><span className={`status status-${project.stage}`}>{statusLabel(project.stage)}</span><span>{project.year}</span></div>
           <h2>{project.title}</h2><p>{project.summary}</p>
         </div>
         <div className="project-detail">
           <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
-          <span className="project-link-label">View project <span aria-hidden="true">↗</span></span>
+          <div className="project-card-links"><span className="project-availability">{project.statusNote}</span><span className="project-link-label">Read article <span aria-hidden="true">↗</span></span></div>
         </div>
       </Link>
     </motion.div>
   );
 }
 
-function ProjectPage({ project }: { project: Project }) {
+function ProjectPage({ project }: { project: ProjectArticle }) {
+  const html = marked.parse(project.body, { gfm: true, breaks: false });
+  const links = [
+    project.liveUrl ? { label: project.liveLabel ?? "Open live project", href: project.liveUrl, external: project.liveUrl.startsWith("http") || project.liveUrl.startsWith("/ai") } : null,
+    project.sourceUrl ? { label: project.sourceLabel ?? "View source", href: project.sourceUrl, external: true } : null,
+  ].filter(Boolean) as { label: string; href: string; external: boolean }[];
   return (
-    <section className="section-shell page-section project-page">
+    <section className="section-shell page-section project-page project-page-article">
       <Link className="back-link" to="/projects">← All projects</Link>
       <div className="project-page-header">
         <p className="label">Project / {project.year}</p>
-        <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span></div>
+        <div className="project-meta"><span className={`status status-${project.stage}`}>{statusLabel(project.stage)}</span><span>{project.statusNote}</span></div>
         <h1>{project.title}</h1>
-        <p>{project.summary}</p>
+        <p className="article-summary">{project.summary}</p>
       </div>
       <div className="project-page-content">
-        <div>
-          <p className="label">Stack</p>
-          <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
-        </div>
-        <div>
-          <p className="label">About this project</p>
-          <p className="project-story">{project.story}</p>
-          {project.slug === "hermes-agent" ? <Link className="text-link project-case-link" to="/projects/hermes">Open Hermes case study ↗</Link> : null}
-          {project.liveUrl ? <a className="text-link project-case-link" href={project.liveUrl} target="_blank" rel="noreferrer">Open live app ↗</a> : null}
-        </div>
+        <aside className="project-facts" aria-label={`${project.title} facts`}>
+          <div><p className="label">Stage</p><p>{statusLabel(project.stage)}</p></div>
+          <div><p className="label">Status</p><p>{project.statusNote}</p></div>
+          <div><p className="label">Year</p><p>{project.year}</p></div>
+          <div><p className="label">Stack</p><ul className="tag-list" aria-label={`${project.title} technologies`}>{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul></div>
+          {links.length ? <div><p className="label">Links</p><ul className="project-fact-links">{links.map((link) => link.external ? <li key={link.href}><a className="text-link" href={link.href} target="_blank" rel="noreferrer">{link.label} ↗</a></li> : <li key={link.href}><Link className="text-link" to={link.href}>{link.label} ↗</Link></li>)}</ul></div> : null}
+        </aside>
+        <article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} />
       </div>
     </section>
   );
@@ -428,73 +429,24 @@ function ProjectPage({ project }: { project: Project }) {
 
 function ProjectDetailRoute() {
   const { slug } = useParams();
-  const project = slug ? projects.find((entry) => entry.slug === slug) : undefined;
+  const project = slug ? findProjectArticle(slug) : undefined;
   return project ? <ProjectPage project={project} /> : <NotFoundPage />;
 }
 
 function ProjectsPage() {
-  const active = projects.filter((project) => project.status !== "completed");
-  const completed = projects.filter((project) => project.status === "completed");
+  const groups: { stage: ProjectStage; label: string; description: string; count: string }[] = [
+    { stage: "deployed", label: "Deployed / Shipped", description: "Public work with a live surface or released source.", count: "05" },
+    { stage: "in-progress", label: "In Progress", description: "Active systems and prototypes being built now.", count: "05" },
+    { stage: "planned", label: "Planned", description: "Forward-looking concepts that are not released.", count: "02" },
+  ];
   return (
     <section className="section-shell page-section">
-      <SectionHeading index="01" label="Projects" title="Projects" description="Current work, systems, and experiments in one place." scene="projects" />
-      <section className="project-current" aria-labelledby="current-focus-title">
-        <div className="section-title"><p className="label">Current focus</p><h2 id="current-focus-title">What I am working on</h2><p>Updated {nowUpdated}.</p></div>
-        <div className="now-list">{nowEntries.map((entry, index) => {
-          const content = <><span>{entry.marker}</span><div><p className="label">{entry.label}</p><h3>{entry.title}</h3></div><p>{entry.description}</p><div className="now-end"><code>{entry.detail}</code>{entry.projectSlug ? <span className="now-project-link">View project <span aria-hidden="true">↗</span></span> : entry.link ? <a className="now-link" href={entry.link.href} target="_blank" rel="noreferrer">{entry.link.label} ↗</a> : null}</div></>;
-          const animation = { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.2 }, transition: { delay: index * 0.04 } };
-          return entry.projectSlug ? <motion.div key={entry.title} {...animation}><Link className="now-row now-row-link" to={`/projects/${entry.projectSlug}`} aria-label={`Open ${entry.title} project`}>{content}</Link></motion.div> : <motion.article className="now-row" key={entry.title} {...animation}>{content}</motion.article>;
-        })}</div>
-      </section>
-      <section className="projects-context" aria-labelledby="projects-context-title">
-        <div className="section-title"><p className="label">Context</p><h2 id="projects-context-title">The areas underneath</h2><p>The old Work page belonged here all along: the projects make more sense when the surrounding systems stay visible.</p></div>
-        <div className="showcase-list">
-          {showcaseTopics.map((topic, index) => (
-            <motion.article className={`showcase-row tone-${topic.tone}`} key={topic.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.05 }}>
-              <span className="row-number">0{index + 1}</span>
-              <div className="showcase-copy">
-                <p className="label">{topic.eyebrow}</p>
-                <h2>{topic.title}</h2>
-                <p>{topic.summary}</p>
-                <ul className="tag-list" aria-label={`${topic.title} topics`}>{topic.items.map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
-              <pre className="topic-ascii" aria-hidden="true">{topic.ascii}</pre>
-            </motion.article>
-          ))}
-        </div>
-      </section>
-      <div className="project-list">{active.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div>
-      <section className="systems-embedded" aria-labelledby="systems-title">
-        <div className="section-title"><p className="label">Systems</p><h2 id="systems-title">The layers underneath</h2><p>Projects are easier to understand when the machines and systems around them are visible.</p></div>
-        <div className="systems-list">{systemLayers.map((layer, index) => <motion.article className="system-row" key={layer.title} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.04 }}><span className="row-number">{layer.index}</span><div><h3>{layer.title}</h3><p>{layer.description}</p><small>Flow</small><code>{layer.signal}</code></div><ul>{layer.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
-        <div className="system-band" aria-label="Four connected areas"><span>Knowledge</span><i>·</i><span>AI</span><i>·</i><span>Hardware</span><i>·</i><span>Audio</span></div>
-      </section>
-      <div className="future-panel"><div><p className="label">Archive</p><h2>Completed</h2><p>Past builds and experiments.</p></div><div className="project-list">{completed.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></div>
-    </section>
-  );
-}
-
-function HermesPage() {
-  return (
-    <section className="section-shell page-section">
-      <Link className="article-back" to="/projects">← All projects</Link>
-      <SectionHeading index="01 / 01" label="Featured project" title="Hermes" description="The AI agent that runs my daily operations — briefs, memory, scheduled work, and model routing." scene="systems" />
-      <div className="hermes-intro"><p>Hermes started as a way to stop rebuilding AI tooling on every device. One server on a Mac mini, connected from everywhere over a private mesh network. It handles morning briefs, interview prep, session journals, and scheduled automations so I can spend more time on the things that need a person.</p></div>
-      <div className="hermes-sections">{hermesSections.map((section, index) => <motion.article className="system-row" key={section.title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ delay: index * 0.05 }}><span className="row-number">0{index + 1}</span><div><h2>{section.title}</h2><p>{section.description}</p></div><ul>{section.items.map((item) => <li key={item}>{item}</li>)}</ul></motion.article>)}</div>
-      <div className="hermes-architecture"><pre className="topic-ascii" aria-hidden="true">{String.raw`
-  ┌─────────────────────────────────────────┐
-  │              HERMES AGENT               │
-  ├─────────┬───────────┬───────────────────┤
-  │ BRIEFS  │ ROUTINES  │ MEMORY            │
-  │ PROMPTS │ REVIEWS   │ MNEMOSYNE         │
-  │ TASKS   │ FALLBACK  │ LOCAL RECALL      │
-  ├─────────┴───────────┴───────────────────┤
-  │         MODEL ROUTING                   │
-  │       routine → complex → fallback      │
-  ├─────────────────────────────────────────┤
-  │         SURFACES                        │
-  │  Telegram · WebUI · Clients · Vault     │
-  └─────────────────────────────────────────┘`}</pre></div>
+      <SectionHeading index="01" label="Projects" title="Projects" description="A status-driven index of the systems, tools, and experiments worth following." scene="projects" />
+      <div className="project-status-overview" aria-label="Project status counts">{groups.map((group) => <div key={group.stage}><span>{group.count}</span><p>{group.label}</p></div>)}</div>
+      <div className="project-status-groups">{groups.map((group) => {
+        const entries = projectsByStage(group.stage);
+        return <section className={`project-status-group project-status-group-${group.stage}`} key={group.stage} aria-labelledby={`project-${group.stage}-title`}><header className="project-status-header"><div><p className="label">{group.count} projects</p><h2 id={`project-${group.stage}-title`}>{group.label}</h2><p>{group.description}</p></div><span className="project-status-count">{entries.length.toString().padStart(2, "0")}</span></header><div className="project-list">{entries.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></section>;
+      })}</div>
     </section>
   );
 }
@@ -505,7 +457,7 @@ function GearPage() {
 }
 
 const relatedGearPages: Record<string, { label: string; to: string }[]> = {
-  [gearSlug("Computers", "Apple Mac mini (M4, 2024)")]: [{ label: "Read the Hermes case study", to: "/projects/hermes" }],
+  [gearSlug("Computers", "Apple Mac mini (M4, 2024)")]: [{ label: "Read the Hermes case study", to: "/projects/hermes-agent" }],
   [gearSlug("Computers", "Lenovo ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
   [gearSlug("Computers", "Panasonic Let's Note SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
 };
@@ -587,7 +539,7 @@ function RoutedSite() {
   const location = useLocation();
   const { renderMode, setRenderMode } = useRenderer();
   const path = location.pathname;
-  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/projects/:slug" element={<ProjectDetailRoute />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/renderer" element={<RendererPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/projects/daily-brief" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/projects/owlbot" element={<Navigate to="/projects" replace />} /><Route path="/projects/delulubot" element={<Navigate to="/projects" replace />} /><Route path="/projects/audio-visualization" element={<Navigate to="/projects" replace />} /><Route path="/projects/:slug" element={<ProjectDetailRoute />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/renderer" element={<RendererPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
 }
 
 function JournalArticleRoute() {
