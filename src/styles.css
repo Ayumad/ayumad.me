@@ -1043,26 +1043,8 @@ main {
   content: "";
 }
 
-.scope-icon-random::before,
-.scope-icon-random::after {
-  position: absolute;
-  left: 1px;
-  width: 14px;
-  height: 6px;
-  border-top: 2px solid currentColor;
-  border-right: 2px solid currentColor;
-  content: "";
-  transform-origin: center;
-}
-
-.scope-icon-random::before {
-  top: 2px;
-  transform: rotate(22deg);
-}
-
-.scope-icon-random::after {
-  bottom: 2px;
-  transform: rotate(-22deg);
+.scope-icon-shuffle {
+  overflow: visible;
 }
 
 .scope-icon-audio-on::before,
@@ -3085,7 +3067,7 @@ main {
   }
 
   .scope-stage {
-    bottom: 390px;
+    bottom: 338px;
     inset-inline: 8px;
   }
 
@@ -3102,11 +3084,6 @@ main {
 
   .scope-controls > :nth-child(even),
   .scope-controls > .scope-actions {
-    border-right: 0;
-  }
-
-  .scope-controls > .scope-units {
-    grid-column: 1 / -1;
     border-right: 0;
   }
 
@@ -4964,7 +4941,11 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   }
 
   .scope-stage {
-    bottom: 390px;
+    bottom: 338px;
+  }
+
+  .scope-controls > .scope-units {
+    grid-column: auto;
   }
 }
 

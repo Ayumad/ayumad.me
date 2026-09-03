@@ -1508,10 +1508,22 @@ export default function AsciiOscilloscope() {
             title="Randomize"
             onClick={randomize}
           >
-            <span
-              className="scope-action-icon scope-icon-random"
+            <svg
+              className="scope-action-icon scope-icon-shuffle"
               aria-hidden="true"
-            />
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m18 2 4 4-4 4" />
+              <path d="m18 14 4 4-4 4" />
+              <path d="M2 6h3.3c.5 0 1 .2 1.4.6l.7.7" />
+              <path d="m7 18 .7-.7" />
+              <path d="M2 18h3.3c.5 0 1-.2 1.4-.6L17.6 6.6c.4-.4.9-.6 1.4-.6H22" />
+            </svg>
           </button>
           <button
             className="scope-audio"

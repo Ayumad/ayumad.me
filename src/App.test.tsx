@@ -51,6 +51,7 @@ describe("Ayumad.me", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show 3D geometry" }));
     expect(screen.getByRole("button", { name: "Show 2D geometry" })).toHaveAttribute("aria-pressed", "true");
     expect(document.querySelector(".oscilloscope-grid")).toHaveAttribute("data-dimension", "3d");
+    expect(screen.getByRole("button", { name: "Randomize" }).querySelector(".scope-icon-shuffle")).toBeInTheDocument();
   });
 
   it("combines current work, projects, and systems on Projects", () => {
