@@ -111,7 +111,7 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   },
   "/projects": {
     title: "Projects — Ayumad.me",
-    description: "Projects, systems, and current work by Ayush Madhukar.",
+    description: "A status-driven portfolio of shipped work, active builds, and planned projects by Ayush Madhukar.",
   },
   "/gear": {
     title: "Gear — Ayumad.me",
