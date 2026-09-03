@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
+import { projects } from "./siteContent";
 
 function renderAt(path: string) {
   window.history.replaceState({}, "", path);
@@ -58,9 +59,25 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Audio", level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Voice Assistant", level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Ayumad.me" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Open Hermes case study/i })).toHaveAttribute("href", "/projects/hermes");
     expect(screen.getByRole("heading", { name: "CRT Lab", level: 2 })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open CRT Lab live app" })).toHaveAttribute("href", "https://crt-lab-xi.vercel.app/");
+    projects.forEach((project) => {
+      expect(screen.getByRole("link", { name: `View ${project.title} project` })).toHaveAttribute(
+        "href",
+        `/projects/${project.slug}`,
+      );
+    });
+  });
+
+  it("renders a project detail page", () => {
+    renderAt("/projects/crt-lab");
+
+    expect(screen.getByRole("heading", { name: "CRT Lab" })).toBeInTheDocument();
+    expect(screen.getByText(/CRT Lab treats whatever you have as an input signal/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open live app ↗" })).toHaveAttribute(
+      "href",
+      "https://crt-lab-xi.vercel.app/",
+    );
+    expect(screen.getByRole("link", { name: "← All projects" })).toHaveAttribute("href", "/projects");
   });
 
   it("renders Hermes as a nested project case study", () => {

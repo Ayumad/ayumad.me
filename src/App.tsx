@@ -158,7 +158,12 @@ function RouteEffects() {
   const gear = location.pathname.startsWith("/gear/")
     ? findGearItem(location.pathname.slice("/gear/".length))
     : undefined;
-  const meta = post
+  const project = location.pathname.startsWith("/projects/")
+    ? projects.find((entry) => entry.slug === location.pathname.slice("/projects/".length))
+    : undefined;
+  const meta = project
+    ? { title: `${project.title} — Ayumad.me`, description: project.summary }
+    : post
     ? { title: `${post.title} — Ayumad.me`, description: post.summary }
     : gear
       ? { title: `${gear.item.name} — Gear — Ayumad.me`, description: `${gear.item.name}: ${gear.item.role ?? gear.item.note}` }
@@ -368,20 +373,52 @@ function statusLabel(status: ProjectStatus) {
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
-    <motion.article className={`project-row ${project.featured ? "project-row-featured" : ""}`} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
-      <div className="project-index" aria-hidden="true"><span>0{index + 1}</span><i>░▒▓█</i></div>
-      <div className="project-main">
-        <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span><span>{project.year}</span></div>
-        <h2>{project.title}</h2><p>{project.summary}</p>
-      </div>
-      <div className="project-detail">
-        <ul className="tag-list">{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
-        {project.slug === "hermes-agent" ? <Link className="text-link project-case-link" to="/projects/hermes">Open Hermes case study ↗</Link> : null}
-        {project.liveUrl ? <a className="text-link project-case-link" href={project.liveUrl} target="_blank" rel="noreferrer" aria-label={`Open ${project.title} live app`}>Open live app ↗</a> : null}
-        <details><summary>Details <span aria-hidden="true">+</span></summary><p>{project.story}</p></details>
-      </div>
-    </motion.article>
+    <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
+      <Link className={`project-row ${project.featured ? "project-row-featured" : ""}`} to={`/projects/${project.slug}`} aria-label={`View ${project.title} project`}>
+        <div className="project-index" aria-hidden="true"><span>0{index + 1}</span><i>░▒▓█</i></div>
+        <div className="project-main">
+          <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span><span>{project.year}</span></div>
+          <h2>{project.title}</h2><p>{project.summary}</p>
+        </div>
+        <div className="project-detail">
+          <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
+          <span className="project-link-label">View project <span aria-hidden="true">↗</span></span>
+        </div>
+      </Link>
+    </motion.div>
   );
+}
+
+function ProjectPage({ project }: { project: Project }) {
+  return (
+    <section className="section-shell page-section project-page">
+      <Link className="back-link" to="/projects">← All projects</Link>
+      <div className="project-page-header">
+        <p className="label">Project / {project.year}</p>
+        <div className="project-meta"><span className={`status status-${project.status}`}>{statusLabel(project.status)}</span></div>
+        <h1>{project.title}</h1>
+        <p>{project.summary}</p>
+      </div>
+      <div className="project-page-content">
+        <div>
+          <p className="label">Stack</p>
+          <ul className="tag-list" aria-label={`${project.title} technologies`}>{project.stack.map((tool) => <li key={tool}>{tool}</li>)}</ul>
+        </div>
+        <div>
+          <p className="label">About this project</p>
+          <p className="project-story">{project.story}</p>
+          {project.slug === "hermes-agent" ? <Link className="text-link project-case-link" to="/projects/hermes">Open Hermes case study ↗</Link> : null}
+          {project.liveUrl ? <a className="text-link project-case-link" href={project.liveUrl} target="_blank" rel="noreferrer">Open live app ↗</a> : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectDetailRoute() {
+  const { slug } = useParams();
+  const project = slug ? projects.find((entry) => entry.slug === slug) : undefined;
+  return project ? <ProjectPage project={project} /> : <NotFoundPage />;
 }
 
 function ProjectsPage() {
@@ -535,7 +572,7 @@ function RoutedSite() {
   const location = useLocation();
   const { renderMode, setRenderMode } = useRenderer();
   const path = location.pathname;
-  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/renderer" element={<RendererPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<HermesPage />} /><Route path="/projects/:slug" element={<ProjectDetailRoute />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/renderer" element={<RendererPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
 }
 
 function JournalArticleRoute() {

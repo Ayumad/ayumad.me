@@ -1637,6 +1637,23 @@ main {
   border-bottom: 1px solid var(--line);
   border-left: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 94%, transparent);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.project-row:hover {
+  background: color-mix(in srgb, var(--cyan) 5%, var(--bg));
+}
+
+.project-row:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+.project-row:hover .project-main h2,
+.project-row:focus-visible .project-main h2 {
+  color: var(--cyan);
 }
 
 .project-index {
@@ -1747,6 +1764,87 @@ main {
   color: var(--soft);
   font-size: 0.9rem;
   line-height: 1.65;
+}
+
+.project-link-label {
+  margin-top: 40px;
+  padding: 17px 0;
+  border-top: 1px solid var(--line);
+  font: 800 0.65rem/1 var(--mono);
+}
+
+.project-link-label span {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--cyan);
+  transition: transform 140ms ease;
+}
+
+.project-row:hover .project-link-label span,
+.project-row:focus-visible .project-link-label span {
+  transform: translate(3px, -3px);
+}
+
+.project-page {
+  max-width: 1060px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 46px;
+  color: var(--muted);
+  font: 600 0.75rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.back-link:hover {
+  color: var(--cyan);
+}
+
+.project-page-header {
+  max-width: 900px;
+  padding-bottom: clamp(40px, 7vw, 82px);
+  border-bottom: 1px solid var(--line);
+}
+
+.project-page-header .project-meta {
+  justify-content: flex-start;
+  margin: 18px 0 0;
+}
+
+.project-page-header h1 {
+  max-width: 11ch;
+  margin: 28px 0;
+  font: 900 clamp(3.5rem, 10vw, 8rem)/0.82 var(--mono);
+  letter-spacing: -0.1em;
+  text-transform: uppercase;
+}
+
+.project-page-header > p:last-child {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--soft);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.project-page-content {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.45fr) 1fr;
+  gap: clamp(40px, 8vw, 130px);
+  padding-top: clamp(40px, 7vw, 82px);
+}
+
+.project-page-content .tag-list {
+  margin-top: 16px;
+}
+
+.project-story {
+  max-width: 68ch;
+  margin: 16px 0 0;
+  color: var(--soft);
+  line-height: 1.75;
 }
 
 .future-panel {
@@ -3151,6 +3249,19 @@ main {
   .project-main h2 {
     margin-top: 44px;
     font-size: clamp(2.6rem, 13vw, 4rem);
+  }
+
+  .back-link {
+    margin-bottom: 32px;
+  }
+
+  .project-page-header h1 {
+    font-size: clamp(3.2rem, 17vw, 5.5rem);
+  }
+
+  .project-page-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
   .future-panel {
