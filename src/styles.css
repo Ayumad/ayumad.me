@@ -4645,6 +4645,18 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   line-height: 1.02;
 }
 
+.contact-links a {
+  container-type: inline-size;
+}
+
+.contact-links strong {
+  min-width: 0;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  font-size: clamp(0.75rem, 6.25cqw, 2.25rem);
+  letter-spacing: -0.04em;
+}
+
 .system-band {
   flex-wrap: wrap;
   gap: 12px 24px;
