@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
-import { projects } from "./siteContent";
+import { projects, socialLinks } from "./siteContent";
 
 function renderAt(path: string) {
   window.history.replaceState({}, "", path);
@@ -30,6 +30,15 @@ describe("Ayumad.me", () => {
     expect(within(navigation).queryByRole("link", { name: /Taste/i })).not.toBeInTheDocument();
     expect(within(navigation).queryByRole("link", { name: /Work/i })).not.toBeInTheDocument();
     expect(within(navigation).queryByRole("link", { name: /Contact/i })).not.toBeInTheDocument();
+
+    const homeContacts = document.querySelector<HTMLElement>(".hero-socials");
+    expect(homeContacts).toBeInTheDocument();
+    socialLinks.forEach((link) => {
+      expect(within(homeContacts as HTMLElement).getByRole("link", { name: link.label })).toHaveAttribute(
+        "href",
+        link.href,
+      );
+    });
   });
 
   it("keeps the oscilloscope controls functional", () => {

@@ -318,6 +318,14 @@ function AsciiDivider() {
   return <div className="ascii-divider" aria-hidden="true"><span> . : - = + * # % @ </span><i /><span> @ % # * + = - : . </span></div>;
 }
 
+function SocialIcon({ label }: { label: string }) {
+  const common = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const, "aria-hidden": true };
+  if (label === "Email") return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="1" /><path d="m4 7 8 6 8-6" /></svg>;
+  if (label === "LinkedIn") return <svg {...common}><path d="M6.5 9.5v8M6.5 6.5v.01M10.5 17.5v-8M10.5 13c0-2.2 1.3-3.5 3.3-3.5 2.1 0 3.2 1.4 3.2 4v4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>;
+  if (label === "GitHub") return <svg {...common}><path d="M9 19c-4.4 1.4-4.4-2.2-6.2-2.7M15 22v-3.5a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6a4.7 4.7 0 0 0-1.3-3.3 4.4 4.4 0 0 0-.1-3.3s-1-.3-3.4 1.3a11.8 11.8 0 0 0-6.2 0C6.3 3.3 5.3 3.6 5.3 3.6a4.4 4.4 0 0 0-.1 3.3 4.7 4.7 0 0 0-1.3 3.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 8.6 18.5V22" /></svg>;
+  return <svg {...common}><path d="M5 4 19 20M19 4 5 20M7.5 4H5l11.5 16H19" /></svg>;
+}
+
 function HomePage() {
   const descriptions = [
     "Current work, systems, and experiments.",
@@ -334,6 +342,9 @@ function HomePage() {
         <div className="hero-copy">
           <p className="label">Computer Engineering</p>
           <h1 aria-label="Ayush Madhukar"><span>Ayush</span><span>Madhukar</span></h1>
+          <div className="hero-socials" aria-label="Contact links">
+            {socialLinks.map((link) => <a className="hero-social-link" key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined} aria-label={link.label} title={link.label}><SocialIcon label={link.label} /></a>)}
+          </div>
           <p className="hero-deck">{homeContent.intro}</p>
           <div className="hero-actions"><Link className="button primary" to="/projects">Projects</Link><Link className="button" to="/about">About</Link></div>
           <SpotifyHomeSignal />

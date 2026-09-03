@@ -1171,6 +1171,35 @@ main {
   -webkit-text-stroke: 1.5px var(--cyan);
 }
 
+.hero-socials {
+  display: flex;
+  margin-top: 26px;
+  gap: 8px;
+}
+
+.hero-social-link {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  color: var(--soft);
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.hero-social-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hero-social-link:hover,
+.hero-social-link:focus-visible {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 10%, transparent);
+  color: var(--cyan);
+  transform: translateY(-2px);
+}
+
 .hero-deck {
   max-width: 52ch;
   margin: 42px 0 0;
