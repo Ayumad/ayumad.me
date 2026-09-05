@@ -1,5 +1,20 @@
 [
  {
+  "date": "2026-09-04",
+  "summary": "Task rescheduling, marketplace sweep (DS Lite candidate), routine cron ops, interview prep menu delivered.",
+  "highlights": [
+   "**Monday Sep 7 is stacked**: 7 tasks due (6 rescheduled today + engineering desktop). EchoSphere ACM kickoff same day — high-load Sunday.",
+   "**Marketplace candidate**: White DS Lite at $75 in SF — worth an offer at $60 but no rush. Same seller appears to have two listings.",
+   "**Reminders sync instability**: ~50% failure rate all day. Not blocking (task mutations went through via gtasks_mutate), but the sync script needs investigation.",
+   "**No Codex or vault writes today** — light day, mostly automated cron ops and one desktop task session."
+  ]
+ },
+ {
+  "date": "2026-09-03",
+  "summary": "Session journal for 2026-09-03: Ayumad.me project portfolio article overhaul, validation, and production rollout.",
+  "highlights": []
+ },
+ {
   "date": "2026-09-02",
   "summary": "Session journal for 2026-09-02: quiet day — routine cron only, one POLS 15 class, Reminders sync intermittent failures continue.",
   "highlights": [
