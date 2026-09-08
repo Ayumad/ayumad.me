@@ -15,10 +15,10 @@ Here's the whole fleet on one scale. Creekwood is 100, everything else is a perc
 ```text
 Creekwood (RTX 5080)         █████████████████████ 100
 RX 9070 XT SFF               ████████████████████   85
-RTX 4080 desktop (lent out)  ███████████████████    84
+RTX 4080 desktop             ███████████████████    84
 Alienware m16                █████████████████      70
 Zephyrus G14                 ████████████████       68
-RX 9060 XT SFF (lent out)    ████████████           52
+RX 9060 XT SFF               ████████████           52
 ROG Flow Z13                 ███████████            48
 Vivobook Pro 15              ██████████             44
 Razer Blade Stealth 13       ██████                 28
@@ -33,10 +33,10 @@ The ranked table, with the panel each machine actually drives:
 | --- | --- | --- | --- |
 | [Creekwood](/gear/computers-creekwood) | RTX 5080 | 100 | 4K 240 Hz OLED |
 | [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) | RX 9070 XT | 85 | TV |
-| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) *(lent out)* | RTX 4080 | 84 | — |
+| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) | RTX 4080 | 84 | — |
 | [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) | RTX 4080 175 W | 70 | 1600p 240 Hz |
 | [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | 2.8K OLED 120 Hz |
-| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) *(lent out)* | RX 9060 XT 16 GB | 52 | TV |
+| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV |
 | [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | 1600p 180 Hz |
 | [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | 2.8K OLED 120 Hz |
 | [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | 1080p 120 Hz |
@@ -44,15 +44,37 @@ The ranked table, with the panel each machine actually drives:
 | [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | 800p 90 Hz OLED |
 | [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | ~720p |
 
+## What if the top of the list was a 5090
+
+I don't own one, but the numbers are public, so here's the same fleet re-based to a maxed 5090 build instead of Creekwood. Tom's Hardware's 2026 hierarchy puts the 5090 at 100 and the 5080 at 69.8 at 4K raster, which puts the 5090 build at ~143 on the scale above. Flip the baseline:
+
+```text
+RTX 5090 build (hypothetical)  ████████████████████ 100
+Creekwood (RTX 5080)           ██████████████       70
+RX 9070 XT SFF                 ████████████         59
+RTX 4080 desktop               ████████████         59
+Alienware m16                  ██████████           49
+Zephyrus G14                   █████████            47
+RX 9060 XT SFF                 ███████              36
+ROG Flow Z13                   ███████              34
+Vivobook Pro 15                ██████               31
+Razer Blade Stealth 13         ████                 20
+ROG Ally                       ████                 18
+Steam Deck OLED                ██                   10
+Retroid Nova                   █                     streaming box
+```
+
+That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
+
 ## The four desktops
 
 Creekwood is the fastest thing I own and it's not close. RTX 5080 Founders Edition with a Ryzen 7 5800X3D, hooked to the 4K 240 Hz Odyssey OLED G8. Tom's Hardware's 31-game suite puts it at 81.9% of an RTX 4090 at 1080p, 76.7% at 1440p, 69.8% at 4K. That translates to: max settings, always, with DLSS reserved for path-traced Cyberpunk and games that are rude about it. It's the reference point for every other machine in this list.
 
-The 12900K / RTX 4080 desktop is Creekwood-lite and it's currently at a friend's place. TechSpot's Cyberpunk 2077 run on the 4080 averages 128 fps at 1440p. When it comes back it sits basically even with the 9070 XT build — within a few percent across a whole suite.
+The 12900K / RTX 4080 desktop is Creekwood-lite. TechSpot's Cyberpunk 2077 run on the 4080 averages 128 fps at 1440p. When it's home it sits basically even with the 9070 XT build — within a few percent across a whole suite.
 
 The [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) is the living-room Steam machine: Ryzen 5 5600 and a PowerColor 9070 XT in a KXRORS S300 case, Bazzite, controller in the coffee table drawer. The numbers here are the fun ones. Clair Obscur: Expedition 33 runs 64 fps at 1440p on the Epic preset. Red Dead Redemption 2 does 83 fps at 4K Ultra. Forza Horizon 5 clears 200 fps at 1440p. The 5600 is the weak link — it holds the GPU back in high-FPS games, same story as Creekwood's AM4 platform. The GPU runs ahead of the CPU and that's the upgrade path.
 
-The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) is also lent out. RX 9060 XT 16 GB with a Ryzen 5 3600, in an NCASE M1. It's a 1080p box — 98 fps average across Tom's suite at 1080p — but the 16 GB of VRAM is why it stays worth owning. Textures last longer than the GPU does.
+The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) is an RX 9060 XT 16 GB with a Ryzen 5 3600, in an NCASE M1. It's a 1080p box — 98 fps average across Tom's suite at 1080p — but the 16 GB of VRAM is why it stays worth owning. Textures last longer than the GPU does.
 
 ## The two laptops
 
@@ -70,7 +92,7 @@ The [ROG Ally](/gear/gaming-asus-rog-ally) is the Windows handheld: Z1 Extreme, 
 
 The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order and there are no published benchmarks for it anywhere, which is fine — it's a Pokémon ROM hack machine and a Moonlight streaming screen for the real gaming hardware. It doesn't need to be fast; it needs to be comfortable.
 
-The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) has an RTX 4050 and an OLED panel, and right now it's somebody else's engineering laptop — SolidWorks duty. If it ever comes home it's a solid 1080p box: CS2 at 127 fps on medium, Cyberpunk at 60+ on ultra, per the 4050's class.
+The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) has an RTX 4050 and an OLED panel. As a 1080p box it's solid: CS2 at 127 fps on medium, Cyberpunk at 60+ on ultra, per the 4050's class.
 
 The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is the oldest gamer here: GTX 1650 Ti Max-Q, four cores of Tiger Lake. Cyberpunk 2077 at 63 fps on 1080p low. Rocket League and Fortnite at comfortable framerates on medium. It plays its role — a small Windows laptop for light games — and it doesn't pretend to do more.
 
