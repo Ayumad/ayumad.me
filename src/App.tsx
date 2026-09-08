@@ -460,6 +460,17 @@ const relatedGearPages: Record<string, { label: string; to: string }[]> = {
   [gearSlug("Computers", "Apple Mac mini (M4, 2024)")]: [{ label: "Read the Hermes case study", to: "/projects/hermes-agent" }],
   [gearSlug("Computers", "Lenovo ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
   [gearSlug("Computers", "Panasonic Let's Note SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
+  [gearSlug("Computers", "Creekwood")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "ASUS ROG Zephyrus G14")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "Dell Alienware m16 (Ryzen 9, GeForce RTX 4080)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "ASUS ROG Flow Z13 (2025)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "SFF PC (Ryzen 5 5600, Radeon RX 9070 XT)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "SFF PC (Ryzen 5 3600, Radeon RX 9060 XT)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "Desktop PC (Core i9-12900K, GeForce RTX 4080)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "ASUS Vivobook Pro 15 (OLED, RTX 4050)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Gaming", "Valve Steam Deck OLED")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Gaming", "ASUS ROG Ally")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Gaming", "Retroid Pocket Nova")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
 };
 
 function GearDetailPage() {

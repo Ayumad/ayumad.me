@@ -163,6 +163,22 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
   });
 
+  it("renders the gaming fleet benchmark article with gear links", () => {
+    renderAt("/journal/gaming-fleet-roundup");
+    expect(screen.getByRole("heading", { name: "Gaming Across My Fleet", level: 1 })).toBeInTheDocument();
+    expect(screen.getAllByRole("table").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByRole("link", { name: "Alienware m16" })[0]).toHaveAttribute("href", "/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
+    expect(screen.getAllByRole("link", { name: "Steam Deck OLED" })[0]).toHaveAttribute("href", "/gear/gaming-valve-steam-deck-oled");
+    expect(screen.getByText(/384 fps/)).toBeInTheDocument();
+
+    renderAt("/journal");
+    expect(screen.getByRole("link", { name: "Read Gaming Across My Fleet" })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
+
+    renderAt("/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
+    expect(screen.getByRole("heading", { name: "Dell Alienware m16 (Ryzen 9, GeForce RTX 4080)" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /gaming fleet benchmark/i })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
+  });
+
   it("redirects legacy clean routes and hash routes", async () => {
     renderAt("/systems");
     await waitFor(() => expect(screen.getByRole("heading", { name: "Projects" })).toBeInTheDocument());
