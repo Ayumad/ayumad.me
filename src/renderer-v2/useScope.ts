@@ -39,7 +39,15 @@ export function useScope(initial: ScopeState, energy?: () => number) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const clockRef = useRef<ClockHandle | null>(null);
   const stateRef = useRef(state);
-  stateRef.current = state;
+  const energyRef = useRef(energy);
+
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  useEffect(() => {
+    energyRef.current = energy;
+  }, [energy]);
 
   // Grid metrics for the ASCII adapter — measured from the real host element
   // after layout settles, and re-measured on resize. (A mount-time useMemo
@@ -77,7 +85,6 @@ export function useScope(initial: ScopeState, energy?: () => number) {
     const ro = new ResizeObserver(measure);
     ro.observe(host);
     return () => ro.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -105,7 +112,7 @@ export function useScope(initial: ScopeState, energy?: () => number) {
       canvas: host,
       settings: () => stateRef.current.settings,
       units: () => stateRef.current.units,
-      energy,
+      energy: () => energyRef.current?.() ?? 0,
       draw: (frame: Frame) => adapter.draw(frame),
     });
 

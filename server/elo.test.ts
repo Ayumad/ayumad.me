@@ -5,8 +5,21 @@ import {
   expectedScore,
   ratingDelta,
   recordRating,
+  summarizeElo,
   type EloEntry,
 } from "./elo.js";
+
+const summaryEntry = (id: string, rating: number, lastRatedAt: string): EloEntry => ({
+  albumId: id,
+  albumName: id,
+  artist: "Artist",
+  rating,
+  games: 1,
+  firstRatedAt: lastRatedAt,
+  lastRatedAt,
+  artworkUrl: null,
+  url: null,
+});
 
 describe("expectedScore", () => {
   it("is 0.5 for equal ratings", () => {
@@ -106,5 +119,32 @@ describe("recordRating", () => {
 
     // 8/10 against a 1700 leader moves the new album above 1500 baseline
     expect(entries.find((e) => e.albumId === "new")?.rating).toBeGreaterThan(1500);
+  });
+});
+
+describe("summarizeElo", () => {
+  it("returns empty metadata for an empty board", () => {
+    expect(summarizeElo([])).toMatchObject({ median: null, updatedAt: null, leaderboard: [] });
+  });
+
+  it("uses the middle rating for an odd board", () => {
+    const summary = summarizeElo([
+      summaryEntry("low", 1400, "2026-01-01T00:00:00Z"),
+      summaryEntry("high", 1700, "2026-01-03T00:00:00Z"),
+      summaryEntry("mid", 1500, "2026-01-02T00:00:00Z"),
+    ]);
+    expect(summary.median).toBe(1500);
+    expect(summary.updatedAt).toBe("2026-01-03T00:00:00Z");
+  });
+
+  it("averages the two middle ratings for an even board", () => {
+    const summary = summarizeElo([
+      summaryEntry("low", 1400, "2026-01-04T00:00:00Z"),
+      summaryEntry("high", 1700, "2026-01-01T00:00:00Z"),
+      summaryEntry("upper", 1600, "2026-01-02T00:00:00Z"),
+      summaryEntry("lower", 1500, "2026-01-03T00:00:00Z"),
+    ]);
+    expect(summary.median).toBe(1550);
+    expect(summary.updatedAt).toBe("2026-01-04T00:00:00Z");
   });
 });

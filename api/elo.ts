@@ -1,5 +1,5 @@
 import eloJson from "../data/elo.json" with { type: "json" };
-import { type EloEntry } from "../server/elo.js";
+import { summarizeElo, type EloEntry } from "../server/elo.js";
 
 const eloEntries = eloJson as EloEntry[];
 
@@ -9,16 +9,12 @@ const jsonHeaders = {
 };
 
 export function GET() {
-  const leaderboard = [...eloEntries].sort((a, b) => b.rating - a.rating);
-  const median =
-    leaderboard.length > 0
-      ? leaderboard[Math.floor(leaderboard.length / 2)].rating
-      : null;
+  const { leaderboard, median, updatedAt } = summarizeElo(eloEntries);
 
   return Response.json(
     {
       configured: true,
-      updatedAt: leaderboard.length > 0 ? leaderboard[0].lastRatedAt : null,
+      updatedAt,
       count: leaderboard.length,
       median,
       leaderboard,

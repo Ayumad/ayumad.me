@@ -123,7 +123,7 @@ describe("Ayumad.me", () => {
 
     renderAt("/gear/computers-apple-mac-mini-m4-2024");
     expect(screen.getByRole("heading", { name: "Apple Mac mini (M4, 2024)" })).toBeInTheDocument();
-    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Hermes client / daily workstation");
+    expect(document.querySelector(".gear-detail-page")?.textContent).toContain("Hermes host / daily workstation");
     expect(document.querySelector(".gear-detail-page")?.textContent).toContain("machine Hermes runs from today");
     expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes-agent");
 

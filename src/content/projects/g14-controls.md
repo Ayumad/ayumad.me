@@ -41,14 +41,13 @@ Future work is mostly compatibility polish, clearer recovery states, and small i
 
 ## Working detail
 
-Each control is designed around a visible state transition. A power-profile action reports the selected profile; a lighting action reflects the service’s current mode; and GPU/MUX controls communicate that firmware or a reboot may be involved. The panel does not pretend that a request is instant when the underlying service needs time to apply it. That small amount of friction is preferable to a toggle that visually lies.
+Each control is designed around a visible state transition. Power, lighting, and
+GPU/MUX actions report the state exposed by the service and communicate when
+firmware or a reboot may be involved. The setup wizard checks the expected
+Omarchy and ASUS service surface, points to supported packages, and explains a
+missing capability instead of shipping a second daemon.
 
-The setup wizard is a compatibility boundary as much as an onboarding step. It checks for the expected Omarchy and ASUS service surface, points to the supported packages, and leaves the user in control of installation. If a capability is missing, the panel can explain the dependency instead of shipping a forked daemon that is difficult to remove. The repository’s README carries the machine-specific setup detail; this article stays focused on the design and release outcome.
-
-The project is deliberately small enough to be read in one sitting. That has made review easier and kept the native desktop behavior coherent while the hardware ecosystem changes underneath it.
-
-The release is also a useful example of scope control. It would be possible to add a full hardware monitor, profiles for every vendor model, and a custom background service. Those features might be valuable later, but they would make the current action surface harder to audit. The shipped project earns its “released” label from the controls that are documented and usable today, while broader compatibility remains a clearly labeled follow-up.
-
-That release boundary keeps the project honest for maintainers too. A new firmware target can be tested and documented without silently changing what the existing installation promises. The public repository remains the practical handoff for those compatibility details.
-
-That handoff is part of the product: a reader can inspect the implementation, follow the setup notes, and decide whether the supported service boundary fits their own G14.
+The repository README remains the machine-specific setup reference. The
+released article stays focused on the documented control surface; compatibility
+polish, recovery states, and setup-flow improvements are follow-up work rather
+than hidden dependencies.

@@ -41,20 +41,14 @@ Remaining work includes completing validation passes, tightening canonical note 
 
 ## Working detail
 
-The refactor separates three kinds of truth. A canonical note answers “what is this and what is its current state?” A session summary answers “what changed during a particular working window?” An instruction file answers “how should a human or agent operate safely here?” Keeping those roles separate prevents a transient plan from overwriting a durable fact and prevents an automated summary from becoming the project’s only documentation.
+The refactor separates three kinds of truth: canonical notes describe current
+state, session summaries preserve what changed, and instruction files define
+safe operation. Structural checks cover frontmatter, duplicate titles, links,
+and governance; deciding whether a project is ready for public writing remains
+an editorial review.
 
-Validation is intentionally structural before it is semantic. Frontmatter, duplicate titles, links, and governance errors can be checked consistently; judgment about whether a project is ready for public writing still belongs in an editorial pass. Git history provides a recovery path when an automated repair is too aggressive, and the public site consumes only the approved projection.
-
-The result is less about a perfect folder tree than about a repeatable maintenance loop: audit, repair, validate, record provenance, then publish only what passes the privacy screen. That loop is what makes the vault useful to Hermes without making Hermes the owner of the vault.
-
-The public projection is intentionally a separate publishing step. A project article may summarize a decision, link to a public journal entry, and state what is still private. It does not need to reproduce the note that inspired it. This keeps the vault’s useful detail available for personal retrieval while giving a reader a concise and privacy-safe account of the work.
-
-The result is a system that can answer both “what changed?” and “what is safe to share?” without making either question depend on a remembered folder path. That is the practical definition of progress for this refactor.
-
-It is also why the refactor belongs in the portfolio: the outcome is a maintainable publishing and retrieval boundary, not simply a rearranged set of folders.
-
-Future automation can then operate against stable contracts instead of guessing which note or folder is current. That is the practical payoff of the work.
-
-The refactor is active because those contracts are still being exercised and refined.
-
-Each validation pass turns a little more of the vault’s implicit knowledge into something that can be safely reused.
+The maintenance loop is audit, repair, validate, record provenance, then
+publish only the approved projection. Future automation can work against those
+stable contracts, while the public site summarizes outcomes without importing
+private notes. The contracts are still being exercised, so the project remains
+active.

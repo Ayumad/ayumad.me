@@ -4,7 +4,7 @@
  * Energy modulator: derived from live Spotify playback when available.
  */
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useScope, type RenderMode } from "./renderer-v2/useScope";
 import { renderModes } from "./renderMode";
@@ -91,8 +91,11 @@ export default function RendererPage() {
   // Spotify energy flows through a ref so the clock reads it per-frame
   // without React re-renders being involved in the hot path.
   const { playback } = useSpotifyPlayback();
+  const energy = trackEnergy(playback);
   const energyRef = useRef(0);
-  energyRef.current = trackEnergy(playback);
+  useEffect(() => {
+    energyRef.current = energy;
+  }, [energy]);
 
   const { state, dispatch, hostRef, preRef, canvasRef } = useScope(initial, () => energyRef.current);
   const { settings, mode, units } = state;
@@ -133,7 +136,7 @@ export default function RendererPage() {
           <span>{mode === "ascii" ? "XY MODE" : `${mode.toUpperCase()} ADAPTER`}</span>
           <span>{units} PTS</span>
           <span>{settings.frequency.toFixed(0)} Hz</span>
-          <span aria-live="off">ENERGY {(energyRef.current * 100).toFixed(0)}%</span>
+          <span aria-live="off">ENERGY {(energy * 100).toFixed(0)}%</span>
         </div>
         {mode === "ascii" ? (
           <pre className="oscilloscope-grid renderer-grid" ref={preRef} aria-label="Oscilloscope display" />
