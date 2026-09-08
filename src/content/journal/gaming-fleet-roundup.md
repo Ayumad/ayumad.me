@@ -8,23 +8,24 @@ kind: article
 status: published
 ---
 
-I own twelve machines that can play games. Since they overlap more than they should, I pulled together published benchmark numbers from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites, and figured out where everything actually stands. The full cited breakdown lives in my vault; this is the readable version.
+I own thirteen machines that can play games. Since they overlap more than they should, I pulled together published benchmark numbers from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites, and figured out where everything actually stands. The full cited breakdown lives in my vault; this is the readable version.
 
 Here's the whole fleet on one scale. Creekwood is 100, everything else is a percentage of it:
 
 ```text
-Creekwood (RTX 5080)         █████████████████████ 100
-RX 9070 XT SFF               ████████████████████   85
-RTX 4080 desktop             ███████████████████    84
-Alienware m16                █████████████████      70
-Zephyrus G14                 ████████████████       68
-RX 9060 XT SFF               ████████████           52
-ROG Flow Z13                 ███████████            48
-Vivobook Pro 15              █████              24
-ROG Ally                     ███                 17
-Steam Deck OLED              ██                    11
-Razer Blade Stealth 13       ██                    10
-Retroid Nova                 █                      streaming box
+Creekwood (RTX 5080)      ████████████████████           100
+RX 9070 XT SFF            █████████████████            85
+RTX 4080 desktop          █████████████████            84
+Alienware m16             ██████████████              70
+Zephyrus G14              ██████████████              68
+RX 9060 XT SFF            ██████████                  52
+ROG Flow Z13              ██████████                  48
+RX 6600 build             ██████                      31
+Vivobook Pro 15           █████                        24
+ROG Ally                  ███                          17
+Steam Deck OLED           ██                           11
+Razer Blade Stealth 13    ██                           10
+Retroid Nova                      █                     streaming box
 ```
 
 The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
@@ -38,6 +39,7 @@ The ranked table, with what each machine drives (panel type where I know it) and
 | [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · OLED | 2.8K 120 Hz |
 | [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV | 1080p 60–100 Hz |
 | [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · IPS | 1600p 180 Hz (esports 1080p) |
+| [RX 6600 build](/gear/computers-desktop-pc-radeon-rx-6600) | RX 6600 | 31 | Monitor · TBD | 1080p |
 | [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 3050 | 24 | Native · OLED | 1080p 60 Hz |
 | [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 17 | Handheld · IPS | 1080p 120 Hz |
 | [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 11 | Handheld · OLED | 800p 90 Hz |
@@ -49,24 +51,25 @@ The ranked table, with what each machine drives (panel type where I know it) and
 I don't own one, but the numbers are public, so here's the same fleet re-based to a maxed 5090 build instead of Creekwood. Tom's Hardware's 2026 hierarchy puts the 5090 at 100 and the 5080 at 69.8 at 4K raster, which puts the 5090 build at ~143 on the scale above. Flip the baseline:
 
 ```text
-RTX 5090 build (hypothetical)  ████████████████████ 100
-Creekwood (RTX 5080)           ██████████████       70
-RX 9070 XT SFF                 ████████████         59
-RTX 4080 desktop               ████████████         59
-Alienware m16                  ██████████           49
-Zephyrus G14                   █████████            47
-RX 9060 XT SFF                 ███████              36
-ROG Flow Z13                   ███████              34
-Vivobook Pro 15                ███                17
-ROG Ally                       ██                 12
-Steam Deck OLED                ██                    8
-Razer Blade Stealth 13         █                     7
-Retroid Nova                   █                     streaming box
+RTX 5090 build (hypothetical) ████████████████████          100
+Creekwood (RTX 5080)          ██████████████               70
+RX 9070 XT SFF                ████████████                 59
+RTX 4080 desktop              ████████████                 59
+Alienware m16                 ██████████                   49
+Zephyrus G14                  █████████                    47
+RX 9060 XT SFF                ███████                      36
+ROG Flow Z13                  ███████                      34
+RX 6600 build                 ████                         22
+Vivobook Pro 15               ███                          17
+ROG Ally                      ██                           12
+Steam Deck OLED               ██                            8
+Razer Blade Stealth 13        █                             7
+Retroid Nova                          █                     streaming box
 ```
 
 That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
 
-## The four desktops
+## The five desktops
 
 Creekwood is the fastest thing I own and it's not close. RTX 5080 Founders Edition with a Ryzen 7 5800X3D, hooked to the 4K 240 Hz Odyssey OLED G8. Tom's Hardware's 2026 hierarchy is scored against the RTX 5090, and the 5080 lands at 81.9% at 1080p, 76.7% at 1440p, 69.8% at 4K — against a 4090 that's roughly 91/90/87%. That translates to: max settings, always, with DLSS reserved for path-traced Cyberpunk and games that are rude about it. It's the reference point for every other machine in this list.
 
@@ -75,6 +78,8 @@ The 12900K / RTX 4080 desktop is Creekwood-lite. TechSpot's Cyberpunk 2077 run o
 The [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) is the living-room Steam machine: Ryzen 5 5600 and a PowerColor 9070 XT in a KXRORS S300 case, Bazzite, under the Sony Bravia, controller in the coffee table drawer. The numbers here are the fun ones. Clair Obscur: Expedition 33 runs 64 fps at 1440p on the Epic preset. Red Dead Redemption 2 does 83 fps at 4K Ultra. Forza Horizon 5 clears 200 fps at 1440p. The 5600 is the weak link — it holds the GPU back in high-FPS games, same story as Creekwood's AM4 platform. The GPU runs ahead of the CPU and that's the upgrade path.
 
 The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) is an RX 9060 XT 16 GB with a Ryzen 5 3600, in an NCASE M1. It's a 1080p box — 98 fps average across Tom's suite at 1080p — but the 16 GB of VRAM is why it stays worth owning. Textures last longer than the GPU does.
+
+The [RX 6600 build](/gear/computers-desktop-pc-radeon-rx-6600) is the engineering desktop — a SolidWorks machine, not a gaming rig. It doesn't get used for games, but for completeness it stacks at 31, comfortably above the whole laptop floor. It's a real 1080p box if anyone ever asks it to be one.
 
 ## The two laptops
 

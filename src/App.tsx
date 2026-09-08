@@ -464,6 +464,7 @@ const relatedGearPages: Record<string, { label: string; to: string }[]> = {
   [gearSlug("Computers", "ASUS ROG Zephyrus G14")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "Dell Alienware m16 (Ryzen 9, GeForce RTX 4080)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "ASUS ROG Flow Z13 (2025)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
+  [gearSlug("Computers", "Desktop PC (Radeon RX 6600)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "SFF PC (Ryzen 5 5600, Radeon RX 9070 XT)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "SFF PC (Ryzen 5 3600, Radeon RX 9060 XT)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "Desktop PC (Core i9-12900K, GeForce RTX 4080)")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
