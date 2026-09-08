@@ -20,10 +20,10 @@ Alienware m16                █████████████████
 Zephyrus G14                 ████████████████       68
 RX 9060 XT SFF               ████████████           52
 ROG Flow Z13                 ███████████            48
-Vivobook Pro 15              █████              27
-Razer Blade Stealth 13       ██████                 28
-ROG Ally                     ██████                 26
-Steam Deck OLED              ███                    15
+Vivobook Pro 15              █████              24
+ROG Ally                     ███                 17
+Steam Deck OLED              ██                    11
+Razer Blade Stealth 13       ██                    10
 Retroid Nova                 █                      streaming box
 ```
 
@@ -38,10 +38,10 @@ The ranked table, with what each machine drives (panel type where I know it) and
 | [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · OLED | 2.8K 120 Hz |
 | [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV | 1080p 60–100 Hz |
 | [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · IPS | 1600p 180 Hz (esports 1080p) |
-| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 3050 | 27 | Native · OLED | 1080p 60 Hz |
-| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | Native · IPS | 1080p 120 Hz |
-| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | Handheld · IPS | 1080p 120 Hz |
-| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | Handheld · OLED | 800p 90 Hz |
+| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 3050 | 24 | Native · OLED | 1080p 60 Hz |
+| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 17 | Handheld · IPS | 1080p 120 Hz |
+| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 11 | Handheld · OLED | 800p 90 Hz |
+| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 10 | Native · IPS | 1080p 120 Hz |
 | [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld | ~720p / 1080p stream |
 
 ## What if the top of the list was a 5090
@@ -57,10 +57,10 @@ Alienware m16                  ██████████           49
 Zephyrus G14                   █████████            47
 RX 9060 XT SFF                 ███████              36
 ROG Flow Z13                   ███████              34
-Vivobook Pro 15                ████                19
-Razer Blade Stealth 13         ████                 20
-ROG Ally                       ████                 18
-Steam Deck OLED                ██                   10
+Vivobook Pro 15                ███                17
+ROG Ally                       ██                 12
+Steam Deck OLED                ██                    8
+Razer Blade Stealth 13         █                     7
 Retroid Nova                   █                     streaming box
 ```
 
