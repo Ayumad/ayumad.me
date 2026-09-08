@@ -25,7 +25,7 @@ Here's the whole fleet on one scale. Creekwood is 100, everything else is a perc
   <div class="fleet-row"><span class="fleet-name">ROG Ally</span><span class="fleet-track"><span class="fleet-fill" style="width: 17%"></span></span><span class="fleet-value">17</span></div>
   <div class="fleet-row"><span class="fleet-name">Razer Blade Stealth 13</span><span class="fleet-track"><span class="fleet-fill" style="width: 15%"></span></span><span class="fleet-value">15</span></div>
   <div class="fleet-row"><span class="fleet-name">Steam Deck OLED</span><span class="fleet-track"><span class="fleet-fill" style="width: 11%"></span></span><span class="fleet-value">11</span></div>
-  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"></span><span class="fleet-value">streaming box</span></div>
+  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"><span class="fleet-fill" style="width: 16%"></span></span><span class="fleet-value">16</span></div>
 </div>
 
 The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
@@ -44,7 +44,7 @@ The ranked table, with what each machine drives (panel type where I know it) and
 | [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 17 | Handheld · IPS | 1080p 120 Hz |
 | [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 15 | Native · IPS | 1080p 120 Hz |
 | [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 11 | Handheld · OLED | 800p 90 Hz |
-| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld | ~720p / 1080p stream |
+| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Snapdragon 8 Gen 2 | 16 | Handheld · AMOLED | 960p 120 Hz · 1080p stream |
 
 ## What if the top of the list was a 5090
 
@@ -64,7 +64,7 @@ I don't own one, but the numbers are public, so here's the same fleet re-based t
   <div class="fleet-row"><span class="fleet-name">ROG Ally</span><span class="fleet-track"><span class="fleet-fill" style="width: 12%"></span></span><span class="fleet-value">12</span></div>
   <div class="fleet-row"><span class="fleet-name">Razer Blade Stealth 13</span><span class="fleet-track"><span class="fleet-fill" style="width: 10%"></span></span><span class="fleet-value">10</span></div>
   <div class="fleet-row"><span class="fleet-name">Steam Deck OLED</span><span class="fleet-track"><span class="fleet-fill" style="width: 8%"></span></span><span class="fleet-value">8</span></div>
-  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"></span><span class="fleet-value">streaming box</span></div>
+  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"><span class="fleet-fill" style="width: 11%"></span></span><span class="fleet-value">11</span></div>
 </div>
 
 That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
@@ -95,7 +95,7 @@ The [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) is an 800p machine and
 
 The [ROG Ally](/gear/gaming-asus-rog-ally) is the Windows handheld: Z1 Extreme, 1080p at 120 Hz. It does the esports thing properly — around 162 fps in Valorant, 118 in CS2, 109 in Rocket League at 1080p with tuned settings. Demanding AAA drops it to 720–900p territory. It's technically redundant next to the Deck, so it's on the sell list, but on the days a Windows-only game exists, it's the one.
 
-The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order and there are no published benchmarks for it anywhere, which is fine — it's a Pokémon ROM hack machine and a Moonlight streaming screen for the real gaming hardware. It doesn't need to be fast; it needs to be comfortable.
+The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order, so these numbers come from its Snapdragon 8 Gen 2 chip rather than the device itself. The Adreno 740 averages around 3,667 in 3DMark Wild Life Extreme — call it a Steam Deck and a half in raw raster. That means light and medium Android games run natively at 60-class frames (Genshin and Fortnite sit around 56–60), emulation covers PS2/GameCube-era stuff, and "streaming screen" is a bonus rather than the whole job. I scored it 16, which slots it between the Ally and the Blade. It's still a Pokémon ROM hack machine and a Moonlight client for the real hardware — just one with a GPU that shows up for work.
 
 The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) is the modest one: an RTX 3050 pushing a 1080p 60 Hz OLED. The GPU and the panel agree on the target — it's a 1080p-60 box, unapologetically.
 
@@ -115,6 +115,6 @@ The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is the olde
 
 A couple of honest gaps: Rocket League and Valorant don't have lab-published numbers for the desktop tier — they're so CPU-bound that review sites skip them — and TechPowerUp blocks bots, so the 5080's per-game table is still riding on the aggregate suite. The numbers that exist are all linked below.
 
-Sources: [Tom's Hardware GPU hierarchy](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) · [TechSpot 9070 XT vs 5070](https://www.techspot.com/review/3168-geforce-rtx-5070-vs-radeon-rx-9070-xt/) · [TechSpot RTX 4080 review](https://www.techspot.com/review/2569-nvidia-geforce-rtx-4080/) · [GamersNexus Steam Deck OLED](https://gamersnexus.net/handheld-pcs/valve-goes-hard-steam-deck-oled-review-benchmarks-vs-asus-rog-ally-z1-extreme-deck-lcd) · [Notebookcheck m16 review](https://www.notebookcheck.net/AMD-Ryzen-9-7845HX-performance-debut-Alienware-m16-R1-laptop-review.742228.0.html) · [Notebookcheck G14 2025](https://www.notebookcheck.net/RTX-5070-Ti-laptop-GPU-almost-as-fast-as-RTX-5080-laptop-GPU-Asus-ROG-Zephyrus-G14-2025-review.1030284.0.html) · [Notebookcheck Flow Z13](https://www.notebookcheck.net/Asus-ROG-Flow-Z13-GZ302EA-Convertible-Review-AMD-s-Strix-Halo-GPU-is-neck-and-neck-with-the-RTX-4070-Laptop.963266.0.html) · [ultrabookreview G14](https://www.ultrabookreview.com/71435-asus-rog-zephyrus-g14-2025-review/) · [LaptopMedia G14](https://laptopmedia.com/gb/review/asus-rog-zephyrus-g14-ga403-ryzen-ai-300-review-rtx-5070-ti-oled-and-true-portability/) · [LaptopMedia Flow Z13](https://laptopmedia.com/review/asus-rog-flow-z13-gz302-review-the-radeon-8060s-challenges-the-rtx-4060/) · [PCWorld ROG Ally](https://d33gy59ovltp76.cloudfront.net/news/asus-rog-ally-review-z1-extreme-lighter-and-brighter) · [Notebookcheck GTX 1650 Ti Max-Q](https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1650-Ti-Max-Q-GPU-Benchmarks-and-Specs.459210.0.html)
+Sources: [Tom's Hardware GPU hierarchy](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) · [TechSpot 9070 XT vs 5070](https://www.techspot.com/review/3168-geforce-rtx-5070-vs-radeon-rx-9070-xt/) · [TechSpot RTX 4080 review](https://www.techspot.com/review/2569-nvidia-geforce-rtx-4080/) · [GamersNexus Steam Deck OLED](https://gamersnexus.net/handheld-pcs/valve-goes-hard-steam-deck-oled-review-benchmarks-vs-asus-rog-ally-z1-extreme-deck-lcd) · [Notebookcheck m16 review](https://www.notebookcheck.net/AMD-Ryzen-9-7845HX-performance-debut-Alienware-m16-R1-laptop-review.742228.0.html) · [Notebookcheck G14 2025](https://www.notebookcheck.net/RTX-5070-Ti-laptop-GPU-almost-as-fast-as-RTX-5080-laptop-GPU-Asus-ROG-Zephyrus-G14-2025-review.1030284.0.html) · [Notebookcheck Flow Z13](https://www.notebookcheck.net/Asus-ROG-Flow-Z13-GZ302EA-Convertible-Review-AMD-s-Strix-Halo-GPU-is-neck-and-neck-with-the-RTX-4070-Laptop.963266.0.html) · [ultrabookreview G14](https://www.ultrabookreview.com/71435-asus-rog-zephyrus-g14-2025-review/) · [LaptopMedia G14](https://laptopmedia.com/gb/review/asus-rog-zephyrus-g14-ga403-ryzen-ai-300-review-rtx-5070-ti-oled-and-true-portability/) · [LaptopMedia Flow Z13](https://laptopmedia.com/review/asus-rog-flow-z13-gz302-review-the-radeon-8060s-challenges-the-rtx-4060/) · [PCWorld ROG Ally](https://d33gy59ovltp76.cloudfront.net/news/asus-rog-ally-review-z1-extreme-lighter-and-brighter) · [Notebookcheck GTX 1650 Ti Max-Q](https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1650-Ti-Max-Q-GPU-Benchmarks-and-Specs.459210.0.html) · [Notebookcheck Adreno 740](https://www.notebookcheck.net/Qualcomm-Adreno-740-GPU-Benchmarks-and-Specs.669947.0.html)
 
 Now I know the numbers, so the next game I buy gets matched to the right machine instead of whichever is closest.
