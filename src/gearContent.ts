@@ -32,7 +32,7 @@ const fullGearCategories: GearCategory[] = [
     item("Raspberry Pi 4 Model B", "The low-power infrastructure companion to the P520: useful for DNS, monitoring, Tailscale/Wake-on-LAN support, or a voice-assistant endpoint when larger machines are offline.", "Homelab helper"),
     item("Razer Blade Stealth 13", "A compact secondary Windows gaming ultrabook for compatibility and lighter games. Its GTX 1650 Ti Max-Q is clearly secondary to the 2025 G14, while the 1 TB storage is a user upgrade.", "Gaming ultrabook"),
     item("SFF PC (Ryzen 5 3600, Radeon RX 9060 XT)", "The smaller and older of the two Radeon SFF Bazzite PCs, in an NCASE M1. The RX 9060 XT 16 GB offers useful VRAM, while the Ryzen 5 3600 and 16 GB system RAM cap its headroom. It is currently lent out.", undefined, "lent"),
-    item("SFF PC (Ryzen 5 5600, Radeon RX 9070 XT)", "The stronger Radeon SFF Bazzite machine: a compact Ryzen 5 5600 / RX 9070 XT build in a KXRORS S300, used as the living-room Steam machine under the TV.", "Living-room Steam machine"),
+    item("SFF PC (Ryzen 5 5600, Radeon RX 9070 XT)", "The stronger Radeon SFF Bazzite machine: a compact Ryzen 5 5600 / RX 9070 XT build in a KXRORS S300, used as the living-room Steam machine under the Sony Bravia.", "Living-room Steam machine"),
   ] },
   { category: "Mobile Devices", items: [
     item("Apple iPad mini (6th Generation)", "A 64 GB Wi-Fi iPad mini with A15, USB-C, and an 8.3-inch display. It is the compact tablet for reading, media, and reference use."),
