@@ -27,22 +27,22 @@ Steam Deck OLED              ███                    15
 Retroid Nova                 █                      streaming box
 ```
 
-The ranked table, with the display type each machine drives and the fps it targets there:
+The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
 
-| Machine | GPU | Rel. speed | Display type · res / fps |
-| --- | --- | --- | --- |
-| [Creekwood](/gear/computers-creekwood) | RTX 5080 | 100 | Monitor · 4K 240 Hz |
-| [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) | RX 9070 XT | 85 | TV · 4K 60 Hz |
-| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) | RTX 4080 | 84 | Monitor · 1440p 165+ Hz |
-| [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) | RTX 4080 175 W | 70 | Native · 1600p 240 Hz (esports 1080p) |
-| [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · 2.8K 120 Hz |
-| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV · 1080p 60–100 Hz |
-| [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · 1600p 180 Hz (esports 1080p) |
-| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | Native · 2.8K 120 Hz |
-| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | Native · 1080p 120 Hz |
-| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | Handheld · 1080p 120 Hz |
-| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | Handheld · 800p 90 Hz |
-| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld · ~720p / 1080p stream |
+| Machine | GPU | Rel. speed | Display | Resolution / target fps |
+| --- | --- | --- | --- | --- |
+| [Creekwood](/gear/computers-creekwood) | RTX 5080 | 100 | Monitor · QD-OLED | 4K 240 Hz |
+| [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) | RX 9070 XT | 85 | TV · LED | 4K 60 Hz |
+| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) | RTX 4080 | 84 | Monitor | 1440p 165+ Hz |
+| [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) | RTX 4080 175 W | 70 | Native · IPS | 1600p 240 Hz (esports 1080p) |
+| [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · OLED | 2.8K 120 Hz |
+| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV | 1080p 60–100 Hz |
+| [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · IPS | 1600p 180 Hz (esports 1080p) |
+| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | Native · OLED | 2.8K 120 Hz |
+| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | Native · IPS | 1080p 120 Hz |
+| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | Handheld · IPS | 1080p 120 Hz |
+| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | Handheld · OLED | 800p 90 Hz |
+| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld | ~720p / 1080p stream |
 
 ## What if the top of the list was a 5090
 
