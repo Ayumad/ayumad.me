@@ -23,8 +23,8 @@ ROG Flow Z13              ██████████                  48
 RX 6600 build             ██████                      31
 Vivobook Pro 15           █████                        24
 ROG Ally                  ███                          17
+Razer Blade Stealth 13    ███                          15
 Steam Deck OLED           ██                           11
-Razer Blade Stealth 13    ██                           10
 Retroid Nova                                     streaming box
 ```
 
@@ -42,8 +42,8 @@ The ranked table, with what each machine drives (panel type where I know it) and
 | [RX 6600 build](/gear/computers-desktop-pc-radeon-rx-6600) | RX 6600 | 31 | Monitor · TBD | 1080p |
 | [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 3050 | 24 | Native · OLED | 1080p 60 Hz |
 | [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 17 | Handheld · IPS | 1080p 120 Hz |
+| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 15 | Native · IPS | 1080p 120 Hz |
 | [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 11 | Handheld · OLED | 800p 90 Hz |
-| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 10 | Native · IPS | 1080p 120 Hz |
 | [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld | ~720p / 1080p stream |
 
 ## What if the top of the list was a 5090
@@ -62,8 +62,8 @@ ROG Flow Z13                  ███████                      34
 RX 6600 build                 ████                         22
 Vivobook Pro 15               ███                          17
 ROG Ally                      ██                           12
+Razer Blade Stealth 13        ██                           10
 Steam Deck OLED               ██                            8
-Razer Blade Stealth 13        █                             7
 Retroid Nova                                       streaming box
 ```
 
