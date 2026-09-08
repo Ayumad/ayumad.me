@@ -2,7 +2,7 @@
 title: Gaming Across My Fleet
 slug: gaming-fleet-roundup
 date: 2026-09-08
-summary: Twelve machines that play games. Same games, published benchmark numbers, so I actually know which one to grab.
+summary: Thirteen machines that play games. Same games, published benchmark numbers, so I actually know which one to grab.
 tags: Hardware, Gaming, Benchmarks
 kind: article
 status: published
@@ -12,21 +12,21 @@ I own thirteen machines that can play games. Since they overlap more than they s
 
 Here's the whole fleet on one scale. Creekwood is 100, everything else is a percentage of it:
 
-```text
-Creekwood (RTX 5080)      ████████████████████           100
-RX 9070 XT SFF            █████████████████            85
-RTX 4080 desktop          █████████████████            84
-Alienware m16             ██████████████              70
-Zephyrus G14              ██████████████              68
-RX 9060 XT SFF            ██████████                  52
-ROG Flow Z13              ██████████                  48
-RX 6600 build             ██████                      31
-Vivobook Pro 15           █████                        24
-ROG Ally                  ███                          17
-Razer Blade Stealth 13    ███                          15
-Steam Deck OLED           ██                           11
-Retroid Nova                                     streaming box
-```
+<div class="fleet-chart" role="img" aria-label="Bar chart of fleet GPU performance, Creekwood RTX 5080 = 100">
+  <div class="fleet-row"><span class="fleet-name">Creekwood (RTX 5080)</span><span class="fleet-track"><span class="fleet-fill" style="width: 100%"></span></span><span class="fleet-value">100</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 9070 XT SFF</span><span class="fleet-track"><span class="fleet-fill" style="width: 85%"></span></span><span class="fleet-value">85</span></div>
+  <div class="fleet-row"><span class="fleet-name">RTX 4080 desktop</span><span class="fleet-track"><span class="fleet-fill" style="width: 84%"></span></span><span class="fleet-value">84</span></div>
+  <div class="fleet-row"><span class="fleet-name">Alienware m16</span><span class="fleet-track"><span class="fleet-fill" style="width: 70%"></span></span><span class="fleet-value">70</span></div>
+  <div class="fleet-row"><span class="fleet-name">Zephyrus G14</span><span class="fleet-track"><span class="fleet-fill" style="width: 68%"></span></span><span class="fleet-value">68</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 9060 XT SFF</span><span class="fleet-track"><span class="fleet-fill" style="width: 52%"></span></span><span class="fleet-value">52</span></div>
+  <div class="fleet-row"><span class="fleet-name">ROG Flow Z13</span><span class="fleet-track"><span class="fleet-fill" style="width: 48%"></span></span><span class="fleet-value">48</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 6600 build</span><span class="fleet-track"><span class="fleet-fill" style="width: 31%"></span></span><span class="fleet-value">31</span></div>
+  <div class="fleet-row"><span class="fleet-name">Vivobook Pro 15</span><span class="fleet-track"><span class="fleet-fill" style="width: 24%"></span></span><span class="fleet-value">24</span></div>
+  <div class="fleet-row"><span class="fleet-name">ROG Ally</span><span class="fleet-track"><span class="fleet-fill" style="width: 17%"></span></span><span class="fleet-value">17</span></div>
+  <div class="fleet-row"><span class="fleet-name">Razer Blade Stealth 13</span><span class="fleet-track"><span class="fleet-fill" style="width: 15%"></span></span><span class="fleet-value">15</span></div>
+  <div class="fleet-row"><span class="fleet-name">Steam Deck OLED</span><span class="fleet-track"><span class="fleet-fill" style="width: 11%"></span></span><span class="fleet-value">11</span></div>
+  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"></span><span class="fleet-value">streaming box</span></div>
+</div>
 
 The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
 
@@ -50,22 +50,22 @@ The ranked table, with what each machine drives (panel type where I know it) and
 
 I don't own one, but the numbers are public, so here's the same fleet re-based to a maxed 5090 build instead of Creekwood. Tom's Hardware's 2026 hierarchy puts the 5090 at 100 and the 5080 at 69.8 at 4K raster, which puts the 5090 build at ~143 on the scale above. Flip the baseline:
 
-```text
-RTX 5090 build (hypothetical) ████████████████████          100
-Creekwood (RTX 5080)          ██████████████               70
-RX 9070 XT SFF                ████████████                 59
-RTX 4080 desktop              ████████████                 59
-Alienware m16                 ██████████                   49
-Zephyrus G14                  █████████                    47
-RX 9060 XT SFF                ███████                      36
-ROG Flow Z13                  ███████                      34
-RX 6600 build                 ████                         22
-Vivobook Pro 15               ███                          17
-ROG Ally                      ██                           12
-Razer Blade Stealth 13        ██                           10
-Steam Deck OLED               ██                            8
-Retroid Nova                                       streaming box
-```
+<div class="fleet-chart" role="img" aria-label="Bar chart of fleet GPU performance, hypothetical RTX 5090 build = 100">
+  <div class="fleet-row"><span class="fleet-name">RTX 5090 build (hypothetical)</span><span class="fleet-track"><span class="fleet-fill" style="width: 100%"></span></span><span class="fleet-value">100</span></div>
+  <div class="fleet-row"><span class="fleet-name">Creekwood (RTX 5080)</span><span class="fleet-track"><span class="fleet-fill" style="width: 70%"></span></span><span class="fleet-value">70</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 9070 XT SFF</span><span class="fleet-track"><span class="fleet-fill" style="width: 59%"></span></span><span class="fleet-value">59</span></div>
+  <div class="fleet-row"><span class="fleet-name">RTX 4080 desktop</span><span class="fleet-track"><span class="fleet-fill" style="width: 59%"></span></span><span class="fleet-value">59</span></div>
+  <div class="fleet-row"><span class="fleet-name">Alienware m16</span><span class="fleet-track"><span class="fleet-fill" style="width: 49%"></span></span><span class="fleet-value">49</span></div>
+  <div class="fleet-row"><span class="fleet-name">Zephyrus G14</span><span class="fleet-track"><span class="fleet-fill" style="width: 47%"></span></span><span class="fleet-value">47</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 9060 XT SFF</span><span class="fleet-track"><span class="fleet-fill" style="width: 36%"></span></span><span class="fleet-value">36</span></div>
+  <div class="fleet-row"><span class="fleet-name">ROG Flow Z13</span><span class="fleet-track"><span class="fleet-fill" style="width: 34%"></span></span><span class="fleet-value">34</span></div>
+  <div class="fleet-row"><span class="fleet-name">RX 6600 build</span><span class="fleet-track"><span class="fleet-fill" style="width: 22%"></span></span><span class="fleet-value">22</span></div>
+  <div class="fleet-row"><span class="fleet-name">Vivobook Pro 15</span><span class="fleet-track"><span class="fleet-fill" style="width: 17%"></span></span><span class="fleet-value">17</span></div>
+  <div class="fleet-row"><span class="fleet-name">ROG Ally</span><span class="fleet-track"><span class="fleet-fill" style="width: 12%"></span></span><span class="fleet-value">12</span></div>
+  <div class="fleet-row"><span class="fleet-name">Razer Blade Stealth 13</span><span class="fleet-track"><span class="fleet-fill" style="width: 10%"></span></span><span class="fleet-value">10</span></div>
+  <div class="fleet-row"><span class="fleet-name">Steam Deck OLED</span><span class="fleet-track"><span class="fleet-fill" style="width: 8%"></span></span><span class="fleet-value">8</span></div>
+  <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"></span><span class="fleet-value">streaming box</span></div>
+</div>
 
 That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
 
