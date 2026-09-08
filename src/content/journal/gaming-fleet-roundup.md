@@ -8,7 +8,7 @@ kind: article
 status: published
 ---
 
-I own twelve machines that can play games. Only three were bought as gaming machines — the rest just ended up that way. Since they overlap more than they should, I pulled together published benchmark numbers from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites, and figured out where everything actually stands. The full cited breakdown lives in my vault; this is the readable version.
+I own twelve machines that can play games. Since they overlap more than they should, I pulled together published benchmark numbers from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites, and figured out where everything actually stands. The full cited breakdown lives in my vault; this is the readable version.
 
 Here's the whole fleet on one scale. Creekwood is 100, everything else is a percentage of it:
 
@@ -20,7 +20,7 @@ Alienware m16                █████████████████
 Zephyrus G14                 ████████████████       68
 RX 9060 XT SFF               ████████████           52
 ROG Flow Z13                 ███████████            48
-Vivobook Pro 15              ██████████             44
+Vivobook Pro 15              █████              27
 Razer Blade Stealth 13       ██████                 28
 ROG Ally                     ██████                 26
 Steam Deck OLED              ███                    15
@@ -38,7 +38,7 @@ The ranked table, with what each machine drives (panel type where I know it) and
 | [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · OLED | 2.8K 120 Hz |
 | [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV | 1080p 60–100 Hz |
 | [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · IPS | 1600p 180 Hz (esports 1080p) |
-| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | Native · OLED | 2.8K 120 Hz |
+| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 3050 | 27 | Native · OLED | 1080p 60 Hz |
 | [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | Native · IPS | 1080p 120 Hz |
 | [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | Handheld · IPS | 1080p 120 Hz |
 | [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | Handheld · OLED | 800p 90 Hz |
@@ -57,7 +57,7 @@ Alienware m16                  ██████████           49
 Zephyrus G14                   █████████            47
 RX 9060 XT SFF                 ███████              36
 ROG Flow Z13                   ███████              34
-Vivobook Pro 15                ██████               31
+Vivobook Pro 15                ████                19
 Razer Blade Stealth 13         ████                 20
 ROG Ally                       ████                 18
 Steam Deck OLED                ██                   10
@@ -92,7 +92,7 @@ The [ROG Ally](/gear/gaming-asus-rog-ally) is the Windows handheld: Z1 Extreme, 
 
 The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order and there are no published benchmarks for it anywhere, which is fine — it's a Pokémon ROM hack machine and a Moonlight streaming screen for the real gaming hardware. It doesn't need to be fast; it needs to be comfortable.
 
-The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) has an RTX 4050 and an OLED panel. As a 1080p box it's solid: CS2 at 127 fps on medium, Cyberpunk at 60+ on ultra, per the 4050's class.
+The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) is the modest one: an RTX 3050 pushing a 1080p 60 Hz OLED. The GPU and the panel agree on the target — it's a 1080p-60 box, unapologetically.
 
 The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is the oldest gamer here: GTX 1650 Ti Max-Q, four cores of Tiger Lake. Cyberpunk 2077 at 63 fps on 1080p low. Rocket League and Fortnite at comfortable framerates on medium. It plays its role — a small Windows laptop for light games — and it doesn't pretend to do more.
 
