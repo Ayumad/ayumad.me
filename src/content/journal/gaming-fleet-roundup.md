@@ -27,22 +27,22 @@ Steam Deck OLED              ███                    15
 Retroid Nova                 █                      streaming box
 ```
 
-The ranked table, with the resolution each machine targets and the framerate it holds there:
+The ranked table, with the display type each machine drives and the fps it targets there:
 
-| Machine | GPU | Rel. speed | Resolution / target fps |
+| Machine | GPU | Rel. speed | Display type · res / fps |
 | --- | --- | --- | --- |
-| [Creekwood](/gear/computers-creekwood) | RTX 5080 | 100 | 4K 240 Hz |
-| [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) | RX 9070 XT | 85 | 4K 60 Hz · Sony Bravia |
-| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) | RTX 4080 | 84 | 1440p 165+ Hz |
-| [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) | RTX 4080 175 W | 70 | 1600p 240 Hz / 1080p esports |
-| [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | 2.8K 120 Hz |
-| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | 1080p 60–100 Hz |
-| [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | 1600p 180 Hz / 1080p esports |
-| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | 2.8K 120 Hz |
-| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | 1080p 120 Hz |
-| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | 1080p 120 Hz |
-| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | 800p 90 Hz |
-| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | ~720p / 1080p stream |
+| [Creekwood](/gear/computers-creekwood) | RTX 5080 | 100 | Monitor · 4K 240 Hz |
+| [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) | RX 9070 XT | 85 | TV · 4K 60 Hz |
+| [12900K RTX 4080 desktop](/gear/computers-desktop-pc-core-i9-12900k-geforce-rtx-4080) | RTX 4080 | 84 | Monitor · 1440p 165+ Hz |
+| [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) | RTX 4080 175 W | 70 | Native · 1600p 240 Hz (esports 1080p) |
+| [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) | RTX 5070 Ti 110 W | 68 | Native · 2.8K 120 Hz |
+| [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) | RX 9060 XT 16 GB | 52 | TV · 1080p 60–100 Hz |
+| [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) | Radeon 8060S iGPU | 48 | Native · 1600p 180 Hz (esports 1080p) |
+| [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) | RTX 4050 | 44 | Native · 2.8K 120 Hz |
+| [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) | GTX 1650 Ti Max-Q | 28 | Native · 1080p 120 Hz |
+| [ROG Ally](/gear/gaming-asus-rog-ally) | Z1 Extreme | 26 | Handheld · 1080p 120 Hz |
+| [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) | custom RDNA 2 | 15 | Handheld · 800p 90 Hz |
+| [Retroid Nova](/gear/gaming-retroid-pocket-nova) *(on order)* | Android SoC | n/a | Handheld · ~720p / 1080p stream |
 
 ## What if the top of the list was a 5090
 
@@ -68,7 +68,7 @@ That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole li
 
 ## The four desktops
 
-Creekwood is the fastest thing I own and it's not close. RTX 5080 Founders Edition with a Ryzen 7 5800X3D, hooked to the 4K 240 Hz Odyssey OLED G8. Tom's Hardware's 31-game suite puts it at 81.9% of an RTX 4090 at 1080p, 76.7% at 1440p, 69.8% at 4K. That translates to: max settings, always, with DLSS reserved for path-traced Cyberpunk and games that are rude about it. It's the reference point for every other machine in this list.
+Creekwood is the fastest thing I own and it's not close. RTX 5080 Founders Edition with a Ryzen 7 5800X3D, hooked to the 4K 240 Hz Odyssey OLED G8. Tom's Hardware's 2026 hierarchy is scored against the RTX 5090, and the 5080 lands at 81.9% at 1080p, 76.7% at 1440p, 69.8% at 4K — against a 4090 that's roughly 91/90/87%. That translates to: max settings, always, with DLSS reserved for path-traced Cyberpunk and games that are rude about it. It's the reference point for every other machine in this list.
 
 The 12900K / RTX 4080 desktop is Creekwood-lite. TechSpot's Cyberpunk 2077 run on the 4080 averages 128 fps at 1440p. When it's home it sits basically even with the 9070 XT build — within a few percent across a whole suite.
 
@@ -80,11 +80,11 @@ The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) is an R
 
 The [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) is the big-screen option: RTX 4080 at 175 W, Ryzen 9 7845HX, 2560×1600 at 240 Hz. Notebookcheck's numbers say Cyberpunk 2077 runs 128 fps at 1080p ultra and 84.5 fps at QHD native. I bought it secondhand for $600 and replaced a motherboard fan, and it runs hot — it's a desk machine, not a lap machine. I grab it when I want a bigger screen than the G14.
 
-The [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) is my main portable. RTX 5070 Ti at 110 W, which is a real cap — the chip wants more but the case is thin. It still manages 170 fps in CS2 at its native 2.8K resolution, and path-traced Cyberpunk hits 100+ fps with DLSS 4 frame generation, which the m16 can't do. Raw raster goes to the m16 by about 15–20%. Everything with DLSS 4 goes to the G14.
+The [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) is my main portable. RTX 5070 Ti at 110 W, which is a real cap — the chip wants more but the case is thin. It still manages 170 fps in CS2 at its native 2.8K resolution, and path-traced Cyberpunk hits 100+ fps with DLSS 4 Multi Frame Generation. That's the part the m16 can't do — MFG is Blackwell-only, so the 4080 tops out at regular frame gen, one frame per rendered frame. The DLSS 4 upscaler runs on both. Raw raster goes to the m16 by about 15–20%. Anything that leans on multi-frame gen goes to the G14.
 
 ## Tablets, handhelds, and the leftovers
 
-The [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) is a tablet with a 16-core Strix Halo chip in it. The iGPU is Radeon 8060S, roughly an RTX 4060 laptop, and the CPU is the fastest in my whole fleet. Result: Cyberpunk 2077 at 75.6 fps on 1080p ultra, and CS2 at 384 fps on 1080p low — the framerates are a CPU flex more than a GPU flex. It docks to the TV via USB4 and disappears behind it.
+The [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) is a tablet with a 16-core Strix Halo chip in it. The iGPU is Radeon 8060S, roughly an RTX 4070 laptop, and the CPU is the fastest in my whole fleet. Result: Cyberpunk 2077 at 75.6 fps on 1080p ultra, and CS2 at 384 fps on 1080p low — the framerates are a CPU flex more than a GPU flex. It docks to the TV via USB4 and disappears behind it.
 
 The [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) is an 800p machine and it knows it. GamersNexus measured RDR2 at 53 fps, Cyberpunk at 44.6 fps with FSR, Baldur's Gate 3 at 23.9 fps — all at its native resolution. The catch: Valorant and Fortnite don't run on it at all. Kernel-level anti-cheat doesn't do Linux. That's the gap the Ally exists for.
 
