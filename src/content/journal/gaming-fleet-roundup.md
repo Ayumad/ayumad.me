@@ -25,7 +25,7 @@ Vivobook Pro 15           █████                        24
 ROG Ally                  ███                          17
 Steam Deck OLED           ██                           11
 Razer Blade Stealth 13    ██                           10
-Retroid Nova                      █                     streaming box
+Retroid Nova                                     streaming box
 ```
 
 The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
@@ -64,7 +64,7 @@ Vivobook Pro 15               ███                          17
 ROG Ally                      ██                           12
 Steam Deck OLED               ██                            8
 Razer Blade Stealth 13        █                             7
-Retroid Nova                          █                     streaming box
+Retroid Nova                                       streaming box
 ```
 
 That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
