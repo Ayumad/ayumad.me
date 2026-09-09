@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-09-08",
+  "summary": "Session journal for 2026-09-08: FB Marketplace MCP project built, loadout wishlist expanded (projector, MacBook 12in, mirror), Retroid Pocket Nova SoC confirmed, Hue HomeKit cancelled.",
+  "highlights": [
+   "**FB Marketplace MCP built and registered** — full FastMCP server with search + listing detail, Playwright-backed, ready for burner login. Feeds the deal-evaluator flow.",
+   "**Loadout wishlist got three new candidates** — projector (BenQ TH575 class), MacBook 12\" (collector piece), and Lululemon Mirror mod. Research notes added with sources and fit analysis.",
+   "**Retroid Pocket Nova SoC conflict resolved** — confirmed SD 8 Gen 2; display spec still open.",
+   "**Reminders sync failures persist** — 64 failed out of 87 total today. Worth investigating if this continues."
+  ]
+ },
+ {
   "date": "2026-09-05",
   "summary": "Session journal for 2026-09-05: sub-1kg laptop deep-dive (XPS 13 vs Zenbook A14 vs alternatives, ARM VM compat), Omarchy Tablet Mode project plan created with 5-phase roadmap for Sep 30 meetup demo.",
   "highlights": [
