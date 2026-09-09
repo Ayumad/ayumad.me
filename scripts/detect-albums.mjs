@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * detect-albums.mjs — find albums Ayush listened to in full from recent
- * Spotify history, dedupe against data/prompted.json, and print the new
- * completions as JSON for the nightly Hermes cron to act on.
+ * Spotify history, queue undelivered completions, and print the current
+ * delivery state as JSON for the nightly Hermes cron to act on.
  *
  * Usage: node scripts/detect-albums.mjs [--reset-prompted]
  * Reads credentials from .env.spotify.local (or process env).
@@ -11,10 +11,16 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { detectCompletedAlbums } from "../server/albums.ts";
+import {
+  deliverPromptBatch,
+  enqueueCompletions,
+  selectPromptBatch,
+} from "../server/albumPrompts.ts";
 import { getRecentlyPlayedDetailed, readSpotifyConfig } from "../server/spotify.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const promptedPath = join(root, "data", "prompted.json");
+const pendingPath = join(root, "data", "pending-albums.json");
 
 // Load .env.spotify.local if present and vars are missing.
 const envFile = join(root, ".env.spotify.local");
@@ -40,6 +46,19 @@ function savePrompted(prompted) {
   writeFileSync(promptedPath, JSON.stringify(prompted, null, 2) + "\n");
 }
 
+function loadPending() {
+  if (!existsSync(pendingPath)) return {};
+  try {
+    return JSON.parse(readFileSync(pendingPath, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+function savePending(pending) {
+  writeFileSync(pendingPath, JSON.stringify(pending, null, 2) + "\n");
+}
+
 const config = readSpotifyConfig(process.env);
 if (!config) {
   console.error("No Spotify credentials — is .env.spotify.local present?");
@@ -47,19 +66,27 @@ if (!config) {
 }
 
 const reset = process.argv.includes("--reset-prompted");
-const prompted = reset ? {} : loadPrompted();
+let prompted = reset ? {} : loadPrompted();
+let pending = reset ? {} : loadPending();
+if (reset) {
+  savePrompted(prompted);
+  savePending(pending);
+}
 
 const tracks = await getRecentlyPlayedDetailed(config, 50);
 const completions = detectCompletedAlbums(tracks, 0.75);
 
 const fresh = completions.filter((album) => !prompted[album.albumId]);
-for (const album of fresh) {
-  prompted[album.albumId] = {
-    promptedAt: new Date().toISOString(),
-    albumName: album.albumName,
-  };
+const alreadyPrompted = completions.filter((album) => prompted[album.albumId]).length;
+pending = enqueueCompletions(
+  completions,
+  pending,
+  prompted,
+  new Date().toISOString(),
+);
+if (fresh.length > 0 || reset || Object.keys(pending).length > 0) {
+  savePending(pending);
 }
-if (fresh.length > 0 || reset) savePrompted(prompted);
 
 // ─── Telegram prompt ───────────────────────────────────────────────────────
 async function sendTelegram(text) {
@@ -86,15 +113,29 @@ async function sendTelegram(text) {
 }
 
 let telegramSent = false;
-if (fresh.length > 0) {
-  const lines = fresh.slice(0, 3).map(
+const batch = selectPromptBatch(pending, prompted);
+if (batch.length > 0) {
+  const lines = batch.map(
     (album, index) =>
       `${index + 1}. ${album.albumName} — ${album.artistNames.join(", ")} (${album.playedTracks}/${album.totalTracks} tracks)`,
   );
   const message =
     `🎧 Album finished — rate it for the Elo board:\n${lines.join("\n")}\n\n` +
     `Reply with e.g. "rate 1 8" (index + score 1-10) and I'll update the ranking.`;
-  telegramSent = await sendTelegram(message);
+  const delivery = await deliverPromptBatch(
+    pending,
+    prompted,
+    batch,
+    () => sendTelegram(message),
+    new Date().toISOString(),
+  );
+  telegramSent = delivery.sent;
+  if (delivery.sent) {
+    prompted = delivery.prompted;
+    savePrompted(prompted);
+    savePending(delivery.pending);
+    pending = delivery.pending;
+  }
 }
 
 console.log(
@@ -108,11 +149,14 @@ console.log(
         totalTracks: album.totalTracks,
         lastPlayedAt: album.lastPlayedAt,
       })),
-      alreadyPrompted: completions.filter((album) => prompted[album.albumId]).length,
+      alreadyPrompted,
       promptedTotal: Object.keys(prompted).length,
+      pendingTotal: Object.keys(pending).length,
       telegramSent,
     },
     null,
     2,
   ),
 );
+
+if (batch.length > 0 && !telegramSent) process.exitCode = 1;

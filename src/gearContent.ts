@@ -5,7 +5,7 @@ const item = (name: string, note: string, role?: string, status: GearItem["statu
 const fullGearCategories: GearCategory[] = [
   { category: "Computers", items: [
     item("AMD Radeon RX 6600 8 GB", "An efficient RDNA 2 1080p-class GPU with 8 GB of VRAM and good Linux-driver fit. Its exact board identity and current assignment still need checking."),
-    item("Apple Mac mini (M4, 2024)", "A quiet, power-efficient M4 desktop with 16 GB unified memory and 256 GB-class storage. It is the machine Hermes runs from today.", "Hermes client / daily workstation"),
+    item("Apple Mac mini (M4, 2024)", "A quiet, power-efficient M4 desktop with 16 GB unified memory and 256 GB-class storage. It is the machine Hermes runs from today.", "Hermes host / daily workstation"),
     item("Apple MacBook Air (M2)", "A 13-inch M2 MacBook Air with 24 GB unified memory and 1 TB storage. It is the lightweight class and coursework machine rather than a sustained graphics or gaming system.", "School laptop"),
     item("Apple MacBook Pro (M4 Pro)", "A 16-inch 2024 MacBook Pro with M4 Pro, 24 GB unified memory, and 512 GB storage. It is the strongest general macOS workstation in the laptop fleet.", "Main general-use laptop"),
     item("ASUS ROG Flow Z13 (2025)", "A 13.4-inch Windows gaming tablet built around Ryzen AI Max and Radeon 8060S graphics, with a 180 Hz touch display, USB4, HDMI 2.1, and a 70 Wh battery.", "Gaming tablet"),

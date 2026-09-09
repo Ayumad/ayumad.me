@@ -13,6 +13,31 @@ export interface EloEntry {
 export const DEFAULT_RATING = 1500;
 export const K = 32;
 
+export interface EloSummary {
+  leaderboard: EloEntry[];
+  median: number | null;
+  updatedAt: string | null;
+}
+
+/** Sort the board and calculate metadata from the complete rating history. */
+export function summarizeElo(entries: EloEntry[]): EloSummary {
+  const leaderboard = [...entries].sort((a, b) => b.rating - a.rating);
+  let median: number | null = null;
+  if (leaderboard.length > 0) {
+    const middle = Math.floor(leaderboard.length / 2);
+    median =
+      leaderboard.length % 2 === 1
+        ? leaderboard[middle].rating
+        : (leaderboard[middle - 1].rating + leaderboard[middle].rating) / 2;
+  }
+  const updatedAt = entries.reduce<string | null>(
+    (latest, entry) =>
+      latest === null || entry.lastRatedAt > latest ? entry.lastRatedAt : latest,
+    null,
+  );
+  return { leaderboard, median, updatedAt };
+}
+
 /** Expected score of rating A against rating B (0..1). */
 export function expectedScore(a: number, b: number): number {
   return 1 / (1 + Math.pow(10, (b - a) / 400));

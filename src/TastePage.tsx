@@ -4,6 +4,7 @@ import AsciiScene from "./AsciiScene";
 interface TasteData {
   configured: boolean;
   generatedAt?: string;
+  message?: string;
   genres?: Array<{ genre: string; weight: number; share: number }>;
   topArtists?: Array<{
     id: string;
@@ -48,6 +49,14 @@ function formatWhen(iso: string | undefined): string {
   });
 }
 
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`${url} returned ${response.status}`);
+  }
+  return (await response.json()) as T;
+}
+
 export function TasteSection() {
   const [taste, setTaste] = useState<TasteData | null>(null);
   const [elo, setElo] = useState<EloData | null>(null);
@@ -56,16 +65,14 @@ export function TasteSection() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/taste")
-      .then((response) => (response.ok ? response.json() : null))
+    fetchJson<TasteData>("/api/taste")
       .then((data) => {
         if (!cancelled) setTaste(data);
       })
       .catch(() => {
         if (!cancelled) setTasteError(true);
       });
-    fetch("/api/elo")
-      .then((response) => (response.ok ? response.json() : null))
+    fetchJson<EloData>("/api/elo")
       .then((data) => {
         if (!cancelled) setElo(data);
       })
@@ -108,27 +115,35 @@ export function TasteSection() {
           <p className="taste-note">Sampling listening history…</p>
         ) : taste.error ? (
           <p className="taste-note">{taste.error}</p>
+        ) : !taste.configured ? (
+          <p className="taste-note">
+            {taste.message ?? "Spotify listening is not connected yet."}
+          </p>
         ) : (
           <>
-            <div className="taste-genre-bars">
-              {taste.genres?.map((genre) => (
-                <div className="taste-genre-row" key={genre.genre}>
-                  <span className="taste-genre-name">{genre.genre}</span>
-                  <div className="taste-genre-track" aria-hidden="true">
-                    <div
-                      className="taste-genre-fill"
-                      style={{
-                        width: `${Math.max(4, (genre.weight / maxWeight) * 100)}%`,
-                      }}
-                    />
+            {taste.genres && taste.genres.length > 0 ? (
+              <div className="taste-genre-bars">
+                {taste.genres.map((genre) => (
+                  <div className="taste-genre-row" key={genre.genre}>
+                    <span className="taste-genre-name">{genre.genre}</span>
+                    <div className="taste-genre-track" aria-hidden="true">
+                      <div
+                        className="taste-genre-fill"
+                        style={{
+                          width: `${Math.max(4, (genre.weight / maxWeight) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="taste-genre-share">{genre.share}%</span>
                   </div>
-                  <span className="taste-genre-share">{genre.share}%</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="taste-note">Genre metadata is unavailable for this sample.</p>
+            )}
             <p className="taste-note taste-meta">
               {taste.generatedAt
-                ? `Sampled ${formatWhen(taste.generatedAt)} · weighted by top-artist position`
+                ? `Sampled ${formatWhen(taste.generatedAt)} · weighted by plays in the latest 50 tracks`
                 : ""}
             </p>
           </>
@@ -141,7 +156,15 @@ export function TasteSection() {
           <p className="taste-note">Couldn&apos;t reach the taste endpoint.</p>
         ) : !taste ? (
           <p className="taste-note">Loading…</p>
-        ) : taste.error ? null : (
+        ) : taste.error ? (
+          <p className="taste-note">{taste.error}</p>
+        ) : !taste.configured ? (
+          <p className="taste-note">
+            {taste.message ?? "Spotify listening is not connected yet."}
+          </p>
+        ) : !taste.topArtists || taste.topArtists.length === 0 ? (
+          <p className="taste-note">No listening data is available yet.</p>
+        ) : (
           <ul className="taste-artist-grid">
             {taste.topArtists?.map((artist, index) => (
               <li className="taste-artist" key={artist.id}>
@@ -150,7 +173,9 @@ export function TasteSection() {
                 </span>
                 <span className="taste-artist-name">{artist.name}</span>
                 <span className="taste-artist-genres">
-                  {artist.genres.slice(0, 2).join(" · ")}
+                  {artist.genres.length > 0
+                    ? artist.genres.slice(0, 2).join(" · ")
+                    : "Genre metadata unavailable"}
                 </span>
               </li>
             ))}
@@ -166,8 +191,7 @@ export function TasteSection() {
           <p className="taste-note">Loading…</p>
         ) : elo.count === 0 ? (
           <p className="taste-note">
-            No albums rated yet — finish an album and rate it in Telegram to
-            seed the board.
+            No albums have been rated yet.
           </p>
         ) : (
           <>

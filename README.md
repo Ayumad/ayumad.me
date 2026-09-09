@@ -35,6 +35,7 @@ The development site runs at `http://localhost:3000`.
 - `npm run typecheck` — run TypeScript without building
 - `npm run lint` — run ESLint
 - `npm test` — run the automated test suite
+- `npm run check:public-boundary` — verify private session-log files are absent
 - `npm run validate` — run every release check in sequence
 
 ## Editing content
@@ -45,6 +46,8 @@ Most site copy and structured content lives in:
 - `src/projectContent.ts` — typed Markdown loader, frontmatter validation, and lifecycle grouping
 - `src/content/projects/*.md` — one evidence-based article per curated project
 - `src/content/journal/*.md` — curated public articles with validated frontmatter
+- `docs/owner-inventory-checklist.md` — internal gear verification checklist;
+  it is not exported by the site build
 - `src/App.tsx` — route composition and shared interface behavior
 - `src/styles.css` — themes, responsive layout, and visual system
 - `resources.md` — complete design, content, architecture, and rebuild specification
@@ -74,7 +77,18 @@ independent website.
 Production is hosted on Vercel. The `main` branch is the production branch, and
 Vercel builds the static `dist` output with `npm run build`.
 
-No environment variables are required for Phase 1.
+The static build requires no environment variables. The live Taste/Spotify
+endpoints require `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, and
+`SPOTIFY_REFRESH_TOKEN`; configure those values in the deployment environment
+when live listening data is enabled. Keep the values in a local
+`.env.spotify.local` file for scripts and never commit that file.
+
+The album-rating maintenance loop is operator-driven: run `npm run spotify:detect`,
+confirm that its Telegram delivery succeeded, then use the album name or ID
+from the prompt with `npm run spotify:rate -- <album> <score>`. Run the full
+validation suite, commit the updated `data/elo.json` and prompt ledgers, and
+push them so Vercel can publish the board. A failed detector run retains its
+pending queue and must be retried.
 
 ## Project status
 
