@@ -1,5 +1,10 @@
 [
  {
+  "date": "2026-09-09",
+  "summary": "Session journal for 2026-09-09: AI-Engineering curriculum expanded with Units 2 (Inference) and 11 (Long-horizon) via qwen3.8-max delegation; todo/wishlist evening checks; cron mixed (vault sync green, reminders sync ~40% success, daily brief failed).",
+  "highlights": []
+ },
+ {
   "date": "2026-09-08",
   "summary": "Session journal for 2026-09-08: FB Marketplace MCP project built, loadout wishlist expanded (projector, MacBook 12in, mirror), Retroid Pocket Nova SoC confirmed, Hue HomeKit cancelled.",
   "highlights": [
