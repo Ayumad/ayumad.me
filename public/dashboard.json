@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-10T03:26:16-07:00",
+ "generated_at": "2026-09-10T03:27:21-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.0",
@@ -57,7 +57,7 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1267,
+   "working": 1269,
    "episodic": 452
   },
   "disk": {
@@ -66,12 +66,12 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2852,
-   "month_in_m": 20.3,
-   "month_out_m": 2.76,
-   "month_cache_m": 273.0,
-   "week_calls": 2162,
-   "week_out_m": 2.03,
+   "month_calls": 2872,
+   "month_in_m": 20.4,
+   "month_out_m": 2.77,
+   "month_cache_m": 275.3,
+   "week_calls": 2182,
+   "week_out_m": 2.04,
    "cache_share": 93,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "deepseek-flash",
-     "calls": 580
+     "calls": 600
     },
     {
      "model": "qwen3.8-max",
@@ -147,7 +147,7 @@
    "name": "Personal Website",
    "status": "active",
    "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
-   "updated": "2026-09-03",
+   "updated": "2026-09-10",
    "folder": ""
   },
   {
@@ -208,15 +208,9 @@
   }
  ],
  "tasks": {
-  "open": 11,
-  "overdue": 1,
+  "open": 10,
+  "overdue": 0,
   "items": [
-   {
-    "title": "Connect Google One subscription to school educational discount",
-    "list": "Subscriptions",
-    "due": "2026-09-03",
-    "overdue": true
-   },
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
@@ -424,8 +418,8 @@
  "now": {
   "active_projects": 11,
   "planned_projects": 4,
-  "open_tasks": 11,
-  "overdue_tasks": 1,
+  "open_tasks": 10,
+  "overdue_tasks": 0,
   "assignments_upcoming": 6,
   "devices_online": 4,
   "devices_total": 12,
