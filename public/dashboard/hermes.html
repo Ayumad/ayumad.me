@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <title>Hermes — Live Audit — Ayumad.me</title>
+    <meta
+      name="description"
+      content="A live audit of the Hermes AI agent running on Ayush Madhukar's Mac mini: model routing, cron health, token spend, and infrastructure findings."
+    />
+    <meta name="author" content="Ayush Madhukar" />
+    <meta name="theme-color" content="#040707" />
+    <link rel="canonical" href="https://ayumad.me/dashboard/hermes" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #040707;
+        --fg: #d7dede;
+        --muted: #7d8a8a;
+        --line: #172020;
+        --edge: #4d6363;
+        --accent: #6fd6a8;
+        --bad: #e08a8a;
+        --warn: #e0b070;
+        --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 44px 20px 90px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1000px; margin: 0 auto; }
+      .back {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 26px;
+      }
+      .back:hover { color: var(--accent); }
+      h1 {
+        font-family: var(--mono);
+        font-size: 25px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+        margin: 0 0 8px;
+      }
+      .meta {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 0 0 4px;
+      }
+      .lede { color: var(--muted); margin: 14px 0 0; max-width: 74ch; }
+      h2 {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 46px 0 14px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 .n { color: var(--muted); font-weight: 400; }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .tile { background: var(--bg); padding: 14px 15px; }
+      .tile .n {
+        font-family: var(--mono);
+        font-size: 22px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+      }
+      .tile .l {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .item { padding: 17px 0; border-bottom: 1px solid var(--line); }
+      .item:last-child { border-bottom: none; }
+      .item .hd {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .item .t { font-weight: 600; font-size: 16px; }
+      .item p { margin: 7px 0 0; color: var(--fg); max-width: 82ch; }
+      .item p .sub { color: var(--muted); }
+      code {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--accent);
+        background: rgba(111, 214, 168, 0.07);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .pill {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 2px 7px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .pill.bad { border-color: var(--bad); color: var(--bad); }
+      .pill.warn { border-color: var(--warn); color: var(--warn); }
+      .pill.good { border-color: var(--accent); color: var(--accent); }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-align: left;
+        padding: 0 14px 9px 0;
+        border-bottom: 1px solid var(--edge);
+      }
+      td {
+        padding: 9px 14px 9px 0;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-family: var(--mono); }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+      }
+      .note { color: var(--muted); font-size: 13.5px; margin: 12px 0 0; }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+      }
+      .card { background: var(--bg); padding: 16px 17px; }
+      .card .ct { font-weight: 600; margin-bottom: 6px; }
+      .card .cd { color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+      footer {
+        margin-top: 56px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      footer a { color: var(--muted); }
+      footer a:hover { color: var(--accent); }
+      @media (max-width: 720px) {
+        .two { grid-template-columns: 1fr; gap: 34px; }
+        body { padding: 30px 16px 70px; }
+        h1 { font-size: 21px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="/">← ayumad.me</a>
+      <h1>Hermes — Live Audit</h1>
+      <p class="meta">Mac mini · read in-session 2026-09-10 · Hermes Agent v0.21.0 (2026.8.31)</p>
+      <p class="lede">
+        A point-in-time audit of the agent that runs this site's automations. Every number below was read
+        from the live install in a single session — the cron ledger, the session store, the model-usage
+        tables and the memory database — not estimated.
+      </p>
+
+      <h2>Snapshot</h2>
+      <div class="tiles">
+        <div class="tile"><div class="n">v0.21.0</div><div class="l">2026.8.31</div></div>
+        <div class="tile"><div class="n">6,640</div><div class="l">commits behind</div></div>
+        <div class="tile"><div class="n">2</div><div class="l">profiles</div></div>
+        <div class="tile"><div class="n">18</div><div class="l">cron jobs / 17 live</div></div>
+        <div class="tile"><div class="n">147</div><div class="l">skills</div></div>
+        <div class="tile"><div class="n">1</div><div class="l">MCP server</div></div>
+        <div class="tile"><div class="n">91%</div><div class="l">data volume used</div></div>
+        <div class="tile"><div class="n">1.4 GB</div><div class="l">state.db</div></div>
+        <div class="tile"><div class="n">924</div><div class="l">sessions</div></div>
+        <div class="tile"><div class="n">1,671</div><div class="l">memory records</div></div>
+      </div>
+
+      <h2>Broken <span class="n">— needing attention</span></h2>
+
+      <div class="item">
+        <div class="hd"><span class="t">Reminders ↔ Google Tasks Sync</span><span class="pill bad">failing</span></div>
+        <p>
+          423 runs, <strong>240 failed</strong>. The cause changed on the day of this audit:
+          <code>invalid_grant: Token has been expired or revoked</code>, first seen 02:14, three in a row.
+          At a 15-minute cadence that is roughly 96 failures a day until the token is re-authorised. The
+          Google token file was last written Sep 8 09:30.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">x-opencode-session HTTP 400</span><span class="pill bad">intermittent</span></div>
+        <p>
+          30 occurrences in 14 days, spaced exactly every 3 hours — the Marketplace Sweep cadence. Last one
+          Sep 9 20:34. The sweep then ran clean at 02:36 and the gateway restarted at 02:41, and the
+          affinity patch (Sep 8) is loaded, so this is intermittent rather than closed.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">No real fallback provider</span><span class="pill bad">failing</span></div>
+        <p>
+          <code>config.yaml</code> carries a <code>fallback_providers</code> value, but
+          <code>hermes fallback list</code> answers <strong>“No fallback providers configured”</strong> —
+          phantom protection. That is why the Sep 9 relay 503 took the Daily Brief down with no retry path.
+          It also pointed at the same provider, which is useless during a relay outage, and at a legacy
+          model id.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">Album Elo Detection</span><span class="pill warn">fix staged, unverified</span></div>
+        <p>
+          Failed four nights straight (Sep 6–9 at 23:30) on <code>npm: command not found</code>, exit 127 —
+          a script-only cron does not inherit the shell PATH. The wrapper now exports
+          <code>$HOME/.hermes/node/bin</code>. Reproduced in a minimal environment both ways: with the fix
+          <code>npm 10.9.8</code>, without it <code>command not found</code>.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">Ayumad.me Monitor reports into the void</span><span class="pill warn">silent</span></div>
+        <p>
+          This very site's staleness check is an agent job with <code>deliver: local</code>. Output is
+          written, never delivered — if the deployed bundle goes stale, nobody is told.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">Question Prompt is switched off</span><span class="pill warn">disabled</span></div>
+        <p>
+          Disabled after 27 runs with 9 failures, last fire Sep 9 23:00. It was scheduled six times a day
+          from the Questions Dashboard, so the reflective-prompt routine is currently not running.
+        </p>
+      </div>
+
+      <h2>Routing and cost</h2>
+      <div class="two">
+        <div>
+          <table>
+            <tr><th>September usage</th><th class="num">value</th></tr>
+            <tr><td>API calls</td><td class="num">2,406</td></tr>
+            <tr><td>Input tokens</td><td class="num">19.3 M</td></tr>
+            <tr><td>Output tokens</td><td class="num">2.36 M</td></tr>
+            <tr><td>Cache reads</td><td class="num">219.4 M</td></tr>
+            <tr><td>Cron share of calls</td><td class="num">661 (27%)</td></tr>
+            <tr><td>Interactive share</td><td class="num">1,846 (73%)</td></tr>
+            <tr><td>Heaviest day (Sep 8)</td><td class="num">920 calls</td></tr>
+          </table>
+          <p class="note">
+            Cache reads are 91% of all tokens — the ratio that makes a flat-rate subscription so hard to
+            beat. Cost columns read $0.00: flat rate, as expected.
+          </p>
+        </div>
+        <div>
+          <table>
+            <tr><th>Model</th><th class="num">calls</th><th class="num">cache</th></tr>
+            <tr><td><code>deepseek-v4-flash</code></td><td class="num">1,517</td><td class="num">171.9 M</td></tr>
+            <tr><td><code>mimo-v2.5</code></td><td class="num">699</td><td class="num">35.9 M</td></tr>
+            <tr><td><code>deepseek-flash</code></td><td class="num">160</td><td class="num">18.0 M</td></tr>
+            <tr><td><code>qwen3.8-max</code></td><td class="num">94</td><td class="num">1.5 M</td></tr>
+            <tr><td><code>gpt-5.6-luna</code></td><td class="num">10</td><td class="num">—</td></tr>
+            <tr><td><code>v4-flash-vision-exp</code></td><td class="num">10</td><td class="num">—</td></tr>
+          </table>
+          <p class="note">
+            All on one relay provider except <code>gpt-5.6-luna</code> (included). The coder profile and
+            subagent delegation both resolve to the cheap model; context compression runs on a long-context
+            model. No wasted spend in the auxiliary paths.
+          </p>
+        </div>
+      </div>
+
+      <h2>Fixed and verified <span class="n">— during this audit</span></h2>
+
+      <div class="item">
+        <div class="hd"><span class="t">Vision model off a retired id</span><span class="pill good">fixed</span></div>
+        <p>
+          The vision auxiliary pointed at a retired V4-vision model id that was only alive through
+          temporary compatibility routing. Repointed to the current model and verified.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">MCP handshake confirmed</span><span class="pill good">verified</span></div>
+        <p>
+          The single MCP server connects over stdio in <strong>812 ms</strong> with 2 tools discovered.
+          Configuration-only checks were hiding nothing.
+        </p>
+      </div>
+
+      <div class="item">
+        <div class="hd"><span class="t">Health sentinel is right, not broken</span><span class="pill good">verified</span></div>
+        <p>
+          Its non-zero exit is the designed warning path, not a crash. The warnings it raised were true:
+          the data volume is 92% full and four jobs are in a non-ok state.
+        </p>
+      </div>
+
+      <h2>Cost landmines still armed</h2>
+      <table>
+        <tr><th>Item</th><th>Why it matters</th></tr>
+        <tr>
+          <td><strong>Mixture-of-Agents enabled</strong><br /><span class="sub" style="color: var(--muted); font-size: 13px">aggregator on an abandoned provider</span></td>
+          <td>
+            MoA is <code>enabled: true</code> with a premium aggregator and a reference model on a provider
+            that was dropped for cost reasons. September shows only 10 reference-model calls, so it is not
+            auto-firing — but it is a loaded gun aimed at a provider no longer being paid for.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>max_tokens: 2048</strong></td>
+          <td>
+            Low for a coding daily driver on a 1M-context model — long diffs and reports get truncated
+            mid-write. Raising it costs nothing; you only pay for tokens actually produced.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Weekly Kanban Dispatch</strong></td>
+          <td>
+            Burns a full agent run every Monday on a board sitting at 6 done and 0 open. Either the
+            workflow needs reviving or the job should become a script.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Install drift</strong><br /><span class="sub" style="color: var(--muted); font-size: 13px">6,640 commits · 4 modified + 1 untracked</span></td>
+          <td>
+            A local patch that fixes the relay's session-affinity requirement exists only as an untracked
+            file. The next upgrade can conflict with or clobber it.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Disk at 91%</strong><br /><span class="sub" style="color: var(--muted); font-size: 13px">19 GiB free</span></td>
+          <td>
+            Reclaimable: a stale 516 MB emergency database backup, plus an offline session-store rebuild.
+            The 656 MB of embedding models are load-bearing — those stay.
+          </td>
+        </tr>
+      </table>
+
+      <h2>Worth building next</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="ct">Local model on the homelab GPU</div>
+          <div class="cd">
+            An RTX 3060 sits in the rack doing passthrough while ~660 cron calls a month go to a cloud
+            relay. A 7–14B local model would take the routine load to zero marginal cost and survive relay
+            outages.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Expose the subscription to other tools</div>
+          <div class="cd">
+            A local OpenAI-compatible proxy backed by the existing subscription would let other CLI coding
+            tools use it instead of paying twice for the same models.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Persistent specialist bots</div>
+          <div class="cd">
+            Everything currently runs as an ephemeral session or a scheduled fire. Durable named
+            specialists with their own memory boundaries would be the closest thing to a real fleet.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Finish the vault integration</div>
+          <div class="cd">
+            The API server and webhook surfaces are disabled even though the credentials are already in
+            place. The vault is the source of truth, so talking to the agent from inside it is the natural
+            next surface.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Second profile for school and research</div>
+          <div class="cd">
+            One profile carries everything. A separate one for coursework and research gets its own skills,
+            schedule and memory with no cross-contamination.
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Desktop panes and widgets</div>
+          <div class="cd">
+            The desktop surface accepts UI plugins. A homelab and cron health pane reading the same stores
+            the sentinel script uses is the obvious first one.
+          </div>
+        </div>
+      </div>
+
+      <h2>Deliberately unchanged</h2>
+      <div class="item">
+        <p>
+          <strong>Compression and delegation routing</strong> — cheap, correct, matched to the flat-rate
+          plan; auxiliary paths inherit the default model, so nothing is overspending there.
+        </p>
+      </div>
+      <div class="item">
+        <p>
+          <strong>Session auto-prune with 90-day retention</strong> — already enabled, so the doctor's
+          complaint about it is stale. The remaining work is the offline storage rebuild.
+        </p>
+      </div>
+      <div class="item">
+        <p>
+          <strong>Webhooks, always-on voice, extra MCP servers</strong> — left off. No consumer, no event
+          source, no security boundary yet. Fixing what is already broken comes before installing another
+          integration.
+        </p>
+      </div>
+      <div class="item">
+        <p>
+          <strong>Vault auto-sync, every 15 minutes</strong> — 426 of 426 runs clean. The only job with a
+          perfect record.
+        </p>
+      </div>
+
+      <footer>
+        Point-in-time audit · 2026-09-10 ·
+        <a href="/">ayumad.me</a> ·
+        <a href="/dashboard/hermes">/dashboard/hermes</a>
+      </footer>
+    </div>
+  </body>
+</html>
