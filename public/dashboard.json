@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-10T03:20:06-07:00",
+ "generated_at": "2026-09-10T03:25:00-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.0",
@@ -11,9 +11,9 @@
   "cron_failing": [
    {
     "name": "Reminders ↔ Google Tasks Sync",
-    "runs": 423,
+    "runs": 422,
     "ok": 185,
-    "failed": 238,
+    "failed": 237,
     "last": "2026-09-10T03:14:36"
    },
    {
@@ -25,17 +25,17 @@
    },
    {
     "name": "Question Prompt",
-    "runs": 27,
-    "ok": 18,
+    "runs": 26,
+    "ok": 17,
     "failed": 9,
     "last": "2026-09-09T23:00:01"
    },
    {
     "name": "Album Elo Detection",
-    "runs": 5,
-    "ok": 1,
+    "runs": 6,
+    "ok": 2,
     "failed": 4,
-    "last": "2026-09-09T23:30:02"
+    "last": "2026-09-10T03:23:55"
    },
    {
     "name": "Hermes Sentinel",
@@ -52,12 +52,12 @@
     "last": "2026-09-09T09:30:08"
    }
   ],
-  "cron_failing_count": 8,
+  "cron_failing_count": 9,
   "skills": 147,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1263,
+   "working": 1266,
    "episodic": 452
   },
   "disk": {
@@ -66,12 +66,12 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2776,
-   "month_in_m": 20.0,
-   "month_out_m": 2.7,
-   "month_cache_m": 264.5,
-   "week_calls": 2086,
-   "week_out_m": 1.97,
+   "month_calls": 2830,
+   "month_in_m": 20.3,
+   "month_out_m": 2.75,
+   "month_cache_m": 270.1,
+   "week_calls": 2140,
+   "week_out_m": 2.01,
    "cache_share": 93,
    "top_models": [
     {
@@ -80,11 +80,11 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 683
+     "calls": 687
     },
     {
      "model": "deepseek-flash",
-     "calls": 521
+     "calls": 566
     },
     {
      "model": "qwen3.8-max",
@@ -281,8 +281,9 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 52,
-  "overdue": 4,
+  "upcoming": 6,
+  "window_days": 7,
+  "later": 46,
   "courses": [
    "CMPE-131",
    "CMPE-142",
@@ -324,44 +325,6 @@
     "course": "CMPE-131",
     "due": "2026-09-15",
     "when": "2026-09-15T17:15:00+00:00"
-   },
-   {
-    "title": "Project Number 1: Getting to know networking tools",
-    "course": "CMPE-148",
-    "due": "2026-09-17",
-    "when": "2026-09-17T23:59:00+00:00"
-   },
-   {
-    "title": "Term Project: Specification Submission - SFDS",
-    "course": "CMPE-131",
-    "due": "2026-09-20",
-    "when": "2026-09-20T23:59:00+00:00"
-   }
-  ],
-  "missed": [
-   {
-    "title": "(In-class Activity) Weekly Sprint Meeting - SAD/Architectural Design",
-    "course": "CMPE-131",
-    "due": "2026-09-08",
-    "when": "2026-09-08T17:30:00+00:00"
-   },
-   {
-    "title": "Chapter 2 HW",
-    "course": "CMPE-142",
-    "due": "2026-09-06",
-    "when": "2026-09-06T23:59:00+00:00"
-   },
-   {
-    "title": "Honesty pledge submission (2 students)",
-    "course": "CMPE-142",
-    "due": "2026-09-03",
-    "when": "2026-09-03T23:59:00+00:00"
-   },
-   {
-    "title": "Prerequisite transcripts submission (4 students)",
-    "course": "CMPE-142",
-    "due": "2026-09-03",
-    "when": "2026-09-03T23:59:00+00:00"
    }
   ]
  },
@@ -463,11 +426,10 @@
   "planned_projects": 4,
   "open_tasks": 11,
   "overdue_tasks": 1,
-  "assignments_upcoming": 52,
-  "assignments_missed": 4,
+  "assignments_upcoming": 6,
   "devices_online": 4,
   "devices_total": 12,
-  "jobs_failing": 8,
+  "jobs_failing": 9,
   "jobs_total": 19
  }
 }
