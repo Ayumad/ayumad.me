@@ -323,16 +323,33 @@
       //              devices on Ayush's tailnet.
       //   snapshot = the committed public/dashboard.json, deployed a few times a
       //              day. Works anywhere, including for anyone not on the tailnet.
-      const LIVE_URL = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json";
+      const NODE = "ayumacmini.taila4a4a9.ts.net";
+      const LIVE_URL = "https://" + NODE + "/dashboard.json";
+      // This page is reachable two ways:
+      //   https://ayumad.me/dashboard  — the public site (Vercel).
+      //   http://<node>:8790/          — served BY the Mac mini. Tailscale Serve is
+      //                                  not enabled on this tailnet (admin-console-only
+      //                                  feature gate, verified 2026-09-10), so the mini
+      //                                  serves this page directly over the tailnet and
+      //                                  the live payload is then its OWN origin: no TLS,
+      //                                  no mixed-content block, no Serve.
+      const onNode = location.hostname === NODE;
 
-      const fromLive = () => new Promise((resolve, reject) => {
-        const ac = new AbortController();
-        const timer = setTimeout(() => { ac.abort(); reject(new Error("live timeout")); }, 1500);
-        fetch(LIVE_URL, { cache: "no-store", signal: ac.signal })
-          .then((r) => { clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-          .then((d) => resolve({ d, source: "live" }))
-          .catch((e) => { clearTimeout(timer); reject(e); });
-      });
+      const fromLive = () => {
+        if (onNode) {
+          return fetch("/dashboard.json", { cache: "no-store" })
+            .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+            .then((d) => ({ d, source: "live" }));
+        }
+        return new Promise((resolve, reject) => {
+          const ac = new AbortController();
+          const timer = setTimeout(() => { ac.abort(); reject(new Error("live timeout")); }, 1500);
+          fetch(LIVE_URL, { cache: "no-store", signal: ac.signal })
+            .then((r) => { clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+            .then((d) => resolve({ d, source: "live" }))
+            .catch((e) => { clearTimeout(timer); reject(e); });
+        });
+      };
 
       const fromSnapshot = () => fetch("/dashboard.json", { cache: "no-store" })
         .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
