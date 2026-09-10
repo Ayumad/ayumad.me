@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-09-10T03:19:27-07:00",
+ "generated_at": "2026-09-10T03:20:06-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.0",
   "released": "2026.8.31",
   "commits_behind": 6654,
-  "cron_total": 19,
-  "cron_active": 18,
-  "cron_no_agent": 9,
+  "cron_total": 20,
+  "cron_active": 19,
+  "cron_no_agent": 10,
   "cron_failing": [
    {
     "name": "Reminders ↔ Google Tasks Sync",
@@ -66,12 +66,12 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2772,
+   "month_calls": 2776,
    "month_in_m": 20.0,
-   "month_out_m": 2.69,
-   "month_cache_m": 263.8,
-   "week_calls": 2082,
-   "week_out_m": 1.96,
+   "month_out_m": 2.7,
+   "month_cache_m": 264.5,
+   "week_calls": 2086,
+   "week_out_m": 1.97,
    "cache_share": 93,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "deepseek-flash",
-     "calls": 517
+     "calls": 521
     },
     {
      "model": "qwen3.8-max",
@@ -468,6 +468,6 @@
   "devices_online": 4,
   "devices_total": 12,
   "jobs_failing": 8,
-  "jobs_total": 18
+  "jobs_total": 19
  }
 }
