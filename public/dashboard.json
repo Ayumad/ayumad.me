@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-10T03:25:00-07:00",
+ "generated_at": "2026-09-10T03:26:16-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.0",
@@ -11,9 +11,9 @@
   "cron_failing": [
    {
     "name": "Reminders ↔ Google Tasks Sync",
-    "runs": 422,
+    "runs": 421,
     "ok": 185,
-    "failed": 237,
+    "failed": 236,
     "last": "2026-09-10T03:14:36"
    },
    {
@@ -57,7 +57,7 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1266,
+   "working": 1267,
    "episodic": 452
   },
   "disk": {
@@ -66,12 +66,12 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2830,
+   "month_calls": 2852,
    "month_in_m": 20.3,
-   "month_out_m": 2.75,
-   "month_cache_m": 270.1,
-   "week_calls": 2140,
-   "week_out_m": 2.01,
+   "month_out_m": 2.76,
+   "month_cache_m": 273.0,
+   "week_calls": 2162,
+   "week_out_m": 2.03,
    "cache_share": 93,
    "top_models": [
     {
@@ -80,11 +80,11 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 687
+     "calls": 688
     },
     {
      "model": "deepseek-flash",
-     "calls": 566
+     "calls": 580
     },
     {
      "model": "qwen3.8-max",
