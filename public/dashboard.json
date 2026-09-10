@@ -1,32 +1,32 @@
 {
- "generated_at": "2026-09-10T03:27:21-07:00",
+ "generated_at": "2026-09-10T10:58:16-07:00",
  "generated_on": "Mac mini",
  "hermes": {
-  "version": "0.21.0",
-  "released": "2026.8.31",
-  "commits_behind": 6654,
-  "cron_total": 20,
-  "cron_active": 19,
-  "cron_no_agent": 10,
+  "version": "0.21.1",
+  "released": "2026.9.7",
+  "commits_behind": 75,
+  "cron_total": 6,
+  "cron_active": 5,
+  "cron_no_agent": 1,
   "cron_failing": [
    {
-    "name": "Reminders ↔ Google Tasks Sync",
-    "runs": 421,
-    "ok": 185,
-    "failed": 236,
-    "last": "2026-09-10T03:14:36"
+    "name": "69726f65e548",
+    "runs": 411,
+    "ok": 176,
+    "failed": 235,
+    "last": "2026-09-10T04:44:02"
    },
    {
-    "name": "Marketplace Sweep (Craigslist wishlist)",
+    "name": "ed3e2400a3b6",
     "runs": 35,
     "ok": 22,
     "failed": 13,
-    "last": "2026-09-10T02:36:31"
+    "last": "2026-09-10T04:47:26"
    },
    {
-    "name": "Question Prompt",
-    "runs": 26,
-    "ok": 17,
+    "name": "b2630adb1e0e",
+    "runs": 25,
+    "ok": 16,
     "failed": 9,
     "last": "2026-09-09T23:00:01"
    },
@@ -38,53 +38,53 @@
     "last": "2026-09-10T03:23:55"
    },
    {
-    "name": "Hermes Sentinel",
-    "runs": 3,
-    "ok": 1,
-    "failed": 2,
-    "last": "2026-09-10T03:11:33"
-   },
-   {
-    "name": "Daily Brief",
+    "name": "3a920665a70b",
     "runs": 4,
     "ok": 2,
     "failed": 2,
     "last": "2026-09-09T09:30:08"
+   },
+   {
+    "name": "Mnemosyne Sleep",
+    "runs": 5,
+    "ok": 3,
+    "failed": 2,
+    "last": "2026-09-10T03:00:32"
    }
   ],
   "cron_failing_count": 9,
-  "skills": 147,
+  "skills": 149,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1269,
+   "working": 1282,
    "episodic": 452
   },
   "disk": {
-   "used_pct": 93,
-   "free_gb": 13.8,
+   "used_pct": 82,
+   "free_gb": 35.4,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2872,
-   "month_in_m": 20.4,
-   "month_out_m": 2.77,
-   "month_cache_m": 275.3,
-   "week_calls": 2182,
-   "week_out_m": 2.04,
-   "cache_share": 93,
+   "month_calls": 4100,
+   "month_in_m": 23.0,
+   "month_out_m": 3.79,
+   "month_cache_m": 457.9,
+   "week_calls": 3381,
+   "week_out_m": 3.02,
+   "cache_share": 95,
    "top_models": [
+    {
+     "model": "deepseek-flash",
+     "calls": 1792
+    },
     {
      "model": "deepseek-v4-flash",
      "calls": 1448
     },
     {
      "model": "mimo-v2.5",
-     "calls": 688
-    },
-    {
-     "model": "deepseek-flash",
-     "calls": 600
+     "calls": 721
     },
     {
      "model": "qwen3.8-max",
@@ -93,189 +93,10 @@
    ]
   }
  },
- "projects": [
-  {
-   "name": "ACM Fall 2026 Workshops",
-   "status": "active",
-   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Agentic Coding series Oct 7–Dec 2.",
-   "updated": "2026-08-27",
-   "folder": ""
-  },
-  {
-   "name": "CRT Lab",
-   "status": "active",
-   "summary": "Build a local-first browser workstation that routes generated signals, media, web pages, and user-owned ROMs through an adjustable CRT display or oscilloscope.",
-   "updated": "2026-08-19",
-   "folder": ""
-  },
-  {
-   "name": "EchoSphere",
-   "status": "active",
-   "summary": "EchoSphere Physical AI Robot — Ayush leads SJSU ACM Robotics & Hardware team (6 members: hardware/software/electronics) in a 12-week build with IPMD (Min Lee) for EchoAi's Kickstarter demo. Kickoff Sep 7, 2026. Company meeting Sep 1: Kickstarter confirmed, $300–500 budget ask, EchoAI API still pending.",
-   "updated": "2026-09-03",
-   "folder": "EchoSphere"
-  },
-  {
-   "name": "Facebook Marketplace MCP",
-   "status": "active",
-   "summary": "Facebook Marketplace MCP server exposing search + listing-detail tools to Hermes, driving a burner-account Chrome profile to feed the marketplace-deal-evaluator flow.",
-   "updated": "2026-09-08",
-   "folder": ""
-  },
-  {
-   "name": "Homelab",
-   "status": "active",
-   "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
-   "updated": "2026-09-10",
-   "folder": ""
-  },
-  {
-   "name": "Obsidian RAG Assistant",
-   "status": "active",
-   "summary": "Build a private AI second brain that retrieves, cites, organizes, and eventually updates Ayush's Obsidian knowledge safely.",
-   "updated": "2026-08-05",
-   "folder": ""
-  },
-  {
-   "name": "Omarchy Tablet Mode",
-   "status": "active",
-   "summary": "Omarchy tablet mode — touch-first UX and automatic posture switching for 2-in-1 convertibles (Chuwi Minibook X), gaming tablets (ROG Flow Z13), and pure tablets; demo-ready for the Omarchy SF meetup 2026-09-30.",
-   "updated": "2026-09-05",
-   "folder": ""
-  },
-  {
-   "name": "Personal Website",
-   "status": "active",
-   "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
-   "updated": "2026-09-10",
-   "folder": ""
-  },
-  {
-   "name": "RetroPie CRT Setup",
-   "status": "active",
-   "summary": "Configure RetroPie on the Raspberry Pi 4 so games play on the Sony WEGA KV-20FS12 CRT with a drop-in ROM folder, plus Kodi so videos in a media folder are playable — best possible CRT experience.",
-   "updated": "2026-08-21",
-   "folder": ""
-  },
-  {
-   "name": "Vault",
-   "status": "active",
-   "summary": "Refactor the vault into a skills-first, self-managing, archive-free knowledge base — audit done, execution in progress.",
-   "updated": "2026-08-21",
-   "folder": ""
-  },
-  {
-   "name": "YouTube Data Deep Dive",
-   "status": "active",
-   "summary": "Pull Ayush's personal YouTube data (watch history, saved, liked, subscriptions, playlists) and build a profile of what it says about him. Public findings done; 3 routes to private data (Takeout / CDP cookies / manual sign-in).",
-   "updated": "2026-08-11",
-   "folder": ""
-  },
-  {
-   "name": "Album Ranking App",
-   "status": "planned",
-   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Start by end of Aug 2026.",
-   "updated": "2026-08-19",
-   "folder": "Planned"
-  },
-  {
-   "name": "Electronics Workbench",
-   "status": "planned",
-   "summary": "Set up a practical electronics and creative-technology workbench for the sister's room.",
-   "updated": "2026-08-07",
-   "folder": ""
-  },
-  {
-   "name": "P520 GPU Passthrough Runbook",
-   "status": "reference",
-   "summary": "P520 GPU passthrough runbook + always-accessible OS VM plan (Ubuntu + Fedora)",
-   "updated": "2026-09-05",
-   "folder": "Homelab"
-  },
-  {
-   "name": "Social Bookmark Sync",
-   "status": "planned",
-   "summary": "Auto-sync Reddit saves, X bookmarks (and TikTok favorites later) into Hermes + Obsidian vault. Shared ingest pipeline, script-first, zero-token when idle. Deferred — build routes researched.",
-   "updated": "2026-08-11",
-   "folder": "Planned"
-  },
-  {
-   "name": "Voice Assistant",
-   "status": "planned",
-   "summary": "Deferred local-first voice interface to Hermes using Raspberry Pi audio hardware and Home Assistant.",
-   "updated": "2026-08-05",
-   "folder": "Planned"
-  }
- ],
- "tasks": {
-  "open": 10,
-  "overdue": 0,
-  "items": [
-   {
-    "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
-    "list": "Tech",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Audit all Hermes cron jobs",
-    "list": "Tech",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Set up Retroid Pocket Nova (Sunshine/Moonlight pairing)",
-    "list": "Daily",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Engineering desktop (RX 6600 XT build): use NVMe SSD, reinstall Windows, set up engineering software (SolidWorks)",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Setup NAS Functionality",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
-    "list": "Tech",
-    "due": "2026-09-30",
-    "overdue": false
-   },
-   {
-    "title": "Cancel subscription of rtings.com",
-    "list": "Subscriptions",
-    "due": "2026-12-15",
-    "overdue": false
-   },
-   {
-    "title": "Write article: AI as a computer — harness=OS, Mnemosyne=RAM, Obsidian=SSD (concept fleshed out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Set up ChatGPT web-chat export (Settings → Data controls → Export data at chatgpt.com)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   }
-  ],
-  "lists": 9
- },
+ "projects": [],
+ "tasks": {},
  "school": {
-  "upcoming": 6,
+  "upcoming": 5,
   "window_days": 7,
   "later": 46,
   "courses": [
@@ -284,12 +105,6 @@
    "CMPE-148"
   ],
   "next": [
-   {
-    "title": "PART ONE: Chapter 1&2 Quiz- Requires Respondus LockDown Browser",
-    "course": "CMPE-142",
-    "due": "2026-09-10",
-    "when": "2026-09-10T17:45:00+00:00"
-   },
    {
     "title": "Quiz 2: Chapter 2: Physical Layer",
     "course": "CMPE-148",
@@ -330,12 +145,6 @@
    "self": true
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -349,6 +158,12 @@
   },
   {
    "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayumacpro",
    "os": "macOS",
    "online": false,
    "self": false
@@ -414,16 +229,19 @@
    "summary": "Task rescheduling, marketplace sweep (DS Lite candidate), routine cron ops, interview prep menu delivered."
   }
  ],
- "errors": {},
+ "errors": {
+  "projects": "RuntimeError: TimeoutError: cannot read /Users/ayumad/Documents/Main from this process — macOS TCC denies ~/Documents to launchd/cron contexts. Grant the Hermes gateway Files & Folders (or Full Disk Access) access.",
+  "tasks": "SectionTimeout: exceeded 25s budget (blocked syscall?)"
+ },
  "now": {
-  "active_projects": 11,
-  "planned_projects": 4,
-  "open_tasks": 10,
+  "active_projects": 0,
+  "planned_projects": 0,
+  "open_tasks": 0,
   "overdue_tasks": 0,
-  "assignments_upcoming": 6,
-  "devices_online": 4,
+  "assignments_upcoming": 5,
+  "devices_online": 3,
   "devices_total": 12,
   "jobs_failing": 9,
-  "jobs_total": 19
+  "jobs_total": 5
  }
 }
