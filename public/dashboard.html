@@ -341,23 +341,23 @@
         clear(hero);
         hero.appendChild(heroCell(now.active_projects ?? "—", "active projects"));
         hero.appendChild(heroCell(now.open_tasks ?? "—", "open tasks"));
-        hero.appendChild(heroCell(now.assignments_upcoming ?? "—", "assignments due", now.assignments_upcoming ? "" : ""));
+        hero.appendChild(heroCell(now.assignments_upcoming ?? "—", "assignments due this week", ""));
         hero.appendChild(heroCell((now.devices_online ?? 0) + "/" + (now.devices_total ?? 0), "devices online"));
         hero.appendChild(heroCell(now.jobs_failing ?? "—", "jobs needing attention", now.jobs_failing ? "warn" : "good"));
         if (h.disk) hero.appendChild(heroCell(h.disk.used_pct + "%", "disk used · " + h.disk.free_gb + " GB free", h.disk.used_pct >= 90 ? "alert" : "warn"));
 
-        // school
+        // school — forward-looking only. Past items are never shown and never
+        // labelled overdue: submission state lives in Canvas, which we can't read.
         const sc = d.school || {};
-        $("school-hint").textContent = (sc.upcoming || 0) + " upcoming" + (sc.overdue ? " · " + sc.overdue + " overdue" : "");
+        const win = sc.window_days || 7;
+        $("school-hint").textContent = (sc.upcoming || 0) + " due in the next " + win + " days"
+          + (sc.later ? " · " + sc.later + " further out" : "");
         const school = $("school");
         clear(school);
         const next = (sc.next || []);
-        if (!next.length) empty(school, "Nothing due in the next two weeks.");
+        if (!next.length) empty(school, "Nothing due in the next " + win + " days.");
         for (const a of next) {
           school.appendChild(row(a.title, null, when(a.due), "course", a.course || "—"));
-        }
-        for (const a of (sc.missed || [])) {
-          school.appendChild(row(a.title, "not submitted", when(a.due), "late", a.course || "—"));
         }
 
         // tasks
