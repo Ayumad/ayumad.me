@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <title>Dashboard — Ayumad.me</title>
+    <meta
+      name="description"
+      content="Live operating dashboard for Ayush Madhukar: coursework deadlines, open tasks, active projects, the Hermes agent fleet, homelab devices, and listening."
+    />
+    <meta name="author" content="Ayush Madhukar" />
+    <meta name="theme-color" content="#040707" />
+    <link rel="canonical" href="https://ayumad.me/dashboard" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #040707;
+        --fg: #d7dede;
+        --muted: #7d8a8a;
+        --line: #172020;
+        --edge: #4d6363;
+        --accent: #6fd6a8;
+        --warn: #e0b070;
+        --bad: #e08a8a;
+        --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 40px 20px 90px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1080px; margin: 0 auto; }
+      .top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .back {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .back:hover { color: var(--accent); }
+      .stamp { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+      .live { color: var(--accent); }
+      h1 {
+        font-family: var(--mono);
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.4px;
+        margin: 10px 0 4px;
+      }
+      .sub { color: var(--muted); margin: 0 0 8px; max-width: 76ch; }
+      h2 {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 44px 0 14px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+      h2 .hint { color: var(--muted); font-weight: 400; letter-spacing: 0.04em; text-transform: none; font-size: 12px; }
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+        margin-top: 24px;
+      }
+      .cell { border: 1px solid var(--line); border-radius: 2px; padding: 15px 16px; }
+      .cell .v {
+        font-family: var(--mono);
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+      }
+      .cell .k {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .cell.alert .v { color: var(--bad); }
+      .cell.warn .v { color: var(--warn); }
+      .cell.good .v { color: var(--accent); }
+      .list { display: flex; flex-direction: column; }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 6px 20px;
+        align-items: baseline;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .row:last-child { border-bottom: none; }
+      .row .t { font-weight: 500; }
+      .row .m { color: var(--muted); font-size: 13px; margin-top: 2px; }
+      .row .r {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        text-align: right;
+        white-space: nowrap;
+      }
+      .course, .tag {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        padding: 1px 6px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .tag { color: var(--muted); border-color: var(--line); }
+      .tag.due { color: var(--warn); border-color: var(--warn); }
+      .tag.late { color: var(--bad); border-color: var(--bad); }
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+        gap: 8px;
+      }
+      .card { border: 1px solid var(--line); border-radius: 2px; padding: 15px 16px; }
+      .card .ct { font-weight: 600; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 10px; }
+      .card .cd { color: var(--muted); font-size: 13px; line-height: 1.55; }
+      .card .cu { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 8px; }
+      .stat { border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; }
+      .stat .v { font-family: var(--mono); font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .stat .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+      .devices { display: flex; flex-wrap: wrap; gap: 8px; }
+      .dev {
+        font-family: var(--mono);
+        font-size: 12px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 5px 9px;
+        color: var(--muted);
+      }
+      .dev.on { border-color: var(--edge); color: var(--fg); }
+      .dev.on::before { content: "● "; color: var(--accent); }
+      .dev.off::before { content: "○ "; }
+      .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 7px; }
+      .bar > i { display: block; height: 100%; background: var(--accent); }
+      .bar > i.warn { background: var(--warn); }
+      a.inline { color: var(--accent); text-decoration: none; }
+      a.inline:hover { text-decoration: underline; }
+      .listen { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+      .listen img { width: 96px; height: 96px; border-radius: 4px; border: 1px solid var(--line); object-fit: cover; }
+      .listen .lt { font-size: 17px; font-weight: 600; }
+      .listen .la { color: var(--muted); }
+      .empty { color: var(--muted); font-size: 13.5px; padding: 10px 0; }
+      .err { color: var(--warn); font-size: 12.5px; font-family: var(--mono); }
+      footer {
+        margin-top: 56px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      footer a { color: var(--muted); }
+      footer a:hover { color: var(--accent); }
+      @media (max-width: 760px) {
+        body { padding: 26px 15px 60px; }
+        h1 { font-size: 21px; }
+        .cols { grid-template-columns: 1fr; gap: 30px; }
+        .cell .v { font-size: 21px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <a class="back" href="/">← ayumad.me</a>
+        <span class="stamp" id="stamp">loading…</span>
+      </div>
+
+      <h1>Dashboard</h1>
+      <p class="sub">
+        What is actually going on: coursework, tasks, projects, the agent fleet behind this site, and
+        what is playing. Assembled on the Mac mini by a script — no model in the loop.
+      </p>
+
+      <div class="hero" id="hero"></div>
+
+      <h2>School <span class="hint" id="school-hint"></span></h2>
+      <div class="list" id="school"></div>
+
+      <h2>Open tasks <span class="hint" id="tasks-hint"></span></h2>
+      <div class="list" id="tasks"></div>
+
+      <h2>Projects <span class="hint">from the vault</span></h2>
+      <div class="cards" id="projects"></div>
+
+      <h2>Hermes agent <span class="hint"><a class="inline" href="/dashboard/hermes">full audit →</a></span></h2>
+      <div class="stats" id="agent-stats"></div>
+      <div class="cols" style="margin-top: 26px">
+        <div>
+          <div class="stamp" style="margin-bottom: 10px">Cron fleet — jobs needing attention</div>
+          <div class="list" id="cron"></div>
+        </div>
+        <div>
+          <div class="stamp" style="margin-bottom: 10px">Token spend this month</div>
+          <div class="list" id="tokens"></div>
+        </div>
+      </div>
+
+      <h2>Fleet <span class="hint" id="fleet-hint"></span></h2>
+      <div class="devices" id="fleet"></div>
+
+      <h2>Listening</h2>
+      <div class="listen" id="listen"><span class="empty">loading…</span></div>
+
+      <h2>Journal <span class="hint"><a class="inline" href="/journal">all entries →</a></span></h2>
+      <div class="list" id="journal"></div>
+
+      <footer>
+        <span id="foot-stamp"></span>
+        <span>
+          <a href="/dashboard/hermes">hermes audit</a> ·
+          <a href="/projects">projects</a> ·
+          <a href="/gear">gear</a> ·
+          <a href="/journal">journal</a>
+        </span>
+      </footer>
+    </div>
+
+    <script>
+      // ── helpers ────────────────────────────────────────────────────────────
+      // Everything from the data file goes in through textContent, never
+      // innerHTML: assignment titles are parsed out of notification email.
+      const $ = (id) => document.getElementById(id);
+      const el = (tag, cls, txt) => {
+        const n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (txt != null) n.textContent = String(txt);
+        return n;
+      };
+      const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
+      const when = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
+        if (isNaN(d)) return iso;
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const days = Math.round((d.setHours(0, 0, 0, 0) - today.getTime()) / 86400000);
+        const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+        if (days === 0) return label + " · today";
+        if (days === 1) return label + " · tomorrow";
+        if (days < 0) return label + " · " + Math.abs(days) + "d late";
+        if (days <= 7) return label + " · in " + days + "d";
+        return label;
+      };
+      const row = (title, meta, right, tagCls, tagTxt) => {
+        const r = el("div", "row");
+        const l = el("div");
+        const t = el("div", "t");
+        t.appendChild(el("span", null, title));
+        if (tagTxt) {
+          t.appendChild(document.createTextNode(" "));
+          t.appendChild(el("span", "tag " + (tagCls || ""), tagTxt));
+        }
+        l.appendChild(t);
+        if (meta) l.appendChild(el("div", "m", meta));
+        r.appendChild(l);
+        r.appendChild(el("div", "r", right || ""));
+        return r;
+      };
+      const stat = (value, label, cls) => {
+        const c = el("div", "stat" + (cls ? " " + cls : ""));
+        c.appendChild(el("div", "v", value));
+        c.appendChild(el("div", "k", label));
+        return c;
+      };
+      const heroCell = (value, label, cls) => {
+        const c = el("div", "cell" + (cls ? " " + cls : ""));
+        c.appendChild(el("div", "v", value));
+        c.appendChild(el("div", "k", label));
+        return c;
+      };
+      const empty = (node, msg) => { clear(node); node.appendChild(el("div", "empty", msg)); };
+
+      // ── dashboard data ─────────────────────────────────────────────────────
+      fetch("/dashboard.json", { cache: "no-store" })
+        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(render)
+        .catch((e) => {
+          $("stamp").textContent = "data unavailable";
+          for (const id of ["hero", "school", "tasks", "projects", "agent-stats", "cron", "tokens", "fleet", "journal"]) {
+            empty($(id), "Live data has not been generated yet — run the dashboard builder.");
+          }
+          $("stamp").appendChild(el("span", "err", " (" + e.message + ")"));
+        });
+
+      function render(d) {
+        const now = d.now || {};
+        const h = d.hermes || {};
+
+        // header
+        const g = d.generated_at ? new Date(d.generated_at) : null;
+        $("stamp").textContent = g
+          ? "generated " + g.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " · " + (d.generated_on || "")
+          : "unknown";
+        $("foot-stamp").textContent = g ? "updated " + g.toLocaleString() : "";
+
+        // hero
+        const hero = $("hero");
+        clear(hero);
+        hero.appendChild(heroCell(now.active_projects ?? "—", "active projects"));
+        hero.appendChild(heroCell(now.open_tasks ?? "—", "open tasks"));
+        hero.appendChild(heroCell(now.assignments_upcoming ?? "—", "assignments due", now.assignments_upcoming ? "" : ""));
+        hero.appendChild(heroCell((now.devices_online ?? 0) + "/" + (now.devices_total ?? 0), "devices online"));
+        hero.appendChild(heroCell(now.jobs_failing ?? "—", "jobs needing attention", now.jobs_failing ? "warn" : "good"));
+        if (h.disk) hero.appendChild(heroCell(h.disk.used_pct + "%", "disk used · " + h.disk.free_gb + " GB free", h.disk.used_pct >= 90 ? "alert" : "warn"));
+
+        // school
+        const sc = d.school || {};
+        $("school-hint").textContent = (sc.upcoming || 0) + " upcoming" + (sc.overdue ? " · " + sc.overdue + " overdue" : "");
+        const school = $("school");
+        clear(school);
+        const next = (sc.next || []);
+        if (!next.length) empty(school, "Nothing due in the next two weeks.");
+        for (const a of next) {
+          school.appendChild(row(a.title, null, when(a.due), "course", a.course || "—"));
+        }
+        for (const a of (sc.missed || [])) {
+          school.appendChild(row(a.title, "not submitted", when(a.due), "late", a.course || "—"));
+        }
+
+        // tasks
+        const tk = d.tasks || {};
+        $("tasks-hint").textContent = (tk.open || 0) + " across " + (tk.lists || 0) + " lists" + (tk.overdue ? " · " + tk.overdue + " overdue" : "");
+        const tasks = $("tasks");
+        clear(tasks);
+        if (!(tk.items || []).length) empty(tasks, "No open tasks.");
+        for (const t of (tk.items || [])) {
+          tasks.appendChild(row(t.title, null, when(t.due), t.overdue ? "late" : "tag", t.list || ""));
+        }
+
+        // projects
+        const projects = $("projects");
+        clear(projects);
+        const show = (d.projects || []).filter((p) => p.status !== "reference");
+        const active = show.filter((p) => p.status === "active" || p.status === "in-progress");
+        const planned = show.filter((p) => p.status !== "active" && p.status !== "in-progress");
+        for (const p of active.concat(planned)) {
+          const c = el("div", "card");
+          const ct = el("div", "ct");
+          ct.appendChild(el("span", null, p.name));
+          ct.appendChild(el("span", "tag", p.status));
+          c.appendChild(ct);
+          if (p.summary) c.appendChild(el("div", "cd", p.summary));
+          if (p.updated) c.appendChild(el("div", "cu", "updated " + p.updated + (p.folder ? " · " + p.folder : "")));
+          projects.appendChild(c);
+        }
+
+        // agent stats
+        const stats = $("agent-stats");
+        clear(stats);
+        stats.appendChild(stat("v" + (h.version || "?"), "version"));
+        stats.appendChild(stat(h.commits_behind != null ? h.commits_behind.toLocaleString() : "—", "commits behind"));
+        stats.appendChild(stat((h.cron_active ?? "—") + "/" + (h.cron_total ?? "—"), "cron live"));
+        stats.appendChild(stat(h.cron_no_agent ?? "—", "zero-token jobs"));
+        stats.appendChild(stat(h.skills ?? "—", "skills"));
+        stats.appendChild(stat(h.memory ? h.memory.working + h.memory.episodic : "—", "memory records"));
+
+        // cron
+        const cron = $("cron");
+        clear(cron);
+        const failing = h.cron_failing || [];
+        if (!failing.length) empty(cron, "Every job is healthy.");
+        for (const j of failing) {
+          const pct = Math.round((j.ok / j.runs) * 100);
+          const r = el("div", "row");
+          const left = el("div");
+          left.appendChild(el("div", "t", j.name));
+          const bar = el("div", "bar");
+          const fill = el("i", pct < 50 ? "warn" : "");
+          fill.style.width = pct + "%";
+          bar.appendChild(fill);
+          left.appendChild(bar);
+          r.appendChild(left);
+          r.appendChild(el("div", "r", j.ok + "/" + j.runs + " ok"));
+          cron.appendChild(r);
+        }
+
+        // tokens
+        const tokens = $("tokens");
+        clear(tokens);
+        const t = h.tokens;
+        if (!t) empty(tokens, "No usage data.");
+        else {
+          tokens.appendChild(row("Calls this month", null, t.month_calls.toLocaleString()));
+          tokens.appendChild(row("Input tokens", null, t.month_in_m + " M"));
+          tokens.appendChild(row("Output tokens", null, t.month_out_m + " M"));
+          tokens.appendChild(row("Cache reads", null, t.month_cache_m + " M"));
+          tokens.appendChild(row("Cache share of all tokens", "what makes the flat rate work", t.cache_share + "%"));
+          tokens.appendChild(row("Last 7 days", null, t.week_calls.toLocaleString() + " calls"));
+          for (const m of (t.top_models || [])) tokens.appendChild(row(m.model, null, m.calls.toLocaleString()));
+        }
+
+        // fleet
+        const fleet = d.fleet || [];
+        $("fleet-hint").textContent = (now.devices_online || 0) + " of " + fleet.length + " online";
+        const fnode = $("fleet");
+        clear(fnode);
+        for (const dev of fleet) {
+          const chip = el("span", "dev " + (dev.online ? "on" : "off"));
+          chip.appendChild(el("span", null, dev.name || "?"));
+          if (dev.os) chip.appendChild(el("span", null, "  " + dev.os));
+          fnode.appendChild(chip);
+        }
+
+        // journal
+        const journal = $("journal");
+        clear(journal);
+        for (const j of (d.journal || [])) {
+          const r = el("div", "row");
+          const left = el("div");
+          left.appendChild(el("div", "t", j.summary || ""));
+          r.appendChild(left);
+          r.appendChild(el("div", "r", j.date || ""));
+          journal.appendChild(r);
+        }
+        if (!(d.journal || []).length) empty(journal, "No entries yet.");
+
+        // any degraded sources
+        const errs = Object.entries(d.errors || {});
+        if (errs.length) {
+          const c = el("div", "err");
+          c.textContent = "degraded sources: " + errs.map(([k, v]) => k + " (" + v + ")").join("; ");
+          $("foot-stamp").appendChild(c);
+        }
+      }
+
+      // ── listening (existing endpoints) ─────────────────────────────────────
+      (async () => {
+        const box = $("listen");
+        try {
+          const [pb, taste] = await Promise.all([
+            fetch("/api/spotify").then((r) => r.json()).catch(() => null),
+            fetch("/api/taste").then((r) => r.json()).catch(() => null),
+          ]);
+          clear(box);
+          if (pb && pb.title) {
+            if (pb.artwork) {
+              const img = el("img");
+              img.src = pb.artwork; img.alt = ""; img.loading = "lazy";
+              box.appendChild(img);
+            }
+            const meta = el("div");
+            meta.appendChild(el("div", "lt", pb.title));
+            meta.appendChild(el("div", "la", (pb.artists || []).join(", ") + (pb.album ? " — " + pb.album : "")));
+            const state = pb.isPlaying ? "playing now" : (pb.playedAt ? "last played " + when(pb.playedAt) : "recently");
+            meta.appendChild(el("div", "cu", state));
+            if (pb.url) {
+              const a = el("a", "inline", "open in Spotify →");
+              a.href = pb.url; a.target = "_blank"; a.rel = "noopener noreferrer";
+              meta.appendChild(a);
+            }
+            box.appendChild(meta);
+          } else {
+            box.appendChild(el("span", "empty", "Spotify is not reporting anything right now."));
+          }
+          if (taste && (taste.topArtists || []).length) {
+            const wrap = el("div");
+            wrap.appendChild(el("div", "cu", "top artists this window"));
+            const parts = taste.topArtists.slice(0, 6).map((a) => a.name + " (" + a.plays + ")");
+            wrap.appendChild(el("div", "la", parts.join(" · ")));
+            if ((taste.genres || []).length) {
+              wrap.appendChild(el("div", "cu", "genres: " + taste.genres.slice(0, 5).map((x) => x.genre).join(", ")));
+            }
+            box.appendChild(wrap);
+          }
+        } catch (e) {
+          empty(box, "Listening data unavailable.");
+        }
+      })();
+    </script>
+  </body>
+</html>

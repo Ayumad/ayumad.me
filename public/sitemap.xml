@@ -61,6 +61,11 @@
   <url><loc>https://ayumad.me/journal/arch-daily-driver</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://ayumad.me/journal/gaming-fleet-roundup</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url>
+    <loc>https://ayumad.me/dashboard</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://ayumad.me/dashboard/hermes</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

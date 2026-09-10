@@ -1,0 +1,473 @@
+{
+ "generated_at": "2026-09-10T03:17:01-07:00",
+ "generated_on": "Mac mini",
+ "hermes": {
+  "version": "0.21.0",
+  "released": "2026.8.31",
+  "commits_behind": 6654,
+  "cron_total": 19,
+  "cron_active": 18,
+  "cron_no_agent": 9,
+  "cron_failing": [
+   {
+    "name": "Reminders ↔ Google Tasks Sync",
+    "runs": 423,
+    "ok": 185,
+    "failed": 238,
+    "last": "2026-09-10T03:14:36"
+   },
+   {
+    "name": "Marketplace Sweep (Craigslist wishlist)",
+    "runs": 35,
+    "ok": 22,
+    "failed": 13,
+    "last": "2026-09-10T02:36:31"
+   },
+   {
+    "name": "Question Prompt",
+    "runs": 27,
+    "ok": 18,
+    "failed": 9,
+    "last": "2026-09-09T23:00:01"
+   },
+   {
+    "name": "Album Elo Detection",
+    "runs": 5,
+    "ok": 1,
+    "failed": 4,
+    "last": "2026-09-09T23:30:02"
+   },
+   {
+    "name": "Hermes Sentinel",
+    "runs": 3,
+    "ok": 1,
+    "failed": 2,
+    "last": "2026-09-10T03:11:33"
+   },
+   {
+    "name": "Daily Brief",
+    "runs": 4,
+    "ok": 2,
+    "failed": 2,
+    "last": "2026-09-09T09:30:08"
+   }
+  ],
+  "cron_failing_count": 8,
+  "skills": 147,
+  "mcp_servers": 1,
+  "mcp_enabled": 1,
+  "memory": {
+   "working": 1261,
+   "episodic": 452
+  },
+  "disk": {
+   "used_pct": 93,
+   "free_gb": 13.9,
+   "size_gb": 228
+  },
+  "tokens": {
+   "month_calls": 2750,
+   "month_in_m": 20.0,
+   "month_out_m": 2.68,
+   "month_cache_m": 260.7,
+   "week_calls": 2060,
+   "week_out_m": 1.95,
+   "cache_share": 93,
+   "top_models": [
+    {
+     "model": "deepseek-v4-flash",
+     "calls": 1448
+    },
+    {
+     "model": "mimo-v2.5",
+     "calls": 683
+    },
+    {
+     "model": "deepseek-flash",
+     "calls": 498
+    },
+    {
+     "model": "qwen3.8-max",
+     "calls": 95
+    }
+   ]
+  }
+ },
+ "projects": [
+  {
+   "name": "ACM Fall 2026 Workshops",
+   "status": "active",
+   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Agentic Coding series Oct 7–Dec 2.",
+   "updated": "2026-08-27",
+   "folder": ""
+  },
+  {
+   "name": "CRT Lab",
+   "status": "active",
+   "summary": "Build a local-first browser workstation that routes generated signals, media, web pages, and user-owned ROMs through an adjustable CRT display or oscilloscope.",
+   "updated": "2026-08-19",
+   "folder": ""
+  },
+  {
+   "name": "EchoSphere",
+   "status": "active",
+   "summary": "EchoSphere Physical AI Robot — Ayush leads SJSU ACM Robotics & Hardware team (6 members: hardware/software/electronics) in a 12-week build with IPMD (Min Lee) for EchoAi's Kickstarter demo. Kickoff Sep 7, 2026. Company meeting Sep 1: Kickstarter confirmed, $300–500 budget ask, EchoAI API still pending.",
+   "updated": "2026-09-03",
+   "folder": "EchoSphere"
+  },
+  {
+   "name": "Facebook Marketplace MCP",
+   "status": "active",
+   "summary": "Facebook Marketplace MCP server exposing search + listing-detail tools to Hermes, driving a burner-account Chrome profile to feed the marketplace-deal-evaluator flow.",
+   "updated": "2026-09-08",
+   "folder": ""
+  },
+  {
+   "name": "Homelab",
+   "status": "active",
+   "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
+   "updated": "2026-09-10",
+   "folder": ""
+  },
+  {
+   "name": "Obsidian RAG Assistant",
+   "status": "active",
+   "summary": "Build a private AI second brain that retrieves, cites, organizes, and eventually updates Ayush's Obsidian knowledge safely.",
+   "updated": "2026-08-05",
+   "folder": ""
+  },
+  {
+   "name": "Omarchy Tablet Mode",
+   "status": "active",
+   "summary": "Omarchy tablet mode — touch-first UX and automatic posture switching for 2-in-1 convertibles (Chuwi Minibook X), gaming tablets (ROG Flow Z13), and pure tablets; demo-ready for the Omarchy SF meetup 2026-09-30.",
+   "updated": "2026-09-05",
+   "folder": ""
+  },
+  {
+   "name": "Personal Website",
+   "status": "active",
+   "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
+   "updated": "2026-09-03",
+   "folder": ""
+  },
+  {
+   "name": "RetroPie CRT Setup",
+   "status": "active",
+   "summary": "Configure RetroPie on the Raspberry Pi 4 so games play on the Sony WEGA KV-20FS12 CRT with a drop-in ROM folder, plus Kodi so videos in a media folder are playable — best possible CRT experience.",
+   "updated": "2026-08-21",
+   "folder": ""
+  },
+  {
+   "name": "Vault",
+   "status": "active",
+   "summary": "Refactor the vault into a skills-first, self-managing, archive-free knowledge base — audit done, execution in progress.",
+   "updated": "2026-08-21",
+   "folder": ""
+  },
+  {
+   "name": "YouTube Data Deep Dive",
+   "status": "active",
+   "summary": "Pull Ayush's personal YouTube data (watch history, saved, liked, subscriptions, playlists) and build a profile of what it says about him. Public findings done; 3 routes to private data (Takeout / CDP cookies / manual sign-in).",
+   "updated": "2026-08-11",
+   "folder": ""
+  },
+  {
+   "name": "Album Ranking App",
+   "status": "planned",
+   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Start by end of Aug 2026.",
+   "updated": "2026-08-19",
+   "folder": "Planned"
+  },
+  {
+   "name": "Electronics Workbench",
+   "status": "planned",
+   "summary": "Set up a practical electronics and creative-technology workbench for the sister's room.",
+   "updated": "2026-08-07",
+   "folder": ""
+  },
+  {
+   "name": "P520 GPU Passthrough Runbook",
+   "status": "reference",
+   "summary": "P520 GPU passthrough runbook + always-accessible OS VM plan (Ubuntu + Fedora)",
+   "updated": "2026-09-05",
+   "folder": "Homelab"
+  },
+  {
+   "name": "Social Bookmark Sync",
+   "status": "planned",
+   "summary": "Auto-sync Reddit saves, X bookmarks (and TikTok favorites later) into Hermes + Obsidian vault. Shared ingest pipeline, script-first, zero-token when idle. Deferred — build routes researched.",
+   "updated": "2026-08-11",
+   "folder": "Planned"
+  },
+  {
+   "name": "Voice Assistant",
+   "status": "planned",
+   "summary": "Deferred local-first voice interface to Hermes using Raspberry Pi audio hardware and Home Assistant.",
+   "updated": "2026-08-05",
+   "folder": "Planned"
+  }
+ ],
+ "tasks": {
+  "open": 11,
+  "overdue": 1,
+  "items": [
+   {
+    "title": "Connect Google One subscription to school educational discount",
+    "list": "Subscriptions",
+    "due": "2026-09-03",
+    "overdue": true
+   },
+   {
+    "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
+    "list": "Tech",
+    "due": "2026-09-13",
+    "overdue": false
+   },
+   {
+    "title": "Audit all Hermes cron jobs",
+    "list": "Tech",
+    "due": "2026-09-13",
+    "overdue": false
+   },
+   {
+    "title": "Set up Retroid Pocket Nova (Sunshine/Moonlight pairing)",
+    "list": "Daily",
+    "due": "2026-09-13",
+    "overdue": false
+   },
+   {
+    "title": "Engineering desktop (RX 6600 XT build): use NVMe SSD, reinstall Windows, set up engineering software (SolidWorks)",
+    "list": "Hardware",
+    "due": "2026-09-13",
+    "overdue": false
+   },
+   {
+    "title": "Setup NAS Functionality",
+    "list": "Hardware",
+    "due": "2026-09-13",
+    "overdue": false
+   },
+   {
+    "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
+    "list": "Tech",
+    "due": "2026-09-30",
+    "overdue": false
+   },
+   {
+    "title": "Cancel subscription of rtings.com",
+    "list": "Subscriptions",
+    "due": "2026-12-15",
+    "overdue": false
+   },
+   {
+    "title": "Write article: AI as a computer — harness=OS, Mnemosyne=RAM, Obsidian=SSD (concept fleshed out)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Set up ChatGPT web-chat export (Settings → Data controls → Export data at chatgpt.com)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   }
+  ],
+  "lists": 9
+ },
+ "school": {
+  "upcoming": 52,
+  "overdue": 4,
+  "courses": [
+   "CMPE-131",
+   "CMPE-142",
+   "CMPE-148"
+  ],
+  "next": [
+   {
+    "title": "PART ONE: Chapter 1&2 Quiz- Requires Respondus LockDown Browser",
+    "course": "CMPE-142",
+    "due": "2026-09-10",
+    "when": "2026-09-10T17:45:00+00:00"
+   },
+   {
+    "title": "Quiz 2: Chapter 2: Physical Layer",
+    "course": "CMPE-148",
+    "due": "2026-09-10",
+    "when": "2026-09-10T23:59:00+00:00"
+   },
+   {
+    "title": "Term Project: Specification Submission - SAD",
+    "course": "CMPE-131",
+    "due": "2026-09-13",
+    "when": "2026-09-13T23:59:00+00:00"
+   },
+   {
+    "title": "Chapter 3 HW",
+    "course": "CMPE-142",
+    "due": "2026-09-13",
+    "when": "2026-09-13T23:59:00+00:00"
+   },
+   {
+    "title": "Programming project #1",
+    "course": "CMPE-142",
+    "due": "2026-09-13",
+    "when": "2026-09-13T23:59:00+00:00"
+   },
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - SFDS",
+    "course": "CMPE-131",
+    "due": "2026-09-15",
+    "when": "2026-09-15T17:15:00+00:00"
+   },
+   {
+    "title": "Project Number 1: Getting to know networking tools",
+    "course": "CMPE-148",
+    "due": "2026-09-17",
+    "when": "2026-09-17T23:59:00+00:00"
+   },
+   {
+    "title": "Term Project: Specification Submission - SFDS",
+    "course": "CMPE-131",
+    "due": "2026-09-20",
+    "when": "2026-09-20T23:59:00+00:00"
+   }
+  ],
+  "missed": [
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - SAD/Architectural Design",
+    "course": "CMPE-131",
+    "due": "2026-09-08",
+    "when": "2026-09-08T17:30:00+00:00"
+   },
+   {
+    "title": "Chapter 2 HW",
+    "course": "CMPE-142",
+    "due": "2026-09-06",
+    "when": "2026-09-06T23:59:00+00:00"
+   },
+   {
+    "title": "Honesty pledge submission (2 students)",
+    "course": "CMPE-142",
+    "due": "2026-09-03",
+    "when": "2026-09-03T23:59:00+00:00"
+   },
+   {
+    "title": "Prerequisite transcripts submission (4 students)",
+    "course": "CMPE-142",
+    "due": "2026-09-03",
+    "when": "2026-09-03T23:59:00+00:00"
+   }
+  ]
+ },
+ "fleet": [
+  {
+   "name": "Ayumacmini",
+   "os": "macOS",
+   "online": true,
+   "self": true
+  },
+  {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumad",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "localhost",
+   "os": "iOS",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayupadpro",
+   "os": "iOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "framework",
+   "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "G14",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "g14-omarchy",
+   "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "M16",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "xps-omarchy",
+   "os": "linux",
+   "online": false,
+   "self": false
+  }
+ ],
+ "journal": [
+  {
+   "date": "2026-09-09",
+   "summary": "AI-Engineering curriculum expanded with Units 2 (Inference) and 11 (Long-horizon) via qwen3.8-max delegation; todo/wishlist evening checks; cron mixed (vault sync green, reminders sync ~40% success, daily brief failed)."
+  },
+  {
+   "date": "2026-09-08",
+   "summary": "FB Marketplace MCP project built, loadout wishlist expanded (projector, MacBook 12in, mirror), Retroid Pocket Nova SoC confirmed, Hue HomeKit cancelled."
+  },
+  {
+   "date": "2026-09-05",
+   "summary": "sub-1kg laptop deep-dive (XPS 13 vs Zenbook A14 vs alternatives, ARM VM compat), Omarchy Tablet Mode project plan created with 5-phase roadmap for Sep 30 meetup demo."
+  },
+  {
+   "date": "2026-09-04",
+   "summary": "Task rescheduling, marketplace sweep (DS Lite candidate), routine cron ops, interview prep menu delivered."
+  }
+ ],
+ "errors": {},
+ "now": {
+  "active_projects": 11,
+  "planned_projects": 4,
+  "open_tasks": 11,
+  "overdue_tasks": 1,
+  "assignments_upcoming": 52,
+  "assignments_missed": 4,
+  "devices_online": 4,
+  "devices_total": 12,
+  "jobs_failing": 8,
+  "jobs_total": 18
+ }
+}
