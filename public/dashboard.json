@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-10T03:17:01-07:00",
+ "generated_at": "2026-09-10T03:19:27-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.0",
@@ -57,21 +57,21 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1261,
+   "working": 1263,
    "episodic": 452
   },
   "disk": {
    "used_pct": 93,
-   "free_gb": 13.9,
+   "free_gb": 13.8,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2750,
+   "month_calls": 2772,
    "month_in_m": 20.0,
-   "month_out_m": 2.68,
-   "month_cache_m": 260.7,
-   "week_calls": 2060,
-   "week_out_m": 1.95,
+   "month_out_m": 2.69,
+   "month_cache_m": 263.8,
+   "week_calls": 2082,
+   "week_out_m": 1.96,
    "cache_share": 93,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "deepseek-flash",
-     "calls": 498
+     "calls": 517
     },
     {
      "model": "qwen3.8-max",
