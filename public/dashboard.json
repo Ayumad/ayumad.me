@@ -1,18 +1,18 @@
 {
- "generated_at": "2026-09-10T23:00:12-07:00",
+ "generated_at": "2026-09-11T05:00:44-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.1",
   "released": "2026.9.7",
-  "commits_behind": 160,
+  "commits_behind": 2,
   "cron_total": 7,
   "cron_active": 6,
   "cron_no_agent": 2,
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 411,
-    "ok": 176,
+    "runs": 410,
+    "ok": 175,
     "failed": 235,
     "last": "2026-09-10T04:44:02"
    },
@@ -46,37 +46,37 @@
    },
    {
     "name": "Mnemosyne Sleep",
-    "runs": 5,
-    "ok": 3,
+    "runs": 6,
+    "ok": 4,
     "failed": 2,
-    "last": "2026-09-10T03:00:32"
+    "last": "2026-09-11T03:00:16"
    }
   ],
   "cron_failing_count": 9,
-  "skills": 150,
+  "skills": 153,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
    "working": 1282,
-   "episodic": 452
+   "episodic": 457
   },
   "disk": {
-   "used_pct": 83,
-   "free_gb": 34.0,
+   "used_pct": 84,
+   "free_gb": 31.2,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4465,
-   "month_in_m": 24.2,
-   "month_out_m": 4.14,
-   "month_cache_m": 474.4,
-   "week_calls": 3691,
-   "week_out_m": 3.33,
+   "month_calls": 4625,
+   "month_in_m": 24.5,
+   "month_out_m": 4.28,
+   "month_cache_m": 481.3,
+   "week_calls": 3838,
+   "week_out_m": 3.45,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2113
+     "calls": 2242
     },
     {
      "model": "deepseek-v4-flash",
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 724
+     "calls": 754
     },
     {
      "model": "qwen3.8-max",
@@ -94,85 +94,7 @@
   }
  },
  "projects": [],
- "tasks": {
-  "open": 12,
-  "overdue": 0,
-  "items": [
-   {
-    "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
-    "list": "Tech",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Set up Retroid Pocket Nova (Sunshine/Moonlight pairing)",
-    "list": "Daily",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Engineering desktop (RX 6600 XT build): use NVMe SSD, reinstall Windows, set up engineering software (SolidWorks)",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Setup NAS Functionality",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": false
-   },
-   {
-    "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
-    "list": "Tech",
-    "due": "2026-09-30",
-    "overdue": false
-   },
-   {
-    "title": "Cancel subscription of rtings.com",
-    "list": "Subscriptions",
-    "due": "2026-12-15",
-    "overdue": false
-   },
-   {
-    "title": "Grant macOS Full Disk Access to ~/.hermes/hermes-agent/venv/bin/python (vault reads blocked since the 03:44 Hermes update; Vault auto-sync + Interview Prep + Session Journal all failing)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Get iMessage working for cron jobs",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Enable the tailnet-served dashboard live view (parked 2026-09-10: Tailscale Serve + TCC blockers, see vault decision note)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Write article: AI as a computer — harness=OS, Mnemosyne=RAM, Obsidian=SSD (concept fleshed out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Set up ChatGPT web-chat export (Settings → Data controls → Export data at chatgpt.com)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   }
-  ],
-  "lists": 9
- },
+ "tasks": {},
  "school": {
   "upcoming": 5,
   "window_days": 7,
@@ -223,12 +145,6 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -238,6 +154,12 @@
    "name": "localhost",
    "os": "iOS",
    "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
    "self": false
   },
   {
@@ -308,15 +230,16 @@
   }
  ],
  "errors": {
-  "projects": "RuntimeError: TimeoutError: cannot read /Users/ayumad/Documents/Main from this process — macOS TCC denies ~/Documents to launchd/cron contexts. Grant the Hermes gateway Files & Folders (or Full Disk Access) access."
+  "projects": "RuntimeError: TimeoutError: cannot read /Users/ayumad/Documents/Main from this process — macOS TCC denies ~/Documents to launchd/cron contexts. Grant the Hermes gateway Files & Folders (or Full Disk Access) access.",
+  "tasks": "SectionTimeout: exceeded 25s budget (blocked syscall?)"
  },
  "now": {
   "active_projects": 0,
   "planned_projects": 0,
-  "open_tasks": 12,
+  "open_tasks": 0,
   "overdue_tasks": 0,
   "assignments_upcoming": 5,
-  "devices_online": 4,
+  "devices_online": 3,
   "devices_total": 12,
   "jobs_failing": 9,
   "jobs_total": 6
