@@ -1,19 +1,19 @@
 {
- "generated_at": "2026-09-11T23:02:56-07:00",
+ "generated_at": "2026-09-12T05:03:51-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 91,
+  "commits_behind": 157,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 409,
+    "runs": 408,
     "ok": 174,
-    "failed": 235,
+    "failed": 234,
     "last": "2026-09-10T04:44:02"
    },
    {
@@ -45,32 +45,32 @@
     "last": "2026-09-09T09:30:08"
    },
    {
-    "name": "Mnemosyne Sleep",
-    "runs": 6,
-    "ok": 4,
+    "name": "7e1d573b39cf",
+    "runs": 4,
+    "ok": 2,
     "failed": 2,
-    "last": "2026-09-11T03:00:16"
+    "last": "2026-09-09T22:00:01"
    }
   ],
-  "cron_failing_count": 10,
+  "cron_failing_count": 8,
   "skills": 153,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
    "working": 1282,
-   "episodic": 457
+   "episodic": 480
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 31.4,
+   "free_gb": 31.6,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4673,
-   "month_in_m": 24.6,
-   "month_out_m": 4.3,
-   "month_cache_m": 482.2,
-   "week_calls": 3807,
+   "month_calls": 4730,
+   "month_in_m": 24.7,
+   "month_out_m": 4.32,
+   "month_cache_m": 484.5,
+   "week_calls": 3855,
    "week_out_m": 3.43,
    "cache_share": 95,
    "top_models": [
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 802
+     "calls": 859
     },
     {
      "model": "qwen3.8-max",
@@ -223,12 +223,6 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -244,6 +238,12 @@
    "name": "localhost",
    "os": "iOS",
    "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
    "self": false
   },
   {
@@ -316,9 +316,9 @@
   "open_tasks": 12,
   "overdue_tasks": 0,
   "assignments_upcoming": 5,
-  "devices_online": 5,
+  "devices_online": 4,
   "devices_total": 12,
-  "jobs_failing": 10,
+  "jobs_failing": 8,
   "jobs_total": 5
  }
 }
