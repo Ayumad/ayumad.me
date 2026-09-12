@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-12T05:03:51-07:00",
+ "generated_at": "2026-09-12T11:04:24-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 157,
+  "commits_behind": 349,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
@@ -62,21 +62,21 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 31.6,
+   "free_gb": 32.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4730,
-   "month_in_m": 24.7,
-   "month_out_m": 4.32,
-   "month_cache_m": 484.5,
-   "week_calls": 3855,
+   "month_calls": 4752,
+   "month_in_m": 24.8,
+   "month_out_m": 4.33,
+   "month_cache_m": 484.9,
+   "week_calls": 3858,
    "week_out_m": 3.43,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2242
+     "calls": 2251
     },
     {
      "model": "deepseek-v4-flash",
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 859
+     "calls": 872
     },
     {
      "model": "qwen3.8-max",
@@ -223,6 +223,12 @@
    "self": true
   },
   {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -242,12 +248,6 @@
   },
   {
    "name": "ayumacair",
-   "os": "macOS",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "Ayumacpro",
    "os": "macOS",
    "online": false,
    "self": false
@@ -316,7 +316,7 @@
   "open_tasks": 12,
   "overdue_tasks": 0,
   "assignments_upcoming": 5,
-  "devices_online": 4,
+  "devices_online": 5,
   "devices_total": 12,
   "jobs_failing": 8,
   "jobs_total": 5
