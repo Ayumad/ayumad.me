@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-11T17:02:10-07:00",
+ "generated_at": "2026-09-11T23:02:56-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 49,
+  "commits_behind": 91,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
@@ -52,7 +52,7 @@
     "last": "2026-09-11T03:00:16"
    }
   ],
-  "cron_failing_count": 9,
+  "cron_failing_count": 10,
   "skills": 153,
   "mcp_servers": 1,
   "mcp_enabled": 1,
@@ -62,15 +62,15 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 31.1,
+   "free_gb": 31.4,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4643,
-   "month_in_m": 24.5,
-   "month_out_m": 4.29,
-   "month_cache_m": 481.5,
-   "week_calls": 3806,
+   "month_calls": 4673,
+   "month_in_m": 24.6,
+   "month_out_m": 4.3,
+   "month_cache_m": 482.2,
+   "week_calls": 3807,
    "week_out_m": 3.43,
    "cache_share": 95,
    "top_models": [
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 772
+     "calls": 802
     },
     {
      "model": "qwen3.8-max",
@@ -229,14 +229,14 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
+   "name": "ayumad",
+   "os": "linux",
    "online": true,
    "self": false
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "Creekwood",
+   "os": "windows",
    "online": true,
    "self": false
   },
@@ -247,14 +247,14 @@
    "self": false
   },
   {
-   "name": "Ayupadpro",
-   "os": "iOS",
+   "name": "Ayumacpro",
+   "os": "macOS",
    "online": false,
    "self": false
   },
   {
-   "name": "Creekwood",
-   "os": "windows",
+   "name": "Ayupadpro",
+   "os": "iOS",
    "online": false,
    "self": false
   },
@@ -318,7 +318,7 @@
   "assignments_upcoming": 5,
   "devices_online": 5,
   "devices_total": 12,
-  "jobs_failing": 9,
+  "jobs_failing": 10,
   "jobs_total": 5
  }
 }
