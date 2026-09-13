@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-12T17:04:59-07:00",
+ "generated_at": "2026-09-12T23:05:30-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 361,
+  "commits_behind": 440,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
@@ -62,21 +62,21 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 32.0,
+   "free_gb": 32.2,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4760,
-   "month_in_m": 24.8,
-   "month_out_m": 4.34,
-   "month_cache_m": 484.9,
-   "week_calls": 3792,
-   "week_out_m": 3.34,
+   "month_calls": 4895,
+   "month_in_m": 25.2,
+   "month_out_m": 4.42,
+   "month_cache_m": 490.6,
+   "week_calls": 3885,
+   "week_out_m": 3.38,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2259
+     "calls": 2390
     },
     {
      "model": "deepseek-v4-flash",
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 872
+     "calls": 876
     },
     {
      "model": "qwen3.8-max",
@@ -95,7 +95,7 @@
  },
  "projects": [],
  "tasks": {
-  "open": 12,
+  "open": 14,
   "overdue": 4,
   "items": [
    {
@@ -135,6 +135,18 @@
     "overdue": false
    },
    {
+    "title": "Mac mini TCC: Documents/Desktop/Downloads denied to launchd+SSH sessions - grant Hermes Full Disk Access so vault journal cron can write and deploy",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Grant macOS privacy access to ~/.hermes/hermes-agent/venv/bin/python (vault reads + vault git sync broken since Sep 10 update; cdhash 6e1f6ad7)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
     "title": "Grant macOS Full Disk Access to ~/.hermes/hermes-agent/venv/bin/python (vault reads blocked since the 03:44 Hermes update; Vault auto-sync + Interview Prep + Session Journal all failing)",
     "list": "Tech",
     "due": null,
@@ -154,18 +166,6 @@
    },
    {
     "title": "Write article: AI as a computer — harness=OS, Mnemosyne=RAM, Obsidian=SSD (concept fleshed out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Set up ChatGPT web-chat export (Settings → Data controls → Export data at chatgpt.com)",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -291,20 +291,20 @@
  ],
  "journal": [
   {
+   "date": "2026-09-11",
+   "summary": "NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocat"
+  },
+  {
+   "date": "2026-09-10",
+   "summary": "Hermes install/setup audit (launcher TypeError root cause, config v39, MCP and cache cleanup); P520 second-GPU consult answered no and gated behind a 30B-class model test; full cron + vault audit — 2 bugs fixed, 15 incidents cleared, session-affinity patch pre"
+  },
+  {
    "date": "2026-09-09",
    "summary": "AI-Engineering curriculum expanded with Units 2 (Inference) and 11 (Long-horizon) via qwen3.8-max delegation; todo/wishlist evening checks; cron mixed (vault sync green, reminders sync ~40% success, daily brief failed)."
   },
   {
    "date": "2026-09-08",
    "summary": "FB Marketplace MCP project built, loadout wishlist expanded (projector, MacBook 12in, mirror), Retroid Pocket Nova SoC confirmed, Hue HomeKit cancelled."
-  },
-  {
-   "date": "2026-09-05",
-   "summary": "sub-1kg laptop deep-dive (XPS 13 vs Zenbook A14 vs alternatives, ARM VM compat), Omarchy Tablet Mode project plan created with 5-phase roadmap for Sep 30 meetup demo."
-  },
-  {
-   "date": "2026-09-04",
-   "summary": "Task rescheduling, marketplace sweep (DS Lite candidate), routine cron ops, interview prep menu delivered."
   }
  ],
  "errors": {
@@ -313,7 +313,7 @@
  "now": {
   "active_projects": 0,
   "planned_projects": 0,
-  "open_tasks": 12,
+  "open_tasks": 14,
   "overdue_tasks": 4,
   "assignments_upcoming": 5,
   "devices_online": 4,
