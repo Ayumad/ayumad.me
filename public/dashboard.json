@@ -1,39 +1,39 @@
 {
- "generated_at": "2026-09-12T11:04:24-07:00",
+ "generated_at": "2026-09-12T17:04:59-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 349,
+  "commits_behind": 361,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 408,
-    "ok": 174,
-    "failed": 234,
+    "runs": 401,
+    "ok": 173,
+    "failed": 228,
     "last": "2026-09-10T04:44:02"
    },
    {
     "name": "ed3e2400a3b6",
-    "runs": 35,
-    "ok": 22,
+    "runs": 34,
+    "ok": 21,
     "failed": 13,
     "last": "2026-09-10T04:47:26"
    },
    {
     "name": "b2630adb1e0e",
-    "runs": 25,
-    "ok": 16,
+    "runs": 24,
+    "ok": 15,
     "failed": 9,
     "last": "2026-09-09T23:00:01"
    },
    {
     "name": "Album Elo Detection",
-    "runs": 6,
-    "ok": 2,
+    "runs": 5,
+    "ok": 1,
     "failed": 4,
     "last": "2026-09-10T03:23:55"
    },
@@ -62,21 +62,21 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 32.1,
+   "free_gb": 32.0,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4752,
+   "month_calls": 4760,
    "month_in_m": 24.8,
-   "month_out_m": 4.33,
+   "month_out_m": 4.34,
    "month_cache_m": 484.9,
-   "week_calls": 3858,
-   "week_out_m": 3.43,
+   "week_calls": 3792,
+   "week_out_m": 3.34,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2251
+     "calls": 2259
     },
     {
      "model": "deepseek-v4-flash",
@@ -96,31 +96,31 @@
  "projects": [],
  "tasks": {
   "open": 12,
-  "overdue": 0,
+  "overdue": 4,
   "items": [
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
     "due": "2026-09-13",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Set up Retroid Pocket Nova (Sunshine/Moonlight pairing)",
     "list": "Daily",
     "due": "2026-09-13",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Engineering desktop (RX 6600 XT build): use NVMe SSD, reinstall Windows, set up engineering software (SolidWorks)",
     "list": "Hardware",
     "due": "2026-09-13",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Setup NAS Functionality",
     "list": "Hardware",
     "due": "2026-09-13",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
@@ -223,12 +223,6 @@
    "self": true
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -248,6 +242,12 @@
   },
   {
    "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayumacpro",
    "os": "macOS",
    "online": false,
    "self": false
@@ -314,9 +314,9 @@
   "active_projects": 0,
   "planned_projects": 0,
   "open_tasks": 12,
-  "overdue_tasks": 0,
+  "overdue_tasks": 4,
   "assignments_upcoming": 5,
-  "devices_online": 5,
+  "devices_online": 4,
   "devices_total": 12,
   "jobs_failing": 8,
   "jobs_total": 5
