@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-09-11",
+  "summary": "Session journal for 2026-09-11: NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocation grounds.",
+  "highlights": []
+ },
+ {
+  "date": "2026-09-10",
+  "summary": "Session journal for 2026-09-10: Hermes install/setup audit (launcher TypeError root cause, config v39, MCP and cache cleanup); P520 second-GPU consult answered no and gated behind a 30B-class model test; full cron + vault audit — 2 bugs fixed, 15 incidents cleared, session-affinity patch preserved, validator driven to all-zero counters.",
+  "highlights": []
+ },
+ {
   "date": "2026-09-09",
   "summary": "Session journal for 2026-09-09: AI-Engineering curriculum expanded with Units 2 (Inference) and 11 (Long-horizon) via qwen3.8-max delegation; todo/wishlist evening checks; cron mixed (vault sync green, reminders sync ~40% success, daily brief failed).",
   "highlights": []
