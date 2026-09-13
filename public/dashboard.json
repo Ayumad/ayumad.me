@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-13T05:06:03-07:00",
+ "generated_at": "2026-09-13T11:06:30-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 442,
+  "commits_behind": 649,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
@@ -66,12 +66,12 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4931,
-   "month_in_m": 25.3,
-   "month_out_m": 4.43,
-   "month_cache_m": 491.8,
-   "week_calls": 3918,
-   "week_out_m": 3.4,
+   "month_calls": 4943,
+   "month_in_m": 25.4,
+   "month_out_m": 4.44,
+   "month_cache_m": 492.0,
+   "week_calls": 3901,
+   "week_out_m": 3.38,
    "cache_share": 95,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 912
+     "calls": 924
     },
     {
      "model": "qwen3.8-max",
