@@ -9,6 +9,15 @@
   ]
  },
  {
+  "date": "2026-09-12",
+  "summary": "Session journal for 2026-09-12: agent-swarms unit added to the AI-Engineering curriculum, Dell S3422DWG deal check, desktop bot intro; vault sync TCC-dead, journal run died, public journal backfilled.",
+  "highlights": [
+   "Agent swarms landed in the AI-Engineering curriculum, and the Dell S3422DWG listing at $150 got a verdict.",
+   "Automated vault syncing stopped on 2026-09-10 05:12 local; every run since fails on TCC while reporting success.",
+   "2026-09-12 is the first day with no cron-written journal entry — all three journal runs to date have died mid-flight."
+  ]
+ },
+ {
   "date": "2026-09-11",
   "summary": "Session journal for 2026-09-11: NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocation grounds.",
   "highlights": []
