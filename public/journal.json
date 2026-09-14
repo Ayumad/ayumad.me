@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-09-13",
+  "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work.",
+  "highlights": [
+   "**Vault auto-sync remains broken** — the exit-0 shim masks the TCC failure; no vault commits since Sep 10. Needs Full Disk Access grant at the Mac mini GUI.",
+   "**2026-09-12 journal entry still missing** — never written (shutdown interrupts on all three cron attempts). Backlog of 2 days without journal entries.",
+   "Quiet day overall; infrastructure running but no user-driven work."
+  ]
+ },
+ {
   "date": "2026-09-11",
   "summary": "Session journal for 2026-09-11: NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocation grounds.",
   "highlights": []
