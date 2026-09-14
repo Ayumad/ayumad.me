@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-09-13T17:06:49-07:00",
+ "generated_at": "2026-09-13T23:07:09-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 798,
+  "commits_behind": 912,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
@@ -62,16 +62,16 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 31.9,
+   "free_gb": 31.8,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 4943,
+   "month_calls": 4947,
    "month_in_m": 25.4,
    "month_out_m": 4.44,
-   "month_cache_m": 492.0,
-   "week_calls": 3875,
-   "week_out_m": 3.36,
+   "month_cache_m": 492.1,
+   "week_calls": 3861,
+   "week_out_m": 3.34,
    "cache_share": 95,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 924
+     "calls": 928
     },
     {
      "model": "qwen3.8-max",
@@ -285,20 +285,20 @@
  ],
  "journal": [
   {
+   "date": "2026-09-13",
+   "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work."
+  },
+  {
+   "date": "2026-09-12",
+   "summary": "agent-swarms unit added to the AI-Engineering curriculum, Dell S3422DWG deal check, desktop bot intro; vault sync TCC-dead, journal run died, public journal backfilled."
+  },
+  {
    "date": "2026-09-11",
    "summary": "NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocat"
   },
   {
    "date": "2026-09-10",
    "summary": "Hermes install/setup audit (launcher TypeError root cause, config v39, MCP and cache cleanup); P520 second-GPU consult answered no and gated behind a 30B-class model test; full cron + vault audit — 2 bugs fixed, 15 incidents cleared, session-affinity patch pre"
-  },
-  {
-   "date": "2026-09-09",
-   "summary": "AI-Engineering curriculum expanded with Units 2 (Inference) and 11 (Long-horizon) via qwen3.8-max delegation; todo/wishlist evening checks; cron mixed (vault sync green, reminders sync ~40% success, daily brief failed)."
-  },
-  {
-   "date": "2026-09-08",
-   "summary": "FB Marketplace MCP project built, loadout wishlist expanded (projector, MacBook 12in, mirror), Retroid Pocket Nova SoC confirmed, Hue HomeKit cancelled."
   }
  ],
  "errors": {
