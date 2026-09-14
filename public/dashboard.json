@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-14T05:07:46-07:00",
+ "generated_at": "2026-09-14T11:08:42-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
@@ -62,16 +62,16 @@
   },
   "disk": {
    "used_pct": 82,
-   "free_gb": 37.0,
+   "free_gb": 36.6,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 5171,
+   "month_calls": 5189,
    "month_in_m": 26.0,
-   "month_out_m": 4.77,
-   "month_cache_m": 518.7,
-   "week_calls": 4085,
-   "week_out_m": 3.67,
+   "month_out_m": 4.78,
+   "month_cache_m": 519.0,
+   "week_calls": 4103,
+   "week_out_m": 3.68,
    "cache_share": 95,
    "top_models": [
     {
@@ -84,7 +84,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 958
+     "calls": 976
     },
     {
      "model": "qwen3.8-max",
@@ -324,6 +324,12 @@
    "self": true
   },
   {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -333,12 +339,6 @@
    "name": "localhost",
    "os": "iOS",
    "online": true,
-   "self": false
-  },
-  {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": false,
    "self": false
   },
   {
@@ -415,7 +415,7 @@
   "open_tasks": 11,
   "overdue_tasks": 2,
   "assignments_upcoming": 4,
-  "devices_online": 3,
+  "devices_online": 4,
   "devices_total": 12,
   "jobs_failing": 9,
   "jobs_total": 5
