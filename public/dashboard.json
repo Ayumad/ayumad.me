@@ -1,58 +1,58 @@
 {
- "generated_at": "2026-09-13T11:06:30-07:00",
+ "generated_at": "2026-09-13T17:06:49-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
   "released": "2026.9.11",
-  "commits_behind": 649,
+  "commits_behind": 798,
   "cron_total": 7,
   "cron_active": 5,
   "cron_no_agent": 2,
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 401,
-    "ok": 173,
-    "failed": 228,
+    "runs": 306,
+    "ok": 130,
+    "failed": 176,
     "last": "2026-09-10T04:44:02"
    },
    {
     "name": "ed3e2400a3b6",
-    "runs": 34,
-    "ok": 21,
-    "failed": 13,
+    "runs": 26,
+    "ok": 14,
+    "failed": 12,
     "last": "2026-09-10T04:47:26"
    },
    {
     "name": "b2630adb1e0e",
-    "runs": 24,
-    "ok": 15,
-    "failed": 9,
+    "runs": 18,
+    "ok": 10,
+    "failed": 8,
     "last": "2026-09-09T23:00:01"
    },
    {
     "name": "Album Elo Detection",
-    "runs": 5,
+    "runs": 4,
     "ok": 1,
-    "failed": 4,
+    "failed": 3,
     "last": "2026-09-10T03:23:55"
    },
    {
     "name": "3a920665a70b",
-    "runs": 4,
-    "ok": 2,
+    "runs": 3,
+    "ok": 1,
     "failed": 2,
     "last": "2026-09-09T09:30:08"
    },
    {
-    "name": "7e1d573b39cf",
-    "runs": 4,
+    "name": "244e05b57d51",
+    "runs": 3,
     "ok": 2,
-    "failed": 2,
-    "last": "2026-09-09T22:00:01"
+    "failed": 1,
+    "last": "2026-09-09T12:00:00"
    }
   ],
-  "cron_failing_count": 8,
+  "cron_failing_count": 9,
   "skills": 153,
   "mcp_servers": 1,
   "mcp_enabled": 1,
@@ -62,7 +62,7 @@
   },
   "disk": {
    "used_pct": 84,
-   "free_gb": 32.0,
+   "free_gb": 31.9,
    "size_gb": 228
   },
   "tokens": {
@@ -70,8 +70,8 @@
    "month_in_m": 25.4,
    "month_out_m": 4.44,
    "month_cache_m": 492.0,
-   "week_calls": 3901,
-   "week_out_m": 3.38,
+   "week_calls": 3875,
+   "week_out_m": 3.36,
    "cache_share": 95,
    "top_models": [
     {
@@ -174,33 +174,15 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 5,
+  "upcoming": 4,
   "window_days": 7,
-  "later": 45,
+  "later": 43,
   "courses": [
    "CMPE-131",
    "CMPE-142",
    "CMPE-148"
   ],
   "next": [
-   {
-    "title": "Term Project: Specification Submission - SAD",
-    "course": "CMPE-131",
-    "due": "2026-09-13",
-    "when": "2026-09-13T23:59:00+00:00"
-   },
-   {
-    "title": "Chapter 3 HW",
-    "course": "CMPE-142",
-    "due": "2026-09-13",
-    "when": "2026-09-13T23:59:00+00:00"
-   },
-   {
-    "title": "Programming project #1",
-    "course": "CMPE-142",
-    "due": "2026-09-13",
-    "when": "2026-09-13T23:59:00+00:00"
-   },
    {
     "title": "(In-class Activity) Weekly Sprint Meeting - SFDS",
     "course": "CMPE-131",
@@ -212,6 +194,18 @@
     "course": "CMPE-148",
     "due": "2026-09-17",
     "when": "2026-09-17T23:59:00+00:00"
+   },
+   {
+    "title": "Term Project: Specification Submission - SFDS",
+    "course": "CMPE-131",
+    "due": "2026-09-20",
+    "when": "2026-09-20T23:59:00+00:00"
+   },
+   {
+    "title": "Chapter 4 HW",
+    "course": "CMPE-142",
+    "due": "2026-09-20",
+    "when": "2026-09-20T23:59:00+00:00"
    }
   ]
  },
@@ -315,10 +309,10 @@
   "planned_projects": 0,
   "open_tasks": 14,
   "overdue_tasks": 4,
-  "assignments_upcoming": 5,
+  "assignments_upcoming": 4,
   "devices_online": 5,
   "devices_total": 12,
-  "jobs_failing": 8,
+  "jobs_failing": 9,
   "jobs_total": 5
  }
 }
