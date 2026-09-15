@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-09-14T17:09:37-07:00",
+ "generated_at": "2026-09-14T23:10:43-07:00",
  "generated_on": "Mac mini",
  "hermes": {
-  "version": "0.21.2",
-  "released": "2026.9.11",
+  "version": "0.21.3",
+  "released": "2026.9.14",
   "commits_behind": 0,
   "cron_total": 7,
   "cron_active": 5,
@@ -47,22 +47,22 @@
    "episodic": 494
   },
   "disk": {
-   "used_pct": 82,
-   "free_gb": 36.5,
+   "used_pct": 83,
+   "free_gb": 34.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 5189,
-   "month_in_m": 26.0,
-   "month_out_m": 4.78,
-   "month_cache_m": 519.0,
-   "week_calls": 4103,
-   "week_out_m": 3.68,
+   "month_calls": 5226,
+   "month_in_m": 26.2,
+   "month_out_m": 4.8,
+   "month_cache_m": 520.5,
+   "week_calls": 4140,
+   "week_out_m": 3.69,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2584
+     "calls": 2593
     },
     {
      "model": "deepseek-v4-flash",
@@ -70,7 +70,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 976
+     "calls": 1004
     },
     {
      "model": "qwen3.8-max",
@@ -194,7 +194,7 @@
   }
  ],
  "tasks": {
-  "open": 11,
+  "open": 12,
   "overdue": 2,
   "items": [
    {
@@ -231,6 +231,12 @@
     "title": "Cancel subscription of rtings.com",
     "list": "Subscriptions",
     "due": "2026-12-15",
+    "overdue": false
+   },
+   {
+    "title": "Daily Brief email section silently empty — install and configure himalaya (mail CLI) on the Mac mini",
+    "list": "Tech",
+    "due": null,
     "overdue": false
    },
    {
@@ -310,14 +316,14 @@
    "self": true
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "Ayumacpro",
+   "os": "macOS",
    "online": true,
    "self": false
   },
   {
-   "name": "Creekwood",
-   "os": "windows",
+   "name": "ayumad",
+   "os": "linux",
    "online": true,
    "self": false
   },
@@ -334,14 +340,14 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
+   "name": "Ayupadpro",
+   "os": "iOS",
    "online": false,
    "self": false
   },
   {
-   "name": "Ayupadpro",
-   "os": "iOS",
+   "name": "Creekwood",
+   "os": "windows",
    "online": false,
    "self": false
   },
@@ -378,6 +384,10 @@
  ],
  "journal": [
   {
+   "date": "2026-09-14",
+   "summary": "Infrastructure day — vault auto-sync restored after 4 days (reconcile fix + TCC grant), Sep 12 journal backfilled, all cron jobs healthy."
+  },
+  {
    "date": "2026-09-13",
    "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work."
   },
@@ -388,17 +398,13 @@
   {
    "date": "2026-09-11",
    "summary": "NAS storage architecture consultation — hosting the Steam back catalogue on the P520 over the network; settled the 5 x 4TB RAIDZ1 (16 TB usable) build, the 4 TB SSD split between VM zvols and a Samba games dataset, and the rejection of iSCSI on dynamic-allocat"
-  },
-  {
-   "date": "2026-09-10",
-   "summary": "Hermes install/setup audit (launcher TypeError root cause, config v39, MCP and cache cleanup); P520 second-GPU consult answered no and gated behind a 30B-class model test; full cron + vault audit — 2 bugs fixed, 15 incidents cleared, session-affinity patch pre"
   }
  ],
  "errors": {},
  "now": {
   "active_projects": 11,
   "planned_projects": 4,
-  "open_tasks": 11,
+  "open_tasks": 12,
   "overdue_tasks": 2,
   "assignments_upcoming": 4,
   "devices_online": 4,
