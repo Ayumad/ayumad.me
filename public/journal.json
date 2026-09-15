@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-09-14",
+  "summary": "Infrastructure day — vault auto-sync restored after 4 days (reconcile fix + TCC grant), Sep 12 journal backfilled, all cron jobs healthy.",
+  "highlights": [
+   "**Vault auto-sync restored** — 4-day outage ended. Reconcile contract decision logged (`99 System/Decisions/2026-09-14 Vault Auto-Sync Reconcile Contract.md`). The fix: `git fetch` + `git pull --rebase --autostash` before checking for changes and before pushing. Prevents permanent wedge from remote-side writers.",
+   "**TCC blocker resolved** — Full Disk Access granted to Hermes binary. Vault reads from cron no longer fail with `Interrupted system call`. This unblocks journal cron, calendar regen, and vault auto-sync.",
+   "**Reminders sync active** — 4 changes applied (TCC task updates, Google Drive reorg reminder, Retroid Pocket setup)."
+  ]
+ },
+ {
   "date": "2026-09-13",
   "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work.",
   "highlights": [
