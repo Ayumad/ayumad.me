@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-15T05:11:40-07:00",
+ "generated_at": "2026-09-15T11:12:54-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -47,22 +47,22 @@
    "episodic": 513
   },
   "disk": {
-   "used_pct": 83,
-   "free_gb": 33.5,
+   "used_pct": 84,
+   "free_gb": 32.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 5232,
-   "month_in_m": 26.2,
-   "month_out_m": 4.8,
-   "month_cache_m": 520.6,
-   "week_calls": 3563,
-   "week_out_m": 3.22,
+   "month_calls": 5499,
+   "month_in_m": 26.9,
+   "month_out_m": 5.03,
+   "month_cache_m": 540.3,
+   "week_calls": 3593,
+   "week_out_m": 3.1,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 2593
+     "calls": 2837
     },
     {
      "model": "deepseek-v4-flash",
@@ -70,7 +70,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1010
+     "calls": 1033
     },
     {
      "model": "qwen3.8-max",
@@ -194,11 +194,11 @@
   }
  ],
  "tasks": {
-  "open": 12,
+  "open": 22,
   "overdue": 2,
   "items": [
    {
-    "title": "Engineering desktop (RX 6600 XT build): use NVMe SSD, reinstall Windows, set up engineering software (SolidWorks)",
+    "title": "Engineering desktop: install engineering software (SolidWorks)",
     "list": "Hardware",
     "due": "2026-09-13",
     "overdue": true
@@ -234,37 +234,37 @@
     "overdue": false
    },
    {
-    "title": "Daily Brief email section silently empty — install and configure himalaya (mail CLI) on the Mac mini",
+    "title": "Confirm the KEF Q150 sale outcome",
     "list": "Tech",
     "due": null,
     "overdue": false
    },
    {
-    "title": "Enable the tailnet-served dashboard live view (parked 2026-09-10: Tailscale Serve + TCC blockers, see vault decision note)",
+    "title": "Delete the stale duplicate API_SERVER_KEY line in config.yaml",
     "list": "Tech",
     "due": null,
     "overdue": false
    },
    {
-    "title": "Get iMessage working for cron jobs",
+    "title": "Re-login the Facebook Marketplace burner profile",
     "list": "Tech",
     "due": null,
     "overdue": false
    },
    {
-    "title": "Write article: AI as a computer — harness=OS, Mnemosyne=RAM, Obsidian=SSD (concept fleshed out)",
+    "title": "Compact Hermes state.db (~1.5 GB)",
     "list": "Tech",
     "due": null,
     "overdue": false
    },
    {
-    "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
+    "title": "Run the sudo disk pass on the Mac mini",
     "list": "Tech",
     "due": null,
     "overdue": false
    },
    {
-    "title": "Set up ChatGPT web-chat export (Settings → Data controls → Export data at chatgpt.com)",
+    "title": "Omarchy tablet-mode",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -275,19 +275,13 @@
  "school": {
   "upcoming": 4,
   "window_days": 7,
-  "later": 43,
+  "later": 42,
   "courses": [
    "CMPE-131",
    "CMPE-142",
    "CMPE-148"
   ],
   "next": [
-   {
-    "title": "(In-class Activity) Weekly Sprint Meeting - SFDS",
-    "course": "CMPE-131",
-    "due": "2026-09-15",
-    "when": "2026-09-15T17:15:00+00:00"
-   },
    {
     "title": "Project Number 1: Getting to know networking tools",
     "course": "CMPE-148",
@@ -305,6 +299,12 @@
     "course": "CMPE-142",
     "due": "2026-09-20",
     "when": "2026-09-20T23:59:00+00:00"
+   },
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - PPD",
+    "course": "CMPE-131",
+    "due": "2026-09-22",
+    "when": "2026-09-22T17:15:00+00:00"
    }
   ]
  },
@@ -316,6 +316,12 @@
    "self": true
   },
   {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -325,12 +331,6 @@
    "name": "localhost",
    "os": "iOS",
    "online": true,
-   "self": false
-  },
-  {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": false,
    "self": false
   },
   {
@@ -404,10 +404,10 @@
  "now": {
   "active_projects": 11,
   "planned_projects": 4,
-  "open_tasks": 12,
+  "open_tasks": 22,
   "overdue_tasks": 2,
   "assignments_upcoming": 4,
-  "devices_online": 3,
+  "devices_online": 4,
   "devices_total": 12,
   "jobs_failing": 4,
   "jobs_total": 5
