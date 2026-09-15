@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-14T11:08:42-07:00",
+ "generated_at": "2026-09-14T17:09:37-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.2",
@@ -11,48 +11,34 @@
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 306,
-    "ok": 130,
-    "failed": 176,
+    "runs": 210,
+    "ok": 78,
+    "failed": 132,
     "last": "2026-09-10T04:44:02"
    },
    {
-    "name": "ed3e2400a3b6",
-    "runs": 26,
-    "ok": 14,
-    "failed": 12,
-    "last": "2026-09-10T04:47:26"
-   },
-   {
-    "name": "b2630adb1e0e",
-    "runs": 18,
-    "ok": 10,
-    "failed": 8,
-    "last": "2026-09-09T23:00:01"
-   },
-   {
     "name": "Album Elo Detection",
-    "runs": 4,
+    "runs": 3,
     "ok": 1,
-    "failed": 3,
+    "failed": 2,
     "last": "2026-09-10T03:23:55"
    },
    {
     "name": "3a920665a70b",
-    "runs": 3,
+    "runs": 2,
     "ok": 1,
-    "failed": 2,
+    "failed": 1,
     "last": "2026-09-09T09:30:08"
    },
    {
-    "name": "244e05b57d51",
-    "runs": 3,
-    "ok": 2,
+    "name": "9ee9a96aafe4",
+    "runs": 2,
+    "ok": 1,
     "failed": 1,
-    "last": "2026-09-09T12:00:00"
+    "last": "2026-09-10T04:43:48"
    }
   ],
-  "cron_failing_count": 9,
+  "cron_failing_count": 4,
   "skills": 153,
   "mcp_servers": 1,
   "mcp_enabled": 1,
@@ -62,7 +48,7 @@
   },
   "disk": {
    "used_pct": 82,
-   "free_gb": 36.6,
+   "free_gb": 36.5,
    "size_gb": 228
   },
   "tokens": {
@@ -324,14 +310,14 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
+   "name": "ayumad",
+   "os": "linux",
    "online": true,
    "self": false
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "Creekwood",
+   "os": "windows",
    "online": true,
    "self": false
   },
@@ -339,6 +325,12 @@
    "name": "localhost",
    "os": "iOS",
    "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
    "self": false
   },
   {
@@ -350,12 +342,6 @@
   {
    "name": "Ayupadpro",
    "os": "iOS",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "Creekwood",
-   "os": "windows",
    "online": false,
    "self": false
   },
@@ -417,7 +403,7 @@
   "assignments_upcoming": 4,
   "devices_online": 4,
   "devices_total": 12,
-  "jobs_failing": 9,
+  "jobs_failing": 4,
   "jobs_total": 5
  }
 }
