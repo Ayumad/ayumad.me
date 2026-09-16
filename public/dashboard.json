@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-16T05:15:40-07:00",
+ "generated_at": "2026-09-16T11:16:38-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -55,21 +55,21 @@
   },
   "disk": {
    "used_pct": 86,
-   "free_gb": 28.4,
+   "free_gb": 28.5,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 6054,
-   "month_in_m": 29.3,
-   "month_out_m": 6.17,
-   "month_cache_m": 593.2,
-   "week_calls": 4042,
-   "week_out_m": 4.18,
+   "month_calls": 6110,
+   "month_in_m": 29.4,
+   "month_out_m": 6.25,
+   "month_cache_m": 603.6,
+   "week_calls": 4098,
+   "week_out_m": 4.26,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 3348
+     "calls": 3393
     },
     {
      "model": "deepseek-v4-flash",
@@ -77,7 +77,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1077
+     "calls": 1088
     },
     {
      "model": "qwen3.8-max",
@@ -329,12 +329,6 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -350,6 +344,12 @@
    "name": "pve-p520",
    "os": "linux",
    "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
    "self": false
   },
   {
@@ -426,7 +426,7 @@
   "open_tasks": 19,
   "overdue_tasks": 2,
   "assignments_upcoming": 5,
-  "devices_online": 5,
+  "devices_online": 4,
   "devices_total": 13,
   "jobs_failing": 5,
   "jobs_total": 6
