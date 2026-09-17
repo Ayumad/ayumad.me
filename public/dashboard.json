@@ -1,41 +1,20 @@
 {
- "generated_at": "2026-09-16T11:16:38-07:00",
+ "generated_at": "2026-09-16T17:17:01-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
   "released": "2026.9.14",
   "commits_behind": 0,
-  "cron_total": 8,
-  "cron_active": 6,
-  "cron_no_agent": 3,
+  "cron_total": 9,
+  "cron_active": 7,
+  "cron_no_agent": 4,
   "cron_failing": [
    {
     "name": "69726f65e548",
-    "runs": 115,
-    "ok": 54,
-    "failed": 61,
+    "runs": 20,
+    "ok": 13,
+    "failed": 7,
     "last": "2026-09-10T04:44:02"
-   },
-   {
-    "name": "ed3e2400a3b6",
-    "runs": 10,
-    "ok": 5,
-    "failed": 5,
-    "last": "2026-09-10T04:47:26"
-   },
-   {
-    "name": "b2630adb1e0e",
-    "runs": 6,
-    "ok": 4,
-    "failed": 2,
-    "last": "2026-09-09T23:00:01"
-   },
-   {
-    "name": "Album Elo Detection",
-    "runs": 2,
-    "ok": 1,
-    "failed": 1,
-    "last": "2026-09-10T03:23:55"
    },
    {
     "name": "9ee9a96aafe4",
@@ -45,8 +24,8 @@
     "last": "2026-09-10T04:43:48"
    }
   ],
-  "cron_failing_count": 5,
-  "skills": 177,
+  "cron_failing_count": 2,
+  "skills": 180,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
@@ -55,21 +34,21 @@
   },
   "disk": {
    "used_pct": 86,
-   "free_gb": 28.5,
+   "free_gb": 28.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 6110,
-   "month_in_m": 29.4,
-   "month_out_m": 6.25,
-   "month_cache_m": 603.6,
-   "week_calls": 4098,
-   "week_out_m": 4.26,
+   "month_calls": 6312,
+   "month_in_m": 30.0,
+   "month_out_m": 6.52,
+   "month_cache_m": 621.3,
+   "week_calls": 4278,
+   "week_out_m": 4.52,
    "cache_share": 95,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 3393
+     "calls": 3595
     },
     {
      "model": "deepseek-v4-flash",
@@ -280,7 +259,7 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 5,
+  "upcoming": 4,
   "window_days": 7,
   "later": 42,
   "courses": [
@@ -289,12 +268,6 @@
    "CMPE-148"
   ],
   "next": [
-   {
-    "title": "Programming project #1",
-    "course": "CMPE-142",
-    "due": "2026-09-16",
-    "when": "2026-09-16T23:59:00+00:00"
-   },
    {
     "title": "Project Number 1: Getting to know networking tools",
     "course": "CMPE-148",
@@ -347,6 +320,12 @@
    "self": false
   },
   {
+   "name": "xps-omarchy",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumacair",
    "os": "macOS",
    "online": false,
@@ -393,12 +372,6 @@
    "os": "windows",
    "online": false,
    "self": false
-  },
-  {
-   "name": "xps-omarchy",
-   "os": "linux",
-   "online": false,
-   "self": false
   }
  ],
  "journal": [
@@ -425,10 +398,10 @@
   "planned_projects": 4,
   "open_tasks": 19,
   "overdue_tasks": 2,
-  "assignments_upcoming": 5,
-  "devices_online": 4,
+  "assignments_upcoming": 4,
+  "devices_online": 5,
   "devices_total": 13,
-  "jobs_failing": 5,
-  "jobs_total": 6
+  "jobs_failing": 2,
+  "jobs_total": 7
  }
 }
