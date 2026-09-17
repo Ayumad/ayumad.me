@@ -1,12 +1,26 @@
 [
  {
+  "date": "2026-09-16",
+  "summary": "P520 clean reinstall + ZFS tank rebuild (3→5 native RAIDZ1), ai-vm rebuilt with Ollama+ChromaDB, 2.5GbE NIC active; no interactive sessions, cron fleet all green.",
+  "highlights": [
+   "**P520 fully operational** — clean reinstall, 5-wide RAIDZ1 rebuilt natively (14.4 TiB), ai-vm running Ollama + ChromaDB, 2.5GbE active. Phase 2 (AI stack) core-done; only Samba password separates Phase 3 from a working NAS.",
+   "**ZFS display bug diagnosed and fixed** — OpenZFS deflation-ratio stuck at pre-expansion value (PR #18324 upstream); remediated by pool rebuild rather than waiting for upstream merge.",
+   "**All 18 cron jobs green** — no failures across the fleet.",
+   "**Quiet day for sessions** — no interactive Hermes work; vault changes were manual and auto-synced."
+  ]
+ },
+ {
   "date": "2026-09-15",
   "summary": "EchoSphere school-Drive hub organized (Meeting Notes/{IPMD, Team}, Project Docs, Presentations, Media, Team & Admin) + daily Drive Organizer cron; vault project note updated.",
   "highlights": [
    "**EchoSphere Drive hub built** — full school Drive reorganized (227 items): EchoSphere hub with IPMD/Team meeting notes split, 5 sub-folders, 2 ACM shared-drive shortcuts. 21 loose root items filed; root went from 23 mixed items to 7 folders.",
    "**Daily Drive Organizer cron deployed** — `school_drive_organizer.py`, daily 8:35 AM, zero-token; files EchoSphere/course-code/ACM/career items automatically.",
    "**Infrastructure push via Operations Queue** — Mac mini force-reset recovery, hermes update to `793529467d` (TCC grant survived), Photon iMessage gate cleared, Daily Brief calendar helper (`calendar_today.py`) fixed, BlueBubbles disabled.",
-   "**All cron jobs green** — no failures across the fleet."
+   "**All cron jobs green** — no failures across the fleet.",
+   "Nothing agent-fixable this pass — cron fleet mostly green; known issues are stale one-shots or bot-chat delivery timeouts.",
+   "NSDC nudge one-shot failed (Photon 500 on Sep 11); meeting is past, no action needed.",
+   "Foreman Weekly roster audit: bot-chat delivery timed out (600s) — recurring bot-chat delivery issue, not a script bug.",
+   "Vaultkeeper Weekly Review: interrupted by shutdown (Sep 13); next run Sep 20 is unaffected."
   ]
  },
  {
