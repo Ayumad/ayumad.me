@@ -39,7 +39,9 @@ export function useScope(initial: ScopeState, energy?: () => number) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const clockRef = useRef<ClockHandle | null>(null);
   const stateRef = useRef(state);
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  });
 
   // Grid metrics for the ASCII adapter — measured from the real host element
   // after layout settles, and re-measured on resize. (A mount-time useMemo

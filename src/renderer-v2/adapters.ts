@@ -6,7 +6,6 @@
 
 import type { Frame } from "./signal";
 
-const RAMP = " .:-=+*#%@"; // light→dark; index by intensity
 const GLYPHS = [" ", ".", ":", "+", "*", "#", "@"]; // structural subset
 
 export interface Adapter {
@@ -22,8 +21,6 @@ export function asciiAdapter(pre: HTMLPreElement, cols: number, rows: number): A
   return {
     draw(frame) {
       buf.fill(0);
-      const w = pre.clientWidth || 1;
-      const h = pre.clientHeight || 1;
       for (let i = 0; i < frame.count; i += 1) {
         const x = frame.points[i * 3];
         const y = frame.points[i * 3 + 1];
