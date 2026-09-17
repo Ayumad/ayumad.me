@@ -5225,3 +5225,460 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
   color: var(--cyan);
   background: rgba(72, 239, 208, 0.08);
 }
+
+/* ─── Daily journal calendar (journal page, 2026-09-17) ─────────────────── */
+
+.journal-calendar {
+  margin: 0 0 8px;
+}
+
+.jcal-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.jcal-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.jcal-toggle,
+.jcal-nav {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.jcal-toggle button,
+.jcal-nav button {
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  font: 700 0.6rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background 140ms ease,
+    color 140ms ease;
+}
+
+.jcal-toggle button {
+  padding: 0 14px;
+  border-right: 1px solid var(--line);
+}
+
+.jcal-toggle button:last-child {
+  border-right: 0;
+}
+
+.jcal-toggle button:hover,
+.jcal-nav button:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--cyan) 9%, transparent);
+}
+
+.jcal-toggle button[aria-pressed="true"],
+.jcal-toggle button[aria-pressed="true"]:hover {
+  background: var(--cyan);
+  color: var(--ink);
+}
+
+.jcal-nav button {
+  min-width: 36px;
+  padding: 0;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.jcal-period {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+  padding: 0 10px;
+  color: var(--text);
+  font: 700 0.68rem/1 var(--mono);
+}
+
+.jcal-latest {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font: 700 0.6rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease;
+}
+
+.jcal-latest:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.jcal-latest:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.jcal-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.jcal-panel {
+  padding: clamp(14px, 2.2vw, 22px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+}
+
+.jcal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font: 700 0.55rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.jcal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.jcal-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: 600 0.78rem/1 var(--mono);
+}
+
+.jcal-cell .jcal-daynum,
+.jcal-mini-cell .jcal-mini-day {
+  position: relative;
+  z-index: 1;
+}
+
+button.jcal-cell {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--cyan) 5%, transparent);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+button.jcal-cell:hover,
+button.jcal-cell:focus-visible,
+.jcal-cell.is-preview {
+  border-color: var(--cyan);
+}
+
+button.jcal-cell:hover,
+button.jcal-cell:focus-visible {
+  background: color-mix(in srgb, var(--cyan) 14%, transparent);
+}
+
+button.jcal-cell:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.jcal-cell.is-selected {
+  border-color: var(--cyan);
+  box-shadow: inset 0 0 0 1px var(--cyan);
+}
+
+.jcal-cell.is-today .jcal-daynum {
+  color: var(--violet);
+  font-weight: 800;
+}
+
+button.jcal-cell.is-today {
+  border-color: color-mix(in srgb, var(--violet) 55%, var(--line));
+}
+
+.jcal-dot {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+.jcal-blank {
+  visibility: hidden;
+}
+
+.jcal-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.jcal-week-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 168px;
+  padding: 12px 11px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  text-align: left;
+}
+
+button.jcal-week-cell {
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+button.jcal-week-cell:hover,
+button.jcal-week-cell:focus-visible,
+.jcal-week-cell.is-preview {
+  border-color: var(--cyan);
+}
+
+button.jcal-week-cell:hover,
+button.jcal-week-cell:focus-visible {
+  background: color-mix(in srgb, var(--cyan) 7%, transparent);
+}
+
+button.jcal-week-cell:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.jcal-week-cell.is-selected {
+  border-color: var(--cyan);
+  box-shadow: inset 0 0 0 1px var(--cyan);
+}
+
+.jcal-weekday {
+  color: var(--muted);
+  font: 700 0.55rem/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.jcal-daynum {
+  color: var(--text);
+  font: 700 0.95rem/1.1 var(--mono);
+}
+
+.jcal-week-empty .jcal-daynum {
+  color: var(--muted);
+}
+
+.jcal-snippet {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  color: var(--soft);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.jcal-week-empty .jcal-snippet {
+  color: var(--muted);
+}
+
+.jcal-year {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.jcal-mini {
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+}
+
+.jcal-mini header {
+  margin-bottom: 8px;
+}
+
+.jcal-mini-title {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: 700 0.6rem/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.jcal-mini-title:hover {
+  color: var(--cyan);
+}
+
+.jcal-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.jcal-mini-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: 600 0.5rem/1 var(--mono);
+}
+
+button.jcal-mini-cell {
+  color: var(--soft);
+  cursor: pointer;
+}
+
+button.jcal-mini-cell:hover,
+button.jcal-mini-cell:focus-visible {
+  background: color-mix(in srgb, var(--cyan) 16%, transparent);
+}
+
+button.jcal-mini-cell:focus-visible {
+  outline: 1px solid var(--cyan);
+  outline-offset: 1px;
+}
+
+button.jcal-mini-cell.is-selected {
+  border-color: var(--cyan);
+}
+
+.jcal-mini-cell.is-today .jcal-mini-day {
+  color: var(--violet);
+  font-weight: 800;
+}
+
+.jcal-mini-cell .jcal-dot {
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+}
+
+.jcal-detail {
+  position: sticky;
+  top: calc(var(--header) + 18px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: clamp(18px, 2.4vw, 26px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--violet) 5%, var(--surface));
+}
+
+.jcal-detail-date {
+  margin: 0;
+  color: var(--cyan);
+  font: 700 0.66rem/1.4 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.jcal-detail-summary {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.jcal-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--soft);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.jcal-highlights strong {
+  color: var(--text);
+}
+
+.jcal-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 1120px) {
+  .jcal-body {
+    grid-template-columns: 1fr;
+  }
+
+  .jcal-detail {
+    position: static;
+  }
+
+  .jcal-year {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .jcal-week {
+    grid-template-columns: 1fr;
+  }
+
+  .jcal-week-cell {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 650px) {
+  .jcal-year {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jcal-cell {
+    min-height: 42px;
+    font-size: 0.7rem;
+  }
+
+  .jcal-period {
+    min-width: 0;
+  }
+}

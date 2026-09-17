@@ -148,9 +148,10 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
   });
 
-  it("renders only curated Journal articles and full article content", () => {
+  it("renders the journal page with the daily log calendar and curated articles", () => {
     renderAt("/journal");
     expect(screen.getByRole("heading", { name: "Journal" })).toBeInTheDocument();
+    expect(screen.getByText("Daily journal")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini" })).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
     expect(screen.queryByText(/Session journal for 2026/)).not.toBeInTheDocument();
 

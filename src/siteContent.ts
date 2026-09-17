@@ -119,7 +119,7 @@ export const pageMeta: Record<string, { title: string; description: string }> = 
   },
   "/journal": {
     title: "Journal — Ayumad.me",
-    description: "Curated field notes on building, configuring, and understanding things.",
+    description: "Daily logs and curated field notes on building, configuring, and understanding things.",
   },
   "/renderer": {
     title: "Renderer — Ayumad.me",

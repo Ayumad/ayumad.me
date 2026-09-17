@@ -22,6 +22,7 @@ import RendererPage from "./RendererPage";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
 import TasteSection from "./TastePage";
+import JournalCalendar from "./JournalCalendar";
 import {
   isRenderMode,
   RenderModeContext,
@@ -483,7 +484,7 @@ function GearDetailPage() {
 }
 
 function JournalPage() {
-  return <section className="section-shell page-section"><SectionHeading index="03" label="Journal" title="Journal" description="Curated field notes on building, configuring, and understanding things." scene="systems" /><div className="journal-intro"><p>These are the pieces that made it through the edit. Short notes and longer articles live together here; the automated private session log does not.</p></div><div className="journal-list">{journalPosts.map((post, index) => <motion.article className="writeup-row" key={post.slug} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}><Link className="writeup-link" to={`/journal/${post.slug}`} aria-label={`Read ${post.title}`}><div className="writeup-meta"><time dateTime={post.date}>{post.date}</time><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div><div className="writeup-main"><h2>{post.title}</h2><p>{post.summary}</p></div><span className="writeup-arrow" aria-hidden="true">↗</span></Link></motion.article>)}</div></section>;
+  return <section className="section-shell page-section"><SectionHeading index="03" label="Journal" title="Journal" description="Daily logs and curated field notes on building, configuring, and understanding things." scene="systems" /><div className="journal-intro"><p>Every logged day is on the calendar below — weekly, monthly, or yearly. Hover or open a marked day to see what I got up to. Longer articles and field notes follow.</p></div><JournalCalendar /><div className="journal-list">{journalPosts.map((post, index) => <motion.article className="writeup-row" key={post.slug} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}><Link className="writeup-link" to={`/journal/${post.slug}`} aria-label={`Read ${post.title}`}><div className="writeup-meta"><time dateTime={post.date}>{post.date}</time><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div><div className="writeup-main"><h2>{post.title}</h2><p>{post.summary}</p></div><span className="writeup-arrow" aria-hidden="true">↗</span></Link></motion.article>)}</div></section>;
 }
 
 function JournalArticlePage({ post }: { post: JournalPost }) {
