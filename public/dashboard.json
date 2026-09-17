@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-16T23:17:54-07:00",
+ "generated_at": "2026-09-17T05:18:22-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -25,7 +25,7 @@
    }
   ],
   "cron_failing_count": 2,
-  "skills": 180,
+  "skills": 181,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
@@ -34,21 +34,21 @@
   },
   "disk": {
    "used_pct": 86,
-   "free_gb": 26.8,
+   "free_gb": 28.0,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 6354,
-   "month_in_m": 30.1,
-   "month_out_m": 6.54,
-   "month_cache_m": 622.9,
-   "week_calls": 4111,
-   "week_out_m": 4.32,
-   "cache_share": 95,
+   "month_calls": 7228,
+   "month_in_m": 33.5,
+   "month_out_m": 8.61,
+   "month_cache_m": 784.4,
+   "week_calls": 3167,
+   "week_out_m": 4.86,
+   "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 3613
+     "calls": 4481
     },
     {
      "model": "deepseek-v4-flash",
@@ -56,7 +56,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1112
+     "calls": 1118
     },
     {
      "model": "qwen3.8-max",
@@ -98,7 +98,7 @@
    "name": "Homelab",
    "status": "active",
    "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
-   "updated": "2026-09-16",
+   "updated": "2026-09-17",
    "folder": ""
   },
   {
@@ -119,7 +119,7 @@
    "name": "Personal Website",
    "status": "active",
    "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
-   "updated": "2026-09-10",
+   "updated": "2026-09-17",
    "folder": ""
   },
   {
@@ -165,6 +165,13 @@
    "folder": "Homelab"
   },
   {
+   "name": "School VM Runbook",
+   "status": "reference",
+   "summary": "Runbook for school-vm (P520 vmid 201): the on-demand Ubuntu 24.04 Linux box holding CMPE 131/142/148 coursework. Access, lifecycle, class-work recipes, snapshots/restore, and verified state.",
+   "updated": "2026-09-17",
+   "folder": "Homelab"
+  },
+  {
    "name": "Social Bookmark Sync",
    "status": "planned",
    "summary": "Auto-sync Reddit saves, X bookmarks (and TikTok favorites later) into Hermes + Obsidian vault. Shared ingest pipeline, script-first, zero-token when idle. Deferred — build routes researched.",
@@ -180,25 +187,25 @@
   }
  ],
  "tasks": {
-  "open": 19,
-  "overdue": 2,
+  "open": 23,
+  "overdue": 0,
   "items": [
-   {
-    "title": "Engineering desktop: install engineering software (SolidWorks)",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": true
-   },
-   {
-    "title": "Setup NAS Functionality",
-    "list": "Hardware",
-    "due": "2026-09-13",
-    "overdue": true
-   },
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
     "due": "2026-09-19",
+    "overdue": false
+   },
+   {
+    "title": "Engineering desktop: install engineering software (SolidWorks)",
+    "list": "Hardware",
+    "due": "2026-09-20",
+    "overdue": false
+   },
+   {
+    "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
+    "list": "Hardware",
+    "due": "2026-09-20",
     "overdue": false
    },
    {
@@ -220,6 +227,30 @@
     "overdue": false
    },
    {
+    "title": "Minecraft whitelist + motd — reply with your MC username",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Xfinity gateway: DHCP reservations + Pi-hole DNS flip",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Pair Hue bridge with Home Assistant (link button press)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Install prometheus-node-exporter on Omarchy SER8 (sudo password needed — one-time)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
     "title": "Re-login FB Marketplace burner profile (fbmp MCP returns 0 listings while logged out)",
     "list": "Tech",
     "due": null,
@@ -227,30 +258,6 @@
    },
    {
     "title": "Delete the stale duplicate API_SERVER_KEY line in config.yaml",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Re-login the Facebook Marketplace burner profile",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Compact Hermes state.db (~1.5 GB)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Run the sudo disk pass on the Mac mini",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Omarchy tablet-mode",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -302,7 +309,25 @@
    "self": true
   },
   {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "Ayupadpro",
+   "os": "iOS",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "docker-vm",
    "os": "linux",
    "online": true,
    "self": false
@@ -320,20 +345,8 @@
    "self": false
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": false,
-   "self": false
-  },
-  {
    "name": "Ayumacpro",
    "os": "macOS",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "Ayupadpro",
-   "os": "iOS",
    "online": false,
    "self": false
   },
@@ -368,6 +381,12 @@
    "self": false
   },
   {
+   "name": "school-vm",
+   "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
    "name": "xps-omarchy",
    "os": "linux",
    "online": false,
@@ -396,11 +415,11 @@
  "now": {
   "active_projects": 11,
   "planned_projects": 4,
-  "open_tasks": 19,
-  "overdue_tasks": 2,
+  "open_tasks": 23,
+  "overdue_tasks": 0,
   "assignments_upcoming": 4,
-  "devices_online": 4,
-  "devices_total": 13,
+  "devices_online": 7,
+  "devices_total": 15,
   "jobs_failing": 2,
   "jobs_total": 7
  }
