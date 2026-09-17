@@ -359,16 +359,22 @@
         const tiles = [
           ["good", `${hl.services_up ?? 0}/${hl.services_total ?? 0}`, "services answering"],
           [(ic.bad ? "bad" : ic.warn ? "warn" : "good"), `${ic.bad ?? 0} / ${ic.warn ?? 0}`, "bad / warn items"],
-          ["", `${hl.guests_running ?? 0}/${(hl.guests || []).length}`, "guests running"],
-          ["", `${cont.running ?? 0}`, "containers up"],
-          [(hl.pools || []).every((p) => p.health === "ONLINE") ? "good" : "bad",
-            `${(hl.pools || []).filter((p) => p.health === "ONLINE").length}/${(hl.pools || []).length}`, "pools online"],
+          // An unreachable host must read as "unknown", never as a real zero.
+          // (Keep these self-contained: `guests`/`pools` are declared further down, and
+          // referencing them here trips the temporal dead zone and kills the render.)
+          ["", (hl.guests || []).length ? `${hl.guests_running ?? 0}/${hl.guests.length}` : "—", "guests running"],
+          ["", cont.running == null ? "—" : `${cont.running}`, "containers up"],
+          [(hl.pools || []).length && (hl.pools || []).every((p) => p.health === "ONLINE") ? "good"
+            : (hl.pools || []).length ? "bad" : "",
+            (hl.pools || []).length ? `${(hl.pools || []).filter((p) => p.health === "ONLINE").length}/${hl.pools.length}` : "—",
+            "pools online"],
           ["", gpu.present ? `${gpu.temp_c}°C` : "—", gpu.present ? `GPU · ${gpu.util_pct}% busy` : "GPU"],
-          ["", `${media.jellyfin_movies ?? 0} · ${media.jellyfin_episodes ?? 0}`, "films · episodes"],
-          ["", `${media.torrents_active ?? 0}`, `torrents · ${(media.down_mbps || 0).toFixed(1)} MB/s`],
-          ["", `${hl.snapshots ?? 0}`, "ZFS snapshots"],
+          ["", media.jellyfin_movies == null ? "—" : `${media.jellyfin_movies} · ${media.jellyfin_episodes}`, "films · episodes"],
+          ["", media.torrents_active == null ? "—" : `${media.torrents_active}`,
+            media.down_mbps == null ? "torrents" : `torrents · ${(media.down_mbps || 0).toFixed(1)} MB/s`],
+          ["", hl.snapshots == null ? "—" : `${hl.snapshots}`, "ZFS snapshots"],
           [(hl.backups || {}).offsite === false ? "warn" : "good",
-            ago((hl.backups || {}).newest_age_h), "newest backup"],
+            (hl.backups || {}).newest_age_h == null ? "—" : ago(hl.backups.newest_age_h), "newest backup"],
         ];
         document.getElementById("tiles").innerHTML = tiles.map(
           ([cls, n, l]) => `<div class="tile ${cls}"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`
