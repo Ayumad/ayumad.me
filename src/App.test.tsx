@@ -163,6 +163,19 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
   });
 
+  it("renders the school VM article with its chart and table", () => {
+    renderAt("/journal/school-vm-p520");
+    expect(screen.getByRole("heading", { name: "An On-Demand School VM on the P520", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Things that bit me" })).toBeInTheDocument();
+    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getByText(/no GUI anywhere in that list/)).toBeInTheDocument();
+    expect(document.querySelector(".fleet-chart")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
+
+    renderAt("/journal");
+    expect(screen.getByRole("link", { name: "Read An On-Demand School VM on the P520" })).toHaveAttribute("href", "/journal/school-vm-p520");
+  });
+
   it("renders the gaming fleet benchmark article with gear links", () => {
     renderAt("/journal/gaming-fleet-roundup");
     expect(screen.getByRole("heading", { name: "Gaming Across My Fleet", level: 1 })).toBeInTheDocument();

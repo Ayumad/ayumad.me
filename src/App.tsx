@@ -458,7 +458,7 @@ function GearPage() {
 
 const relatedGearPages: Record<string, { label: string; to: string }[]> = {
   [gearSlug("Computers", "Apple Mac mini (M4, 2024)")]: [{ label: "Read the Hermes case study", to: "/projects/hermes-agent" }],
-  [gearSlug("Computers", "Lenovo ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }],
+  [gearSlug("Computers", "Lenovo ThinkStation P520")]: [{ label: "Read the P520 GPU passthrough journal", to: "/journal/gpu-passthrough-p520" }, { label: "Read the school VM journal", to: "/journal/school-vm-p520" }],
   [gearSlug("Computers", "Panasonic Let's Note SV1")]: [{ label: "Read the Arch daily-driver journal", to: "/journal/arch-daily-driver" }],
   [gearSlug("Computers", "Creekwood")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
   [gearSlug("Computers", "ASUS ROG Zephyrus G14")]: [{ label: "Read the gaming fleet benchmark", to: "/journal/gaming-fleet-roundup" }],
