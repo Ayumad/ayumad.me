@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-17T07:16:26-07:00",
+ "generated_at": "2026-09-17T07:19:18-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -8,10 +8,26 @@
   "cron_total": 11,
   "cron_active": 9,
   "cron_no_agent": 6,
-  "cron_failing": [],
-  "cron_failing_count": 0,
+  "cron_failing": [
+   {
+    "name": "69726f65e548",
+    "runs": 20,
+    "ok": 13,
+    "failed": 7,
+    "last": "2026-09-10T04:44:02"
+   },
+   {
+    "name": "9ee9a96aafe4",
+    "runs": 2,
+    "ok": 1,
+    "failed": 1,
+    "last": "2026-09-10T04:43:48"
+   }
+  ],
+  "cron_failing_count": 2,
   "skills": 183,
-  "mcp_servers": 0,
+  "mcp_servers": 1,
+  "mcp_enabled": 1,
   "memory": {
    "working": 1282,
    "episodic": 513
@@ -22,17 +38,17 @@
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 7824,
+   "month_calls": 7837,
    "month_in_m": 35.2,
-   "month_out_m": 9.33,
-   "month_cache_m": 871.4,
-   "week_calls": 3734,
+   "month_out_m": 9.34,
+   "month_cache_m": 876.3,
+   "week_calls": 3747,
    "week_out_m": 5.55,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 5077
+     "calls": 5090
     },
     {
      "model": "deepseek-v4-flash",
@@ -51,16 +67,16 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-17T07:16:26-07:00",
+  "checked_at": "2026-09-17T07:19:18-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 12221,
+   "uptime_s": 12392,
    "load": [
-    "1.32",
-    "1.63",
-    "1.64"
+    "1.17",
+    "1.28",
+    "1.49"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -169,7 +185,7 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 150.0,
+    "alloc_gb": 154.0,
     "free_gb": 18432.0,
     "health": "ONLINE",
     "used_pct": 1,
@@ -242,7 +258,7 @@
    },
    {
     "name": "tank",
-    "used": "120G",
+    "used": "123G",
     "avail": "14.3T"
    },
    {
@@ -252,7 +268,7 @@
    },
    {
     "name": "tank/media",
-    "used": "87.7G",
+    "used": "90.7G",
     "avail": "14.3T"
    },
    {
@@ -343,7 +359,7 @@
   "media": {
    "torrents": 6,
    "torrents_active": 4,
-   "down_mbps": 15.07,
+   "down_mbps": 13.03,
    "jellyfin_movies": 1,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
@@ -372,7 +388,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 31,
+    "ms": 30,
     "code": 200
    },
    {
@@ -382,7 +398,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 104,
+    "ms": 99,
     "code": 200
    },
    {
@@ -392,7 +408,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 27,
+    "ms": 19,
     "code": 200
    },
    {
@@ -402,7 +418,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 23,
+    "ms": 21,
     "code": 200
    },
    {
@@ -412,7 +428,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 23,
+    "ms": 20,
     "code": 200
    },
    {
@@ -422,7 +438,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 22,
+    "ms": 14,
     "code": 200
    },
    {
@@ -432,7 +448,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 25,
+    "ms": 23,
     "code": 200
    },
    {
@@ -442,7 +458,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 25,
+    "ms": 20,
     "code": 200
    },
    {
@@ -452,7 +468,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 43,
+    "ms": 28,
     "code": 200
    },
    {
@@ -462,7 +478,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 68,
+    "ms": 51,
     "code": 200
    },
    {
@@ -472,7 +488,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 20,
+    "ms": 13,
     "code": 200
    },
    {
@@ -482,7 +498,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 41,
+    "ms": 33,
     "code": 200
    },
    {
@@ -492,7 +508,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 34,
+    "ms": 28,
     "code": 200
    },
    {
@@ -502,7 +518,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 35,
+    "ms": 28,
     "code": 200
    },
    {
@@ -512,7 +528,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 55,
+    "ms": 38,
     "code": 200
    },
    {
@@ -522,7 +538,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 21,
+    "ms": 18,
     "code": 200
    },
    {
@@ -532,7 +548,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 18,
+    "ms": 14,
     "code": 200
    },
    {
@@ -542,7 +558,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 45,
+    "ms": 37,
     "code": 200
    },
    {
@@ -552,7 +568,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 20,
+    "ms": 10,
     "code": 200
    },
    {
@@ -562,7 +578,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 77,
+    "ms": 61,
     "code": 200
    },
    {
@@ -572,7 +588,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 18,
+    "ms": 11,
     "code": 200
    },
    {
@@ -582,7 +598,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 20,
+    "ms": 30,
     "code": 401
    },
    {
@@ -592,7 +608,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 29,
+    "ms": 18,
     "code": 200
    },
    {
@@ -602,7 +618,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 24,
+    "ms": 13,
     "code": 200
    },
    {
@@ -612,7 +628,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 37,
+    "ms": 27,
     "code": 200
    },
    {
@@ -622,7 +638,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 17,
+    "ms": 16,
     "code": 200
    },
    {
@@ -632,7 +648,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 12,
+    "ms": 14,
     "code": 200
    },
    {
@@ -642,7 +658,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 27,
+    "ms": 21,
     "code": 200
    },
    {
@@ -652,7 +668,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 12,
+    "ms": 11,
     "code": 200
    },
    {
@@ -672,7 +688,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 14,
+    "ms": 11,
     "code": 200
    },
    {
@@ -682,7 +698,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 18,
+    "ms": 21,
     "code": 200
    },
    {
@@ -692,7 +708,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 18,
+    "ms": 13,
     "code": 200
    }
   ],
@@ -1081,10 +1097,7 @@
    "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work."
   }
  ],
- "errors": {
-  "cron_ledger": "OperationalError: unable to open database file",
-  "mcp": "ModuleNotFoundError: No module named 'yaml'"
- },
+ "errors": {},
  "now": {
   "active_projects": 11,
   "planned_projects": 4,
@@ -1093,7 +1106,7 @@
   "assignments_upcoming": 4,
   "devices_online": 8,
   "devices_total": 16,
-  "jobs_failing": 0,
+  "jobs_failing": 2,
   "jobs_total": 9,
   "homelab_reachable": true,
   "services_up": 33,
