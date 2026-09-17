@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
+    <title>Homelab — Live — Ayumad.me</title>
+    <meta
+      name="description"
+      content="Live state of Ayush Madhukar's homelab: the P520 Proxmox host, its guests, ZFS pools, GPU, backups and the 30+ services running on docker-vm."
+    />
+    <meta name="author" content="Ayush Madhukar" />
+    <meta name="theme-color" content="#040707" />
+    <link rel="canonical" href="https://ayumad.me/dashboard/homelab" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #040707;
+        --fg: #d7dede;
+        --muted: #7d8a8a;
+        --line: #172020;
+        --edge: #4d6363;
+        --accent: #6fd6a8;
+        --bad: #e08a8a;
+        --warn: #e0b070;
+        --cyan: #67e8f9;
+        --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 44px 20px 90px;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1040px; margin: 0 auto; }
+      .back {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 26px;
+      }
+      .back:hover { color: var(--accent); }
+      h1 {
+        font-family: var(--mono);
+        font-size: 25px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+        margin: 0 0 8px;
+      }
+      .meta {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 0 0 4px;
+      }
+      .lede { color: var(--muted); margin: 14px 0 0; max-width: 76ch; }
+      h2 {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 46px 0 14px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      h2 .n { color: var(--muted); font-weight: 400; letter-spacing: 0.04em; text-transform: none; }
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+        gap: 8px;
+      }
+      .tile { border: 1px solid var(--line); border-radius: 2px; padding: 14px 15px; }
+      .tile .n {
+        font-family: var(--mono);
+        font-size: 21px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+      }
+      .tile .l {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .tile.warn .n { color: var(--warn); }
+      .tile.bad .n { color: var(--bad); }
+      .tile.good .n { color: var(--accent); }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-align: left;
+        padding: 0 14px 9px 0;
+        border-bottom: 1px solid var(--edge);
+      }
+      td { padding: 9px 14px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+      .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-family: var(--mono); }
+      code {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--accent);
+        background: rgba(111, 214, 168, 0.07);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .pill {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 2px 7px;
+        border: 1px solid var(--edge);
+        border-radius: 3px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .pill.bad { border-color: var(--bad); color: var(--bad); }
+      .pill.warn { border-color: var(--warn); color: var(--warn); }
+      .pill.good { border-color: var(--accent); color: var(--accent); }
+      .pill.dim { border-color: var(--line); color: var(--muted); }
+      .item { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .item:last-child { border-bottom: none; }
+      .item .hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+      .item .t { font-weight: 600; font-size: 15.5px; }
+      .item p { margin: 6px 0 0; color: var(--muted); font-size: 13.5px; max-width: 88ch; }
+      .bar {
+        display: block;
+        height: 6px;
+        background: var(--line);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 7px;
+        min-width: 70px;
+      }
+      .bar > span { display: block; height: 100%; background: var(--accent); }
+      .bar.warn > span { background: var(--warn); }
+      .bar.bad > span { background: var(--bad); }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(216px, 1fr));
+        gap: 8px;
+      }
+      .svc {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 11px 13px;
+        text-decoration: none;
+        color: var(--fg);
+        display: block;
+      }
+      .svc:hover { border-color: var(--edge); }
+      .svc .row { display: flex; align-items: baseline; gap: 8px; }
+      .svc .nm { font-weight: 600; font-size: 14px; }
+      .svc .pt { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: auto; }
+      .svc .st { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; }
+      .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--muted); flex: 0 0 auto; }
+      .dot.up { background: var(--accent); }
+      .dot.down { background: var(--bad); }
+      .grouphd {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 18px 0 8px;
+      }
+      .two { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+      .note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+      .unreachable {
+        border: 1px solid var(--bad);
+        border-radius: 3px;
+        padding: 18px 20px;
+        margin: 22px 0 0;
+        background: rgba(224, 138, 138, 0.05);
+      }
+      .unreachable .ut { font-weight: 600; color: var(--bad); font-family: var(--mono); }
+      .unreachable p { margin: 8px 0 0; color: var(--muted); font-size: 13.5px; }
+      .hidden { display: none; }
+      footer {
+        margin-top: 56px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      footer a { color: var(--muted); }
+      footer a:hover { color: var(--accent); }
+      @media (max-width: 720px) {
+        .two { grid-template-columns: 1fr; gap: 34px; }
+        body { padding: 30px 16px 70px; }
+        h1 { font-size: 21px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="/dashboard">← /dashboard</a>
+      <h1>
+        Homelab — Live
+        <span id="src" class="pill dim" style="font-size: 9px; vertical-align: middle">checking…</span>
+      </h1>
+      <p class="meta" id="meta">reading state…</p>
+      <p class="lede">
+        The box in the corner: a Lenovo P520 running Proxmox, its guests, the ZFS pools behind them,
+        the GPU that moves between VMs, and the services on <code>docker-vm</code>. Every number is read
+        from the live systems over SSH and HTTP — nothing here is typed in by hand.
+      </p>
+
+      <div id="unreachable" class="unreachable hidden">
+        <div class="ut">P520 — unreachable</div>
+        <p>
+          The host did not answer over SSH, so its panels carry no fresh data. Services reachable over
+          the network are still probed below. Last successful read: <span id="lastok">—</span>.
+        </p>
+      </div>
+
+      <h2>At a glance</h2>
+      <div class="tiles" id="tiles"></div>
+
+      <h2>Open items <span class="n">— measured, not assumed</span></h2>
+      <div id="issues"></div>
+
+      <h2>Host <span class="n">— Lenovo P520 · Proxmox VE</span></h2>
+      <div id="host"></div>
+
+      <h2>Guests</h2>
+      <div id="guests"></div>
+
+      <div class="two">
+        <div>
+          <h2 style="margin-top: 46px">Storage <span class="n">— ZFS</span></h2>
+          <div id="pools"></div>
+        </div>
+        <div>
+          <h2 style="margin-top: 46px">Backups</h2>
+          <div id="backups"></div>
+        </div>
+      </div>
+
+      <h2>GPU <span class="n">— RTX 3060, passed through</span></h2>
+      <div id="gpu"></div>
+
+      <h2>Services <span class="n" id="svcount"></span></h2>
+      <div id="services"></div>
+
+      <h2>Media pipeline</h2>
+      <div id="media"></div>
+
+      <h2>Storage access <span class="n">— the pool over SMB</span></h2>
+      <div id="nas"></div>
+
+      <h2>Datasets</h2>
+      <div id="datasets"></div>
+
+      <footer id="foot"></footer>
+    </div>
+
+    <script>
+      // ── data ────────────────────────────────────────────────────────────────
+      // Two sources, and the header always says which one answered — a stale
+      // snapshot must never masquerade as live.
+      //   live     = Tailscale Serve on the Mac mini (rolling, no deploys).
+      //              Only resolves for devices on the tailnet.
+      //   snapshot = the committed public/dashboard.json, deployed by the
+      //              Dashboard Refresh cron. Works anywhere.
+      const LIVE_URL = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json";
+
+      const fromLive = () =>
+        new Promise((resolve, reject) => {
+          const ac = new AbortController();
+          const timer = setTimeout(() => { ac.abort(); reject(new Error("live timeout")); }, 1500);
+          fetch(LIVE_URL, { cache: "no-store", signal: ac.signal })
+            .then((r) => { clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+            .then((d) => resolve({ d, source: "live" }))
+            .catch((e) => { clearTimeout(timer); reject(e); });
+        });
+
+      const fromSnapshot = () =>
+        fetch("/dashboard.json", { cache: "no-store" })
+          .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+          .then((d) => ({ d, source: "snapshot" }));
+
+      // ── helpers ─────────────────────────────────────────────────────────────
+      const esc = (v) => String(v == null ? "" : v)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const uptime = (s) => {
+        if (!s) return "—";
+        const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+        return d ? `${d}d ${h}h` : h ? `${h}h ${m}m` : `${m}m`;
+      };
+      const gb = (v) => (v == null ? "—" : v >= 1024 ? (v / 1024).toFixed(1) + " TB" : Math.round(v) + " GB");
+      const ago = (h) => (h == null ? "—" : h < 1 ? Math.round(h * 60) + "m ago" :
+        h < 48 ? h.toFixed(1) + "h ago" : (h / 24).toFixed(1) + "d ago");
+      const bar = (pct, cls) =>
+        `<span class="bar ${cls || ""}"><span style="width:${Math.max(0, Math.min(100, pct || 0))}%"></span></span>`;
+      const capClass = (pct) => (pct >= 90 ? "bad" : pct >= 75 ? "warn" : "");
+      const statusPill = (up) =>
+        up ? '<span class="pill good">up</span>' : '<span class="pill bad">down</span>';
+
+      const GROUPS = {
+        core: "Core", media: "Media", observability: "Observability · monitoring",
+        documents: "Documents & files", photos: "Photos", dev: "Dev & AI",
+        automation: "Home automation",
+      };
+
+      function render(d, source) {
+        const hl = d.homelab || null;
+        const badge = document.getElementById("src");
+        const stamp = (d.generated_at || "").replace("T", " ").slice(0, 16);
+        badge.textContent = source === "live" ? "● live" : "● snapshot";
+        badge.className = "pill " + (source === "live" ? "good" : "warn");
+        document.getElementById("meta").textContent =
+          `Proxmox host · ${source === "live" ? "live read" : "snapshot"} ${stamp} · generated on ${d.generated_on || "Mac mini"}`;
+
+        if (!hl) {
+          document.getElementById("tiles").innerHTML =
+            '<p class="note">This payload has no <code>homelab</code> section yet — the builder produces it on its next run.</p>';
+          return;
+        }
+
+        // ── unreachable banner ──────────────────────────────────────────────
+        if (!hl.reachable) {
+          document.getElementById("unreachable").classList.remove("hidden");
+          document.getElementById("lastok").textContent = hl.checked_at || stamp;
+        }
+
+        // ── tiles ───────────────────────────────────────────────────────────
+        const ic = hl.issue_counts || {};
+        const gpu = hl.gpu || {};
+        const media = hl.media || {};
+        const cont = hl.containers || {};
+        const tiles = [
+          ["good", `${hl.services_up ?? 0}/${hl.services_total ?? 0}`, "services answering"],
+          [(ic.bad ? "bad" : ic.warn ? "warn" : "good"), `${ic.bad ?? 0} / ${ic.warn ?? 0}`, "bad / warn items"],
+          ["", `${hl.guests_running ?? 0}/${(hl.guests || []).length}`, "guests running"],
+          ["", `${cont.running ?? 0}`, "containers up"],
+          [(hl.pools || []).every((p) => p.health === "ONLINE") ? "good" : "bad",
+            `${(hl.pools || []).filter((p) => p.health === "ONLINE").length}/${(hl.pools || []).length}`, "pools online"],
+          ["", gpu.present ? `${gpu.temp_c}°C` : "—", gpu.present ? `GPU · ${gpu.util_pct}% busy` : "GPU"],
+          ["", `${media.jellyfin_movies ?? 0} · ${media.jellyfin_episodes ?? 0}`, "films · episodes"],
+          ["", `${media.torrents_active ?? 0}`, `torrents · ${(media.down_mbps || 0).toFixed(1)} MB/s`],
+          ["", `${hl.snapshots ?? 0}`, "ZFS snapshots"],
+          [(hl.backups || {}).offsite === false ? "warn" : "good",
+            ago((hl.backups || {}).newest_age_h), "newest backup"],
+        ];
+        document.getElementById("tiles").innerHTML = tiles.map(
+          ([cls, n, l]) => `<div class="tile ${cls}"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`
+        ).join("");
+
+        // ── issues ──────────────────────────────────────────────────────────
+        const issues = hl.open_issues || [];
+        document.getElementById("issues").innerHTML = issues.length
+          ? issues.map((i) => `<div class="item"><div class="hd">
+              <span class="pill ${i.severity === "bad" ? "bad" : "warn"}">${esc(i.severity)}</span>
+              <span class="t" style="font-size:14.5px">${esc(i.text)}</span></div></div>`).join("")
+          : '<div class="item"><div class="hd"><span class="pill good">clear</span>' +
+            '<span class="t" style="font-size:14.5px">Nothing measured is degraded — pools online, services answering, backups fresh.</span></div></div>';
+
+        // ── host ────────────────────────────────────────────────────────────
+        const h = hl.host || {};
+        if (!h.name) {
+          document.getElementById("host").innerHTML =
+            '<p class="note">No host data in this read — the P520 did not answer SSH.</p>';
+        } else {
+          const memPct = h.mem_total_gb ? Math.round((h.mem_used_gb / h.mem_total_gb) * 100) : 0;
+          const nics = (h.nics || []).map(
+            (n) => `<code>${esc(n.name)}</code> ${n.speed_mbps ? n.speed_mbps + " Mb/s" : "—"} ${esc(n.state)}`
+          ).join(" · ");
+          document.getElementById("host").innerHTML = `
+            <div class="two">
+              <div><table>
+                <tr><th>Host</th><th class="num">value</th></tr>
+                <tr><td>Proxmox VE</td><td class="num">${esc(h.proxmox || "—")}</td></tr>
+                <tr><td>Kernel</td><td class="num">${esc(h.kernel || "—")}</td></tr>
+                <tr><td>Uptime</td><td class="num">${uptime(h.uptime_s)}</td></tr>
+                <tr><td>Failed units</td><td class="num">${(h.failed_units ?? 0) === 0
+                  ? '<span class="pill good">0</span>'
+                  : `<span class="pill warn">${h.failed_units}</span>`}</td></tr>
+                <tr><td><a href="${esc(h.pve_ui)}" style="color:var(--accent)">Proxmox UI →</a></td>
+                    <td class="num">tailnet only</td></tr>
+              </table></div>
+              <div><table>
+                <tr><th>Compute</th><th class="num">value</th></tr>
+                <tr><td>CPU</td><td class="num">${esc((h.cpu || "").replace(/\(R\)|\(TM\)/g, "").trim())}</td></tr>
+                <tr><td>Cores</td><td class="num">${h.cores ?? "—"}</td></tr>
+                <tr><td>Load (1/5/15)</td><td class="num">${esc((h.load || []).join(" "))}</td></tr>
+                <tr><td>Memory</td><td class="num">${h.mem_used_gb ?? "—"} / ${h.mem_total_gb ?? "—"} GB
+                  ${bar(memPct, capClass(memPct))}</td></tr>
+                <tr><td>NICs</td><td class="num" style="font-size:12.5px">${nics || "—"}</td></tr>
+              </table>
+              ${(h.failed_list || []).length
+                ? `<p class="note">Failed: ${(h.failed_list || []).map(esc).join(", ")}</p>` : ""}
+              </div>
+            </div>`;
+        }
+
+        // ── guests ──────────────────────────────────────────────────────────
+        const guests = hl.guests || [];
+        document.getElementById("guests").innerHTML = guests.length ? `
+          <table>
+            <tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th class="num">RAM</th>
+                <th class="num">Disk</th><th>Autostart</th><th>Notes</th></tr>
+            ${guests.map((g) => `<tr>
+              <td class="num">${g.id}</td>
+              <td><strong>${esc(g.name)}</strong></td>
+              <td>${esc(g.type === "qemu" ? "VM" : "LXC")}</td>
+              <td>${g.status === "running"
+                    ? '<span class="pill good">running</span>'
+                    : '<span class="pill dim">stopped</span>'}</td>
+              <td class="num">${(g.mem_mb / 1024).toFixed(0)} GB</td>
+              <td class="num">${g.disk_gb ?? "—"} GB</td>
+              <td>${g.onboot === true ? "on boot" : g.onboot === false ? "manual" : "on demand"}</td>
+              <td>${g.gpu ? '<span class="pill warn">GPU</span>' : ""}</td>
+            </tr>`).join("")}
+          </table>` : '<p class="note">No guest data in this read.</p>';
+
+        // ── pools ───────────────────────────────────────────────────────────
+        const pools = hl.pools || [];
+        document.getElementById("pools").innerHTML = pools.length ? `
+          <table>
+            <tr><th>Pool</th><th>Health</th><th class="num">Capacity</th></tr>
+            ${pools.map((p) => `<tr>
+              <td><strong>${esc(p.name)}</strong><br />
+                  <span class="note" style="margin:0">${esc((p.vdev || []).join(" "))}</span></td>
+              <td>${p.health === "ONLINE" ? '<span class="pill good">online</span>'
+                    : `<span class="pill bad">${esc(p.health)}</span>`}
+                  ${p.never_scrubbed ? '<br /><span class="pill warn" style="margin-top:4px;display:inline-block">never scrubbed</span>' : ""}</td>
+              <td class="num">${gb(p.free_gb)} free<br />
+                  <span class="note" style="margin:0">of ${gb(p.size_gb)} · ${p.used_pct}% used</span>
+                  ${bar(p.used_pct, capClass(p.used_pct))}</td>
+            </tr>`).join("")}
+          </table>
+          <p class="note">
+            Sizes are raw pool capacity (parity included); usable space is smaller on raidz.
+            ${hl.scrub_timers ? "" : "No scrub timer exists on this host."}
+          </p>` : '<p class="note">No pool data in this read.</p>';
+
+        // ── backups ─────────────────────────────────────────────────────────
+        const b = hl.backups || {};
+        document.getElementById("backups").innerHTML = `
+          <table>
+            <tr><th>Backups</th><th class="num">value</th></tr>
+            <tr><td>Newest dump</td><td class="num">${ago(b.newest_age_h)}</td></tr>
+            <tr><td>Schedule</td><td class="num" style="font-size:12.5px">${esc(b.schedule || "—")}</td></tr>
+            <tr><td>Dumps kept</td><td class="num">${b.count ?? "—"}</td></tr>
+            <tr><td>Destination</td><td class="num" style="font-size:12.5px">${esc(b.destination || "—")}</td></tr>
+            <tr><td>Off-machine copy</td><td class="num">${b.offsite
+              ? '<span class="pill good">yes</span>'
+              : '<span class="pill warn">none</span>'}</td></tr>
+          </table>
+          <p class="note">
+            Restores are proven (a guest restores into a scratch VM), but every dump currently sits on
+            the same machine it protects — a dead P520 takes the backups with it.
+          </p>`;
+
+        // ── gpu ─────────────────────────────────────────────────────────────
+        document.getElementById("gpu").innerHTML = `
+          <div class="tiles">
+            <div class="tile ${gpu.present ? "good" : "warn"}"><div class="n">${gpu.present ? esc(gpu.name.replace("NVIDIA ", "")) : "not visible"}</div><div class="l">card</div></div>
+            <div class="tile"><div class="n">${gpu.present ? gpu.temp_c + "°C" : "—"}</div><div class="l">temperature</div></div>
+            <div class="tile"><div class="n">${gpu.present ? gpu.util_pct + "%" : "—"}</div><div class="l">utilisation</div></div>
+            <div class="tile"><div class="n">${gpu.present ? (gpu.mem_used_mb / 1024).toFixed(1) + "/" + (gpu.mem_total_mb / 1024).toFixed(0) + " GB" : "—"}</div><div class="l">VRAM</div></div>
+            <div class="tile"><div class="n" style="font-size:15px">${esc(gpu.owner_name || "—")}</div><div class="l">currently in</div></div>
+          </div>
+          <p class="note">
+            One GPU, two consumers: it lives in <code>ai-vm</code> for local models or in
+            <code>docker-vm</code> for Jellyfin transcoding, and never both. Current mode:
+            <strong>${esc(gpu.mode || "unknown")}</strong>. When it is on the AI side, Jellyfin falls back
+            to software transcoding — a dedicated Arc A310 is on the wishlist to retire this switch.
+          </p>`;
+
+        // ── services ────────────────────────────────────────────────────────
+        const svcs = hl.services || [];
+        const byGroup = {};
+        svcs.forEach((s) => { (byGroup[s.group] = byGroup[s.group] || []).push(s); });
+        document.getElementById("svcount").textContent =
+          `— ${hl.services_up ?? 0} of ${hl.services_total ?? svcs.length} answering`;
+        document.getElementById("services").innerHTML = Object.keys(GROUPS)
+          .filter((g) => byGroup[g])
+          .map((g) => `<div class="grouphd">${esc(GROUPS[g])} · ${byGroup[g].filter((s) => s.up).length}/${byGroup[g].length}</div>
+            <div class="grid">${byGroup[g].map((s) => `
+              <a class="svc" href="${esc(s.url)}" target="_blank" rel="noopener">
+                <span class="row"><span class="dot ${s.up ? "up" : "down"}"></span>
+                  <span class="nm">${esc(s.name)}</span><span class="pt">:${s.port}</span></span>
+                <span class="st">${s.up ? (s.ms != null ? s.ms + " ms" : "up") : "no answer"}${s.code ? " · HTTP " + s.code : ""}</span>
+              </a>`).join("")}</div>`).join("");
+        document.getElementById("services").innerHTML +=
+          `<p class="note">Links point at the docker-vm node over Tailscale (<code>100.113.99.29</code>),
+           so they open from anywhere on the tailnet — and at home on the LAN.</p>`;
+
+        // ── media ───────────────────────────────────────────────────────────
+        document.getElementById("media").innerHTML = `
+          <div class="tiles">
+            <div class="tile"><div class="n">${media.torrents ?? 0}</div><div class="l">torrents · ${media.torrents_active ?? 0} active</div></div>
+            <div class="tile"><div class="n">${(media.down_mbps || 0).toFixed(1)}</div><div class="l">MB/s inbound</div></div>
+            <div class="tile"><div class="n">${media.radarr_queue ?? 0}</div><div class="l">radarr queue</div></div>
+            <div class="tile"><div class="n">${media.sonarr_queue ?? 0}</div><div class="l">sonarr queue</div></div>
+            <div class="tile"><div class="n">${media.jellyfin_movies ?? 0}</div><div class="l">films in library</div></div>
+            <div class="tile"><div class="n">${media.jellyfin_episodes ?? 0}</div><div class="l">episodes in library</div></div>
+          </div>
+          <p class="note">
+            Requests go through Jellyseerr → Prowlarr → Sonarr/Radarr → qBittorrent (behind the VPN) →
+            the pool → Jellyfin. Downloads and library both live on <code>tank</code>
+            (${esc(media.mount_free || "capacity unknown")}).
+          </p>`;
+
+        // ── nas ─────────────────────────────────────────────────────────────
+        const nas = hl.nas || {};
+        document.getElementById("nas").innerHTML = `
+          <table>
+            <tr><th>Share</th><th class="num">access</th></tr>
+            <tr><td colspan="2" class="note" style="padding-top:0">
+              Served by CT 100 <code>nas</code> — <code>${esc(nas.lan || "")}</code> on the LAN,
+              <code>${esc(nas.tailnet || "")}</code> as tailnet node <code>tank</code>.
+              Reachable: ${nas.smb_lan ? '<span class="pill good">LAN</span>' : '<span class="pill bad">LAN</span>'}
+              ${nas.smb_tailnet ? '<span class="pill good">tailnet</span>' : '<span class="pill bad">tailnet</span>'}
+            </td></tr>
+            ${(nas.shares || []).map((s) => `<tr><td><code>${esc(s)}</code></td>
+              <td class="num">${s.includes("ro") ? "read-only" : "read/write"}</td></tr>`).join("")}
+          </table>
+          <p class="note">Clients mount <code>smb://tank</code> (or the tailnet IP) as user <code>ayush</code>.</p>`;
+
+        // ── datasets ────────────────────────────────────────────────────────
+        const ds = hl.datasets || [];
+        document.getElementById("datasets").innerHTML = ds.length ? `
+          <table><tr><th>Dataset</th><th class="num">used</th><th class="num">available</th></tr>
+          ${ds.map((x) => `<tr><td><code>${esc(x.name)}</code></td>
+            <td class="num">${esc(x.used)}</td><td class="num">${esc(x.avail)}</td></tr>`).join("")}
+          </table>` : '<p class="note">No dataset data in this read.</p>';
+
+        // ── footer ──────────────────────────────────────────────────────────
+        const errs = Object.keys(d.errors || {});
+        const deg = hl.degraded ? Object.keys(hl.degraded) : [];
+        document.getElementById("foot").innerHTML = `
+          Read ${esc((hl.checked_at || stamp))} · source: <strong>${esc(source)}</strong>
+          · ${esc((d.generated_on || "Mac mini"))}
+          ${errs.length ? `<br />Degraded sources: ${errs.map(esc).join(", ")}` : ""}
+          ${deg.length ? `<br />Degraded homelab panels: ${deg.map(esc).join(", ")}` : ""}
+          <br /><a href="/">ayumad.me</a> · <a href="/dashboard">/dashboard</a>
+          · <a href="/dashboard/hermes">/dashboard/hermes</a>`;
+      }
+
+      function failed(why) {
+        document.getElementById("src").textContent = "● no data";
+        document.getElementById("src").className = "pill bad";
+        document.getElementById("meta").textContent = "could not load the dashboard payload";
+        document.getElementById("tiles").innerHTML =
+          `<p class="note">No payload could be read (${esc(why.message || why)}). The committed
+           snapshot lives at <code>/dashboard.json</code>; if this persists, the
+           <code>Dashboard Refresh</code> job needs a look.</p>`;
+      }
+
+      fromLive().catch(() => fromSnapshot()).then(({ d, source }) => render(d, source)).catch(failed);
+    </script>
+  </body>
+</html>
