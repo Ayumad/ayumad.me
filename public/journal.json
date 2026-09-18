@@ -1,12 +1,28 @@
 [
  {
+  "date": "2026-09-17",
+  "summary": "Massive homelab day: P520 full services stack built (33 containers, extras, alerting), media pipeline live end-to-end, restore drill passed, Creekwood display outage diagnosed, CMPE148 assignment completed, task-mirror fix, display issues debugged.",
+  "highlights": [
+   "**P520 is a full homelab now** — 33 containers across 7 compose files, internal TLS via Caddy, alerting via Grafana→ntfy, restore drill passed. The \"services stack\" saga that started weeks ago is effectively done.",
+   "**Media pipeline works end-to-end** — Prowlarr indexers → Radarr/Sonarr → qBittorrent → Jellyfin. FlareSolverr cracked Cloudflare; the 6 live indexers cover movies, TV, anime, and ebooks.",
+   "**Creekwood diagnosed remotely** — display dead but OS healthy (port scan proved it alive at 10.0.0.186). No remote-control path exists yet; Sunshine is running but unpaired. Gaps logged for when it's back up.",
+   "**School work landed** — CMPE148 Project 1 completed (packet captures, PDF, GitHub push, NAS sync). The school-vm is functional for Linux coursework."
+  ]
+ },
+ {
   "date": "2026-09-16",
   "summary": "P520 clean reinstall + ZFS tank rebuild (3→5 native RAIDZ1), ai-vm rebuilt with Ollama+ChromaDB, 2.5GbE NIC active; no interactive sessions, cron fleet all green.",
   "highlights": [
    "**P520 fully operational** — clean reinstall, 5-wide RAIDZ1 rebuilt natively (14.4 TiB), ai-vm running Ollama + ChromaDB, 2.5GbE active. Phase 2 (AI stack) core-done; only Samba password separates Phase 3 from a working NAS.",
    "**ZFS display bug diagnosed and fixed** — OpenZFS deflation-ratio stuck at pre-expansion value (PR #18324 upstream); remediated by pool rebuild rather than waiting for upstream merge.",
    "**All 18 cron jobs green** — no failures across the fleet.",
-   "**Quiet day for sessions** — no interactive Hermes work; vault changes were manual and auto-synced."
+   "**Quiet day for sessions** — no interactive Hermes work; vault changes were manual and auto-synced.",
+   "Nothing required fixing. Foreman roster audit delivery timeout and Vaultkeeper Weekly Review shutdown-interrupt are both transient — they'll self-heal on next fire.",
+   "No cron incidents to ack (0 detected).",
+   "Sudo disk pass (~53 GB) — needs your terminal",
+   "state.db compaction (~1.5 GB) — needs gateway maintenance window",
+   "FB Marketplace re-login — needs Screen Sharing + GUI",
+   "Stale config.yaml line — needs hand edit"
   ]
  },
  {
