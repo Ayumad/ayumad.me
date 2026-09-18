@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-17T17:19:15-07:00",
+ "generated_at": "2026-09-17T23:20:09-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -10,7 +10,7 @@
   "cron_no_agent": 6,
   "cron_failing": [],
   "cron_failing_count": 0,
-  "skills": 183,
+  "skills": 184,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
@@ -19,21 +19,21 @@
   },
   "disk": {
    "used_pct": 87,
-   "free_gb": 26.6,
+   "free_gb": 26.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 7971,
-   "month_in_m": 35.6,
-   "month_out_m": 9.47,
-   "month_cache_m": 885.0,
-   "week_calls": 3732,
-   "week_out_m": 5.5,
+   "month_calls": 8226,
+   "month_in_m": 36.6,
+   "month_out_m": 10.04,
+   "month_cache_m": 909.1,
+   "week_calls": 3761,
+   "week_out_m": 5.89,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 5218
+     "calls": 5457
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1124
+     "calls": 1140
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-17T17:19:16-07:00",
+  "checked_at": "2026-09-17T23:20:09-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 48390,
+   "uptime_s": 70043,
    "load": [
-    "0.95",
-    "1.27",
-    "1.48"
+    "1.58",
+    "1.52",
+    "1.56"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 29.1,
+   "mem_used_gb": 30.7,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -97,7 +97,7 @@
    {
     "id": 201,
     "name": "school-vm",
-    "status": "stopped",
+    "status": "running",
     "mem_mb": 6144,
     "disk_gb": 40,
     "type": "qemu",
@@ -145,13 +145,13 @@
     "gpu": false
    }
   ],
-  "guests_running": 4,
+  "guests_running": 5,
   "gpu_owner_vm": 202,
   "pools": [
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 56.7,
+    "alloc_gb": 56.9,
     "free_gb": 3512.32,
     "health": "ONLINE",
     "used_pct": 2,
@@ -168,7 +168,7 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 299.0,
+    "alloc_gb": 318.0,
     "free_gb": 18329.6,
     "health": "ONLINE",
     "used_pct": 2,
@@ -241,7 +241,7 @@
    },
    {
     "name": "tank",
-    "used": "239G",
+    "used": "254G",
     "avail": "14.2T"
    },
    {
@@ -251,7 +251,7 @@
    },
    {
     "name": "tank/media",
-    "used": "207G",
+    "used": "222G",
     "avail": "14.2T"
    },
    {
@@ -261,7 +261,7 @@
    },
    {
     "name": "tank/shared",
-    "used": "211K",
+    "used": "1.08M",
     "avail": "14.2T"
    }
   ],
@@ -270,7 +270,7 @@
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_17-03_32_02.vma.zst",
-   "newest_age_h": 13.7,
+   "newest_age_h": 19.8,
    "count": 6,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -333,21 +333,21 @@
    "owner_name": "docker-vm",
    "mode": "media (docker-vm)",
    "name": "NVIDIA GeForce RTX 3060",
-   "temp_c": 41,
+   "temp_c": 38,
    "util_pct": 0,
    "mem_used_mb": 2,
    "mem_total_mb": 12288,
    "present": true
   },
   "media": {
-   "torrents": 6,
-   "torrents_active": 0,
-   "down_mbps": 0.0,
-   "jellyfin_movies": 5,
+   "torrents": 8,
+   "torrents_active": 1,
+   "down_mbps": 2.69,
+   "jellyfin_movies": 6,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 0,
+   "radarr_queue": 1,
    "mount_free": "15T free of 15T (2% used)"
   },
   "nas": {
@@ -371,7 +371,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 43,
+    "ms": 41,
     "code": 200
    },
    {
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 72,
+    "ms": 93,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 24,
+    "ms": 25,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 21,
+    "ms": 20,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 27,
+    "ms": 32,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 17,
+    "ms": 30,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 27,
+    "ms": 28,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 23,
+    "ms": 27,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 26,
+    "ms": 31,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 56,
+    "ms": 51,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 17,
+    "ms": 20,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 29,
+    "ms": 38,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 28,
+    "ms": 21,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 28,
+    "ms": 27,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 44,
+    "ms": 39,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 17,
+    "ms": 16,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 16,
+    "ms": 10,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 54,
+    "ms": 25,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 17,
+    "ms": 13,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 82,
+    "ms": 66,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 14,
+    "ms": 12,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 24,
+    "ms": 20,
     "code": 401
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 25,
+    "ms": 20,
     "code": 200
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 13,
+    "ms": 12,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 30,
+    "ms": 22,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 12,
+    "ms": 13,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 28,
+    "ms": 23,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 7,
+    "ms": 5,
     "code": null
    },
    {
@@ -671,7 +671,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 17,
+    "ms": 16,
     "code": 200
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 21,
+    "ms": 13,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 13,
+    "ms": 15,
     "code": 200
    }
   ],
@@ -759,6 +759,13 @@
    "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
    "updated": "2026-09-17",
    "folder": ""
+  },
+  {
+   "name": "Homelab Service Ideas — 2026-09-17 Swarm",
+   "status": "active",
+   "summary": "Swarm research (7 agents + 3,172 r/selfhosted comments) on self-hosted services for the P520: tiered add-list, measured disk/RAM limits, verified skip-list; nothing deployed yet.",
+   "updated": "2026-09-17",
+   "folder": "Homelab"
   },
   {
    "name": "Obsidian RAG Assistant",
@@ -874,12 +881,6 @@
     "overdue": false
    },
    {
-    "title": "docker-vm: remove CIFS idle-timeout on /mnt/media (media-mount staleness)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
     "title": "Grant macOS Automation permission for Notes (agent cannot write to Notes)",
     "list": "Tech",
     "due": null,
@@ -917,6 +918,12 @@
    },
    {
     "title": "Prove the backups: restore one guest into a scratch VM + pick a destination for the off-machine copy",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Home Assistant: add the MQTT integration (Mosquitto broker) — HA currently sees no MQTT entities",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -967,6 +974,12 @@
    "self": true
   },
   {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -975,12 +988,6 @@
   {
    "name": "Ayupadpro",
    "os": "iOS",
-   "online": true,
-   "self": false
-  },
-  {
-   "name": "Creekwood",
-   "os": "windows",
    "online": true,
    "self": false
   },
@@ -1003,6 +1010,12 @@
    "self": false
   },
   {
+   "name": "school-vm",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "tank",
    "os": "linux",
    "online": true,
@@ -1015,8 +1028,8 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
+   "name": "Creekwood",
+   "os": "windows",
    "online": false,
    "self": false
   },
@@ -1045,12 +1058,6 @@
    "self": false
   },
   {
-   "name": "school-vm",
-   "os": "linux",
-   "online": false,
-   "self": false
-  },
-  {
    "name": "xps-omarchy",
    "os": "linux",
    "online": false,
@@ -1058,6 +1065,10 @@
   }
  ],
  "journal": [
+  {
+   "date": "2026-09-17",
+   "summary": "Massive homelab day: P520 full services stack built (33 containers, extras, alerting), media pipeline live end-to-end, restore drill passed, Creekwood display outage diagnosed, CMPE148 assignment completed, task-mirror fix, display issues debugged."
+  },
   {
    "date": "2026-09-16",
    "summary": "P520 clean reinstall + ZFS tank rebuild (3→5 native RAIDZ1), ai-vm rebuilt with Ollama+ChromaDB, 2.5GbE NIC active; no interactive sessions, cron fleet all green."
@@ -1069,27 +1080,23 @@
   {
    "date": "2026-09-14",
    "summary": "Infrastructure day — vault auto-sync restored after 4 days (reconcile fix + TCC grant), Sep 12 journal backfilled, all cron jobs healthy."
-  },
-  {
-   "date": "2026-09-13",
-   "summary": "Quiet Sunday — cron ran clean, vault auto-sync still TCC-failing, no user sessions or Codex work."
   }
  ],
  "errors": {},
  "now": {
-  "active_projects": 11,
+  "active_projects": 12,
   "planned_projects": 4,
   "open_tasks": 24,
   "overdue_tasks": 0,
   "assignments_upcoming": 4,
-  "devices_online": 8,
+  "devices_online": 9,
   "devices_total": 16,
   "jobs_failing": 0,
   "jobs_total": 8,
   "homelab_reachable": true,
   "services_up": 33,
   "services_total": 33,
-  "guests_running": 4,
+  "guests_running": 5,
   "containers_running": 44,
   "pools_online": 2,
   "pools_total": 2,
