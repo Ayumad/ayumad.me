@@ -1,5 +1,17 @@
 [
  {
+  "date": "2026-09-18",
+  "summary": "Marketplace Navigator bot created (Meta Muse Spark 1.3); fb-marketplace MCP went fully live — burner login completed, search hardened + verified with real listings; Bonsai 2 27B local-LLM deploy on ai-vm; Jev (TypeSafe) decision model wired; Time Machine → tank NAS; Interview Prep cron.",
+  "highlights": [
+   "Muse Spark now runs a specialist bot on the flat-rate plan — first non-default model in the bot fleet, zero marginal per-token cost.",
+   "The bot's first-ever tool round behaved exactly per spec (search → cookie check → honest diagnosis) — SOUL + skill encoding validated.",
+   "Marketplace MCP is **fully live**: burner session + search/detail verified with real listings; Marketplace Navigator returned its first real results (5 clean monitor listings) end-to-end.",
+   "Bonsai 2 27B is live on ai-vm — first local LLM in the fleet, 35.5 t/s decode, wired into Hermes as a provider.",
+   "Jev decision model is wired and costed at ~$0.62/mo for 1k calls — ready for queue triage and routing tasks.",
+   "Time Machine backup destination built on the NAS — MacBook Pro backed up live, Mac mini client step pending."
+  ]
+ },
+ {
   "date": "2026-09-17",
   "summary": "Massive homelab day: P520 full services stack built (33 containers, extras, alerting), media pipeline live end-to-end, restore drill passed, Creekwood display outage diagnosed, CMPE148 assignment completed, task-mirror fix, display issues debugged.",
   "highlights": [
