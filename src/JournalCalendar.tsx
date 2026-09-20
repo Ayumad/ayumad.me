@@ -1,12 +1,17 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   addDays,
   buildMonthGrid,
   formatFullDate,
+  formatWeekRange,
+  isDateInWeek,
+  monthWeekStarts,
   parseISO,
   startOfWeek,
   toISO,
+  weekDates,
   type DailyJournalEntry,
+  type WeeklyReview,
 } from "./journalCalendarMath";
 
 type CalendarView = "week" | "month" | "year";
@@ -26,11 +31,13 @@ function renderRichText(text: string): ReactNode {
 
 export default function JournalCalendar() {
   const [entries, setEntries] = useState<DailyJournalEntry[] | null>(null);
+  const [reviews, setReviews] = useState<WeeklyReview[]>([]);
   const [failed, setFailed] = useState(false);
   const [view, setView] = useState<CalendarView>("month");
   const [cursor, setCursor] = useState(() => new Date());
   const [selected, setSelected] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [openWeek, setOpenWeek] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,15 +66,57 @@ export default function JournalCalendar() {
     };
   }, []);
 
+  // Weekly reviews are an optional layer — a missing feed never blocks the calendar.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/weekly.json")
+      .then((response) => {
+        if (!response.ok) throw new Error(`weekly.json ${response.status}`);
+        return response.json() as Promise<WeeklyReview[]>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setReviews(
+          (Array.isArray(data) ? data : []).filter(
+            (review) =>
+              review && typeof review.weekStart === "string" && Array.isArray(review.sections),
+          ),
+        );
+      })
+      .catch(() => {
+        /* the week panel composes from daily entries without it */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const byDate = useMemo(() => {
     const map = new Map<string, DailyJournalEntry>();
     for (const entry of entries ?? []) map.set(entry.date, entry);
     return map;
   }, [entries]);
 
+  const reviewByWeek = useMemo(() => {
+    const map = new Map<string, WeeklyReview>();
+    for (const review of reviews) map.set(review.weekStart, review);
+    return map;
+  }, [reviews]);
+
   const todayIso = toISO(new Date());
   const activeIso = preview ?? selected;
-  const activeEntry = activeIso ? byDate.get(activeIso) ?? null : null;
+  const activeEntry = !openWeek && activeIso ? byDate.get(activeIso) ?? null : null;
+
+  const openWeekReview = openWeek ? reviewByWeek.get(openWeek) ?? null : null;
+  const openWeekDays = useMemo(() => {
+    const days: { iso: string; entry: DailyJournalEntry }[] = [];
+    if (!openWeek) return days;
+    for (const iso of weekDates(openWeek)) {
+      const entry = byDate.get(iso);
+      if (entry) days.push({ iso, entry });
+    }
+    return days;
+  }, [openWeek, byDate]);
 
   const shift = (direction: -1 | 1) => {
     setCursor((current) => {
@@ -77,23 +126,35 @@ export default function JournalCalendar() {
     });
   };
 
+  const changeView = (option: CalendarView) => {
+    setView(option);
+    setOpenWeek(null);
+  };
+
   const jumpToLatest = () => {
     const latest = entries?.[0];
     if (!latest) return;
     setSelected(latest.date);
     setPreview(null);
+    setOpenWeek(null);
     setCursor(parseISO(latest.date));
+  };
+
+  const openWeekFrom = (weekStartIso: string) => {
+    setOpenWeek(weekStartIso);
+    setPreview(null);
+  };
+
+  const selectDay = (iso: string) => {
+    setSelected(iso);
+    setPreview(null);
+    setOpenWeek(null);
   };
 
   const periodLabel = useMemo(() => {
     if (view === "year") return String(cursor.getFullYear());
     if (view === "month") return `${MONTHS[cursor.getMonth()]} ${cursor.getFullYear()}`;
-    const start = startOfWeek(cursor);
-    const end = addDays(start, 6);
-    const startDay = `${MONTHS_SHORT[start.getMonth()]} ${start.getDate()}`;
-    const endDay = start.getMonth() === end.getMonth() ? String(end.getDate()) : `${MONTHS_SHORT[end.getMonth()]} ${end.getDate()}`;
-    const years = start.getFullYear() === end.getFullYear() ? String(end.getFullYear()) : `${start.getFullYear()}/${end.getFullYear()}`;
-    return `${startDay} – ${endDay}, ${years}`;
+    return formatWeekRange(toISO(startOfWeek(cursor)));
   }, [cursor, view]);
 
   const cellProps = (iso: string) => ({
@@ -101,19 +162,38 @@ export default function JournalCalendar() {
     onMouseLeave: () => setPreview(null),
     onFocus: () => setPreview(iso),
     onBlur: () => setPreview(null),
-    onClick: () => {
-      setSelected(iso);
-      setPreview(null);
-    },
+    onClick: () => selectDay(iso),
   });
 
   const entryCellClass = (base: string, iso: string, isSelected: boolean) => {
     const classes = [base, "jcal-has-entry"];
-    if (isSelected) classes.push("is-selected");
+    if (isSelected && !openWeek) classes.push("is-selected");
     if (preview === iso) classes.push("is-preview");
     if (iso === todayIso) classes.push("is-today");
+    if (openWeek && isDateInWeek(iso, openWeek)) classes.push("is-week");
     return classes.join(" ");
   };
+
+  const monthGrid = useMemo(
+    () => buildMonthGrid(cursor.getFullYear(), cursor.getMonth()),
+    [cursor],
+  );
+  const monthWeeks = useMemo(
+    () => monthWeekStarts(cursor.getFullYear(), cursor.getMonth()),
+    [cursor],
+  );
+  const visibleWeekStart = toISO(startOfWeek(cursor));
+
+  const weekButton = (weekStartIso: string, extra: string) => (
+    <button
+      type="button"
+      className={`jcal-weeklink${extra}`}
+      aria-pressed={openWeek === weekStartIso}
+      onClick={() => openWeekFrom(weekStartIso)}
+    >
+      Week in review ↗
+    </button>
+  );
 
   return (
     <section className="journal-calendar" id="daily-journal" aria-label="Daily journal calendar">
@@ -122,7 +202,7 @@ export default function JournalCalendar() {
         <div className="jcal-controls">
           <div className="jcal-toggle" role="group" aria-label="Calendar view">
             {(["week", "month", "year"] as const).map((option) => (
-              <button key={option} type="button" aria-pressed={view === option} onClick={() => setView(option)}>
+              <button key={option} type="button" aria-pressed={view === option} onClick={() => changeView(option)}>
                 {option === "week" ? "Weekly" : option === "month" ? "Monthly" : "Yearly"}
               </button>
             ))}
@@ -140,68 +220,91 @@ export default function JournalCalendar() {
           {view === "month" ? (
             <>
               <div className="jcal-weekdays" aria-hidden="true">
+                <span className="jcal-gutter-gap" />
                 {WEEKDAY_SHORT.map((day) => <span key={day}>{day}</span>)}
               </div>
               <div className="jcal-grid">
-                {buildMonthGrid(cursor.getFullYear(), cursor.getMonth()).map((iso, index) => {
-                  if (iso === null) return <span key={`blank-${index}`} className="jcal-cell jcal-blank" aria-hidden="true" />;
-                  const hasEntry = byDate.has(iso);
-                  const isSelected = iso === selected;
-                  if (hasEntry) {
-                    return (
-                      <button
-                        key={iso}
-                        type="button"
-                        className={entryCellClass("jcal-cell", iso, isSelected)}
-                        aria-pressed={isSelected}
-                        aria-label={`${formatFullDate(iso)} — open entry`}
-                        {...cellProps(iso)}
-                      >
-                        <span className="jcal-daynum">{parseISO(iso).getDate()}</span>
-                        <span className="jcal-dot" aria-hidden="true" />
-                      </button>
-                    );
-                  }
+                {monthWeeks.map((weekStart, row) => {
+                  const cells = monthGrid.slice(row * 7, row * 7 + 7);
+                  const isOpen = openWeek === weekStart;
                   return (
-                    <span key={iso} className={`jcal-cell jcal-day${iso === todayIso ? " is-today" : ""}`}>
-                      <span className="jcal-daynum">{parseISO(iso).getDate()}</span>
-                    </span>
+                    <Fragment key={weekStart}>
+                      <button
+                        type="button"
+                        className={`jcal-weekbtn${isOpen ? " is-open" : ""}${reviewByWeek.has(weekStart) ? " has-review" : ""}`}
+                        aria-label={`Week in review, ${formatWeekRange(weekStart)}`}
+                        aria-pressed={isOpen}
+                        onClick={() => openWeekFrom(weekStart)}
+                      >
+                        ↗
+                      </button>
+                      {cells.map((iso, index) => {
+                        if (iso === null) return <span key={`blank-${row}-${index}`} className="jcal-cell jcal-blank" aria-hidden="true" />;
+                        const hasEntry = byDate.has(iso);
+                        const isSelected = iso === selected;
+                        if (hasEntry) {
+                          return (
+                            <button
+                              key={iso}
+                              type="button"
+                              className={entryCellClass("jcal-cell", iso, isSelected)}
+                              aria-pressed={isSelected && !openWeek}
+                              aria-label={`${formatFullDate(iso)} — open entry`}
+                              {...cellProps(iso)}
+                            >
+                              <span className="jcal-daynum">{parseISO(iso).getDate()}</span>
+                              <span className="jcal-dot" aria-hidden="true" />
+                            </button>
+                          );
+                        }
+                        const weekClass = openWeek && isDateInWeek(iso, openWeek) ? " is-week" : "";
+                        return (
+                          <span key={iso} className={`jcal-cell jcal-day${iso === todayIso ? " is-today" : ""}${weekClass}`}>
+                            <span className="jcal-daynum">{parseISO(iso).getDate()}</span>
+                          </span>
+                        );
+                      })}
+                    </Fragment>
                   );
                 })}
               </div>
             </>
           ) : null}
           {view === "week" ? (
-            <div className="jcal-week">
-              {Array.from({ length: 7 }, (_, offset) => addDays(startOfWeek(cursor), offset)).map((day) => {
-                const iso = toISO(day);
-                const entry = byDate.get(iso);
-                if (entry) {
-                  const isSelected = iso === selected;
+            <>
+              <div className="jcal-week-bar">{weekButton(visibleWeekStart, "")}</div>
+              <div className="jcal-week">
+                {weekDates(visibleWeekStart).map((iso) => {
+                  const day = parseISO(iso);
+                  const entry = byDate.get(iso);
+                  if (entry) {
+                    const isSelected = iso === selected;
+                    const weekClass = openWeek && isDateInWeek(iso, openWeek) ? " is-week" : "";
+                    return (
+                      <button
+                        key={iso}
+                        type="button"
+                        className={`jcal-week-cell${isSelected && !openWeek ? " is-selected" : ""}${preview === iso ? " is-preview" : ""}${iso === todayIso ? " is-today" : ""}${weekClass}`}
+                        aria-pressed={isSelected && !openWeek}
+                        aria-label={`${formatFullDate(iso)} — open entry`}
+                        {...cellProps(iso)}
+                      >
+                        <span className="jcal-weekday">{WEEKDAY_SHORT[day.getDay()]}</span>
+                        <span className="jcal-daynum">{day.getDate()} {MONTHS_SHORT[day.getMonth()]}</span>
+                        <span className="jcal-snippet">{entry.summary}</span>
+                      </button>
+                    );
+                  }
                   return (
-                    <button
-                      key={iso}
-                      type="button"
-                      className={`jcal-week-cell${isSelected ? " is-selected" : ""}${preview === iso ? " is-preview" : ""}${iso === todayIso ? " is-today" : ""}`}
-                      aria-pressed={isSelected}
-                      aria-label={`${formatFullDate(iso)} — open entry`}
-                      {...cellProps(iso)}
-                    >
+                    <div key={iso} className={`jcal-week-cell jcal-week-empty${iso === todayIso ? " is-today" : ""}`}>
                       <span className="jcal-weekday">{WEEKDAY_SHORT[day.getDay()]}</span>
                       <span className="jcal-daynum">{day.getDate()} {MONTHS_SHORT[day.getMonth()]}</span>
-                      <span className="jcal-snippet">{entry.summary}</span>
-                    </button>
+                      <span className="jcal-snippet">—</span>
+                    </div>
                   );
-                }
-                return (
-                  <div key={iso} className={`jcal-week-cell jcal-week-empty${iso === todayIso ? " is-today" : ""}`}>
-                    <span className="jcal-weekday">{WEEKDAY_SHORT[day.getDay()]}</span>
-                    <span className="jcal-daynum">{day.getDate()} {MONTHS_SHORT[day.getMonth()]}</span>
-                    <span className="jcal-snippet">—</span>
-                  </div>
-                );
-              })}
-            </div>
+                })}
+              </div>
+            </>
           ) : null}
           {view === "year" ? (
             <div className="jcal-year">
@@ -214,6 +317,7 @@ export default function JournalCalendar() {
                       onClick={() => {
                         setCursor(new Date(cursor.getFullYear(), month, 1));
                         setView("month");
+                        setOpenWeek(null);
                       }}
                     >
                       {MONTHS_SHORT[month]}
@@ -229,7 +333,7 @@ export default function JournalCalendar() {
                           <button
                             key={iso}
                             type="button"
-                            className={`jcal-mini-cell jcal-has-entry${isSelected ? " is-selected" : ""}${iso === todayIso ? " is-today" : ""}`}
+                            className={`jcal-mini-cell jcal-has-entry${isSelected && !openWeek ? " is-selected" : ""}${iso === todayIso ? " is-today" : ""}`}
                             aria-label={`${formatFullDate(iso)} — open entry`}
                             {...cellProps(iso)}
                           >
@@ -251,7 +355,46 @@ export default function JournalCalendar() {
           ) : null}
         </div>
         <div className="jcal-detail" aria-live="polite">
-          {activeEntry ? (
+          {openWeek ? (
+            <>
+              <p className="jcal-detail-date">Week in review</p>
+              <p className="jcal-detail-summary">{formatWeekRange(openWeek)}</p>
+              {openWeekReview ? (
+                <div className="jcal-review">
+                  {openWeekReview.summary ? <p className="jcal-review-lead">{openWeekReview.summary}</p> : null}
+                  {openWeekReview.sections.map((section, sectionIndex) => (
+                    <section key={sectionIndex} className="jcal-review-section">
+                      {section.heading ? <h4 className="jcal-review-heading">{section.heading}</h4> : null}
+                      {section.items.length > 0 ? (
+                        <ul className="jcal-review-items">
+                          {section.items.map((item, itemIndex) => <li key={itemIndex}>{renderRichText(item)}</li>)}
+                        </ul>
+                      ) : null}
+                    </section>
+                  ))}
+                  <p className="jcal-review-stamp">Reviewed {formatFullDate(openWeekReview.date)}</p>
+                </div>
+              ) : (
+                <p className="jcal-empty">No written review for this week yet — here is the day-by-day log.</p>
+              )}
+              {openWeekDays.length > 0 ? (
+                <div className="jcal-week-days">
+                  <h4 className="jcal-review-heading">Day by day</h4>
+                  {openWeekDays.map(({ iso, entry }) => (
+                    <div key={iso} className="jcal-week-day">
+                      <p className="jcal-week-day-title">{formatFullDate(iso)}</p>
+                      <p className="jcal-week-day-summary">{entry.summary}</p>
+                      {entry.highlights && entry.highlights.length > 0 ? (
+                        <ul className="jcal-highlights">
+                          {entry.highlights.map((line, index) => <li key={index}>{renderRichText(line)}</li>)}
+                        </ul>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          ) : activeEntry ? (
             <>
               <p className="jcal-detail-date">{formatFullDate(activeEntry.date)}</p>
               <p className="jcal-detail-summary">{activeEntry.summary}</p>
@@ -262,6 +405,7 @@ export default function JournalCalendar() {
                   ))}
                 </ul>
               ) : null}
+              {weekButton(toISO(startOfWeek(parseISO(activeEntry.date))), "")}
             </>
           ) : (
             <p className="jcal-empty">
@@ -271,7 +415,7 @@ export default function JournalCalendar() {
                   ? "Loading the daily log…"
                   : entries.length === 0
                     ? "No logged days yet."
-                    : "Hover or open a marked day to see what I got up to."}
+                    : "Hover or open a marked day — or a whole week — to see what I got up to."}
             </p>
           )}
         </div>

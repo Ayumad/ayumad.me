@@ -1,0 +1,130 @@
+[
+ {
+  "date": "2026-09-20",
+  "weekStart": "2026-09-13",
+  "summary": "Weekly review for Sep 13–20, 2026: P520 services stack complete, NAS architecture settled, Marketplace MCP live, school work landed.",
+  "sections": [
+   {
+    "heading": "✅ This Week's Highlights",
+    "items": [
+     "**1. P520 Homelab: Full Services Stack Built** — Massive infrastructure push. The P520 went from bare Proxmox to a production homelab: 33 containers across 7 compose files, internal TLS via Caddy, media pipeline live end-to-end (6 indexers + FlareSolverr for Cloudflare), Grafana→ntfy alerting, and a restore drill that passed. The \"services stack\" saga is effectively done.",
+     "**2. NAS + Storage Architecture Settled** — ZFS tank rebuilt as native 5-wide RAIDZ1 (14.4 TiB usable). Storage allocation locked: SSD pool for VMs + games share, HDD pool for bulk. iSCSI rejected, Unraid re-confirmed declined. 2.5GbE NIC installed and active.",
+     "**3. Marketplace MCP Fully Live** — Facebook Marketplace Navigator bot built (Muse Spark 1.3 on flat-rate opencode-go), burner login cleared, search/detail verified end-to-end with real listings. First specialist bot in the fleet.",
+     "**4. School Work Landed** — CMPE148 Project 1 completed (packet captures, PDF, GitHub push). EchoSphere Drive hub built (227 items reorganized). Daily Drive Organizer cron deployed.",
+     "**5. Bonsai 2 27B + Jev Decision Model Wired** — First local LLM in the fleet (35.5 t/s decode on RTX 3060). Jev decision model wired at ~$0.62/mo for queue triage."
+    ]
+   },
+   {
+    "heading": "📊 Project Status",
+    "items": [
+     "**Homelab** — P520 services stack COMPLETE. Media pipeline end-to-end verified. Remaining: off-machine backup + restore drill, ZFS scrub timer, HA↔MQTT integration, Pi-hole DNS flip, dashboard (Phase 7), class VMs (Phase 8).",
+     "**EchoSphere** — ACM Robotics lead, 12-wk build from Sep 7. Drive hub organized with IPMD/Team meeting notes split.",
+     "**Personal Website (ayumad.me)** — Daily journal calendar shipped on /journal. Dashboard refreshes running. 54 open tasks across 7 phases.",
+     "**Vault** — 522 notes, 0 invalid, 0 unresolved. Auto-sync restored (4-day TCC outage fixed Sep 14). Publish scope expanded to include session summaries.",
+     "**Creekwood** — Display output dead but OS healthy (port scan proved it alive at 10.0.0.186). No remote-control path exists yet; Sunshine running but unpaired."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**Creekwood display** — GPU driver reinstall killed display output. Recovery is physical (no iGPU fallback). Gaps logged: enable OpenSSH/WinRM/RDP, record MAC for WoL, add Windows recovery runbook.",
+     "**Creekwood WoL** — MAC never recorded; magic packet impossible until physical access.",
+     "**Xfinity gateway** — DHCP reservations + Pi-hole DNS flip need browser login. Minecraft public access (port forward TCP 25565) also needs the xFi app.",
+     "**Hue↔Home Assistant pairing** — physical link button press required.",
+     "**SER8 node_exporter** — needs sudo install.",
+     "**Notes scripting timeout** — Apple Notes app hung on agent enumeration (09-18).",
+     "**Disk space** — 91% full (23 GB free). Sudo disk pass (~53 GB reclaimable) is the biggest available win.",
+     "**state.db** — 1.5 GB, needs compaction during maintenance window."
+    ]
+   },
+   {
+    "heading": "🔜 Next Week Focus",
+    "items": [
+     "1. **P520 BIOS: WOL + restore-on-AC-power-loss** — Sunday 09-20, physical access",
+     "2. **Creekwood recovery** — get display working, enable remote access (SSH/RDP/WinRM), record MAC",
+     "3. **Xfinity gateway** — DHCP reservations + Pi-hole DNS flip (browser login)",
+     "4. **Hue↔HA pairing** — physical button press",
+     "5. **Homelab Phase 7** — dashboard (now unblocked)",
+     "6. **Homelab Phase 8** — class VMs (semester-critical)"
+    ]
+   },
+   {
+    "heading": "📝 Miscellaneous",
+    "items": [
+     "**Hermes LCM** refreshed to v1.0.0-rc.1, staged but not enabled (upstream mid-fix-wave)",
+     "**Tirith tilde-block** root-caused: `~` in cron command strings flagged as [HIGH]; Daily Brief fixed with absolute paths",
+     "**Minecraft** — whitelist locked with Ayumadbro123, Paper updated to build 26, mc-status.sh created",
+     "**Time Machine** — NAS destination built, MacBook Pro backed up live",
+     "**Cron fleet** — ~95 runs on 09-19 with zero failures; fully healthy",
+     "**Wishlist** — 6 backburn candidates added (FZ55, DS Lite, SSD mirror, Ayn Thor, Retroid P6, sister-Mac monitor); Bluetack ordered",
+     "**Vault publish scope** — session summaries now live on ayumad.me/vault (password-gated)"
+    ]
+   }
+  ]
+ },
+ {
+  "date": "2026-09-13",
+  "weekStart": "2026-09-06",
+  "summary": "Weekly review for Sep 7–13, 2026: hermes maintenance overhaul, AI-Engineering expansion, Marketplace MCP built, NAS architecture settled.",
+  "sections": [
+   {
+    "heading": "🏆 This Week's Highlights",
+    "items": [
+     "1. **Hermes major overhaul (Sept 10)** — Updated v0.21.0→v0.21.1, config v38→v39, disk 94%→80%, audited all 21 cron jobs, fixed 2 real bugs, cleared 15 failure incidents, vault validator driven to 504 notes / 0 invalid / 0 unresolved. Biggest single-session maintenance pass in the vault's history.",
+     "2. **AI-Engineering curriculum expanded** — Added Units 2 (Inference Engineering) and 11 (Long-Horizon Tasks) via qwen3.8-max subagent delegation. Course now 12 units, 71 notes. All 21 new source links fetch-verified.",
+     "3. **Facebook Marketplace MCP built** — Full FastMCP stdio server with search + listing detail, Playwright-backed. Registered in Hermes config. Pending: burner account re-login.",
+     "4. **NAS storage architecture settled** — 5×4TB RAIDZ1 (16 TB usable) + 4 TB SSD split, SMB over iSCSI (rejected on dynamic-allocation grounds). 2.5GbE PCIe NIC purchased.",
+     "5. **P520 second GPU declined** — Gated behind a Phase 2 30B-class model test. Single 3090-class card is the target if needed."
+    ]
+   },
+   {
+    "heading": "📁 Project Progress",
+    "items": [
+     "**Homelab** — Roadmap expanded to 52 unique tasks across 9 phases. P520 storage plan documented (5-bay RAIDZ1). 2.5GbE NIC purchased. P520 still unreachable/off — blocks every phase. Phase 8 (Class & GUI VMs) is the semester-critical one.",
+     "**Ayumad.me** — Dashboard auto-refreshing every 6h (36 commits this week). Journal backfilled Sep 10-11 via GitHub API (vault TCC-blocked for cron). Tailnet-served live view parked.",
+     "**Vault Refactor** — Phase 0–1 done, 2–4 pending. No new progress this week (TCC blocks vault writes from cron). Local clone drifting behind remote.",
+     "**Omarchy** — 4 config fixes done hands-on (gaps, natural scroll, school WiFi, Hermes desktop support). G14 GPU and install size remain open.",
+     "**EchoSphere** — ACM Robotics 12-week build started Sep 7. Active project, leading 6-person team.",
+     "**CRT Lab** — V1 live on Vercel. No changes this week.",
+     "**RetroPie CRT Setup** — Active. No changes this week.",
+     "**Omarchy Clear Bar** — New release pushed (bar compatibility + Lumon theme alignment)."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**P520 unreachable** — IP/port unresponsive from SER8 subnet. No route from Mac mini. Blocks Homelab phases 2-9 and Obsidian RAG Assistant.",
+     "**TCC permission** — vault reads/writes still blocked from launchd/cron/SSH. Vault auto-sync, journal deploy, interview prep all degraded. Needs System Settings grant + restart.",
+     "**iMessage cron channel** — blocked on texting the Photon line once (shared lines can't initiate outbound).",
+     "**state.db bloat** — 1.4 GB / 930+ sessions, needs compaction during maintenance window.",
+     "**FB Marketplace** — burner account session expired; MCP returns 0 listings.",
+     "**53 GB sudo cleanup** — orphaned simulator runtimes, CoreSimulator caches, app leftovers. Waiting on Ayush to run manually."
+    ]
+   },
+   {
+    "heading": "🎯 Next Week's Focus",
+    "items": [
+     "**Text the Photon line** — unblocks iMessage as the cron delivery channel",
+     "**Run the sudo disk pass** — frees ~53 GB (orphaned simulators, app leftovers)",
+     "**Recover the P520** — confirm AC/PSU, link LEDs, re-enable WOL — unblocks the entire homelab",
+     "**NAS setup** — drive bays, SATA cables, 2.5GbE NIC install (due Sep 13 per Hardware list)",
+     "**Engineering desktop (RX 6600 XT)** — NVMe + Windows + SolidWorks (due Sep 13)",
+     "**EchoSphere kickoff** — first sprint of the 12-week ACM × IPMD build",
+     "**Homelab dashboard page** — Phase 7 of the roadmap (custom ayumad.me/dashboard/homelab)"
+    ]
+   },
+   {
+    "heading": "📌 Miscellaneous",
+    "items": [
+     "**2.5GbE link verification** — SER8 NIC confirmed at 2500 Mb/s on BrosTrend switch. Creekwood NIC speed still unverified (last leg of the 2.5G path).",
+     "**Nova SoC conflict resolved** — confirmed Snapdragon 8 Gen 2 (QCS8550). Display spec (5.5\" IPS vs 4.5\" AMOLED) still open.",
+     "**Loadout wishlist expanded** — MacBook 12\" (collector piece), projector (BenQ TH575 class, 3000+ ANSI lumens), Lululemon Mirror mod. All researched with sources.",
+     "**Interview Prep** — Knowledge map updated with 3 new entries (Sep 11).",
+     "**Cron fleet** — 21 jobs, 20 enabled, 1 paused (Question Prompt). Daily Brief + Mnemosyne Sleep green; Reminders sync ~40% success (transient auth issues persist).",
+     "**Weekly Kanban Dispatch** — fired successfully Sep 10.",
+     "**P520 dashboard** — Phase 7 added to Homelab roadmap (custom page, Grafana deferred)."
+    ]
+   }
+  ]
+ }
+]
