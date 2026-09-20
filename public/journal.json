@@ -6,8 +6,13 @@
    "The homelab Minecraft server is playable for the first time, verified with a real protocol handshake rather than a port check.",
    "\"The service is running\" proved insufficient again: a live process + listening port + green unit hid a server that rejected every player.",
    "Cron fleet ran ~95 jobs with zero failures — fully healthy day.",
-   "[[02 Projects/Homelab]] — CT 102 `minecraft` line rewritten (open for play, motd set, 17 builds behind); Phase 6 checkbox note updated; the \"Minecraft is locked to everyone\" item in the 2026-09-17 audit callout marked fixed.",
-   "[[90 Operations/Hermes/TODO Master]] — `Minecraft: whitelist + motd` → `Minecraft: send your IGN to re-lock the whitelist` (server OPEN + playable).",
+   "**Checked:** vault validator clean (522 notes, 0 issues).",
+   "**Checked:** cron health — 0 incidents, ~455 runs across 17 jobs. Two non-critical items flagged (foreman weekly roster audit delivery timeout, vaultkeeper weekly review interrupted by shutdown) — both transient, will self-correct on next run.",
+   "**Checked:** data volume at 91% (23.2 GB free) — within range, no action tonight.",
+   "**Checked:** todo-cleanup section — 8 items, all still open and still need Ayush. No items visibly cleared; no changes.",
+   "**Nothing broke, nothing fixed.** Clean night.",
+   "[[02 Projects/Homelab]] — CT 102 `minecraft` line rewritten (playable, whitelisted, Paper updated to build 26); Phase 6 checkbox note updated; the \"Minecraft is locked to everyone\" item in the 2026-09-17 audit callout marked fixed.",
+   "[[90 Operations/Hermes/TODO Master]] — Minecraft item closed ✅ 2026-09-19 (whitelist re-locked with `Ayumadbro123`, motd set); Google Tasks + Apple `Tech` twins completed.`~/.hermes/scripts/mc-status.sh` is the standing up-check.",
    "Google Tasks / Apple Reminders (`Tech`) — twin patched in place, id `T2F3M2F2R19PR3hhRXRBag` preserved; sync health `0 action(s) planned`."
   ]
  },
