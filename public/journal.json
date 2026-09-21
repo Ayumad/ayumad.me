@@ -1,9 +1,9 @@
 [
  {
   "date": "2026-09-20",
-  "summary": "Quiet Saturday — routine cron only; weekly review shipped, LCM refreshed + staged, Minecraft whitelist re-locked at 4:30 AM.",
+  "summary": "Quiet Sunday — routine cron only; weekly review shipped, LCM refreshed + staged, Minecraft whitelist re-locked at 4:30 AM.",
   "highlights": [
-   "Quiet Saturday — no interactive sessions; routine cron ran all day with zero failures.",
+   "Quiet Sunday — no interactive sessions; routine cron ran all day with zero failures.",
    "Weekly review shipped and persisted (vault + site week-in-review layer).",
    "LCM refreshed to v1.0.0-rc.1 and staged — enable decision pending upstream fixes.",
    "One unresolved wikilink: `[[2026-09-20]]` in Journal Calendar (this entry resolves it)."
