@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-09-20",
+  "summary": "Quiet Saturday — routine cron only; weekly review shipped, LCM refreshed + staged, Minecraft whitelist re-locked at 4:30 AM.",
+  "highlights": [
+   "Quiet Saturday — no interactive sessions; routine cron ran all day with zero failures.",
+   "Weekly review shipped and persisted (vault + site week-in-review layer).",
+   "LCM refreshed to v1.0.0-rc.1 and staged — enable decision pending upstream fixes.",
+   "One unresolved wikilink: `[[2026-09-20]]` in Journal Calendar (this entry resolves it)."
+  ]
+ },
+ {
   "date": "2026-09-19",
   "summary": "Minecraft homelab server verified and opened for play: found a locking empty whitelist on CT 102, set a real MOTD, proved the join path end-to-end (status ping + login handshake from the Mac mini), and synced the record across vault + Google Tasks + Apple Reminders.",
   "highlights": [
