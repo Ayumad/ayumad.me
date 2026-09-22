@@ -1,12 +1,25 @@
 [
  {
+  "date": "2026-09-21",
+  "summary": "Session journal for 2026-09-21: CrinEar Reference eval, tank/PC file reorg, NAS PC share created, 96 cron runs all green.",
+  "highlights": [
+   "**CrinEar Reference eval completed** — \"BUY IF VERIFIED\" at $275, consistent with earlier iMessage verdict; comps support the price.",
+   "**Tank/PC reorganized** — Flattened nested dirs, consolidated emulators under `Emulation/`, initiated 2.65 TB games copy.",
+   "**NAS PC share live** — New Samba share hot-added with bind mount; Creekwood mapped and verified; 1 Gbps NIC confirmed as transfer bottleneck.",
+   "**Cron healthy** — 96 runs, zero failures; all automated pipelines (sweeps, media, marketplace, health) ran without issues."
+  ]
+ },
+ {
   "date": "2026-09-20",
   "summary": "Quiet Sunday — routine cron only; weekly review shipped, LCM refreshed + staged, Minecraft whitelist re-locked at 4:30 AM.",
   "highlights": [
    "Quiet Sunday — no interactive sessions; routine cron ran all day with zero failures.",
    "Weekly review shipped and persisted (vault + site week-in-review layer).",
    "LCM refreshed to v1.0.0-rc.1 and staged — enable decision pending upstream fixes.",
-   "One unresolved wikilink: `[[2026-09-20]]` in Journal Calendar (this entry resolves it)."
+   "One unresolved wikilink: `[[2026-09-20]]` in Journal Calendar (this entry resolves it).",
+   "**Reminders ↔ Google Tasks sync** (`69726f65e548`): `remindctl all --json` timed out after 90s on some fires (EventKit stall). Latest runs completed successfully — intermittent, not broken.",
+   "**Vault git sync** (`c7fc843f40a3`): syntax error on line 24 from a past run; script now passes `bash -n` and latest runs completed. No action needed.",
+   "**Foreman weekly roster audit** (`NON-OK`): delivery timed out (bot-chat to own profile). Non-blocking — next scheduled fire will retry."
   ]
  },
  {
