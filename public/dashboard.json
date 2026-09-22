@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-22T05:34:35-07:00",
+ "generated_at": "2026-09-22T11:35:42-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.3",
@@ -18,22 +18,22 @@
    "episodic": 513
   },
   "disk": {
-   "used_pct": 92,
-   "free_gb": 16.1,
+   "used_pct": 91,
+   "free_gb": 17.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 10406,
-   "month_in_m": 45.9,
-   "month_out_m": 18.26,
-   "month_cache_m": 1141.0,
-   "week_calls": 5174,
-   "week_out_m": 13.46,
+   "month_calls": 10460,
+   "month_in_m": 46.1,
+   "month_out_m": 18.51,
+   "month_cache_m": 1143.8,
+   "week_calls": 4720,
+   "week_out_m": 12.69,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 7475
+     "calls": 7525
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1291
+     "calls": 1295
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-22T05:34:35-07:00",
+  "checked_at": "2026-09-22T11:35:42-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 438109,
+   "uptime_s": 459776,
    "load": [
-    "1.01",
-    "1.01",
-    "1.04"
+    "1.28",
+    "1.25",
+    "1.17"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 45.9,
+   "mem_used_gb": 46.2,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -280,12 +280,12 @@
     "avail": "1.69T"
    }
   ],
-  "snapshots": 79,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-22_12:00:15_hourly",
+  "snapshots": 97,
+  "snapshot_newest": "tank/shared@autosnap_2026-09-22_18:00:15_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_22-03_33_05.vma.zst",
-   "newest_age_h": 1.9,
+   "newest_age_h": 8.0,
    "count": 36,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 38,
+    "ms": 39,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 90,
+    "ms": 75,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 25,
+    "ms": 21,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 28,
+    "ms": 27,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 21,
+    "ms": 23,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 21,
+    "ms": 20,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 25,
+    "ms": 26,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 25,
+    "ms": 26,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 38,
+    "ms": 36,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 56,
+    "ms": 54,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 23,
+    "ms": 19,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 46,
+    "ms": 35,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 33,
+    "ms": 29,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 49,
+    "ms": 46,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 23,
+    "ms": 16,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 15,
+    "ms": 17,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 71,
+    "ms": 56,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 18,
+    "ms": 13,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 22,
+    "ms": 20,
     "code": 401
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 18,
+    "ms": 16,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 18,
+    "ms": 12,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 41,
+    "ms": 30,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 18,
+    "ms": 17,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 11,
+    "ms": 16,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 31,
+    "ms": 30,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 16,
+    "ms": 18,
     "code": 200
    },
    {
@@ -671,7 +671,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 8,
+    "ms": 11,
     "code": null
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 16,
+    "ms": 18,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 14,
+    "ms": 12,
     "code": 200
    }
   ],
@@ -823,6 +823,13 @@
    "folder": "Planned"
   },
   {
+   "name": "Audio Hub",
+   "status": "planned",
+   "summary": "Audio Hub: one web app bundling a by-ear EQ trainer (sweep a sine, mark peaks/dips, export an 8-band PEQ), a feed of recent audio articles, and a library of articles explaining audio terms.",
+   "updated": "2026-09-22",
+   "folder": "Planned"
+  },
+  {
    "name": "Electronics Workbench",
    "status": "planned",
    "summary": "Set up a practical electronics and creative-technology workbench for the sister's room.",
@@ -940,19 +947,13 @@
  "school": {
   "upcoming": 5,
   "window_days": 7,
-  "later": 39,
+  "later": 38,
   "courses": [
    "CMPE-131",
    "CMPE-142",
    "CMPE-148"
   ],
   "next": [
-   {
-    "title": "(In-class Activity) Weekly Sprint Meeting - PPD",
-    "course": "CMPE-131",
-    "due": "2026-09-22",
-    "when": "2026-09-22T17:15:00+00:00"
-   },
    {
     "title": "Chapter 4&5&6 Quiz- Requires Respondus LockDown Browser",
     "course": "CMPE-131",
@@ -976,6 +977,12 @@
     "course": "CMPE-142",
     "due": "2026-09-27",
     "when": "2026-09-27T23:59:00+00:00"
+   },
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - TPD",
+    "course": "CMPE-131",
+    "due": "2026-09-29",
+    "when": "2026-09-29T17:15:00+00:00"
    }
   ]
  },
@@ -1104,7 +1111,7 @@
  "errors": {},
  "now": {
   "active_projects": 12,
-  "planned_projects": 4,
+  "planned_projects": 5,
   "open_tasks": 28,
   "overdue_tasks": 4,
   "assignments_upcoming": 5,
