@@ -1,16 +1,16 @@
 {
- "generated_at": "2026-09-24T05:43:31-07:00",
+ "generated_at": "2026-09-24T11:44:31-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.4",
   "released": "2026.9.21",
   "commits_behind": 0,
-  "cron_total": 13,
+  "cron_total": 12,
   "cron_active": 9,
-  "cron_no_agent": 5,
+  "cron_no_agent": 4,
   "cron_failing": [],
   "cron_failing_count": 0,
-  "skills": 192,
+  "skills": 193,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
@@ -18,22 +18,22 @@
    "episodic": 513
   },
   "disk": {
-   "used_pct": 92,
-   "free_gb": 15.7,
+   "used_pct": 93,
+   "free_gb": 14.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 11045,
-   "month_in_m": 48.9,
-   "month_out_m": 21.08,
-   "month_cache_m": 1208.2,
+   "month_calls": 11128,
+   "month_in_m": 49.7,
+   "month_out_m": 21.41,
+   "month_cache_m": 1218.3,
    "week_calls": 2944,
    "week_out_m": 11.04,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 8061
+     "calls": 8138
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1344
+     "calls": 1350
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-24T05:43:31-07:00",
+  "checked_at": "2026-09-24T11:44:31-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 611445,
+   "uptime_s": 633105,
    "load": [
-    "1.04",
-    "1.13",
-    "1.16"
+    "1.54",
+    "1.33",
+    "1.23"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 46.4,
+   "mem_used_gb": 46.3,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -151,7 +151,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 68.0,
+    "alloc_gb": 68.3,
     "free_gb": 3502.08,
     "health": "ONLINE",
     "used_pct": 2,
@@ -281,11 +281,11 @@
    }
   ],
   "snapshots": 166,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-24_12:00:16_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-09-24_18:00:15_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_24-03_33_02.vma.zst",
-   "newest_age_h": 2.1,
+   "newest_age_h": 8.1,
    "count": 42,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 37,
+    "ms": 38,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 109,
+    "ms": 92,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 20,
+    "ms": 25,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 29,
+    "ms": 24,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 18,
+    "ms": 19,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 20,
+    "ms": 21,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 22,
+    "ms": 24,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 29,
+    "ms": 24,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 36,
+    "ms": 32,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 100,
+    "ms": 56,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 22,
+    "ms": 20,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 80,
+    "ms": 32,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 63,
+    "ms": 25,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 79,
+    "ms": 25,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 89,
+    "ms": 40,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 58,
+    "ms": 15,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 58,
+    "ms": 14,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 74,
+    "ms": 30,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 36,
+    "ms": 14,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 83,
+    "ms": 61,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 46,
+    "ms": 11,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 25,
+    "ms": 20,
     "code": 401
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 34,
+    "ms": 22,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 18,
+    "ms": 15,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 45,
+    "ms": 32,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 26,
+    "ms": 21,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 13,
+    "ms": 16,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 35,
+    "ms": 30,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 13,
+    "ms": 12,
     "code": 200
    },
    {
@@ -671,7 +671,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 20,
+    "ms": 6,
     "code": null
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 28,
+    "ms": 15,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 26,
+    "ms": 18,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 20,
+    "ms": 16,
     "code": 200
    }
   ],
@@ -945,9 +945,9 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 7,
+  "upcoming": 8,
   "window_days": 7,
-  "later": 38,
+  "later": 36,
   "courses": [
    "CMPE-131",
    "CMPE-142",
@@ -955,12 +955,6 @@
    "Class"
   ],
   "next": [
-   {
-    "title": "Chapter 4&5&6 Quiz- Requires Respondus LockDown Browser",
-    "course": "CMPE-131",
-    "due": "2026-09-24",
-    "when": "2026-09-24T16:15:00+00:00"
-   },
    {
     "title": "Quiz 3: Chapter 3: Data Link Layer",
     "course": "CMPE-148",
@@ -996,6 +990,18 @@
     "course": "CMPE-142",
     "due": "2026-09-30",
     "when": "2026-09-30T23:59:00+00:00"
+   },
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - Spec Presentation Prep",
+    "course": "CMPE-131",
+    "due": "2026-10-01",
+    "when": "2026-10-01T17:15:00+00:00"
+   },
+   {
+    "title": "PART TWO: Chapter 3&4&5 Quiz- Requires Respondus LockDown Browser",
+    "course": "CMPE-142",
+    "due": "2026-10-01",
+    "when": "2026-10-01T17:45:00+00:00"
    }
   ]
  },
@@ -1007,20 +1013,8 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "Ayumacpro",
    "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
-   "name": "Ayupadpro",
-   "os": "iOS",
    "online": true,
    "self": false
   },
@@ -1067,8 +1061,20 @@
    "self": false
   },
   {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayupadpro",
+   "os": "iOS",
    "online": false,
    "self": false
   },
@@ -1133,8 +1139,8 @@
   "planned_projects": 5,
   "open_tasks": 28,
   "overdue_tasks": 4,
-  "assignments_upcoming": 7,
-  "devices_online": 11,
+  "assignments_upcoming": 8,
+  "devices_online": 9,
   "devices_total": 18,
   "jobs_failing": 0,
   "jobs_total": 9,
