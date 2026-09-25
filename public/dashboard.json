@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-24T17:45:31-07:00",
+ "generated_at": "2026-09-24T23:46:31-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.4",
@@ -19,21 +19,21 @@
   },
   "disk": {
    "used_pct": 93,
-   "free_gb": 14.0,
+   "free_gb": 13.7,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 11151,
-   "month_in_m": 49.8,
-   "month_out_m": 21.53,
-   "month_cache_m": 1221.4,
-   "week_calls": 2836,
-   "week_out_m": 10.94,
+   "month_calls": 11178,
+   "month_in_m": 49.9,
+   "month_out_m": 21.54,
+   "month_cache_m": 1223.1,
+   "week_calls": 2646,
+   "week_out_m": 10.44,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 8161
+     "calls": 8166
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1350
+     "calls": 1372
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-24T17:45:31-07:00",
+  "checked_at": "2026-09-24T23:46:31-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 654765,
+   "uptime_s": 676425,
    "load": [
-    "1.11",
-    "1.20",
-    "1.16"
+    "1.52",
+    "1.18",
+    "1.09"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 46.3,
+   "mem_used_gb": 46.4,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -151,7 +151,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 68.6,
+    "alloc_gb": 68.7,
     "free_gb": 3502.08,
     "health": "ONLINE",
     "used_pct": 2,
@@ -201,7 +201,7 @@
    },
    {
     "name": "ssd/subvol-101-disk-0",
-    "used": "508M",
+    "used": "509M",
     "avail": "3.51G"
    },
    {
@@ -281,11 +281,11 @@
    }
   ],
   "snapshots": 184,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-25_00:00:16_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-09-25_06:00:16_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_24-03_33_02.vma.zst",
-   "newest_age_h": 14.1,
+   "newest_age_h": 20.1,
    "count": 42,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 55,
+    "ms": 33,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 86,
+    "ms": 109,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 22,
+    "ms": 23,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 22,
+    "ms": 25,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 23,
+    "ms": 22,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 19,
+    "ms": 18,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 36,
+    "ms": 24,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 46,
+    "ms": 43,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 73,
+    "ms": 84,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 31,
+    "ms": 19,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 50,
+    "ms": 42,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 43,
+    "ms": 25,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 51,
+    "ms": 25,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 56,
+    "ms": 52,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 23,
+    "ms": 12,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 31,
+    "ms": 58,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 13,
+    "ms": 11,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 62,
+    "ms": 82,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 16,
+    "ms": 18,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 27,
+    "ms": 22,
     "code": 401
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 32,
+    "ms": 36,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 22,
+    "ms": 16,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 42,
+    "ms": 36,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 20,
+    "ms": 18,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 17,
+    "ms": 13,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 33,
+    "ms": 27,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 14,
+    "ms": 15,
     "code": 200
    },
    {
@@ -671,7 +671,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 7,
     "code": null
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 20,
+    "ms": 21,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 13,
+    "ms": 18,
     "code": 200
    }
   ],
@@ -1013,12 +1013,6 @@
    "self": true
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "Ayupadpro",
    "os": "iOS",
    "online": true,
@@ -1073,6 +1067,12 @@
    "self": false
   },
   {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": false,
@@ -1117,6 +1117,10 @@
  ],
  "journal": [
   {
+   "date": "2026-09-24",
+   "summary": "wishlist reconciliation — closed the desk-setup candidates (monitor arm, desk mats, USB-C hub/dock, power strips, conditioner), resolved the Standing Desk + Surge Protector board drift, OWC second unit recorded as the X1 Lite dock; backburner cleanup followed "
+  },
+  {
    "date": "2026-09-23",
    "summary": "Quiet day — article brainstorm (Layers of Working with AI), audio gear research, vault maintenance. All cron green."
   },
@@ -1127,10 +1131,6 @@
   {
    "date": "2026-09-21",
    "summary": "CrinEar Reference eval, tank/PC file reorg, NAS PC share created, 96 cron runs all green."
-  },
-  {
-   "date": "2026-09-20",
-   "summary": "Quiet Sunday — routine cron only; weekly review shipped, LCM refreshed + staged, Minecraft whitelist re-locked at 4:30 AM."
   }
  ],
  "errors": {},
@@ -1140,7 +1140,7 @@
   "open_tasks": 28,
   "overdue_tasks": 4,
   "assignments_upcoming": 8,
-  "devices_online": 10,
+  "devices_online": 9,
   "devices_total": 18,
   "jobs_failing": 0,
   "jobs_total": 8,
