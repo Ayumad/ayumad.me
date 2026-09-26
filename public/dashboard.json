@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T11:48:31-07:00",
+ "generated_at": "2026-09-25T17:49:31-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.4",
@@ -27,8 +27,8 @@
    "month_in_m": 50.0,
    "month_out_m": 21.54,
    "month_cache_m": 1223.2,
-   "week_calls": 1871,
-   "week_out_m": 8.08,
+   "week_calls": 1815,
+   "week_out_m": 7.74,
    "cache_share": 96,
    "top_models": [
     {
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-25T11:48:32-07:00",
+  "checked_at": "2026-09-25T17:49:32-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 719746,
+   "uptime_s": 741406,
    "load": [
-    "0.96",
-    "1.12",
-    "1.11"
+    "0.98",
+    "1.05",
+    "1.08"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 46.8,
+   "mem_used_gb": 46.9,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -151,7 +151,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 69.1,
+    "alloc_gb": 69.3,
     "free_gb": 3502.08,
     "health": "ONLINE",
     "used_pct": 2,
@@ -186,7 +186,7 @@
   "datasets": [
    {
     "name": "ssd",
-    "used": "377G",
+    "used": "378G",
     "avail": "3.01T"
    },
    {
@@ -196,7 +196,7 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "590M",
+    "used": "592M",
     "avail": "7.43G"
    },
    {
@@ -216,7 +216,7 @@
    },
    {
     "name": "ssd/vm-200-disk-0",
-    "used": "82.9G",
+    "used": "83.0G",
     "avail": "3.07T"
    },
    {
@@ -226,7 +226,7 @@
    },
    {
     "name": "ssd/vm-201-disk-0",
-    "used": "43.9G",
+    "used": "44.2G",
     "avail": "3.05T"
    },
    {
@@ -236,7 +236,7 @@
    },
    {
     "name": "ssd/vm-202-disk-0",
-    "used": "248G",
+    "used": "249G",
     "avail": "3.21T"
    },
    {
@@ -280,12 +280,12 @@
     "avail": "1.69T"
    }
   ],
-  "snapshots": 184,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-25_18:00:17_hourly",
+  "snapshots": 202,
+  "snapshot_newest": "tank/shared@autosnap_2026-09-26_00:00:05_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_25-03_33_07.vma.zst",
-   "newest_age_h": 8.2,
+   "newest_age_h": 14.2,
    "count": 42,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 60,
+    "ms": 40,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 107,
+    "ms": 88,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 42,
+    "ms": 24,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 47,
+    "ms": 28,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 44,
+    "ms": 27,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 42,
+    "ms": 24,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 46,
+    "ms": 29,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 46,
+    "ms": 23,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 58,
+    "ms": 36,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 83,
+    "ms": 66,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 43,
+    "ms": 22,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 57,
+    "ms": 38,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 39,
+    "ms": 24,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 42,
+    "ms": 34,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 45,
+    "ms": 34,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 17,
+    "ms": 14,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 42,
+    "ms": 37,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 57,
+    "ms": 56,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 22,
+    "ms": 16,
     "code": 401
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 22,
+    "ms": 26,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 19,
+    "ms": 15,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 36,
+    "ms": 30,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 20,
+    "ms": 19,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 18,
+    "ms": 13,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 31,
+    "ms": 25,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 17,
+    "ms": 14,
     "code": 200
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 16,
+    "ms": 13,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 16,
+    "ms": 22,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 17,
+    "ms": 15,
     "code": 200
    }
   ],
