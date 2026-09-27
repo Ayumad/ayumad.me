@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-26T23:54:27-07:00",
+ "generated_at": "2026-09-27T05:55:27-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.4",
@@ -10,30 +10,30 @@
   "cron_no_agent": 4,
   "cron_failing": [],
   "cron_failing_count": 0,
-  "skills": 193,
+  "skills": 195,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1289,
+   "working": 1302,
    "episodic": 513
   },
   "disk": {
-   "used_pct": 89,
-   "free_gb": 20.3,
+   "used_pct": 88,
+   "free_gb": 23.3,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 11497,
-   "month_in_m": 52.5,
-   "month_out_m": 22.01,
-   "month_cache_m": 1240.0,
-   "week_calls": 1712,
-   "week_out_m": 6.32,
+   "month_calls": 11797,
+   "month_in_m": 54.2,
+   "month_out_m": 22.5,
+   "month_cache_m": 1277.5,
+   "week_calls": 1955,
+   "week_out_m": 6.53,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 8432
+     "calls": 8730
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1425
+     "calls": 1427
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-26T23:54:28-07:00",
+  "checked_at": "2026-09-27T05:55:29-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 849702,
+   "uptime_s": 871362,
    "load": [
-    "1.13",
-    "1.31",
-    "1.21"
+    "3.58",
+    "4.25",
+    "4.53"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 47.0,
+   "mem_used_gb": 46.2,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -151,8 +151,8 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 70.1,
-    "free_gb": 3502.08,
+    "alloc_gb": 81.4,
+    "free_gb": 3481.6,
     "health": "ONLINE",
     "used_pct": 2,
     "scan": "no scrub on record",
@@ -168,10 +168,10 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 4966.4,
-    "free_gb": 13619.2,
+    "alloc_gb": 5150.72,
+    "free_gb": 13516.8,
     "health": "ONLINE",
-    "used_pct": 27,
+    "used_pct": 28,
     "scan": "no scrub on record",
     "never_scrubbed": true,
     "errors": "No known data errors",
@@ -237,42 +237,42 @@
    {
     "name": "ssd/vm-202-disk-0",
     "used": "249G",
-    "avail": "3.20T"
+    "avail": "3.19T"
    },
    {
     "name": "tank",
-    "used": "3.88T",
-    "avail": "10.5T"
+    "used": "4.01T",
+    "avail": "10.4T"
    },
    {
     "name": "tank/MM",
     "used": "530K",
-    "avail": "10.5T"
+    "avail": "10.4T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "10.5T"
+    "avail": "10.4T"
    },
    {
     "name": "tank/backups",
-    "used": "469G",
-    "avail": "10.5T"
+    "used": "530G",
+    "avail": "10.4T"
    },
    {
     "name": "tank/media",
-    "used": "1.19T",
-    "avail": "10.5T"
+    "used": "1.27T",
+    "avail": "10.4T"
    },
    {
     "name": "tank/photos",
-    "used": "143M",
-    "avail": "10.5T"
+    "used": "161M",
+    "avail": "10.4T"
    },
    {
     "name": "tank/shared",
-    "used": "1.94M",
-    "avail": "10.5T"
+    "used": "2.03M",
+    "avail": "10.4T"
    },
    {
     "name": "tank/timemachine",
@@ -281,12 +281,12 @@
    }
   ],
   "snapshots": 210,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-27_06:00:15_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-09-27_12:00:18_hourly",
   "scrub_timers": 0,
   "backups": {
-   "newest": "vzdump-qemu-202-2026_09_26-03_33_13.vma.zst",
-   "newest_age_h": 20.3,
-   "count": 42,
+   "newest": "vzdump-qemu-202-2026_09_27-03_33_55.vma.zst",
+   "newest_age_h": 2.2,
+   "count": 48,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
    "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
@@ -350,14 +350,14 @@
    "present": false
   },
   "media": {
-   "torrents": 2,
-   "torrents_active": 0,
-   "down_mbps": 0.0,
-   "jellyfin_movies": 213,
+   "torrents": 163,
+   "torrents_active": 155,
+   "down_mbps": 7.76,
+   "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 0,
+   "radarr_queue": 161,
    "mount_free": "11T free of 12T (11% used)"
   },
   "nas": {
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 43,
+    "ms": 51,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 92,
+    "ms": 116,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 29,
+    "ms": 39,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 26,
+    "ms": 32,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 27,
+    "ms": 30,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 21,
+    "ms": 26,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 27,
+    "ms": 34,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 26,
+    "ms": 34,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 44,
+    "ms": 50,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 67,
+    "ms": 90,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 24,
+    "ms": 22,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 36,
+    "ms": 45,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 24,
+    "ms": 29,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 42,
+    "ms": 25,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 44,
+    "ms": 45,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 14,
+    "ms": 17,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 15,
+    "ms": 20,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 44,
+    "ms": 51,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 13,
+    "ms": 16,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 69,
+    "ms": 86,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 20,
+    "ms": 11,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 29,
+    "ms": 21,
     "code": 401
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 28,
+    "ms": 25,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 25,
+    "ms": 15,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 42,
+    "ms": 24,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 25,
+    "ms": 29,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 14,
+    "ms": 15,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 31,
+    "ms": 33,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 16,
+    "ms": 15,
     "code": 200
    },
    {
@@ -671,7 +671,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 7,
     "code": null
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 14,
+    "ms": 18,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 16,
+    "ms": 20,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 13,
+    "ms": 17,
     "code": 200
    }
   ],
@@ -763,7 +763,7 @@
    "name": "Homelab",
    "status": "active",
    "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
-   "updated": "2026-09-24",
+   "updated": "2026-09-27",
    "folder": ""
   },
   {
@@ -866,7 +866,7 @@
   }
  ],
  "tasks": {
-  "open": 28,
+  "open": 31,
   "overdue": 4,
   "items": [
    {
@@ -906,7 +906,19 @@
     "overdue": false
    },
    {
-    "title": "Xfinity gateway: DHCP reservations + Minecraft port forward 25565 -> .231 + Pi-hole DNS flip",
+    "title": "Verify the Jellyfin remux upgrade landed (209 titles imported; ~weeks of downloads)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Namecheap DNS: add A record jellyfin -> 67.180.196.131 (public Jellyfin)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Xfinity gateway: DHCP reservations + port forwards (Minecraft 25565 -> .231, Jellyfin 443/80 -> .54) + Pi-hole DNS flip",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -925,18 +937,6 @@
    },
    {
     "title": "Trust the Caddy root CA on your devices + make .lan resolve (file: ~/Downloads/homelab-caddy-root.crt)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Finish 3 service setups: Cleanuparr (qBit+arr creds in UI), Vaultwarden account, Open WebUI -> ai-vm Ollama connection",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Deploy Open WebUI + Qdrant on docker-vm (front end for the pending RAG assistant; vault index is ready)",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -1137,7 +1137,7 @@
  "now": {
   "active_projects": 12,
   "planned_projects": 5,
-  "open_tasks": 28,
+  "open_tasks": 31,
   "overdue_tasks": 4,
   "assignments_upcoming": 8,
   "devices_online": 9,
