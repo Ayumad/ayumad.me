@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-26T17:53:32-07:00",
+ "generated_at": "2026-09-26T23:54:27-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.21.4",
@@ -14,26 +14,26 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1282,
+   "working": 1289,
    "episodic": 513
   },
   "disk": {
-   "used_pct": 94,
-   "free_gb": 11.4,
+   "used_pct": 89,
+   "free_gb": 20.3,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 11216,
-   "month_in_m": 50.1,
-   "month_out_m": 21.55,
-   "month_cache_m": 1224.5,
-   "week_calls": 1531,
-   "week_out_m": 6.31,
+   "month_calls": 11497,
+   "month_in_m": 52.5,
+   "month_out_m": 22.01,
+   "month_cache_m": 1240.0,
+   "week_calls": 1712,
+   "week_out_m": 6.32,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 8166
+     "calls": 8432
     },
     {
      "model": "deepseek-v4-flash",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.5",
-     "calls": 1410
+     "calls": 1425
     },
     {
      "model": "qwen3.8-max",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-26T17:53:32-07:00",
+  "checked_at": "2026-09-26T23:54:28-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 828046,
+   "uptime_s": 849702,
    "load": [
-    "1.17",
-    "1.04",
-    "1.10"
+    "1.13",
+    "1.31",
+    "1.21"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 46.8,
+   "mem_used_gb": 47.0,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -151,7 +151,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 69.9,
+    "alloc_gb": 70.1,
     "free_gb": 3502.08,
     "health": "ONLINE",
     "used_pct": 2,
@@ -196,12 +196,12 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "595M",
+    "used": "596M",
     "avail": "7.43G"
    },
    {
     "name": "ssd/subvol-101-disk-0",
-    "used": "510M",
+    "used": "517M",
     "avail": "3.51G"
    },
    {
@@ -280,12 +280,12 @@
     "avail": "1.69T"
    }
   ],
-  "snapshots": 220,
-  "snapshot_newest": "tank/shared@autosnap_2026-09-27_00:00:05_hourly",
+  "snapshots": 210,
+  "snapshot_newest": "tank/shared@autosnap_2026-09-27_06:00:15_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_26-03_33_13.vma.zst",
-   "newest_age_h": 14.2,
+   "newest_age_h": 20.3,
    "count": 42,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 33,
+    "ms": 43,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 60,
+    "ms": 92,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 20,
+    "ms": 29,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 23,
+    "ms": 26,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 20,
+    "ms": 21,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 26,
+    "ms": 27,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 22,
+    "ms": 26,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 36,
+    "ms": 44,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 59,
+    "ms": 67,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 22,
+    "ms": 24,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 37,
+    "ms": 36,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 23,
+    "ms": 24,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 36,
+    "ms": 42,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 40,
+    "ms": 44,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 13,
+    "ms": 14,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 13,
+    "ms": 15,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 35,
+    "ms": 44,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 54,
+    "ms": 69,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 11,
+    "ms": 20,
     "code": 200
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 20,
+    "ms": 29,
     "code": 401
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 10,
+    "ms": 25,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 32,
+    "ms": 42,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 18,
+    "ms": 25,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 15,
+    "ms": 14,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 28,
+    "ms": 31,
     "code": 200
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 12,
+    "ms": 14,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 13,
+    "ms": 16,
     "code": 200
    },
    {
@@ -701,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 16,
+    "ms": 13,
     "code": 200
    }
   ],
@@ -1117,6 +1117,10 @@
  ],
  "journal": [
   {
+   "date": "2026-09-26",
+   "summary": "loadout valuation pass — all 27 remaining unvalued product notes researched via a 6-agent fan-out and valued; ownership coverage now 127/127, loadout est $41,865. Also: Lumix LX100 eval (no purchase)."
+  },
+  {
    "date": "2026-09-25",
    "summary": "quiet day — routine cron only (Mnemosyne Sleep, Daily Brief, Interview Prep); all 69 executions green."
   },
@@ -1127,10 +1131,6 @@
   {
    "date": "2026-09-23",
    "summary": "Quiet day — article brainstorm (Layers of Working with AI), audio gear research, vault maintenance. All cron green."
-  },
-  {
-   "date": "2026-09-22",
-   "summary": "file migration verification, routine cron health, marketplace monitoring."
   }
  ],
  "errors": {},
