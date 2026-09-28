@@ -1,11 +1,26 @@
 [
  {
+  "date": "2026-09-27",
+  "summary": "Session journal for 2026-09-27: Weekly Review cron (Sep 21–27), all cron green (70 runs), vault notes updated (Homelab, Home Network, Validation Report, Operations Queue).",
+  "highlights": [
+   "Weekly review delivered (vault written, iMessage delivery failed due to Photon sidecar 500 — known issue since Sep 26).",
+   "All cron infrastructure healthy; no incidents.",
+   "Vault notes updated: Homelab, Home Network, Vault Validation Report, Hermes Operations Queue.",
+   "Reminders sync: Alienware m16 diagnosis task created, Namecheap DNS + Jellyfin tasks updated."
+  ]
+ },
+ {
   "date": "2026-09-26",
-  "summary": "Session journal for 2026-09-26: loadout valuation pass — all 27 remaining unvalued product notes researched via a 6-agent fan-out and valued; ownership coverage now 127/127, loadout est $41,865. Also: Lumix LX100 eval (no purchase).",
+  "summary": "Session journal for 2026-09-26: loadout valuation pass — all 27 remaining unvalued product notes researched via a 6-agent fan-out and valued; ownership coverage now 127/127, loadout est $41,490. Also: Lumix LX100 eval (no purchase).",
   "highlights": [
    "Loadout fully valued: all 127 owned notes now carry low/estimate/high bands; total est $41,865.",
    "Lumix LX100 eval — decided not to purchase (below market).",
-   "Daily Brief delivery hit a Photon sidecar 500 — needs monitoring if it recurs."
+   "Daily Brief delivery hit a Photon sidecar 500 — needs monitoring if it recurs.",
+   "**Notes scripting still hung** — osascript `count notes` timed out after 20s. Needs Ayush to quit & reopen Notes + grant any permission prompt.",
+   "**SER8 (100.73.4.38) offline** — Tailscale shows last seen 6 days ago, 100% packet loss. Prometheus node exporter install blocked until it comes back. Omarchy Health Monitor restoration also blocked (decision in ops-queue).",
+   "**Daily Brief delivery failed** (9:31 AM) — Photon sidecar returned 500; sidecar is configured and likely recovered, but the morning brief never reached iMessage. Transient — monitor for recurrence.",
+   "**Disk 92% / 16 GB free** — stable but tight. The sudo disk pass (53 GB reclaim) is still the single biggest win.",
+   "**API_SERVER_KEY on config.yaml line 728** — duplicate, needs manual delete."
   ]
  },
  {

@@ -1,5 +1,68 @@
 [
  {
+  "date": "2026-09-27",
+  "weekStart": "2026-09-20",
+  "summary": "Weekly review for Sep 21–27, 2026: loadout fully valued ($41,490), Jellyfin library upgraded to remux, phones purchased, NAS reorg complete.",
+  "sections": [
+   {
+    "heading": "✅ This Week's Highlights",
+    "items": [
+     "**1. Loadout Fully Valued — $41,490 Total** — All 127 owned product notes now carry low/estimate/high valuation bands. Ran a 6-agent parallel research fan-out (Swappa/eBay/dealer comps) covering the 27 remaining unvalued notes — machines, PC parts, docks, peripherals, keyboards, mice, iPad accessories, Kinect, and both bench scopes. Total est up $6,210 from $35,280 pre-pass.",
+     "**2. Jellyfin Library Quality Upgrade** — Radarr now tracks all 209 movies (was 7). Custom quality profiles with upscale/junk rejection filters installed. Remux queue live: 25 × Remux-2160p queued (1.46 TB, ~2.95 MB/s peer-limited — full set will take weeks). Library curation: 4 duplicates deleted (20.99 GB reclaimed), 63 films given tagged English subtitles via subliminal, 193 foreign films verified for native audio via local Whisper (4 Ghibli dubs flagged for re-acquisition).",
+     "**3. Phone Purchases — Android Lane Closed** — Google Pixel 10 Pro ($300, hairline crack) activated on the free line. Samsung Galaxy S25 ($200, blacklisted IMEI) set up as Wi-Fi-only games/DeX device. ≤$350 Phone Hunt cron built and parked. iPhone Duo funding strategy: ~$1,300 banked from research-study gift cards, ~$900 to go vs Oct 16 preorder.",
+     "**4. NAS Tank/PC Reorganization** — 168,060 files / 2.66 TiB copied from Creekwood to tank. Flattened nested dirs, consolidated emulators under `Emulation/`, separated repacks from playable games. Found real Steam saves in `SteamLibrary` (would have been deleted). Ebooks imported into Calibre-Web (21 unique titles from 43 epubs).",
+     "**5. Remote KVM + Hermes Fleet Researched** — Remote KVM wishlisted (JetKVM ~$103 lead; JetKVM Mini $39 on Oct 26 sale). Hermes Fleet gateway wired for iPhone TestFlight — serve `:9119` tailnet-bound, auth verified end-to-end from a tailnet peer."
+    ]
+   },
+   {
+    "heading": "📊 Project Status",
+    "items": [
+     "**Homelab** — Services stack complete (29 containers). Jellyfin quality upgrade executed. Library curation done (dedup + subtitles + audio verification). Public Jellyfin access staged (Caddy vhost ready, awaiting xFi port forward + Namecheap A record). Off-machine backup still missing. ZFS scrub never run.",
+     "**EchoSphere** — ACM Robotics lead, 12-wk build from Sep 7. No session activity logged this week — likely between meetings or handled outside Hermes.",
+     "**Personal Website (ayumad.me)** — PRs #29 (content refresh) and #30 (public boundary remediation) open. Dashboard refreshes running (200+ deploys). Weekly reviews now live on /journal. 54 open tasks across 7 phases.",
+     "**Vault** — 537 notes, 0 invalid, 0 unpushed. Loadout fully valued. Git auto-sync healthy.",
+     "**Articles** — \"Layers of Working with AI\" brainstorm doc created (Sep 23). Ready for backbone confirmation before promoting to draft."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**Alienware m16 power failure** — stopped powering on 09-26. Adapter LED dies on connect (suspected power-path short). Dell warranty check needed (ST 210CKS3).",
+     "**SER8 offline** — Tailscale last seen 6+ days ago, 100% packet loss. Prometheus node exporter install blocked. Omarchy Health Monitor restoration blocked.",
+     "**Xfinity gateway** — DHCP reservations + Pi-hole DNS flip + port forwards (Minecraft, Jellyfin) need browser login via xFi app.",
+     "**Mac mini disk** — 93% / 16 GB free. Sudo disk pass (~53 GB reclaimable) is the single biggest available win.",
+     "**Notes scripting hung** — osascript timeout on Apple Notes enumeration since 09-18. Quit + reopen didn't fix it.",
+     "**Hue↔Home Assistant pairing** — physical link button press required.",
+     "**Daily Brief delivery** — Photon sidecar 500 error on 09-26. Transient; monitoring for recurrence."
+    ]
+   },
+   {
+    "heading": "🔜 Next Week Focus",
+    "items": [
+     "1. **Alienware m16 diagnosis** — adapter/DC jack/battery-disconnect test + Dell warranty lookup",
+     "2. **Mac mini sudo disk pass** — 53 GB reclaim, biggest available win",
+     "3. **SER8 recovery** — diagnose offline state, restore Tailscale",
+     "4. **Xfinity gateway** — DHCP + Pi-hole DNS + Jellyfin port forward",
+     "5. **Radarr remux queue** — monitor download progress, verify quality upgrades land",
+     "6. **Homelab Phase 8** — class VMs (semester-critical, semester starting soon)"
+    ]
+   },
+   {
+    "heading": "📝 Miscellaneous",
+    "items": [
+     "**CrinEar Reference** eval at $275 — \"BUY IF VERIFIED\" verdict, no purchase made",
+     "**Lumix LX100** eval at $350 — below market, no purchase",
+     "**Cron fleet** — 400+ fires across 15+ jobs, all green. Phone Hunt parked after Android lane closed.",
+     "**Minecraft** — Paper 26.3 build 26 (alpha channel), whitelisted and playable",
+     "**tank/PC reorg snapshots** — `pre-organize` and `pre-cleanup` snapshots taken, reversible",
+     "**ZFS snapshot policy** — sanoid installed and running on all datasets",
+     "**Bazarr confirmed empty** — zero subtitle providers configured; subliminal-in-a-container is the working path",
+     "**state.db** — 1.8 GB, compaction still pending (needs maintenance window)"
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-09-20",
   "weekStart": "2026-09-13",
   "summary": "Weekly review for Sep 13–20, 2026: P520 services stack complete, NAS architecture settled, Marketplace MCP live, school work landed.",
