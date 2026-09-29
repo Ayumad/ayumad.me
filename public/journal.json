@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-09-28",
+  "summary": "Session journal for 2026-09-28: P520 health sweep — three unclean overnight reboots (no trace; power-side suspected), guests/storage/backups healthy; cron jobs all green; POLS-15 midterm graded 34/50.",
+  "highlights": [
+   "P520 stable after the overnight reboot cluster; crash cause open (power-side suspect) — recurrence watch.",
+   "Two standing ops gaps surfaced to Ayush: `tank` never scrubbed; PVE notification mail not delivering.",
+   "Product-note drift (pre-Sep-16 build description) found and fixed; vault validated (541 notes, 0 issues) and pushed.",
+   "POLS-15 midterm graded 34/50 — flagged for review. Kanban board clean and empty, ready for new work."
+  ]
+ },
+ {
   "date": "2026-09-27",
   "summary": "Session journal for 2026-09-27: Weekly Review cron (Sep 21–27), all cron green (70 runs), vault notes updated (Homelab, Home Network, Validation Report, Operations Queue).",
   "highlights": [
    "Weekly review delivered (vault written, iMessage delivery failed due to Photon sidecar 500 — known issue since Sep 26).",
    "All cron infrastructure healthy; no incidents.",
    "Vault notes updated: Homelab, Home Network, Vault Validation Report, Hermes Operations Queue.",
-   "Reminders sync: Alienware m16 diagnosis task created, Namecheap DNS + Jellyfin tasks updated."
+   "Reminders sync: Alienware m16 diagnosis task created, Namecheap DNS + Jellyfin tasks updated.",
+   "Fixed stale ops-queue note: Omarchy Health Monitor item incorrectly said \"SER8 is online again\" — corrected to reflect SER8 still offline (Tailscale 7d+, 100% packet loss re-confirmed).",
+   "Updated disk stats in todo-cleanup (89% / 21 GB free — improved from 93% / 14 GB).",
+   "Updated SER8 offline duration in todo-cleanup (now 7d+).",
+   "SER8 (100.73.4.38) offline 7+ days. No ping, no Tailscale. Blocks: Prometheus node exporter, Omarchy Health Monitor restoration. May need physical power cycle.",
+   "Notes app still hangs on osascript (since Sep 18). Quit & reopen didn't help."
   ]
  },
  {
