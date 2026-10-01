@@ -1,12 +1,10 @@
 {
- "generated_at": "2026-09-30T18:09:29-07:00",
+ "generated_at": "2026-10-01T00:10:24-07:00",
  "generated_on": "Mac mini",
  "hermes": {
-  "version": "0.21.4",
-  "released": "2026.9.21",
   "commits_behind": 0,
   "cron_total": 12,
-  "cron_active": 8,
+  "cron_active": 7,
   "cron_no_agent": 4,
   "cron_failing": [],
   "cron_failing_count": 0,
@@ -18,54 +16,37 @@
    "episodic": 513
   },
   "disk": {
-   "used_pct": 90,
-   "free_gb": 18.0,
+   "used_pct": 92,
+   "free_gb": 15.6,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 11996,
-   "month_in_m": 55.9,
-   "month_out_m": 22.9,
-   "month_cache_m": 1293.7,
-   "week_calls": 992,
-   "week_out_m": 1.77,
-   "cache_share": 96,
-   "top_models": [
-    {
-     "model": "deepseek-flash",
-     "calls": 8838
-    },
-    {
-     "model": "mimo-v2.5",
-     "calls": 1518
-    },
-    {
-     "model": "deepseek-v4-flash",
-     "calls": 1489
-    },
-    {
-     "model": "qwen3.8-max",
-     "calls": 95
-    }
-   ]
+   "month_calls": 0,
+   "month_in_m": 0.0,
+   "month_out_m": 0.0,
+   "month_cache_m": 0.0,
+   "week_calls": 996,
+   "week_out_m": 1.76,
+   "cache_share": 0,
+   "top_models": []
   }
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-09-30T18:09:30-07:00",
+  "checked_at": "2026-10-01T00:10:25-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 47288,
+   "uptime_s": 68943,
    "load": [
-    "4.47",
-    "4.67",
-    "5.04"
+    "7.14",
+    "8.27",
+    "7.21"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 29.4,
+   "mem_used_gb": 30.5,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -97,7 +78,7 @@
    {
     "id": 201,
     "name": "school-vm",
-    "status": "stopped",
+    "status": "running",
     "mem_mb": 6144,
     "disk_gb": 40,
     "type": "qemu",
@@ -145,13 +126,13 @@
     "gpu": false
    }
   ],
-  "guests_running": 4,
+  "guests_running": 5,
   "gpu_owner_vm": 200,
   "pools": [
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 83.9,
+    "alloc_gb": 84.1,
     "free_gb": 3481.6,
     "health": "ONLINE",
     "used_pct": 2,
@@ -168,10 +149,10 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 9287.68,
-    "free_gb": 9338.88,
+    "alloc_gb": 9615.36,
+    "free_gb": 9000.96,
     "health": "ONLINE",
-    "used_pct": 50,
+    "used_pct": 52,
     "scan": "no scrub on record",
     "never_scrubbed": true,
     "errors": "No known data errors",
@@ -241,51 +222,51 @@
    },
    {
     "name": "tank",
-    "used": "7.24T",
-    "avail": "7.16T"
+    "used": "7.50T",
+    "avail": "6.90T"
    },
    {
     "name": "tank/MM",
     "used": "722K",
-    "avail": "7.16T"
+    "avail": "6.90T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "7.16T"
+    "avail": "6.90T"
    },
    {
     "name": "tank/backups",
     "used": "692G",
-    "avail": "7.16T"
+    "avail": "6.90T"
    },
    {
     "name": "tank/media",
-    "used": "4.34T",
-    "avail": "7.16T"
+    "used": "4.59T",
+    "avail": "6.90T"
    },
    {
     "name": "tank/photos",
     "used": "215M",
-    "avail": "7.16T"
+    "avail": "6.90T"
    },
    {
     "name": "tank/shared",
-    "used": "3.31M",
-    "avail": "7.16T"
+    "used": "4.43M",
+    "avail": "6.90T"
    },
    {
     "name": "tank/timemachine",
-    "used": "321G",
-    "avail": "1.69T"
+    "used": "332G",
+    "avail": "1.68T"
    }
   ],
   "snapshots": 269,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-01_01:00:01_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-01_07:00:01_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_09_30-03_33_21.vma.zst",
-   "newest_age_h": 14.5,
+   "newest_age_h": 20.5,
    "count": 48,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -351,14 +332,14 @@
   },
   "media": {
    "torrents": 163,
-   "torrents_active": 128,
-   "down_mbps": 15.61,
+   "torrents_active": 121,
+   "down_mbps": 16.55,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 141,
-   "mount_free": "7.2T free of 12T (38% used)"
+   "radarr_queue": 136,
+   "mount_free": "7.0T free of 12T (40% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -381,7 +362,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 52,
+    "ms": 33,
     "code": 200
    },
    {
@@ -391,7 +372,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 245,
+    "ms": 109,
     "code": 200
    },
    {
@@ -401,7 +382,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 22,
+    "ms": 20,
     "code": 200
    },
    {
@@ -411,7 +392,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 22,
+    "ms": 24,
     "code": 200
    },
    {
@@ -421,7 +402,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 27,
+    "ms": 24,
     "code": 200
    },
    {
@@ -431,7 +412,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 23,
+    "ms": 20,
     "code": 200
    },
    {
@@ -441,7 +422,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 65,
+    "ms": 20,
     "code": 200
    },
    {
@@ -451,7 +432,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 65,
+    "ms": 24,
     "code": 200
    },
    {
@@ -461,7 +442,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 41,
+    "ms": 30,
     "code": 200
    },
    {
@@ -471,7 +452,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 58,
+    "ms": 67,
     "code": 200
    },
    {
@@ -481,7 +462,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 39,
+    "ms": 21,
     "code": 200
    },
    {
@@ -491,7 +472,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 43,
+    "ms": 30,
     "code": 200
    },
    {
@@ -501,7 +482,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 126,
+    "ms": 26,
     "code": 200
    },
    {
@@ -511,7 +492,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 40,
+    "ms": 26,
     "code": 200
    },
    {
@@ -521,7 +502,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 37,
+    "ms": 36,
     "code": 200
    },
    {
@@ -531,7 +512,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 179,
+    "ms": 20,
     "code": 200
    },
    {
@@ -541,7 +522,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 113,
+    "ms": 14,
     "code": 200
    },
    {
@@ -551,7 +532,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 45,
+    "ms": 32,
     "code": 200
    },
    {
@@ -571,7 +552,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 137,
+    "ms": 67,
     "code": 200
    },
    {
@@ -581,7 +562,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 15,
+    "ms": 14,
     "code": 200
    },
    {
@@ -591,7 +572,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 49,
+    "ms": 19,
     "code": 401
    },
    {
@@ -601,7 +582,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 176,
+    "ms": 25,
     "code": 200
    },
    {
@@ -611,7 +592,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 20,
+    "ms": 12,
     "code": 200
    },
    {
@@ -621,7 +602,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 39,
+    "ms": 33,
     "code": 200
    },
    {
@@ -631,7 +612,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 64,
+    "ms": 32,
     "code": 200
    },
    {
@@ -641,7 +622,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 78,
+    "ms": 18,
     "code": 200
    },
    {
@@ -651,7 +632,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 37,
+    "ms": 28,
     "code": 200
    },
    {
@@ -661,7 +642,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 16,
+    "ms": 12,
     "code": 200
    },
    {
@@ -681,7 +662,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 65,
+    "ms": 13,
     "code": 200
    },
    {
@@ -691,7 +672,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 111,
+    "ms": 17,
     "code": 200
    },
    {
@@ -701,7 +682,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 119,
+    "ms": 16,
     "code": 200
    }
   ],
@@ -730,141 +711,7 @@
    "warn": 4
   }
  },
- "projects": [
-  {
-   "name": "ACM Fall 2026 Workshops",
-   "status": "active",
-   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Agentic Coding series Oct 7–Dec 2.",
-   "updated": "2026-08-27",
-   "folder": ""
-  },
-  {
-   "name": "CRT Lab",
-   "status": "active",
-   "summary": "Build a local-first browser workstation that routes generated signals, media, web pages, and user-owned ROMs through an adjustable CRT display or oscilloscope.",
-   "updated": "2026-08-19",
-   "folder": ""
-  },
-  {
-   "name": "EchoSphere",
-   "status": "active",
-   "summary": "EchoSphere Physical AI Robot — Ayush leads SJSU ACM Robotics & Hardware team (6 members: hardware/software/electronics) in a 12-week build with IPMD (Min Lee) for EchoAi's Kickstarter demo. Kickoff Sep 7, 2026. Company meeting Sep 1: Kickstarter confirmed, $300–500 budget ask, EchoAI API still pending.",
-   "updated": "2026-09-15",
-   "folder": "EchoSphere"
-  },
-  {
-   "name": "Facebook Marketplace MCP",
-   "status": "active",
-   "summary": "Facebook Marketplace MCP server exposing search + listing-detail tools to Hermes via a burner-account Chrome profile, live as of 2026-09-18, consumed interactively by the Marketplace Navigator bot (Meta Muse Spark) and by two monitor-mode sweeps (wishlist roundup + hourly %-off steal sweep).",
-   "updated": "2026-09-18",
-   "folder": ""
-  },
-  {
-   "name": "Homelab",
-   "status": "active",
-   "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
-   "updated": "2026-09-27",
-   "folder": ""
-  },
-  {
-   "name": "Homelab Service Ideas — 2026-09-17 Swarm",
-   "status": "active",
-   "summary": "Swarm research (7 agents + 3,172 r/selfhosted comments) on self-hosted services for the P520: tiered add-list, measured disk/RAM limits, verified skip-list; nothing deployed yet.",
-   "updated": "2026-09-17",
-   "folder": "Homelab"
-  },
-  {
-   "name": "Obsidian RAG Assistant",
-   "status": "active",
-   "summary": "Build a private AI second brain that retrieves, cites, organizes, and eventually updates Ayush's Obsidian knowledge safely.",
-   "updated": "2026-08-05",
-   "folder": ""
-  },
-  {
-   "name": "Omarchy Tablet Mode",
-   "status": "active",
-   "summary": "Omarchy tablet mode — touch-first UX and automatic posture switching for 2-in-1 convertibles (Chuwi Minibook X), gaming tablets (ROG Flow Z13), and pure tablets; demo-ready for the Omarchy SF meetup 2026-09-30.",
-   "updated": "2026-09-05",
-   "folder": ""
-  },
-  {
-   "name": "Personal Website",
-   "status": "active",
-   "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
-   "updated": "2026-09-17",
-   "folder": ""
-  },
-  {
-   "name": "RetroPie CRT Setup",
-   "status": "active",
-   "summary": "Configure RetroPie on the Raspberry Pi 4 so games play on the Sony WEGA KV-20FS12 CRT with a drop-in ROM folder, plus Kodi so videos in a media folder are playable — best possible CRT experience.",
-   "updated": "2026-08-21",
-   "folder": ""
-  },
-  {
-   "name": "Vault",
-   "status": "active",
-   "summary": "Refactor the vault into a skills-first, self-managing, archive-free knowledge base — audit done, execution in progress.",
-   "updated": "2026-08-21",
-   "folder": ""
-  },
-  {
-   "name": "YouTube Data Deep Dive",
-   "status": "active",
-   "summary": "Pull Ayush's personal YouTube data (watch history, saved, liked, subscriptions, playlists) and build a profile of what it says about him. Public findings done; 3 routes to private data (Takeout / CDP cookies / manual sign-in).",
-   "updated": "2026-08-11",
-   "folder": ""
-  },
-  {
-   "name": "Album Ranking App",
-   "status": "planned",
-   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Start by end of Aug 2026.",
-   "updated": "2026-08-19",
-   "folder": "Planned"
-  },
-  {
-   "name": "Audio Hub",
-   "status": "planned",
-   "summary": "Audio Hub: one web app bundling a by-ear EQ trainer (sweep a sine, mark peaks/dips, export an 8-band PEQ), a feed of recent audio articles, and a library of articles explaining audio terms.",
-   "updated": "2026-09-22",
-   "folder": "Planned"
-  },
-  {
-   "name": "Electronics Workbench",
-   "status": "planned",
-   "summary": "Set up a practical electronics and creative-technology workbench for the sister's room.",
-   "updated": "2026-08-07",
-   "folder": ""
-  },
-  {
-   "name": "P520 GPU Passthrough Runbook",
-   "status": "reference",
-   "summary": "P520 GPU passthrough runbook + always-accessible OS VM plan (Ubuntu + Fedora)",
-   "updated": "2026-09-16",
-   "folder": "Homelab"
-  },
-  {
-   "name": "School VM Runbook",
-   "status": "reference",
-   "summary": "Runbook for school-vm (P520 vmid 201): the on-demand Ubuntu 24.04 Linux box holding CMPE 131/142/148 coursework. Access, lifecycle, class-work recipes, snapshots/restore, and verified state.",
-   "updated": "2026-09-17",
-   "folder": "Homelab"
-  },
-  {
-   "name": "Social Bookmark Sync",
-   "status": "planned",
-   "summary": "Auto-sync Reddit saves, X bookmarks (and TikTok favorites later) into Hermes + Obsidian vault. Shared ingest pipeline, script-first, zero-token when idle. Deferred — build routes researched.",
-   "updated": "2026-08-11",
-   "folder": "Planned"
-  },
-  {
-   "name": "Voice Assistant",
-   "status": "planned",
-   "summary": "Deferred local-first voice interface to Hermes using Raspberry Pi audio hardware and Home Assistant.",
-   "updated": "2026-08-05",
-   "folder": "Planned"
-  }
- ],
+ "projects": [],
  "tasks": {
   "open": 31,
   "overdue": 5,
@@ -1013,18 +860,6 @@
    "self": true
   },
   {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "Ayupadpro",
    "os": "iOS",
    "online": true,
@@ -1032,6 +867,12 @@
   },
   {
    "name": "Canyon",
+   "os": "windows",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
    "os": "windows",
    "online": true,
    "self": false
@@ -1055,20 +896,32 @@
    "self": false
   },
   {
+   "name": "school-vm",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "tank",
    "os": "linux",
    "online": true,
    "self": false
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "ayumacair",
+   "os": "macOS",
    "online": false,
    "self": false
   },
   {
-   "name": "Creekwood",
-   "os": "windows",
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "ayumad",
+   "os": "linux",
    "online": false,
    "self": false
   },
@@ -1093,12 +946,6 @@
   {
    "name": "M16",
    "os": "windows",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "school-vm",
-   "os": "linux",
    "online": false,
    "self": false
   },
@@ -1133,21 +980,23 @@
    "summary": "loadout valuation pass — all 27 remaining unvalued product notes researched via a 6-agent fan-out and valued; ownership coverage now 127/127, loadout est $41,490. Also: Lumix LX100 eval (no purchase)."
   }
  ],
- "errors": {},
+ "errors": {
+  "projects": "RuntimeError: TimeoutError: cannot read /Users/ayumad/Documents/Main from this process — macOS TCC denies ~/Documents to launchd/cron contexts. Grant the Hermes gateway Files & Folders (or Full Disk Access) access."
+ },
  "now": {
-  "active_projects": 12,
-  "planned_projects": 5,
+  "active_projects": 0,
+  "planned_projects": 0,
   "open_tasks": 31,
   "overdue_tasks": 5,
   "assignments_upcoming": 8,
   "devices_online": 9,
   "devices_total": 18,
   "jobs_failing": 0,
-  "jobs_total": 8,
+  "jobs_total": 7,
   "homelab_reachable": true,
   "services_up": 33,
   "services_total": 33,
-  "guests_running": 4,
+  "guests_running": 5,
   "containers_running": 44,
   "pools_online": 2,
   "pools_total": 2,
