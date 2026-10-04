@@ -1,11 +1,46 @@
 [
  {
+  "date": "2026-10-04",
+  "summary": "Session journal for 2026-10-04: NAS name-resolution fix, Mac mini remote-access recipes, infra recovery (vault sync timeouts, WebUI crash, publisher merge), paused crons resumed, journal pipeline back.",
+  "highlights": [
+   "NAS connect failure root-caused: reachable by IP everywhere, but the short name `nas` only resolves on some subnets — documented in the NAS skill; same lesson applied to reaching the Mac mini from the MacBook (tailnet IP / MagicDNS, not `.local`).",
+   "Overnight infra damage from the Oct 4 01:18 Hermes update (vault-sync timeouts, WebUI pyyaml crash-loop) diagnosed and largely fixed before 6 AM; vault git is back in sync with origin.",
+   "The journal pipeline itself had been dead since Sep 29 (job paused, overdue since Sep 30) — today's entry is the first since; Oct 1-3 remain unwritten and need backfill.",
+   "Open follow-ups: WebUI wrapper hardening, publisher merge push, stray SSH session on the mini, physical TCC/FDA visit."
+  ]
+ },
+ {
+  "date": "2026-10-03",
+  "summary": "Session journal for 2026-10-03: 1 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-10-02",
+  "summary": "Session journal for 2026-10-02: routine cron day, no user sessions.",
+  "highlights": []
+ },
+ {
+  "date": "2026-10-01",
+  "summary": "Session journal for 2026-10-01: 1 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
+  "date": "2026-09-30",
+  "summary": "Session journal for 2026-09-30: 1 user session(s), routine cron.",
+  "highlights": []
+ },
+ {
   "date": "2026-09-29",
   "summary": "Session journal for 2026-09-29: routine cron day, all systems green, no user sessions.",
   "highlights": [
    "All cron jobs healthy; no failures or errors across 69 total runs.",
    "Automated systems keeping homelab monitoring, media sync, and school drive organization running smoothly on a day with no direct user interaction.",
-   "Reminders sync log last updated 2026-09-27; no Apple↔Google task changes today."
+   "Reminders sync log last updated 2026-09-27; no Apple↔Google task changes today.",
+   "All 15 active cron jobs ran green (427 fires, 0 failures)",
+   "Vault: 543 notes, 0 invalid, git clean",
+   "Disk: 92% / 20.8 GB free (stable)",
+   "SER8: offline 9+ days now — still needs a physical power cycle",
+   "Todo-cleanup: 9 items unchanged — all still blocked on human steps"
   ]
  },
  {
