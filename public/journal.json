@@ -12,25 +12,32 @@
    "**SER8 is back online** — ping + BatchMode SSH OK on 100.73.4.38 after ~14 days down. `sudo` still requires a password, so the Prometheus node-exporter install stays a human step; the cleanup entry was rewritten to say the machine is reachable and only the sudo password blocks it.",
    "**todo-cleanup reconciled**: 9 items kept, none dropped; disk stat updated to 94% / 13.7 GB free (worse than Sep 29's 19 GB — the sudo pass is the single biggest win left); state.db size corrected to 1.2 GB per doctor's live reading.",
    "**Vault validation after edits**: all counters 0 (548 notes, 0 invalid, 0 duplicates). One uncommitted path (the auto-generated validation report) left for the 15-min sync — not committed by hand.",
-   "**Still open for Ayush**: the 9 todo-cleanup items (top: the sudo disk pass). Not queued here — agent-side, tracked elsewhere: Oct 1–3 journal backfill (vaultkeeper job's own open item), publisher merge push, WebUI wrapper hardening (the infra recovery thread's work — not touched by this pass)."
+   "**Still open for Ayush**: the 9 todo-cleanup items (top: the sudo disk pass). Not queued here — agent-side, tracked elsewhere: Oct 1–3 journal backfill (vaultkeeper job's own open item), publisher merge push, WebUI wrapper hardening (the infra recovery thread's work — not touched by this pass).",
+   "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook (100.73.7.67); Full Disk Access live for every Hermes process (all three grants working — no clicks left)."
   ]
  },
  {
   "date": "2026-10-03",
-  "summary": "Session journal for 2026-10-03: webui workspace session; routine cron.",
-  "highlights": []
+  "summary": "Session journal for 2026-10-03: quiet day; WebUI wishlist request hit vault read failures as evening sync wedges began (both resolved in the Oct 4 recovery window).",
+  "highlights": [
+   "Vault access regressed during the evening (reads failing from ~5 PM, sync timeouts from ~6 PM) — fully fixed in the Oct 4 recovery window.",
+   "Otherwise quiet."
+  ]
  },
  {
   "date": "2026-10-02",
-  "summary": "Session journal for 2026-10-02: routine cron day, no user sessions.",
-  "highlights": []
+  "summary": "Session journal for 2026-10-02: quiet day — routine cron only, no interactive sessions.",
+  "highlights": [
+   "Quiet, fully green day — the fleet ran unattended end-to-end."
+  ]
  },
  {
   "date": "2026-10-01",
-  "summary": "Session journal for 2026-10-01: vault/TCC access loss diagnosed, Full Disk Access restored, WebUI crash-loop fixed.",
+  "summary": "Session journal for 2026-10-01: cron-fleet follow-through; vault TCC access loss diagnosed and Full Disk Access restored in the evening; WebUI crash-loop fixed.",
   "highlights": [
-   "Vault access (macOS TCC Full Disk Access) loss diagnosed and the grant restored; vault sync confirmed working.",
-   "Hermes WebUI crash-loop root-caused (PM-runtime relaunch) and fixed the same night."
+   "Vault TCC diagnosis → Full Disk Access restored on the mini in the evening; vault chain verified end-to-end.",
+   "Reminders sync failure root-caused; Mnemosyne env fixed and memory back online.",
+   "WebUI crash-loop fixed the same night."
   ]
  },
  {
