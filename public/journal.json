@@ -1,12 +1,15 @@
 [
  {
   "date": "2026-10-04",
-  "summary": "Session journal for 2026-10-04: NAS name-resolution fix, Mac mini remote-access recipes, infra recovery (vault sync timeouts, WebUI crash, publisher merge), paused crons resumed, journal pipeline back.",
+  "summary": "Session journal for 2026-10-04: NAS/Mac-mini access recipes, infra recovery (vault sync, WebUI, publisher), FDA restored, journals backfilled, weekly review, behavioral STAR drafts, auto-theme idea.",
   "highlights": [
    "NAS connect failure root-caused: reachable by IP everywhere, but the short name `nas` only resolves on some subnets — documented in the NAS skill; same lesson applied to reaching the Mac mini from the MacBook (tailnet IP / MagicDNS, not `.local`).",
    "Overnight infra damage from the Oct 4 01:18 Hermes update (vault-sync timeouts, WebUI pyyaml crash-loop) diagnosed and largely fixed before 6 AM; vault git is back in sync with origin.",
    "The journal pipeline itself had been dead since Sep 29 (job paused, overdue since Sep 30) — today's entry is the first since; Oct 1-3 remain unwritten and need backfill.",
    "Open follow-ups: WebUI wrapper hardening, publisher merge push, stray SSH session on the mini, physical TCC/FDA visit.",
+   "Weekly review for Sep 28–Oct 4 published: infra recovery, SER8 back, publisher merge as the week's wins; next week's top item is still the Mac mini sudo disk pass (94% full).",
+   "Interview prep went vault-grounded: 3 behavioral STAR drafts from real projects (EchoSphere leadership, Jellyfin failure, RAIDZ depth); topics moved ❓→🟡, live rehearsal pending.",
+   "Omarchy auto-theme idea captured with prior art (Tēma / `omarchy-auto-theme` / `omarchy-walltheme`) — evaluate/adapt before building.",
    "**Baseline verified**: config v49 ✓; doctor clean (no security advisories, TCC anchor active + signing identity stable, state.db 1.2 GB, runtime venv `ba5a18b79a` staged); 11 profiles, all gateways running; default cron store 8 active + 4 paused (Ayush-paused — untouched); vaultkeeper store healthy (Vault auto-sync last run 05:45 ok). Hermes v0.21.5 (`2026.9.24`), 14 commits behind upstream — update deferred.",
    "**False alarm closed**: the raw repo launcher `~/.hermes/hermes-agent/hermes` needs Python ≥3.10 and dies under system python3.9 (`str | object` TypeError); the real shim `~/.hermes/hermes-agent/.hermes/bin/hermes` (FDA python 3.14.7) works fine — gateway/cron contexts were never affected. No fix needed; terminal probes should use the shim.",
    "**SER8 is back online** — ping + BatchMode SSH OK on 100.73.4.38 after ~14 days down. `sudo` still requires a password, so the Prometheus node-exporter install stays a human step; the cleanup entry was rewritten to say the machine is reachable and only the sudo password blocks it.",

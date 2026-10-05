@@ -1,5 +1,78 @@
 [
  {
+  "date": "2026-10-04",
+  "weekStart": "2026-09-27",
+  "summary": "Weekly review for Sep 28–Oct 4, 2026: post-update infra recovery (vault FDA, WebUI, sync), SER8 back online, publisher merged, journals backfilled.",
+  "sections": [
+   {
+    "heading": null,
+    "items": [
+     "Sep 28–Oct 4, 2026"
+    ]
+   },
+   {
+    "heading": "✅ This Week's Highlights",
+    "items": [
+     "**1. Post-Update Infra Recovery — All Three Breakages Fixed** — Two Hermes updates this week each broke something, and both were diagnosed and repaired. The Sep 30 update dropped macOS Full Disk Access (vault unreadable from Hermes until Oct 1 evening); the Oct 4 01:18 update dropped pyyaml from the managed env (WebUI crash-loop, 323 import failures). Both fixed; Full Disk Access now live for every Hermes process; WebUI permanently on a self-healing managed wrapper. Same window also fixed: Reminders↔Google Tasks sync (wedged EventKit — cleared via `remindctl authorize`), Mnemosyne packages re-homed into the runtime venv (memory consolidation works again; Sleep job rewired to a zero-token script driver), and vault auto-sync hardened (fail fast + reap stuck children) after the Oct 3 evening git-transfer hangs.",
+     "**2. Vault Access Chain Restored + Journals Backfilled** — The journal pipeline had been dead since Sep 29 (Session Journal + Deploy and Daily Cleanup paused) — both resumed Oct 4, and the missing Oct 1–3 session summaries were backfilled from session records, cron DBs, and git history. Vault git is back in sync with origin; validation clean at 548 notes, 0 invalid.",
+     "**3. SER8 Back Online After ~14 Days** — Ping + BatchMode SSH verified on 100.73.4.38. The Prometheus node-exporter install is now blocked only on Ayush's sudo password.",
+     "**4. Publisher Repo Divergence Resolved** — `agent/public-knowledge-site` had drifted 519 sync commits vs 3 upstream; origin/main merged behind safety tag `backup-premerge-20261004` and pushed. ayumad.me and the blog both serving 200s.",
+     "**5. NAS Name-Resolution Failure Root-Caused** — The Mac mini's \"connect to server 'nas'\" dialog could never succeed — the short name `nas` doesn't resolve from the mini's subnet (the share answers on :445 by IP everywhere). Pattern recorded: hand clients `smb://<ip>` / tailnet IP / MagicDNS `ayumacmini`, not `.local`."
+    ]
+   },
+   {
+    "heading": "📊 Project Progress",
+    "items": [
+     "**Homelab** — P520 health sweep Sep 28 caught three unclean overnight reboots (no kernel/MCE/ECC trace; power-side suspected, cause unresolved — recurrence watch). Two standing gaps flagged: `tank` has never been scrubbed (zfsutils cron guard not firing) and PVE notification emails stuck in the postfix queue since Sep 24 (ntfy reroute proposed). Backups healthy (all 6 guests, nightly 03:30–03:42). Monitor blind spot: 30-min checks can't see 2–3 min outages — reboot/uptime alert proposed. SER8 online again (see highlights). Radarr remux queue still draining (25 × Remux-2160p, 1.46 TB, peer-limited — verification task parked until it settles). CMPE 142 proj2 (UNIX shell + multithreaded sorting) pushed to `Ayumad/school-cmpe142` Oct 1 with source, READMEs, and execution records.",
+     "**Personal Website (ayumad.me)** — no new deploys all week: deployed hash `index-Y5FAYJlE.js` unchanged since Sep 20 (weekly reviews on /journal). Dashboard refreshes (every 3h) and nightly journal updates committing daily. Open PRs #29 (content refresh, last touched Aug 19) and #30 (public boundary remediation, Sep 08) both stale. Publisher merge restored the sync pipeline.",
+     "**Hermes / Automation** — ~2,300 fires across the week; the only failure cluster was the Oct 3 evening vault auto-sync timeouts (5–7 bad runs), fixed by the sync-script hardening. Mnemosyne consolidation restored after the Sep 30 guard regression. Hermes v0.21.5 (2026.9.24), 14 commits behind upstream — update deferred.",
+     "**Vault** — 548 notes, all validation counters 0 (Oct 4). Git in sync. Loadout touch-ups: iPhone 17 valuation reviewed (band retained $580–700; unlock-eligibility date still unrecorded), P520 config text corrected, P520 3060 board-partner discrepancy flagged (Gigabyte record vs MSI subsystem).",
+     "**Interview Prep** — daily 6 PM cron green all week; Oct 2 session covered NUMA effects & huge pages (first-touch policy, TLB pressure, HugeTLB vs THP, numastat/perf c2c diagnosis). Flagged weak areas: multi-level page tables, CFS/RT scheduling, priority inversion. High-risk untested: SWE fundamentals (trees, DP, sorting, recursion) and behavioral rehearsal.",
+     "**EchoSphere** — no session activity logged this week (third week running; likely between meetings or outside Hermes).",
+     "**School** — POLS-15 midterm graded 34/50 (flagged Sep 28 for review). CMPE 142 proj2 shipped Oct 1.",
+     "**Articles** — no movement; 3 open (CRT journey, AI as a Computer, Sunshine writeup)."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**9 human-blocked items unchanged** — top of list: the Mac mini sudo disk pass (disk now 94% / 13.7 GB free, worse than Sep 29 — ~53 GB reclaimable). Also: Xfinity gateway config, Namecheap jellyfin A record, state.db compaction (1.2 GB, needs a maintenance window), Notes scripting hung (since Sep 18), stale `API_SERVER_KEY` line in config.yaml, Hue↔HA pairing (physical button), SER8 node-exporter (now just sudo password), Jellyfin remux verification (waiting on the queue).",
+     "**P520 unclean reboot cluster** — cause unresolved (power-side suspected); recurrence watch active; the health monitor can't currently see short outages.",
+     "**`tank` never scrubbed** — no scrub/trim in pool history; zfsutils cron guard not firing.",
+     "**PVE postfix mail queue stuck** — since Sep 24; ntfy reroute proposed.",
+     "**Photon daily send limit** — decision still awaited: trim relays / stagger the Sunday review / add a fallback channel / upgrade to Photon Pro ($25/mo). Late-day fires hit the cap first.",
+     "**Framework 13 remote access** — still unverified (offline as of the Sep 10 re-check); blocks agent-side Omarchy work.",
+     "**Alienware m16** — power-failure diagnosis + Dell warranty check (ST 210CKS3) still open from last week."
+    ]
+   },
+   {
+    "heading": "🔜 Next Week's Focus",
+    "items": [
+     "1. **Mac mini sudo disk pass** — 53 GB reclaim; the disk is getting worse (94%).",
+     "2. **Xfinity gateway + Namecheap** — DHCP reservations, Pi-hole DNS flip, Minecraft/Jellyfin port forwards, `jellyfin` A record — unblocks public Jellyfin access.",
+     "3. **P520 maintenance** — first ZFS scrub on `tank` + fix the scrub cron guard; reroute PVE notifications to ntfy; keep watching reboot recurrence.",
+     "4. **SER8 node-exporter** — one sudo command away now that the machine is reachable.",
+     "5. **Alienware m16** — adapter/DC jack/battery-disconnect test + Dell warranty lookup (carried from last week).",
+     "6. **Photon delivery decision** — pick one of the four options so cron relays stop riding the daily cap.",
+     "7. **Interview prep** — attack the flagged high-risk gaps: trees/DP/sorting/recursion, multi-level page tables, behavioral story rehearsal.",
+     "8. **Omarchy auto-theme generator** — evaluate prior art (Tēma, `omarchy-auto-theme`, `omarchy-walltheme`) before building from scratch (idea added Oct 4)."
+    ]
+   },
+   {
+    "heading": "📝 Miscellaneous",
+    "items": [
+     "**Cron fleet**: ~2,300 fires across the week; only bad runs were the Oct 3–4 vault auto-sync cluster (fixed). Daily Brief, Interview Prep, Mnemosyne, watchdogs all green.",
+     "**False alarm closed**: the repo-root `hermes` launcher needs Python ≥3.10 and dies under system python3.9 — the real shim (`.hermes/bin/hermes`, FDA python 3.14.7) is what gateway/cron use. Terminal probes should use the shim; no fix needed.",
+     "**iPhone 17** — valuation reviewed Oct 4; band retained ($580–700, est $640); one live sealed T-Mobile-locked eBay comp left for a human price-check; unlock-eligibility date still unrecorded.",
+     "**Omarchy auto-theme idea** captured in TODO Master with prior art (Oct 4).",
+     "**Vault validation** (Oct 4): 548 notes, 0 invalid metadata, 0 duplicates, 0 unresolved/ambiguous wikilinks.",
+     "**GitHub this week**: 85 commits across ayumad.github.io (30, incl. the publisher merge), ayumad.me (30, dashboard+journal automation), ayumad.vault (24), school-cmpe142 (1). No PRs or issues authored.",
+     "**\"Stray\" SSH session on the mini** — identified as Ayush's own MacBook (100.73.7.67); not an intruder."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-09-27",
   "weekStart": "2026-09-20",
   "summary": "Weekly review for Sep 21–27, 2026: loadout fully valued ($41,490), Jellyfin library upgraded to remux, phones purchased, NAS reorg complete.",
