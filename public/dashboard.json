@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-04T18:25:22-07:00",
+ "generated_at": "2026-10-05T00:26:22-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -17,21 +17,21 @@
   },
   "disk": {
    "used_pct": 94,
-   "free_gb": 11.4,
+   "free_gb": 11.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 301,
-   "month_in_m": 2.1,
-   "month_out_m": 0.61,
-   "month_cache_m": 25.1,
-   "week_calls": 510,
-   "week_out_m": 0.95,
+   "month_calls": 311,
+   "month_in_m": 2.2,
+   "month_out_m": 0.64,
+   "month_cache_m": 25.8,
+   "week_calls": 433,
+   "week_out_m": 0.8,
    "cache_share": 92,
    "top_models": [
     {
      "model": "mimo-v2.5",
-     "calls": 151
+     "calls": 161
     },
     {
      "model": "deepseek-flash",
@@ -42,20 +42,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-04T18:25:23-07:00",
+  "checked_at": "2026-10-05T00:26:23-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 393841,
+   "uptime_s": 415502,
    "load": [
-    "4.47",
-    "8.56",
-    "9.45"
+    "13.13",
+    "12.38",
+    "11.56"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 30.8,
+   "mem_used_gb": 30.7,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -141,7 +141,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 75.7,
+    "alloc_gb": 75.9,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -158,8 +158,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 12800.0,
-    "free_gb": 5826.56,
+    "alloc_gb": 12902.4,
+    "free_gb": 5713.92,
     "health": "ONLINE",
     "used_pct": 69,
     "scan": "no scrub on record",
@@ -231,38 +231,38 @@
    },
    {
     "name": "tank",
-    "used": "9.98T",
-    "avail": "4.42T"
+    "used": "10.1T",
+    "avail": "4.34T"
    },
    {
     "name": "tank/MM",
-    "used": "901K",
-    "avail": "4.42T"
+    "used": "991K",
+    "avail": "4.34T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "4.42T"
+    "avail": "4.34T"
    },
    {
     "name": "tank/backups",
     "used": "897G",
-    "avail": "4.42T"
+    "avail": "4.34T"
    },
    {
     "name": "tank/media",
-    "used": "6.85T",
-    "avail": "4.42T"
+    "used": "6.93T",
+    "avail": "4.34T"
    },
    {
     "name": "tank/photos",
     "used": "286M",
-    "avail": "4.42T"
+    "avail": "4.34T"
    },
    {
     "name": "tank/shared",
     "used": "4.79M",
-    "avail": "4.42T"
+    "avail": "4.34T"
    },
    {
     "name": "tank/timemachine",
@@ -271,11 +271,11 @@
    }
   ],
   "snapshots": 289,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-05_01:00:04_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-05_07:00:06_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_10_04-03_33_52.vma.zst",
-   "newest_age_h": 14.7,
+   "newest_age_h": 20.8,
    "count": 54,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -341,14 +341,14 @@
   },
   "media": {
    "torrents": 162,
-   "torrents_active": 93,
-   "down_mbps": 4.33,
+   "torrents_active": 91,
+   "down_mbps": 4.72,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 102,
-   "mount_free": "4.5T free of 11T (60% used)"
+   "radarr_queue": 101,
+   "mount_free": "4.4T free of 11T (61% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -371,7 +371,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 64,
+    "ms": 47,
     "code": 200
    },
    {
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 117,
+    "ms": 86,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 56,
+    "ms": 37,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 41,
+    "ms": 29,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 41,
+    "ms": 30,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 39,
+    "ms": 28,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 41,
+    "ms": 34,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 39,
+    "ms": 30,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 66,
+    "ms": 44,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 97,
+    "ms": 81,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 38,
+    "ms": 33,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 69,
+    "ms": 44,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 35,
+    "ms": 65,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 36,
+    "ms": 43,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 54,
+    "ms": 47,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 110,
+    "ms": 137,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 66,
+    "ms": 57,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 50,
+    "ms": 51,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 14,
+    "ms": 15,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 77,
+    "ms": 100,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 16,
+    "ms": 15,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 15,
+    "ms": 25,
     "code": 401
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 56,
+    "ms": 80,
     "code": 200
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 19,
+    "ms": 23,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 40,
+    "ms": 35,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 28,
+    "ms": 32,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 49,
+    "ms": 75,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 32,
+    "ms": 35,
     "code": 200
    },
    {
@@ -651,7 +651,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 14,
+    "ms": 17,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 7,
     "code": null
    },
    {
@@ -671,7 +671,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 26,
+    "ms": 14,
     "code": 200
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 16,
+    "ms": 24,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 70,
+    "ms": 84,
     "code": 200
    }
   ],
@@ -984,6 +984,12 @@
    "self": true
   },
   {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -991,6 +997,12 @@
   },
   {
    "name": "Canyon",
+   "os": "windows",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
    "os": "windows",
    "online": true,
    "self": false
@@ -1032,20 +1044,8 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": false,
-   "self": false
-  },
-  {
    "name": "Ayupadpro",
    "os": "iOS",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "Creekwood",
-   "os": "windows",
    "online": false,
    "self": false
   },
@@ -1089,7 +1089,7 @@
  "journal": [
   {
    "date": "2026-10-04",
-   "summary": "NAS name-resolution fix, Mac mini remote-access recipes, infra recovery (vault sync timeouts, WebUI crash, publisher merge), paused crons resumed, journal pipeline back."
+   "summary": "NAS/Mac-mini access recipes, infra recovery (vault sync, WebUI, publisher), FDA restored, journals backfilled, weekly review, behavioral STAR drafts, auto-theme idea."
   },
   {
    "date": "2026-10-03",
@@ -1111,7 +1111,7 @@
   "open_tasks": 31,
   "overdue_tasks": 5,
   "assignments_upcoming": 5,
-  "devices_online": 8,
+  "devices_online": 10,
   "devices_total": 18,
   "jobs_failing": 0,
   "jobs_total": 8,
