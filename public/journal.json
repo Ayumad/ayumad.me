@@ -1,5 +1,16 @@
 [
  {
+  "date": "2026-10-05",
+  "summary": "Session journal for 2026-10-05: Monday ops — foreman roster audit flags 8 dead skill refs + coder trim; vault metrics 549 notes all-green; daily brief, kanban idle, interview prep SWE rotation; no Codex.",
+  "highlights": [
+   "**Roster audit is the day's substance:** fleet is healthiest it's been (0 failures, vault-sync wedge confirmed fully resolved), but 8 dead SOUL skill references across 4 bots went undetected until today's live probes — 3 fixes proposed and waiting on Ayush's word.",
+   "**Vault all-green at 549 notes** — validator counters zero for the second straight week; metrics/validation reports auto-regenerated.",
+   "**Monday cadence ran clean end-to-end** — brief, dispatch, metrics, monitor, interview prep; interview session is parked waiting on Ayush's question-count reply.",
+   "**Writing thread quietly alive:** the \"Layers of Working with AI\" brainstorm doc got a full review pass in the WebUI tonight; still a working doc, no draft yet.",
+   "No Codex threads; no Decision Log entries; reminders sync quiet (no changes since Sep 27 log entry)."
+  ]
+ },
+ {
   "date": "2026-10-04",
   "summary": "Session journal for 2026-10-04: NAS/Mac-mini access recipes, infra recovery (vault sync, WebUI, publisher), FDA restored, journals backfilled, weekly review, behavioral STAR drafts, auto-theme idea.",
   "highlights": [
@@ -16,7 +27,11 @@
    "**todo-cleanup reconciled**: 9 items kept, none dropped; disk stat updated to 94% / 13.7 GB free (worse than Sep 29's 19 GB — the sudo pass is the single biggest win left); state.db size corrected to 1.2 GB per doctor's live reading.",
    "**Vault validation after edits**: all counters 0 (548 notes, 0 invalid, 0 duplicates). One uncommitted path (the auto-generated validation report) left for the 15-min sync — not committed by hand.",
    "**Still open for Ayush**: the 9 todo-cleanup items (top: the sudo disk pass). Not queued here — agent-side, tracked elsewhere: Oct 1–3 journal backfill (vaultkeeper job's own open item), publisher merge push, WebUI wrapper hardening (the infra recovery thread's work — not touched by this pass).",
-   "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook (100.73.7.67); Full Disk Access live for every Hermes process (all three grants working — no clicks left)."
+   "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook (100.73.7.67); Full Disk Access live for every Hermes process (all three grants working — no clicks left).",
+   "**\"FAILING Daily Cleanup\" flag = false alarm.** The brief's `1/1 — running: (no message)` row was this run's own in-flight execution (claimed 23:00:22, `finished_at: NULL` because the agent hadn't replied yet). Verified across all 11 cron stores: zero stuck-running rows >90 min, zero non-ok runs in the last 26 h except the already-resolved overnight vaultkeeper `vault_git_sync.sh` timeouts (6× 3600 s + 1 scheduler-restart `unknown`, all incidents closed 03:21). Nothing to ack.",
+   "**todo-cleanup reconciled**: 9 items kept, none dropped — every one is still genuinely human-blocked (verified the `API_SERVER_KEY` line is still in config.yaml at line 729, was ~722; SER8 node-exporter port probe blocked by the cron security scanner's raw-IP-HTTP rule, so that entry stays as \"blocked on sudo password\"). Disk stat refreshed to **94.8% / 12.6 GB free** (measured 23:07; 13.7 GB this morning, 19 GB Sep 29 — still shrinking).",
+   "**Vault validation after edits**: run after this append — counters reported in the job's final message.",
+   "**Still open for Ayush**: the same 9 todo-cleanup items (top: the sudo disk pass — biggest win at ~53 GB, and the volume is at its tightest yet)."
   ]
  },
  {
