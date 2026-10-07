@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-07T00:34:23-07:00",
+ "generated_at": "2026-10-07T06:35:17-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -16,22 +16,22 @@
    "episodic": 525
   },
   "disk": {
-   "used_pct": 95,
-   "free_gb": 10.0,
+   "used_pct": 88,
+   "free_gb": 23.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 425,
-   "month_in_m": 3.0,
-   "month_out_m": 1.01,
-   "month_cache_m": 39.3,
-   "week_calls": 509,
-   "week_out_m": 1.16,
+   "month_calls": 452,
+   "month_in_m": 3.5,
+   "month_out_m": 1.11,
+   "month_cache_m": 48.0,
+   "week_calls": 510,
+   "week_out_m": 1.25,
    "cache_share": 93,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 217
+     "calls": 244
     },
     {
      "model": "mimo-v2.5",
@@ -42,16 +42,16 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-07T00:34:24-07:00",
+  "checked_at": "2026-10-07T06:35:18-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 588782,
+   "uptime_s": 610436,
    "load": [
-    "14.83",
-    "15.76",
-    "16.02"
+    "3.56",
+    "7.91",
+    "10.97"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -141,7 +141,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 77.1,
+    "alloc_gb": 77.4,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -158,10 +158,10 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 14028.8,
-    "free_gb": 4567.04,
+    "alloc_gb": 14131.2,
+    "free_gb": 4454.4,
     "health": "ONLINE",
-    "used_pct": 75,
+    "used_pct": 76,
     "scan": "no scrub on record",
     "never_scrubbed": true,
     "errors": "No known data errors",
@@ -231,38 +231,38 @@
    },
    {
     "name": "tank",
-    "used": "11.0T",
-    "avail": "3.44T"
+    "used": "11.1T",
+    "avail": "3.35T"
    },
    {
     "name": "tank/MM",
     "used": "1.05M",
-    "avail": "3.44T"
+    "avail": "3.35T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "3.44T"
+    "avail": "3.35T"
    },
    {
     "name": "tank/backups",
-    "used": "999G",
-    "avail": "3.44T"
+    "used": "1.03T",
+    "avail": "3.35T"
    },
    {
     "name": "tank/media",
-    "used": "7.72T",
-    "avail": "3.44T"
+    "used": "7.77T",
+    "avail": "3.35T"
    },
    {
     "name": "tank/photos",
-    "used": "322M",
-    "avail": "3.44T"
+    "used": "340M",
+    "avail": "3.35T"
    },
    {
     "name": "tank/shared",
-    "used": "4.97M",
-    "avail": "3.44T"
+    "used": "5.06M",
+    "avail": "3.35T"
    },
    {
     "name": "tank/timemachine",
@@ -271,11 +271,11 @@
    }
   ],
   "snapshots": 302,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-07_07:00:09_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-07_13:00:04_hourly",
   "scrub_timers": 0,
   "backups": {
-   "newest": "vzdump-qemu-202-2026_10_06-03_34_55.vma.zst",
-   "newest_age_h": 20.8,
+   "newest": "vzdump-qemu-202-2026_10_07-03_36_06.vma.zst",
+   "newest_age_h": 2.8,
    "count": 54,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -341,14 +341,14 @@
   },
   "media": {
    "torrents": 147,
-   "torrents_active": 63,
-   "down_mbps": 2.05,
+   "torrents_active": 62,
+   "down_mbps": 1.14,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
    "radarr_queue": 66,
-   "mount_free": "3.5T free of 11T (67% used)"
+   "mount_free": "3.4T free of 11T (68% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -371,7 +371,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 43,
+    "ms": 38,
     "code": 200
    },
    {
@@ -381,7 +381,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 86,
+    "ms": 89,
     "code": 200
    },
    {
@@ -391,7 +391,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 23,
+    "ms": 21,
     "code": 200
    },
    {
@@ -401,7 +401,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 23,
+    "ms": 21,
     "code": 200
    },
    {
@@ -411,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 25,
+    "ms": 23,
     "code": 200
    },
    {
@@ -421,7 +421,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 20,
+    "ms": 19,
     "code": 200
    },
    {
@@ -431,7 +431,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 25,
+    "ms": 22,
     "code": 200
    },
    {
@@ -441,7 +441,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 23,
+    "ms": 22,
     "code": 200
    },
    {
@@ -451,7 +451,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 30,
+    "ms": 33,
     "code": 200
    },
    {
@@ -461,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 72,
+    "ms": 59,
     "code": 200
    },
    {
@@ -471,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 22,
+    "ms": 21,
     "code": 200
    },
    {
@@ -481,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 41,
+    "ms": 37,
     "code": 200
    },
    {
@@ -491,7 +491,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 25,
+    "ms": 34,
     "code": 200
    },
    {
@@ -501,7 +501,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 43,
+    "ms": 32,
     "code": 200
    },
    {
@@ -511,7 +511,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 59,
+    "ms": 45,
     "code": 200
    },
    {
@@ -521,7 +521,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 20,
+    "ms": 15,
     "code": 200
    },
    {
@@ -531,7 +531,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 17,
+    "ms": 15,
     "code": 200
    },
    {
@@ -541,7 +541,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 41,
+    "ms": 35,
     "code": 200
    },
    {
@@ -551,7 +551,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 16,
+    "ms": 11,
     "code": 200
    },
    {
@@ -561,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 67,
+    "ms": 62,
     "code": 200
    },
    {
@@ -571,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 12,
+    "ms": 15,
     "code": 200
    },
    {
@@ -581,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 31,
+    "ms": 20,
     "code": 401
    },
    {
@@ -591,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 31,
+    "ms": 28,
     "code": 200
    },
    {
@@ -601,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 18,
+    "ms": 19,
     "code": 200
    },
    {
@@ -611,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 42,
+    "ms": 28,
     "code": 200
    },
    {
@@ -621,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 19,
+    "ms": 18,
     "code": 200
    },
    {
@@ -631,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 19,
+    "ms": 13,
     "code": 200
    },
    {
@@ -641,7 +641,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 36,
+    "ms": 29,
     "code": 200
    },
    {
@@ -661,7 +661,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 7,
+    "ms": 8,
     "code": null
    },
    {
@@ -681,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 17,
+    "ms": 15,
     "code": 200
    },
    {
@@ -691,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 17,
+    "ms": 15,
     "code": 200
    }
   ],
@@ -856,38 +856,26 @@
   }
  ],
  "tasks": {
-  "open": 31,
-  "overdue": 5,
+  "open": 28,
+  "overdue": 0,
   "items": [
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
-    "due": "2026-09-19",
-    "overdue": true
-   },
-   {
-    "title": "Engineering desktop: install engineering software (SolidWorks)",
-    "list": "Hardware",
-    "due": "2026-09-20",
-    "overdue": true
+    "due": "2026-10-10",
+    "overdue": false
    },
    {
     "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
     "list": "Hardware",
-    "due": "2026-09-20",
-    "overdue": true
-   },
-   {
-    "title": "Set up Retroid Pocket Nova (Sunshine/Moonlight pairing)",
-    "list": "Daily",
-    "due": "2026-09-21",
-    "overdue": true
+    "due": "2026-10-10",
+    "overdue": false
    },
    {
     "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
     "list": "Tech",
-    "due": "2026-09-30",
-    "overdue": true
+    "due": "2026-10-12",
+    "overdue": false
    },
    {
     "title": "Cancel subscription of rtings.com",
@@ -927,6 +915,18 @@
    },
    {
     "title": "Trust the Caddy root CA on your devices + make .lan resolve (file: ~/Downloads/homelab-caddy-root.crt)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Finish 3 service setups: Cleanuparr (qBit+arr creds in UI), Vaultwarden account, Open WebUI -> ai-vm Ollama connection",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Deploy Open WebUI + Qdrant on docker-vm (front end for the pending RAG assistant; vault index is ready)",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -990,12 +990,6 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -1047,6 +1041,12 @@
    "name": "tank",
    "os": "linux",
    "online": true,
+   "self": false
+  },
+  {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": false,
    "self": false
   },
   {
@@ -1108,10 +1108,10 @@
  "now": {
   "active_projects": 12,
   "planned_projects": 5,
-  "open_tasks": 31,
-  "overdue_tasks": 5,
+  "open_tasks": 28,
+  "overdue_tasks": 0,
   "assignments_upcoming": 5,
-  "devices_online": 12,
+  "devices_online": 11,
   "devices_total": 18,
   "jobs_failing": 0,
   "jobs_total": 8,
