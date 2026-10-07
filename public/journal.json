@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-06",
+  "summary": "Session journal for 2026-10-06: Tuesday — brief (CMPE 131 quiz day), interview-prep self-study: Dijkstra + cycle detection + trees, knowledge map updated; fleet 427 runs 0 failed; site green; no Codex.",
+  "highlights": [
+   "**Interview prep quietly productive:** one self-study packet closed out the graphs gap list (Dijkstra, cycle detection, topological sort) and off-boards trees from \"completely untested, high risk\" to 🟡 — three self-study sessions' worth of material in one run. DP, sorting, and recursion are now the entire remaining untested SWE surface; live rehearsal is the recurring gap everywhere.",
+   "**Fleet fully green:** 427 runs / 27 jobs / 11 stores, zero failures in 24h — vault auto-sync continues clean past the Oct 4 wedge fix; site monitor confirms ayumad.me current.",
+   "**School day load:** CMPE 131 quiz (Ch 22–23, Respondus) at 4:15 PM + sprint spec meeting 5:15 PM were today's live commitments; the brief keeps flagging Google Drives reorg (overdue since Sep 19) and Album Ranking App kickoff (overdue since Sep 30).",
+   "**Still parked on Ayush:** foreman's 3 roster fixes (dead skill installs, coder trim, photon disable), sudo disk pass (~53 GB reclaim on a 95%-full volume), and interview-prep live rehearsal. No Codex threads; no new Decision Log entries."
+  ]
+ },
+ {
   "date": "2026-10-05",
   "summary": "Session journal for 2026-10-05: Monday ops — foreman roster audit flags 8 dead skill refs + coder trim; vault metrics 549 notes all-green; daily brief, kanban idle, interview prep SWE rotation; no Codex.",
   "highlights": [
@@ -7,7 +17,14 @@
    "**Vault all-green at 549 notes** — validator counters zero for the second straight week; metrics/validation reports auto-regenerated.",
    "**Monday cadence ran clean end-to-end** — brief, dispatch, metrics, monitor, interview prep; interview session is parked waiting on Ayush's question-count reply.",
    "**Writing thread quietly alive:** the \"Layers of Working with AI\" brainstorm doc got a full review pass in the WebUI tonight; still a working doc, no draft yet.",
-   "No Codex threads; no Decision Log entries; reminders sync quiet (no changes since Sep 27 log entry)."
+   "No Codex threads; no Decision Log entries; reminders sync quiet (no changes since Sep 27 log entry).",
+   "The \"FAILING Daily Cleanup\" row in the brief was confirmed a false alarm — this run's own in-flight execution. Incidents list shows only closed Sep 10 items; zero detected incidents, zero real failures in 26h.",
+   "Verified the stale `API_SERVER_KEY` line is still at config.yaml line 729 (unchanged since Oct 4).",
+   "todo-cleanup reconciled: 9 items, none dropped, all genuinely still waiting on Ayush. Disk stat refreshed — volume now **95% / 10.8 GB free** (worse than 12.6 GB last night and 13.7 GB Oct 4 morning). state.db measured at **1.30 GB**.",
+   "Vault validator clean post-edits: 550 notes, all counters 0. Git 0 uncommitted, 0 unpushed.",
+   "SER8 node-exporter install stays blocked on Ayush's sudo password (cron scanner also blocks the raw-IP probe — item kept as-is).",
+   "The three roster-audit fixes (dead skill installs, coder trim, photon platform disable) need Ayush's approval — not agent-side work.",
+   "Disk keeps shrinking with no agent-side reclaim available; the sudo disk pass is the single biggest win left (~53 GB)."
   ]
  },
  {
