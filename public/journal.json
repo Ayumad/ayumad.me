@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-08",
+  "summary": "Session journal for 2026-10-08: CMPE 148 Project 2 built + submitted; Retroid Nova full audit (PS2 launch fix, metadata, NAS offload) + Syncthing saves plan; fleet 426 runs 0 failed; no Codex.",
+  "highlights": [
+   "CMPE 148 Project 2 went from spec to submitted in one night: `mini-tcp.c` built and battery-tested on school-vm (15% loss / 10% reorder, byte-identical), Canvas submission task closed at 10:56 AM — both of today's due items (Project 2, CMPE 142 HW6&7) cleared.",
+   "The Retroid Pocket Nova is properly sorted now: the PS2 \"emulator not found\" mystery was a broken find-rules typo in the community ES-DE build — root-caused, overridden, FFX verified booting; 195 games metadata-enriched; archives offloaded to NAS. Syncthing saves sync Nova ↔ CRT Pi is the next step.",
+   "Fleet stayed fully green (426 runs, 0 failed) and the vault validated clean for the second consecutive check (552 notes, zero defects).",
+   "Open threads: Liquid Crystal ROM missing from the Nova card; Syncthing mesh not yet stood up; simulator-runtime decision (~47 GB) still parked; interview-prep menu unanswered three nights running."
+  ]
+ },
+ {
   "date": "2026-10-07",
   "summary": "Session journal for 2026-10-07: Wednesday brief (POLS 15, ACM workshop, CMPE 148 UDP project due); AI/ML interview menu posted, unanswered; fleet 427 runs 0 failed; reminders sync 6 changes; no Codex.",
   "highlights": [
