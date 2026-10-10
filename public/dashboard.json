@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-09T18:46:10-07:00",
+ "generated_at": "2026-10-10T00:47:10-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -16,46 +16,46 @@
    "episodic": 529
   },
   "disk": {
-   "used_pct": 89,
-   "free_gb": 21.1,
+   "used_pct": 90,
+   "free_gb": 20.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 846,
-   "month_in_m": 6.8,
-   "month_out_m": 2.71,
-   "month_cache_m": 108.7,
-   "week_calls": 641,
-   "week_out_m": 2.26,
+   "month_calls": 888,
+   "month_in_m": 7.0,
+   "month_out_m": 2.81,
+   "month_cache_m": 114.4,
+   "week_calls": 683,
+   "week_out_m": 2.36,
    "cache_share": 94,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 565
+     "calls": 573
     },
     {
      "model": "mimo-v2.5",
-     "calls": 281
+     "calls": 315
     }
    ]
   }
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-09T18:46:11-07:00",
+  "checked_at": "2026-10-10T00:47:11-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 827095,
+   "uptime_s": 848749,
    "load": [
-    "5.08",
-    "8.22",
-    "10.67"
+    "5.33",
+    "10.89",
+    "11.54"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 31.7,
+   "mem_used_gb": 31.6,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -141,7 +141,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 77.5,
+    "alloc_gb": 77.7,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -158,8 +158,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 15052.8,
-    "free_gb": 3543.04,
+    "alloc_gb": 15155.2,
+    "free_gb": 3512.32,
     "health": "ONLINE",
     "used_pct": 81,
     "scan": "no scrub on record",
@@ -186,7 +186,7 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "955M",
+    "used": "957M",
     "avail": "7.14G"
    },
    {
@@ -232,42 +232,42 @@
    {
     "name": "tank",
     "used": "11.8T",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/MM",
     "used": "1.32M",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/backups",
     "used": "1.13T",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/media",
-    "used": "8.35T",
-    "avail": "2.64T"
+    "used": "8.38T",
+    "avail": "2.61T"
    },
    {
     "name": "tank/photos",
     "used": "376M",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/shared",
     "used": "7.48M",
-    "avail": "2.64T"
+    "avail": "2.61T"
    },
    {
     "name": "tank/timemachine",
@@ -276,11 +276,11 @@
    }
   ],
   "snapshots": 316,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-10_01:00:11_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-10_07:00:03_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_10_09-03_34_40.vma.zst",
-   "newest_age_h": 15.1,
+   "newest_age_h": 21.1,
    "count": 54,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -346,14 +346,14 @@
   },
   "media": {
    "torrents": 147,
-   "torrents_active": 47,
-   "down_mbps": 0.8,
+   "torrents_active": 49,
+   "down_mbps": 1.98,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 54,
-   "mount_free": "2.7T free of 11T (74% used)"
+   "radarr_queue": 53,
+   "mount_free": "2.7T free of 11T (75% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -376,7 +376,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 543,
+    "ms": 1315,
     "code": 200
    },
    {
@@ -386,7 +386,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 609,
+    "ms": 1366,
     "code": 200
    },
    {
@@ -396,7 +396,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 516,
+    "ms": 1307,
     "code": 200
    },
    {
@@ -406,7 +406,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 521,
+    "ms": 1025,
     "code": 200
    },
    {
@@ -416,7 +416,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 520,
+    "ms": 1305,
     "code": 200
    },
    {
@@ -426,7 +426,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 520,
+    "ms": 1024,
     "code": 200
    },
    {
@@ -436,7 +436,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 531,
+    "ms": 1304,
     "code": 200
    },
    {
@@ -446,7 +446,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 524,
+    "ms": 1305,
     "code": 200
    },
    {
@@ -456,7 +456,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 541,
+    "ms": 1312,
     "code": 200
    },
    {
@@ -466,7 +466,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 584,
+    "ms": 1352,
     "code": 200
    },
    {
@@ -476,7 +476,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 524,
+    "ms": 1023,
     "code": 200
    },
    {
@@ -486,7 +486,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 539,
+    "ms": 1311,
     "code": 200
    },
    {
@@ -496,7 +496,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 50,
+    "ms": 306,
     "code": 200
    },
    {
@@ -506,7 +506,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 36,
+    "ms": 316,
     "code": 200
    },
    {
@@ -516,7 +516,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 60,
+    "ms": 328,
     "code": 200
    },
    {
@@ -526,7 +526,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 75,
+    "ms": 26,
     "code": 200
    },
    {
@@ -536,7 +536,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 48,
+    "ms": 12,
     "code": 200
    },
    {
@@ -546,7 +546,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 59,
+    "ms": 58,
     "code": 200
    },
    {
@@ -556,7 +556,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 24,
+    "ms": 25,
     "code": 200
    },
    {
@@ -566,7 +566,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 104,
+    "ms": 63,
     "code": 200
    },
    {
@@ -576,7 +576,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 15,
+    "ms": 28,
     "code": 200
    },
    {
@@ -586,7 +586,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 20,
+    "ms": 27,
     "code": 401
    },
    {
@@ -596,7 +596,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 90,
+    "ms": 28,
     "code": 200
    },
    {
@@ -606,7 +606,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 23,
+    "ms": 21,
     "code": 200
    },
    {
@@ -616,7 +616,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 47,
+    "ms": 40,
     "code": 200
    },
    {
@@ -626,7 +626,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 57,
+    "ms": 33,
     "code": 200
    },
    {
@@ -636,7 +636,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 79,
+    "ms": 12,
     "code": 200
    },
    {
@@ -646,7 +646,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 45,
+    "ms": 30,
     "code": 200
    },
    {
@@ -656,7 +656,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 37,
+    "ms": 22,
     "code": 200
    },
    {
@@ -666,7 +666,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 15,
+    "ms": 6,
     "code": null
    },
    {
@@ -676,7 +676,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 23,
+    "ms": 19,
     "code": 200
    },
    {
@@ -696,7 +696,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 22,
+    "ms": 18,
     "code": 200
    }
   ],
@@ -813,28 +813,28 @@
   {
    "name": "Workshop 1 — The Landscape",
    "status": "active",
-   "summary": "Workshop 1 of the ACM Fall 2026 'Intro to Agentic AI' series — the landscape: what models, agents, and harnesses are, the models actually in use (Oct 2026), the wider stack (providers, routers, runtimes, environments), and the honest list of things to be aware of.",
+   "summary": "Workshop 1 of the ACM Fall 2026 'Intro to Agentic AI' series — the landscape: what models, agents, and harnesses are, how we got here, the models in use (Oct 2026), benchmarks, the wider stack (providers, routers, runtimes, environments), and the honest list of things to be aware of.",
    "updated": "2026-10-09",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "Workshop 2 — Using AI Well",
    "status": "active",
-   "summary": "Workshop 2 of the ACM Fall 2026 'Intro to Agentic AI' series — using AI well: context management, choosing the right model, effort levels, and working modes (ask / plan / agent / debug / goal).",
+   "summary": "Workshop 2 of the ACM Fall 2026 'Intro to Agentic AI' series — using AI well: context management, choosing the right model, effort levels, working modes (ask / plan / agent / debug / goal), and the full working loop.",
    "updated": "2026-10-09",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "Workshop 3 — Local and Personal AI",
    "status": "active",
-   "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, and what hardware actually runs them.",
+   "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, the hardware that runs them, and how to start.",
    "updated": "2026-10-09",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "Workshop 4 — MCP 101",
    "status": "active",
-   "summary": "Workshop 4 of the ACM Fall 2026 'Intro to Agentic AI' series — MCP 101, co-presented with an industry professional: what MCP is, live demo, building a server, security, and the production view.",
+   "summary": "Workshop 4 of the ACM Fall 2026 'Intro to Agentic AI' series — MCP 101, co-presented with an industry professional: the problem MCP solves, protocol concepts, live demo, build-along, security, and the production view.",
    "updated": "2026-10-09",
    "folder": "Intro to Agentic AI Workshops"
   },
@@ -896,7 +896,7 @@
   }
  ],
  "tasks": {
-  "open": 30,
+  "open": 31,
   "overdue": 2,
   "items": [
    {
@@ -936,6 +936,12 @@
     "overdue": false
    },
    {
+    "title": "Photon/iMessage sidecar 500 — hermes send --to photon failing (journal relay 2026-10-09 undelivered; non-retryable sidecar_internal)",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
     "title": "Verify the Jellyfin remux upgrade landed (209 titles imported; ~weeks of downloads)",
     "list": "Tech",
     "due": null,
@@ -961,12 +967,6 @@
    },
    {
     "title": "Wire Pocket ID SSO in front of the admin UIs (Caddy + internal TLS went live 2026-09-17)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Trust the Caddy root CA on your devices + make .lan resolve (file: ~/Downloads/homelab-caddy-root.crt)",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -1128,6 +1128,10 @@
  ],
  "journal": [
   {
+   "date": "2026-10-09",
+   "summary": "Friday brief (EchoSphere check-in, POLS extra credit due 10/10); ACM 'Intro to Agentic AI' 4-workshop series drafted + homelab workshop doc; fleet 422 runs 0 failed; no Codex."
+  },
+  {
    "date": "2026-10-08",
    "summary": "CMPE 148 Project 2 built + submitted (Canvas verify task added; snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex."
   },
@@ -1138,17 +1142,13 @@
   {
    "date": "2026-10-06",
    "summary": "Tuesday — brief (CMPE 131 quiz day), interview-prep self-study: Dijkstra + cycle detection + trees, knowledge map updated; fleet 427 runs 0 failed; site green; no Codex."
-  },
-  {
-   "date": "2026-10-05",
-   "summary": "Monday ops — foreman roster audit flags 8 dead skill refs + coder trim; vault metrics 549 notes all-green; daily brief, kanban idle, interview prep SWE rotation; no Codex."
   }
  ],
  "errors": {},
  "now": {
   "active_projects": 17,
   "planned_projects": 5,
-  "open_tasks": 30,
+  "open_tasks": 31,
   "overdue_tasks": 2,
   "assignments_upcoming": 4,
   "devices_online": 10,
