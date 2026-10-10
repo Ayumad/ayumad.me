@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-09T12:45:10-07:00",
+ "generated_at": "2026-10-09T18:46:10-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -16,42 +16,42 @@
    "episodic": 529
   },
   "disk": {
-   "used_pct": 91,
-   "free_gb": 18.8,
+   "used_pct": 89,
+   "free_gb": 21.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 801,
-   "month_in_m": 6.4,
-   "month_out_m": 2.56,
-   "month_cache_m": 104.3,
-   "week_calls": 603,
-   "week_out_m": 2.14,
+   "month_calls": 846,
+   "month_in_m": 6.8,
+   "month_out_m": 2.71,
+   "month_cache_m": 108.7,
+   "week_calls": 641,
+   "week_out_m": 2.26,
    "cache_share": 94,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 522
+     "calls": 565
     },
     {
      "model": "mimo-v2.5",
-     "calls": 279
+     "calls": 281
     }
    ]
   }
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-09T12:45:11-07:00",
+  "checked_at": "2026-10-09T18:46:11-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 805429,
+   "uptime_s": 827095,
    "load": [
-    "21.71",
-    "14.44",
-    "12.44"
+    "5.08",
+    "8.22",
+    "10.67"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -141,7 +141,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 78.0,
+    "alloc_gb": 77.5,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -159,7 +159,7 @@
     "name": "tank",
     "size_gb": 18636.8,
     "alloc_gb": 15052.8,
-    "free_gb": 3624.96,
+    "free_gb": 3543.04,
     "health": "ONLINE",
     "used_pct": 81,
     "scan": "no scrub on record",
@@ -186,7 +186,7 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "953M",
+    "used": "955M",
     "avail": "7.14G"
    },
    {
@@ -216,7 +216,7 @@
    },
    {
     "name": "ssd/vm-201-disk-0",
-    "used": "44.6G",
+    "used": "44.8G",
     "avail": "3.04T"
    },
    {
@@ -231,43 +231,43 @@
    },
    {
     "name": "tank",
-    "used": "11.7T",
-    "avail": "2.70T"
+    "used": "11.8T",
+    "avail": "2.64T"
    },
    {
     "name": "tank/MM",
     "used": "1.32M",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/backups",
     "used": "1.13T",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/media",
-    "used": "8.29T",
-    "avail": "2.70T"
+    "used": "8.35T",
+    "avail": "2.64T"
    },
    {
     "name": "tank/photos",
     "used": "376M",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/shared",
     "used": "7.48M",
-    "avail": "2.70T"
+    "avail": "2.64T"
    },
    {
     "name": "tank/timemachine",
@@ -275,12 +275,12 @@
     "avail": "1.65T"
    }
   ],
-  "snapshots": 312,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-09_19:00:01_hourly",
+  "snapshots": 316,
+  "snapshot_newest": "tank/shared@autosnap_2026-10-10_01:00:11_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_10_09-03_34_40.vma.zst",
-   "newest_age_h": 9.0,
+   "newest_age_h": 15.1,
    "count": 54,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -346,14 +346,14 @@
   },
   "media": {
    "torrents": 147,
-   "torrents_active": 52,
-   "down_mbps": 4.2,
+   "torrents_active": 47,
+   "down_mbps": 0.8,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 55,
-   "mount_free": "2.8T free of 11T (74% used)"
+   "radarr_queue": 54,
+   "mount_free": "2.7T free of 11T (74% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -376,7 +376,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 2042,
+    "ms": 543,
     "code": 200
    },
    {
@@ -386,7 +386,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 2099,
+    "ms": 609,
     "code": 200
    },
    {
@@ -396,7 +396,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 1027,
+    "ms": 516,
     "code": 200
    },
    {
@@ -406,7 +406,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 1025,
+    "ms": 521,
     "code": 200
    },
    {
@@ -416,7 +416,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 1026,
+    "ms": 520,
     "code": 200
    },
    {
@@ -426,7 +426,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 1025,
+    "ms": 520,
     "code": 200
    },
    {
@@ -436,7 +436,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 1031,
+    "ms": 531,
     "code": 200
    },
    {
@@ -446,7 +446,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 1031,
+    "ms": 524,
     "code": 200
    },
    {
@@ -456,7 +456,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 2039,
+    "ms": 541,
     "code": 200
    },
    {
@@ -466,7 +466,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 2085,
+    "ms": 584,
     "code": 200
    },
    {
@@ -476,7 +476,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 1024,
+    "ms": 524,
     "code": 200
    },
    {
@@ -486,7 +486,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 2050,
+    "ms": 539,
     "code": 200
    },
    {
@@ -496,7 +496,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 1043,
+    "ms": 50,
     "code": 200
    },
    {
@@ -506,7 +506,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 1058,
+    "ms": 36,
     "code": 200
    },
    {
@@ -516,7 +516,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 1058,
+    "ms": 60,
     "code": 200
    },
    {
@@ -526,7 +526,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 1024,
+    "ms": 75,
     "code": 200
    },
    {
@@ -536,7 +536,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 1057,
+    "ms": 48,
     "code": 200
    },
    {
@@ -546,7 +546,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 1037,
+    "ms": 59,
     "code": 200
    },
    {
@@ -556,7 +556,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 1009,
+    "ms": 24,
     "code": 200
    },
    {
@@ -566,7 +566,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 84,
+    "ms": 104,
     "code": 200
    },
    {
@@ -576,7 +576,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 26,
+    "ms": 15,
     "code": 200
    },
    {
@@ -586,7 +586,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 27,
+    "ms": 20,
     "code": 401
    },
    {
@@ -596,7 +596,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 159,
+    "ms": 90,
     "code": 200
    },
    {
@@ -606,7 +606,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 32,
+    "ms": 23,
     "code": 200
    },
    {
@@ -616,7 +616,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 39,
+    "ms": 47,
     "code": 200
    },
    {
@@ -626,7 +626,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 29,
+    "ms": 57,
     "code": 200
    },
    {
@@ -636,7 +636,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 141,
+    "ms": 79,
     "code": 200
    },
    {
@@ -646,7 +646,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 55,
+    "ms": 45,
     "code": 200
    },
    {
@@ -656,7 +656,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 22,
+    "ms": 37,
     "code": 200
    },
    {
@@ -666,7 +666,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 13,
+    "ms": 15,
     "code": null
    },
    {
@@ -676,7 +676,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 21,
+    "ms": 23,
     "code": 200
    },
    {
@@ -686,7 +686,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 40,
+    "ms": 23,
     "code": 200
    },
    {
@@ -696,7 +696,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 38,
+    "ms": 22,
     "code": 200
    }
   ],
@@ -727,10 +727,17 @@
  },
  "projects": [
   {
+   "name": "00 Series Overview",
+   "status": "active",
+   "summary": "Series hub for the ACM Fall 2026 'Intro to Agentic AI' workshop series (4 sessions): overview, format conventions, session links, open questions.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
    "name": "ACM Fall 2026 Workshops",
    "status": "active",
-   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Agentic Coding series Oct 7–Dec 2.",
-   "updated": "2026-08-27",
+   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Intro to Agentic AI series Oct 7–Dec 2 (outlines drafted 10-09).",
+   "updated": "2026-10-09",
    "folder": ""
   },
   {
@@ -804,6 +811,34 @@
    "folder": ""
   },
   {
+   "name": "Workshop 1 — The Landscape",
+   "status": "active",
+   "summary": "Workshop 1 of the ACM Fall 2026 'Intro to Agentic AI' series — the landscape: what models, agents, and harnesses are, the models actually in use (Oct 2026), the wider stack (providers, routers, runtimes, environments), and the honest list of things to be aware of.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 2 — Using AI Well",
+   "status": "active",
+   "summary": "Workshop 2 of the ACM Fall 2026 'Intro to Agentic AI' series — using AI well: context management, choosing the right model, effort levels, and working modes (ask / plan / agent / debug / goal).",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 3 — Local and Personal AI",
+   "status": "active",
+   "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, and what hardware actually runs them.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 4 — MCP 101",
+   "status": "active",
+   "summary": "Workshop 4 of the ACM Fall 2026 'Intro to Agentic AI' series — MCP 101, co-presented with an industry professional: what MCP is, live demo, building a server, security, and the production view.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
    "name": "YouTube Data Deep Dive",
    "status": "active",
    "summary": "Pull Ayush's personal YouTube data (watch history, saved, liked, subscriptions, playlists) and build a profile of what it says about him. Public findings done; 3 routes to private data (Takeout / CDP cookies / manual sign-in).",
@@ -862,19 +897,19 @@
  ],
  "tasks": {
   "open": 30,
-  "overdue": 0,
+  "overdue": 2,
   "items": [
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
     "due": "2026-10-10",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
     "list": "Hardware",
     "due": "2026-10-10",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
@@ -940,7 +975,7 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 5,
+  "upcoming": 4,
   "window_days": 7,
   "later": 27,
   "courses": [
@@ -949,12 +984,6 @@
    "Class"
   ],
   "next": [
-   {
-    "title": "Chapter 6&7 HW",
-    "course": "CMPE-142",
-    "due": "2026-10-09",
-    "when": "2026-10-09T23:59:00+00:00"
-   },
    {
     "title": "EXTRA CREDIT: Artificial Intelligence & Election Security Panel Discussion (EVENT IS 10/7; RESPONSES DUE 10/10)",
     "course": "Class",
@@ -1117,11 +1146,11 @@
  ],
  "errors": {},
  "now": {
-  "active_projects": 12,
+  "active_projects": 17,
   "planned_projects": 5,
   "open_tasks": 30,
-  "overdue_tasks": 0,
-  "assignments_upcoming": 5,
+  "overdue_tasks": 2,
+  "assignments_upcoming": 4,
   "devices_online": 10,
   "devices_total": 19,
   "jobs_failing": 0,
