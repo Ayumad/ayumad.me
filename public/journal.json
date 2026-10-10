@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-10-09",
+  "summary": "Session journal for 2026-10-09: Friday brief (EchoSphere check-in, POLS extra credit due 10/10); ACM 'Intro to Agentic AI' 4-workshop series drafted + homelab workshop doc; fleet 422 runs 0 failed; no Codex.",
+  "highlights": [
+   "**ACM workshop season stocked for October**: the \"Intro to Agentic AI\" series went from placeholder to four full outlines (vault + 4 regenerated Google Docs) in one sitting, and a separate intro-to-homelab doc landed in the ACM Drive folder — Oct 14 and the mid-October SCE collab both have material ready.",
+   "**Vault stayed healthy through the burst**: 558 notes validated clean, changes auto-committed (`5f59736`); the new workshop folder follows the canonical-note pattern (frontmatter, hub, cross-links).",
+   "**Fleet green with one soft spot**: 422 runs, 0 failures, but Homelab Health Monitor's latest delivery failed — delivery, not execution; flag if it recurs.",
+   "**Quiet on the memory/Codex front**: no Codex threads and no new Mnemosyne memories today — the day's output was all in the vault and Google Docs."
+  ]
+ },
+ {
   "date": "2026-10-08",
   "summary": "Session journal for 2026-10-08: CMPE 148 Project 2 built + submitted (Canvas verify task added; snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex.",
   "highlights": [
    "CMPE 148 Project 2 went from spec to submitted in one night: `mini-tcp.c` built and battery-tested on school-vm (15% loss / 10% reorder, byte-identical), Canvas submission task closed at 10:56 AM. Caveat: the school snapshot still shows Project 2 overdue (no graded email yet) — a verify-on-Canvas task now guards it.",
    "The Retroid Pocket Nova is properly sorted now: the PS2 \"emulator not found\" mystery was a broken find-rules typo in the community ES-DE build — root-caused, overridden, FFX verified booting; 195 games metadata-enriched; archives offloaded to NAS. Syncthing saves sync Nova ↔ CRT Pi is the next step.",
    "Fleet stayed fully green (426 runs, 0 failed) and the vault validated clean for the second consecutive check (552 notes, zero defects).",
-   "Open threads: Liquid Crystal ROM missing from the Nova card; Syncthing mesh not yet stood up; simulator-runtime decision (~47 GB) still parked; interview-prep menu unanswered three nights running."
+   "Open threads: Liquid Crystal ROM missing from the Nova card; Syncthing mesh not yet stood up; simulator-runtime decision (~47 GB) still parked; interview-prep menu unanswered three nights running.",
+   "**Closed:** the stale TODO Master focus line \"CMPE 148: submit Project 2\" — the submission actually landed this morning (Google Task completed 10:56 AM); checked off and archived to Completed Tasks, with the School-list verify task still guarding the Canvas side until a graded email arrives. Kanban tidied: the \"Review the 2 Loadout notes past `review_by`\" focus item retired (validator reviews_due=0) and the state.db size note corrected to the live 1.2 GB.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out at 30 s, unchanged since 09-18, still needs a quit/reopen on the mini. SER8 :9100 closed on the tailnet IP (node exporter still not installed); the LAN IP 10.0.0.105 didn't answer a TCP probe at all from the mini — confirm SER8's current DHCP address before pointing Prometheus at it. config.yaml API_SERVER_KEY duplicate still present, still line 725 — hand-edit only.",
+   "**Verified healthy:** last night's daily_cleanup_brief.py fix (its own in-flight row counted as a failure) held — no FAILING flag, 0 cron incidents, 425 runs/24 h across 15 jobs. Vault 553 notes, all validator counters 0, git clean, 0 unpushed.",
+   "**Still needs Ayush:** 9 todo-cleanup items — top is the held simulator-runtime removal (~47 GB; the data volume is back to 92% / 20.2 GB free after Xcode 27.0 landed overnight, so it's the cheapest big win). Also untouched: state.db compaction (needs a gateway-stopped window), the Notes wedge (GUI restart), Xfinity + Namecheap logins.",
+   "Gap noted: the simulator-runtime cleanup item still has no Google Tasks Tech twin — this job is barred from writing task surfaces, so a pass with write access should add it."
   ]
  },
  {
