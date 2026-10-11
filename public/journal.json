@@ -1,12 +1,28 @@
 [
  {
+  "date": "2026-10-10",
+  "summary": "Session journal for 2026-10-10: Saturday brief — POLS extra-credit responses + CMPE 142 Ch 8 HW due today; AI/ML interview menu posted (unanswered); morning Photon delivery failures; no Codex.",
+  "highlights": [
+   "**Quiet Saturday, deadline-heavy**: the brief put four hard items on today — POLS extra-credit responses, CMPE 142 Ch 8 HW, P520 BIOS WOL, Drives reorg — with the two Canvas verifications from Oct 8 still open behind them.",
+   "**Interview prep offered, not taken**: the AI/ML menu went up at 6 PM; unanswered, so the rotation stays put for the next session.",
+   "**Delivery channel remains the weak link**: morning sends to Photon failed while every run itself was green — the free-tier cooldown story from yesterday, recovered by evening.",
+   "**Nothing churned in the vault**: no note updates, no new decisions, no Codex threads — this entry is the day's only write."
+  ]
+ },
+ {
   "date": "2026-10-09",
   "summary": "Session journal for 2026-10-09: Friday brief (EchoSphere check-in, POLS extra credit due 10/10); ACM 'Intro to Agentic AI' 4-workshop series drafted + homelab workshop doc; fleet 422 runs 0 failed; no Codex.",
   "highlights": [
    "**ACM workshop season stocked for October**: the \"Intro to Agentic AI\" series went from placeholder to four full outlines (vault + 4 regenerated Google Docs) in one sitting, and a separate intro-to-homelab doc landed in the ACM Drive folder — Oct 14 and the mid-October SCE collab both have material ready.",
    "**Vault stayed healthy through the burst**: 558 notes validated clean, changes auto-committed (`5f59736`); the new workshop folder follows the canonical-note pattern (frontmatter, hub, cross-links).",
    "**Fleet green with one soft spot**: 422 runs, 0 failures, but Homelab Health Monitor's latest delivery failed — delivery, not execution; flag if it recurs.",
-   "**Quiet on the memory/Codex front**: no Codex threads and no new Mnemosyne memories today — the day's output was all in the vault and Google Docs."
+   "**Quiet on the memory/Codex front**: no Codex threads and no new Mnemosyne memories today — the day's output was all in the vault and Google Docs.",
+   "**Root-caused + fixed the repeating Homelab Health Monitor delivery_failed** (7 runs today, 18:21→23:01 — last night's journal flagged it as \"watch if it repeats\"; it repeated). Two real bugs, both in `~/.hermes/scripts/homelab-monitor.sh`: (1) `ping -c1 -W3` — on macOS `-W` is **milliseconds**, so the Omarchy probe had a 3 ms budget against a 13–430 ms cross-subnet path and flapped a false \"not responding to ping\" roughly every other run; (2) the signature dedup hashed raw numbers, so the slow tank drift (80→81%, filled by the remux queue) re-hashed as a brand-new issue set on every tick. Each re-alert burned one of Photon's free-tier 3-sends-until-you-reply; once spent, the sidecar 500s (\"Recipient has not replied; cooling period limits sends to 3/day\") and everything else — journal relay, briefs — starved. Fixed: `-W 3000`, and digits normalized to `#` before hashing (⚠️→❌ escalation still re-alerts). Verified with three real runs: Omarchy now ✓ reachable, and an unchanged re-run produces empty stdout (silent). Genuine warning that remains: tank at 81% — expected, Radarr's 2 TB floor stops the remux pull on its own.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out (40 s bound), unchanged since 09-18; still needs a quit/reopen on the mini. SER8: alive over tailnet (ping + SSH), **LAN IP confirmed 10.0.0.105 straight from the host** (`ip -4 -br addr`) — closes the long-standing \"confirm its current DHCP address\" question; :9100 still closed and `sudo -n` confirms the password is still required, so the node-exporter install is one sudo command away. `jellyfin.ayumad.me` still doesn't resolve (Namecheap item stays open). config.yaml duplicate `API_SERVER_KEY` still present, now line 727. state.db re-measured: 1.21 GB.",
+   "**Scout Marketplace Sweep**: paused by Ayush at 03:17 after its Craigslist fetch failures; the delivery_failed the brief showed is the stale 03:06 run — its degraded-notice pending file is settled, nothing stuck, not re-enabled.",
+   "**Next task-surface pass**: the Google Tasks Tech item \"Photon/iMessage sidecar 500 — non-retryable sidecar_internal\" is mis-premised — the root cause is the Photon free-tier cooldown, not the sidecar; close it. (This job is barred from task surfaces.)",
+   "**Verified healthy:** fleet 422 runs / 14 jobs, 0 incidents; vault 559 notes all validator counters 0; git clean, 0 unpushed; disk 91% / 22.5 GB free (up from 20.2 GB yesterday).",
+   "**Still needs Ayush:** 9 todo-cleanup items — top is still the held simulator-runtime removal (~47 GB; cheapest big win at current disk pressure)."
   ]
  },
  {
