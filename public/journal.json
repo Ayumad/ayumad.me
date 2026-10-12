@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-11",
+  "summary": "Session journal for 2026-10-11: Sunday — weekly review Oct 5–11 written + relayed; brief (Ch 8 HW due, delivery lost to Photon cooldown); interview prep AI/ML; Vercel prune staged; fleet green; no Codex.",
+  "highlights": [
+   "**Week wrapped and delivered** — the Oct 5–11 review is in the vault and on iMessage; the week's proof points are the Oct 8 double submission (CMPE 148 P2 + CMPE 142 HW6&7) and the stocked ACM workshop series.",
+   "**Photon delivery failure is now a three-morning streak** (Oct 9–11) — root cause known (engagement limit, 3 sends/day until a reply); the free fix is one reply to the thread, fallback options still parked.",
+   "**Interview prep crossed to the AI/ML rotation** — transformers and RAG identified as the live-practice gaps; backprop/optimizers join DP/sorting/recursion as the untested surface.",
+   "**Vercel prune staged** (2:20 PM) — first run next Sunday; deployment storage at 75% keeps bleeding until the Confirm tap."
+  ]
+ },
+ {
   "date": "2026-10-10",
   "summary": "Session journal for 2026-10-10: Saturday brief — POLS extra-credit responses + CMPE 142 Ch 8 HW due today; AI/ML interview menu posted (unanswered); morning Photon delivery failures; no Codex.",
   "highlights": [

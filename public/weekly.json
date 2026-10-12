@@ -1,5 +1,71 @@
 [
  {
+  "date": "2026-10-11",
+  "weekStart": "2026-10-04",
+  "summary": "Weekly review for Oct 5–11, 2026: CMPE 148 P2 shipped in a night, ACM agentic-AI workshop series built, Nova PS2 fixed, two cron bug classes patched, Vercel prune staged.",
+  "sections": [
+   {
+    "heading": "✅ This Week's Highlights",
+    "items": [
+     "**1. CMPE 148 Project 2 + CMPE 142 HW6&7 all submitted (Oct 8)** — `mini-tcp.c` — a Go-Back-N reliable UDP file transfer (seq numbers/ACKs, RTO retransmission, checksum, simulated loss/reorder) — went from spec to Canvas in one overnight session, battery-tested on school-vm end-to-end (300 KB at 15% loss / 10% reorder, byte-identical, both sides exit 0). The test recipe is recorded in the [[02 Projects/Active/Homelab/School VM Runbook|School VM Runbook]]; both commits pushed to `Ayumad/school-cmpe148` / `Ayumad/school-cmpe142`. A 2-item Canvas verification queue in [[03 Areas/Education/School|School]] guards both until graded emails land (the Canvas import never removes items, so the snapshot still shows Project 2 \"overdue\" on purpose).",
+     "**2. ACM October workshop season fully stocked (Oct 9)** — The \"Intro to Agentic AI\" series went from placeholder to four full outlines in one sitting — The Landscape / Using AI Well / Local and Personal AI / MCP 101 with industry guest — grounded in a fresh Sept-2026 model-landscape survey, all published as Google Docs and mirrored as five canonical vault notes ([[02 Projects/Intro to Agentic AI Workshops/00 Series Overview|series hub]]). A separate 45-minute \"Intro to Homelab\" outline also landed in the ACM Drive. Open: confirm the series name with the ACM team, find the Workshop 4 guest.",
+     "**3. Retroid Pocket Nova: PS2 mystery solved, device fully audited (Oct 8)** — PS2 games had *never* launched from ES-DE — root-caused to a broken find-rules typo in the community build (`come.nanodata…`), fixed with a custom `es_find_rules.xml` override, FFX verified booting end-to-end. Also: 195 games metadata-enriched (832 parsing, md5-verified), 26+ GB of archives offloaded to the NAS, junk entries removed; the [[04 Resources/Technology/Retroid Pocket Nova Setup|setup guide]] is marked fully applied. Open: Liquid Crystal ROM missing from the card; Syncthing mesh Nova ↔ CRT Pi still to stand up.",
+     "**4. Interview prep closed the graphs gap and off-boarded trees (Oct 6)** — One self-study packet covered Dijkstra, cycle detection (Kahn's vs 3-color DFS), and BST/AVL/trie/B+tree — trees moved ❓→🟡 and the graphs gap list cleared. SWE question bank 3→6. DP/sorting/recursion are now the entire remaining untested SWE surface. Caveat: the 6 PM menu went **unanswered four nights running (Oct 7–10)** — the rotation is parked waiting on a reply.",
+     "**5. Two cron bug classes root-caused + fixed (Oct 9–10)** — First, the Homelab Health Monitor's false \"not responding\" flaps (macOS `ping -W` takes **milliseconds**, so the Omarchy probe had a 3 ms budget) plus a dedup signature that re-alerted on raw numbers — together they were burning Photon's free-tier send budget. Then the Photon sidecar itself, which misclassified the free-tier cooldown as `sidecar_internal` — now classified `rate_limited` via the second live local patch ([[90 Operations/Hermes/Configuration/Local Patches|Local Patches]]). Result: fleet stayed at **0 failed runs all week** and morning delivery failures (Oct 9–10) self-recovered by evening."
+    ]
+   },
+   {
+    "heading": "📊 Project Progress",
+    "items": [
+     "**School** — the big week: CMPE 148 P2 + CMPE 142 HW6&7 shipped Oct 8; CMPE 142 Ch 8 HW and the POLS-15 extra-credit panel responses were both due Oct 10; the Canvas verification queue (2 tasks) is the open tail. Flagged: CMPE 142 is missing from the Fall 2026 schedule table in [[03 Areas/Education/School|School]] (sourced from MySJSU before the class was added).",
+     "**Homelab** — the 4K remux pass got triaged and partially rolled back (Oct 6): 45 showcase titles keep the remux plan, 85 middle stay as-is, and 31 \"fine at lower bitrate\" titles reverted to a new `4K Rip (no remux)` Radarr profile — 16 in-flight targets cancelled, ~330 GB of partials freed and ~400 GB of download avoided. `tank` sits at 81% (expected; the 2 TB floor stops the pull on its own). SER8's LAN IP was confirmed 10.0.0.105 from the host, closing the last question on the node-exporter install. P520 BIOS Wake-on-LAN was due Oct 10 and remains open. Still true from last week: `tank` has never been scrubbed.",
+     "**Hermes / Automation** — 499 logged executions Oct 5–11 with **0 failures**; daily fleet ~422–433 runs across ~27 jobs, all green. The launcher re-exec guard was reverted by the Oct 6/7 Hermes update and re-applied (third time) — the durable fix (swap five cron prompts off the repo-root launcher onto the installer-managed shim) is proposed in [[90 Operations/Hermes/Hermes Operations Queue|Hermes Operations Queue]] and awaits a go-ahead. New job staged today: **Vercel Deployment Prune** (Sundays 7:00 AM, keeps newest 20 deployments per project) after Vercel flagged deployment storage at 75% — roughly 330 stacked builds from the auto-deploys.",
+     "**Personal Website (ayumad.me)** — still no new deploys: hash `index-Y5FAYJlE.js` unchanged since Sep 20; nightly journal updates and 4×/day dashboard refreshes committing as always. PRs #29 and #30 remain stale; zero PR/issue activity this week across all repos.",
+     "**ACM / EchoSphere** — workshop docs above; Sprint W5 EchoSphere check-in was on the Oct 10 calendar (no Hermes-logged activity around it).",
+     "**Articles** — no movement; 3 open (CRT journey, AI as a Computer, Sunshine writeup). The \"Layers of Working with AI\" brainstorm doc got a review pass Oct 5 but is still a working doc, no draft yet.",
+     "**GitHub** — 177 commits: `ayumad.github.io` 98 (publisher sync), `ayumad.me` 37 (dashboard + journal automation), `ayumad.vault` 39 (auto-sync + monitor bumps + the prune job), school repos 3. No PRs or issues authored."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**Vercel confirm — new today.** The prune job is staged, but the actual cleanup needs one tap: the device-code link in the iMessage thread (Ayush confirms, then old deployments get deleted and auto-deploys throttled).",
+     "**Photon free-tier cooldown.** Root cause is an *engagement* limit — 3 sends/day until the recipient replies. The cheap remedy: reply once to the iMessage thread. Morning briefs lost delivery Oct 9–10 until it reset by evening; if it keeps recurring, the old decision (trim relays / Photon Pro $25/mo) is still waiting.",
+     "**9 human-blocked items unchanged** — top: the held simulator-runtime removal (~47 GB; the data volume is at 92% / 20.7 GB free after Xcode 27.0 landed, so it's the cheapest big win). Also: Xfinity xFi steps, Namecheap `jellyfin` A record, state.db compaction window, Notes.app scripting wedge (since Sep 18, re-probed Oct 9 — still wedged), Hue↔HA link button, SER8 node-exporter sudo, the stale `API_SERVER_KEY` line (config.yaml line 727), and the remux queue re-check when it settles.",
+     "**Foreman's three roster fixes** (8 dead SOUL skill refs, coder profile trim, foreman's stray photon platform) proposed Oct 5, still awaiting approval.",
+     "**Mnemosyne Sleep consolidation still no-ops in cron** (since Sep 30) — the recommended fix (rework the job to a no-agent CLI driver) is proposed, not yet applied.",
+     "**Interview prep parked** — menus unanswered four nights; DP/sorting/recursion stay untested.",
+     "**Framework 13 remote access** — still unverified since the Sep 10 re-check; blocks agent-side Omarchy work."
+    ]
+   },
+   {
+    "heading": "🔜 Next Week's Focus",
+    "items": [
+     "1. **Two one-tap wins:** the simulator-runtime answer (\"go\" / \"keep iOS\" / \"hold\" on the parked desktop session — ~47 GB) and the Vercel device-code Confirm (stops the 75%-storage bleed).",
+     "2. **Reply once to the Photon thread** — resets the send cooldown for free; decide the fallback channel only if it recurs.",
+     "3. **Xfinity xFi + Namecheap** — DHCP reservations, Pi-hole DNS flip, Minecraft/Jellyfin port forwards, `jellyfin` A record — the public Jellyfin stack is staged and validated, waiting only on these.",
+     "4. **P520 maintenance** — BIOS Wake-on-LAN + restore-on-AC (overdue from Oct 10) and the first-ever ZFS scrub on `tank`.",
+     "5. **SER8 node-exporter** — one sudo command; the LAN IP question is closed (10.0.0.105).",
+     "6. **ACM follow-through** — confirm the \"Intro to Agentic AI\" name with the team and find a Workshop 4 industry guest before Oct 14.",
+     "7. **Interview prep** — take the menu; DP/sorting/recursion are the last untested SWE surface.",
+     "8. **Approvals sitting in queues:** the foreman roster fixes and the launcher-shim prompt swap — both proposed, both one word from done.",
+     "9. **School tail** — CMPE 142 Ch 8 HW follow-through; clear the Canvas verification queue as graded emails arrive."
+    ]
+   },
+   {
+    "heading": "📝 Miscellaneous",
+    "items": [
+     "**Cron fleet:** ~422–433 runs/day across ~27 jobs / 11 stores; install-level executions Oct 5–11: 499 runs, 0 failures, 22 delivery failures (all the Photon cooldown above). Daily Brief, Interview Prep, Mnemosyne Sleep, Sentinel, watchdogs all green.",
+     "**Vault:** 30 notes modified this week; validator all-zero at 559 notes (Oct 9); git clean and pushed all week; nightly journal + weekly reviews still feeding ayumad.me/journal.",
+     "**Scout Marketplace Sweep** stays paused (paused by Ayush Oct 9 after Craigslist fetch failures; not re-enabled).",
+     "**No Codex threads all week**; Decision Log untouched since Aug 7.",
+     "**Mac mini disk:** Ayush's own cleanup early in the week took it from 9.8 GB to ~25 GB free; it has since drifted back down to 20.7 GB (92%) after Xcode 27.0 landed.",
+     "**Today's (Oct 11) session journal** lands with the 10 PM cron — this review covers through the Oct 10 journal plus today's morning brief and the Vercel prune work."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-10-04",
   "weekStart": "2026-09-27",
   "summary": "Weekly review for Sep 28–Oct 4, 2026: post-update infra recovery (vault FDA, WebUI, sync), SER8 back online, publisher merged, journals backfilled.",
