@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-12T12:57:09-07:00",
+ "generated_at": "2026-10-12T18:58:09-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -8,54 +8,54 @@
   "cron_no_agent": 6,
   "cron_failing": [],
   "cron_failing_count": 0,
-  "skills": 198,
+  "skills": 199,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1325,
+   "working": 1335,
    "episodic": 532
   },
   "disk": {
    "used_pct": 91,
-   "free_gb": 18.8,
+   "free_gb": 18.5,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 1050,
-   "month_in_m": 7.9,
-   "month_out_m": 3.21,
-   "month_cache_m": 129.4,
-   "week_calls": 704,
-   "week_out_m": 2.47,
+   "month_calls": 1158,
+   "month_in_m": 8.7,
+   "month_out_m": 3.64,
+   "month_cache_m": 142.2,
+   "week_calls": 807,
+   "week_out_m": 2.9,
    "cache_share": 94,
    "top_models": [
     {
      "model": "deepseek-flash",
-     "calls": 675
+     "calls": 780
     },
     {
      "model": "mimo-v2.5",
-     "calls": 375
+     "calls": 378
     }
    ]
   }
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-12T12:57:10-07:00",
+  "checked_at": "2026-10-12T18:58:10-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 1065349,
+   "uptime_s": 1087009,
    "load": [
-    "32.87",
-    "26.00",
-    "22.18"
+    "8.46",
+    "13.36",
+    "15.06"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 34.0,
+   "mem_used_gb": 32.7,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -141,7 +141,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 78.8,
+    "alloc_gb": 77.1,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -158,8 +158,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 15872.0,
-    "free_gb": 2723.84,
+    "alloc_gb": 15769.6,
+    "free_gb": 2816.0,
     "health": "ONLINE",
     "used_pct": 85,
     "scan": "scrub in progress since Sun Oct 11 00:24:02 2026",
@@ -176,7 +176,7 @@
   "datasets": [
    {
     "name": "ssd",
-    "used": "387G",
+    "used": "386G",
     "avail": "3.00T"
    },
    {
@@ -186,12 +186,12 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "975M",
+    "used": "980M",
     "avail": "7.13G"
    },
    {
     "name": "ssd/subvol-101-disk-0",
-    "used": "534M",
+    "used": "533M",
     "avail": "3.51G"
    },
    {
@@ -201,7 +201,7 @@
    },
    {
     "name": "ssd/vm-200-cloudinit",
-    "used": "6.60M",
+    "used": "6.59M",
     "avail": "3.00T"
    },
    {
@@ -211,7 +211,7 @@
    },
    {
     "name": "ssd/vm-201-cloudinit",
-    "used": "6.23M",
+    "used": "6.22M",
     "avail": "3.00T"
    },
    {
@@ -221,53 +221,53 @@
    },
    {
     "name": "ssd/vm-202-cloudinit",
-    "used": "6.22M",
+    "used": "6.15M",
     "avail": "3.00T"
    },
    {
     "name": "ssd/vm-202-disk-0",
-    "used": "256G",
+    "used": "255G",
     "avail": "3.20T"
    },
    {
     "name": "tank",
-    "used": "12.4T",
-    "avail": "2.00T"
+    "used": "12.3T",
+    "avail": "2.07T"
    },
    {
     "name": "tank/MM",
     "used": "1.49M",
-    "avail": "2.00T"
+    "avail": "2.07T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "2.00T"
+    "avail": "2.07T"
    },
    {
     "name": "tank/backups",
-    "used": "1.28T",
-    "avail": "2.00T"
+    "used": "1.18T",
+    "avail": "2.07T"
    },
    {
     "name": "tank/media",
-    "used": "8.83T",
-    "avail": "2.00T"
+    "used": "8.85T",
+    "avail": "2.07T"
    },
    {
     "name": "tank/photos",
     "used": "430M",
-    "avail": "2.00T"
+    "avail": "2.07T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "2.00T"
+    "avail": "2.07T"
    },
    {
     "name": "tank/shared",
     "used": "7.74M",
-    "avail": "2.00T"
+    "avail": "2.07T"
    },
    {
     "name": "tank/timemachine",
@@ -275,12 +275,12 @@
     "avail": "1.63T"
    }
   ],
-  "snapshots": 324,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-12_19:00:31_hourly",
+  "snapshots": 336,
+  "snapshot_newest": "tank/shared@autosnap_2026-10-13_01:00:25_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_10_12-03_34_33.vma.zst",
-   "newest_age_h": 9.3,
+   "newest_age_h": 15.3,
    "count": 60,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -345,15 +345,15 @@
    "present": false
   },
   "media": {
-   "torrents": 147,
+   "torrents": 146,
    "torrents_active": 35,
-   "down_mbps": 1.05,
+   "down_mbps": 1.1,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 38,
-   "mount_free": "2.0T free of 9.9T (80% used)"
+   "radarr_queue": 37,
+   "mount_free": "2.1T free of 10T (80% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -376,7 +376,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 1320,
+    "ms": 223,
     "code": 200
    },
    {
@@ -386,7 +386,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 1364,
+    "ms": 323,
     "code": 200
    },
    {
@@ -396,7 +396,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 1309,
+    "ms": 195,
     "code": 200
    },
    {
@@ -406,7 +406,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 1027,
+    "ms": 188,
     "code": 200
    },
    {
@@ -416,7 +416,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 1025,
+    "ms": 195,
     "code": 200
    },
    {
@@ -426,7 +426,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 1024,
+    "ms": 187,
     "code": 200
    },
    {
@@ -436,7 +436,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 1307,
+    "ms": 200,
     "code": 200
    },
    {
@@ -446,7 +446,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 1025,
+    "ms": 199,
     "code": 200
    },
    {
@@ -456,7 +456,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 1318,
+    "ms": 213,
     "code": 200
    },
    {
@@ -466,7 +466,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 1374,
+    "ms": 254,
     "code": 200
    },
    {
@@ -476,7 +476,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 1308,
+    "ms": 192,
     "code": 200
    },
    {
@@ -486,7 +486,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 1317,
+    "ms": 220,
     "code": 200
    },
    {
@@ -496,7 +496,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 344,
+    "ms": 79,
     "code": 200
    },
    {
@@ -506,7 +506,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 344,
+    "ms": 45,
     "code": 200
    },
    {
@@ -516,7 +516,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 389,
+    "ms": 61,
     "code": 200
    },
    {
@@ -526,7 +526,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 302,
+    "ms": 31,
     "code": 200
    },
    {
@@ -536,7 +536,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 49,
+    "ms": 31,
     "code": 200
    },
    {
@@ -546,7 +546,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 66,
+    "ms": 42,
     "code": 200
    },
    {
@@ -556,7 +556,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 19,
+    "ms": 25,
     "code": 200
    },
    {
@@ -566,7 +566,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 293,
+    "ms": 108,
     "code": 200
    },
    {
@@ -576,7 +576,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 50,
+    "ms": 15,
     "code": 200
    },
    {
@@ -586,7 +586,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 56,
+    "ms": 51,
     "code": 401
    },
    {
@@ -596,7 +596,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 79,
+    "ms": 52,
     "code": 200
    },
    {
@@ -606,7 +606,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 34,
+    "ms": 22,
     "code": 200
    },
    {
@@ -616,7 +616,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 67,
+    "ms": 46,
     "code": 200
    },
    {
@@ -626,7 +626,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 44,
+    "ms": 41,
     "code": 200
    },
    {
@@ -636,7 +636,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 247,
+    "ms": 143,
     "code": 200
    },
    {
@@ -646,7 +646,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 242,
+    "ms": 45,
     "code": 200
    },
    {
@@ -656,7 +656,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 46,
+    "ms": 29,
     "code": 200
    },
    {
@@ -666,7 +666,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 38,
+    "ms": 11,
     "code": null
    },
    {
@@ -676,7 +676,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 41,
+    "ms": 18,
     "code": 200
    },
    {
@@ -686,7 +686,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 49,
+    "ms": 22,
     "code": 200
    },
    {
@@ -696,7 +696,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 236,
+    "ms": 22,
     "code": 200
    }
   ],
@@ -838,13 +838,6 @@
    "folder": ""
   },
   {
-   "name": "Album Ranking App",
-   "status": "planned",
-   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Start by end of Aug 2026.",
-   "updated": "2026-08-19",
-   "folder": "Planned"
-  },
-  {
    "name": "Audio Hub",
    "status": "planned",
    "summary": "Audio Hub: one web app bundling a by-ear EQ trainer (sweep a sine, mark peaks/dips, export an 8-band PEQ), a feed of recent audio articles, and a library of articles explaining audio terms.",
@@ -857,6 +850,13 @@
    "summary": "Set up a practical electronics and creative-technology workbench for the sister's room.",
    "updated": "2026-08-07",
    "folder": ""
+  },
+  {
+   "name": "Loadout Browser",
+   "status": "planned",
+   "summary": "Vibe-coded website for looking through the Loadout — built with the anatomy skill (interactive isometric figures) and a Claude-driven plan; target end of Oct 2026.",
+   "updated": "2026-10-12",
+   "folder": "Planned"
   },
   {
    "name": "P520 GPU Passthrough Runbook",
@@ -885,29 +885,54 @@
    "summary": "Deferred local-first voice interface to Hermes using Raspberry Pi audio hardware and Home Assistant.",
    "updated": "2026-08-05",
    "folder": "Planned"
+  },
+  {
+   "name": "Album Ranking App",
+   "status": "paused",
+   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Backburnered 2026-10-12 (was: start by end of Aug 2026).",
+   "updated": "2026-10-12",
+   "folder": "Planned"
   }
  ],
  "tasks": {
-  "open": 31,
-  "overdue": 3,
+  "open": 32,
+  "overdue": 0,
   "items": [
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
-    "due": "2026-10-10",
-    "overdue": true
+    "due": "2026-10-14",
+    "overdue": false
+   },
+   {
+    "title": "PS Vita: finish setup (modded)",
+    "list": "Hardware",
+    "due": "2026-10-17",
+    "overdue": false
+   },
+   {
+    "title": "New Nintendo 3DS XL: finish setup (modded)",
+    "list": "Hardware",
+    "due": "2026-10-24",
+    "overdue": false
+   },
+   {
+    "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
+    "list": "Tech",
+    "due": "2026-10-31",
+    "overdue": false
+   },
+   {
+    "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
+    "list": "Hardware",
+    "due": "2026-10-31",
+    "overdue": false
    },
    {
     "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
     "list": "Hardware",
-    "due": "2026-10-10",
-    "overdue": true
-   },
-   {
-    "title": "Start Album Ranking App (Beli-style music: Elo ratings, leaderboards, genre overviews, wrapped dashboard, social recs — web + mobile)",
-    "list": "Tech",
-    "due": "2026-10-12",
-    "overdue": true
+    "due": "2026-10-31",
+    "overdue": false
    },
    {
     "title": "Cancel subscription of rtings.com",
@@ -916,14 +941,8 @@
     "overdue": false
    },
    {
-    "title": "CMPE 142: verify Chapter 6&7 HW actually landed on Canvas (due Oct 8; vault: 03 Areas/Education/School.md — Course Verification Queue)",
-    "list": "School",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Verify CMPE 148 Project 2 (mini-tcp.c) landed on Canvas (due Oct 8; snapshot shows it overdue until graded-email or manual clear)",
-    "list": "School",
+    "title": "Omarchy auto-theme generator (wallpaper → theme)",
+    "list": "Tech",
     "due": null,
     "overdue": false
    },
@@ -947,18 +966,6 @@
    },
    {
     "title": "Xfinity gateway: DHCP reservations + port forwards (Minecraft 25565 -> .231, Jellyfin 443/80 -> .54) + Pi-hole DNS flip",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Grant macOS Automation permission for Notes (agent cannot write to Notes)",
-    "list": "Tech",
-    "due": null,
-    "overdue": false
-   },
-   {
-    "title": "Wire Pocket ID SSO in front of the admin UIs (Caddy + internal TLS went live 2026-09-17)",
     "list": "Tech",
     "due": null,
     "overdue": false
@@ -1009,25 +1016,19 @@
    "self": true
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
    "self": false
   },
   {
-   "name": "Ayupadpro",
-   "os": "iOS",
+   "name": "Canyon",
+   "os": "windows",
    "online": true,
    "self": false
   },
   {
-   "name": "Canyon",
+   "name": "Creekwood",
    "os": "windows",
    "online": true,
    "self": false
@@ -1069,8 +1070,14 @@
    "self": false
   },
   {
-   "name": "Creekwood",
-   "os": "windows",
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayupadpro",
+   "os": "iOS",
    "online": false,
    "self": false
   },
@@ -1139,10 +1146,10 @@
  "now": {
   "active_projects": 17,
   "planned_projects": 5,
-  "open_tasks": 31,
-  "overdue_tasks": 3,
+  "open_tasks": 32,
+  "overdue_tasks": 0,
   "assignments_upcoming": 4,
-  "devices_online": 10,
+  "devices_online": 9,
   "devices_total": 19,
   "jobs_failing": 0,
   "jobs_total": 9,
