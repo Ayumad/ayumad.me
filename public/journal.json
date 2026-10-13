@@ -1,12 +1,33 @@
 [
  {
+  "date": "2026-10-12",
+  "summary": "Session journal for 2026-10-12: camera lens research, P520 scrub-noise diagnosis, Proxmox nag removal, todo review, wishlist ops (PS5/Steam Machine), Google OAuth agentic deadline, WA7 vs Bottlehead Crack audio chain.",
+  "highlights": [
+   "**Audio day:** Crack-over-WA7 verdict held on re-surfaced $600 deal; MOTU M2 settled as the workstation DAC (doubles as the scope/CV interface); stale \"owned\" roster (Focal Clear/Meze 99 sold) flushed out of skill + vault — validator 565/0.",
+   "**Google OAuth agentic deadline is real but non-urgent:** REST traffic unaffected; one checkbox decision on `hermesomarchy` due before **Nov 11**, parked as a Mnemosyne pending task so it can't slip.",
+   "**Homelab noise explained, not a fault:** P520 loudness was the monthly ZFS scrub + busy docker-vm; uptime-kuma flagged as a disproportionate CPU consumer (127 CPU-hrs / 12 days).",
+   "**Gear bookkeeping locked in:** PS5 target ≤$300 w/ DualSense; Steam Machine trial logged with a resale plan; iPhone Duo gated on GC savings; Proxmox nag permanently patched on pve-p520.",
+   "Cron healthy overall; two flags: Interview Prep delivery_failed and Vercel Deployment Prune never running."
+  ]
+ },
+ {
   "date": "2026-10-11",
   "summary": "Session journal for 2026-10-11: Sunday — weekly review Oct 5–11 written + relayed; brief (Ch 8 HW due, delivery lost to Photon cooldown); interview prep AI/ML; Vercel prune staged; fleet green; no Codex.",
   "highlights": [
    "**Week wrapped and delivered** — the Oct 5–11 review is in the vault and on iMessage; the week's proof points are the Oct 8 double submission (CMPE 148 P2 + CMPE 142 HW6&7) and the stocked ACM workshop series.",
    "**Photon delivery failure is now a three-morning streak** (Oct 9–11) — root cause known (engagement limit, 3 sends/day until a reply); the free fix is one reply to the thread, fallback options still parked.",
    "**Interview prep crossed to the AI/ML rotation** — transformers and RAG identified as the live-practice gaps; backprop/optimizers join DP/sorting/recursion as the untested surface.",
-   "**Vercel prune staged** (2:20 PM) — first run next Sunday; deployment storage at 75% keeps bleeding until the Confirm tap."
+   "**Vercel prune staged** (2:20 PM) — first run next Sunday; deployment storage at 75% keeps bleeding until the Confirm tap.",
+   "Photon cooldown classifier patch re-verified **applied to the on-disk sidecar source** (`plugins/platforms/photon/sidecar/index.mjs:883`, `cooling period` → `rate_limited`); it lands on the next natural sidecar restart — nothing was restarted here.",
+   "API_SERVER_KEY cleanup item: duplication **re-verified programmatically** — the config.yaml value is byte-identical to the `.env` copy (compared via script, values never printed), and port 8642 is confirmed live, so deleting the one config line is safe and still needs a human (config.yaml writes are policy-blocked).",
+   "Notes scripting wedge: **re-probed today — still wedged** (bounded `Notes count notes` AppleScript probe hit the 25 s alarm, exit 142). Item kept.",
+   "Disk re-measured: **91% used / 19 GB free** (sliding ~1.5 GB since the 23:00 brief snapshot).",
+   "Cron health: no incidents to ack; the two `delivery_failed` entries (Daily Brief, Daily Cleanup) are the known cooldown class, not new breakage; paused jobs left paused; no job-script repairs needed.",
+   "todo-cleanup reconciled in TODO Master (9 items, all re-verified still open, dates refreshed).",
+   "Morning deliveries stay lost until he replies once to the Photon thread (free tier: 3 sends/day until the recipient replies); evenings self-recover.",
+   "The held simulator-runtime removal (~47 GB) on the parked desktop session — disk keeps sliding; cheapest big win sitting around.",
+   "Google Tech task \"Photon/iMessage sidecar 500 — non-retryable sidecar_internal\" is mis-premised (cooldown, not a sidecar fault) and needs closing on a task-surface pass — this job may not write task surfaces.",
+   "state.db compaction (~1.2 GB) still awaits a maintenance window (requires the gateway stopped)."
   ]
  },
  {
