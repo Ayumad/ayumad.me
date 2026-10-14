@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-13",
+  "summary": "Session journal for 2026-10-13: ACM keyboard sale sheet, wishlist→Muse scrape-list bridge, loadout browser spec, AD1865 DAC verdict, bug-bounty feasibility.",
+  "highlights": [
+   "The wishlist→Muse bridge closed the loop Ayush asked for: adding a want in Obsidian now automatically changes what the marketplace bot hunts, and it was proven against the real bot, not a mock.",
+   "The ACM keyboard sale got its operational tool: 32 sale-ready units tracked with a live $1,140–$1,460 profit model, ready to fill in and sell.",
+   "Loadout browser moved from idea to an executable 782-line spec with a phased plan; figure quality is the make-or-break risk (build one archetype end-to-end first).",
+   "Bug-bounty reality check landed with receipts: agent-sprayed reports are the flood every program is now defending against — don't build income plans on it."
+  ]
+ },
+ {
   "date": "2026-10-12",
   "summary": "Session journal for 2026-10-12: camera lens research, P520 scrub-noise diagnosis, Proxmox nag removal, todo review, wishlist ops (PS5/Steam Machine), Google OAuth agentic deadline, WA7 vs Bottlehead Crack audio chain.",
   "highlights": [
@@ -7,7 +17,18 @@
    "**Google OAuth agentic deadline is real but non-urgent:** REST traffic unaffected; one checkbox decision on `hermesomarchy` due before **Nov 11**, parked as a Mnemosyne pending task so it can't slip.",
    "**Homelab noise explained, not a fault:** P520 loudness was the monthly ZFS scrub + busy docker-vm; uptime-kuma flagged as a disproportionate CPU consumer (127 CPU-hrs / 12 days).",
    "**Gear bookkeeping locked in:** PS5 target ≤$300 w/ DualSense; Steam Machine trial logged with a resale plan; iPhone Duo gated on GC savings; Proxmox nag permanently patched on pve-p520.",
-   "Cron healthy overall; two flags: Interview Prep delivery_failed and Vercel Deployment Prune never running."
+   "Cron healthy overall; one flag: Interview Prep delivery_failed (Vercel Deployment Prune is new — first fire Oct 18).",
+   "**Vercel prune — yesterday's \"waiting on Confirm\" note was stale, and a new real fault found.** The log proves the Oct 11 run actually executed: dry=False passes deleted 287 + 47 deployments, 0 failures, both projects at keep-20. But a dry-run probe today returns **HTTP 403** — the stored CLI token is dead, so the weekly job's first fire (Sun Oct 18, 7 AM) would silently no-op and deployment storage resumes bleeding. Added a todo-cleanup item: `vercel login` device-code re-auth, then a dry-run to confirm.",
+   "Interview Prep 6 PM `delivery_failed`: transient Photon sidecar 500 (`upstream_transient, retryable`) — the run itself completed; deliberately NOT re-run (a quiz delivered at 11:30 PM is useless; tomorrow's 6 PM fire covers it). Known transient class; the cooldown-classifier patch is on disk awaiting the next natural sidecar restart.",
+   "Notes scripting: re-probed with a bounded folder-count AppleScript — still wedged (25 s alarm, exit 142). Item kept.",
+   "Remux upgrade re-measured: queue down to **36 rows / ~913 GB left** (was 54 / ~1.46 TB on Oct 9); 32 of them remux rows. Draining steadily; 2 TB disk-floor guard in place.",
+   "Disk re-measured: **92% used / 18.9 GB free** — still sliding ~1.5 GB/day; simulator-runtime removal stays the top item.",
+   "SER8:9100 still refuses connections (node exporter not installed — sudo item kept); `jellyfin.ayumad.me` still does not resolve (Namecheap item kept); API_SERVER_KEY line still at line 727 of config.yaml (human-only delete kept).",
+   "Cron: no incidents to ack, no broken job scripts, paused jobs left paused; Scout sweep's delivery timeout is stale (job paused by decision).",
+   "todo-cleanup reconciled to 10 items: added Vercel token re-auth; every other item re-verified still open with today's measurements.",
+   "The held simulator-runtime removal (~47 GB) on the parked desktop session — disk keeps sliding; cheapest big win sitting around.",
+   "Vercel re-auth before Sunday 7 AM or the prune silently no-ops.",
+   "Notes quit & reopen, config.yaml line delete, Xfinity / Namecheap / Hue / SER8 clicks — all unchanged."
   ]
  },
  {
