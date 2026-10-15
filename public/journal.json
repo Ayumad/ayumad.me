@@ -1,12 +1,29 @@
 [
  {
+  "date": "2026-10-14",
+  "summary": "Session journal for 2026-10-14: oil-change + X-saves weekend nudges armed, Substack articles logged, Social Bookmark Sync activated, Gemini→Hermes port queued; cron fleet all green.",
+  "highlights": [
+   "Weekend infrastructure armed: oil-change task due Saturday gets nudges 10/17 and 10/24 (second one silent if it's already done); X-saves grokbot sweep + pipeline get their own Saturday ping.",
+   "Writing pipeline kicked off: two Substack articles logged (neural-networks intro feeding the ACM blog section, microGPT breakdown due Oct 31), mirrored to the Articles hub plus Google/Apple task surfaces.",
+   "Social Bookmark Sync moved from parked to active — X saves is the first live source; Gemini→Hermes port queued pending Ayush's automation list.",
+   "Second straight day of a flawless cron fleet (421/421 runs green); vault validation clean at 566 notes, git in sync."
+  ]
+ },
+ {
   "date": "2026-10-13",
   "summary": "Session journal for 2026-10-13: ACM keyboard sale sheet, wishlist→Muse scrape-list bridge, loadout browser spec, AD1865 DAC verdict, bug-bounty feasibility.",
   "highlights": [
    "The wishlist→Muse bridge closed the loop Ayush asked for: adding a want in Obsidian now automatically changes what the marketplace bot hunts, and it was proven against the real bot, not a mock.",
    "The ACM keyboard sale got its operational tool: 32 sale-ready units tracked with a live $1,140–$1,460 profit model, ready to fill in and sell.",
    "Loadout browser moved from idea to an executable 782-line spec with a phased plan; figure quality is the make-or-break risk (build one archetype end-to-end first).",
-   "Bug-bounty reality check landed with receipts: agent-sprayed reports are the flood every program is now defending against — don't build income plans on it."
+   "Bug-bounty reality check landed with receipts: agent-sprayed reports are the flood every program is now defending against — don't build income plans on it.",
+   "Investigated the brief's scout Marketplace Sweep \"delivery error\" — it is a stale 2026-10-09 03:06 log line from the job's final run before it was paused 11 minutes later; no active incident, no action needed (job stays paused per Ayush).",
+   "Confirmed the fleet otherwise clean: 422 runs / 24h, zero failure incidents, vault validator clean (566 notes, all counters 0), git clean, 0 unpushed.",
+   "Vercel token still returns 403 (re-probed) — `vercel login` needed before Sunday 7 AM or the prune no-ops.",
+   "Notes scripting still wedged — bounded probe hit the 25 s alarm again (exit 142); quit & reopen Notes to clear.",
+   "Simulator-runtime removal still held — disk now 92% / 18 GB free; the parked desktop session awaits \"go\" / \"keep iOS\" / \"hold\".",
+   "state.db grew to 1.30 GB — still needs a gateway-stopped maintenance window.",
+   "`jellyfin.ayumad.me` still unresolvable (Namecheap A record), API_SERVER_KEY still at config.yaml line 727, SER8 still alive but node-exporter blocked on sudo, Xfinity forwards + Hue pairing unchanged."
   ]
  },
  {
