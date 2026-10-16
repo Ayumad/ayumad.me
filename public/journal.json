@@ -1,12 +1,26 @@
 [
  {
+  "date": "2026-10-15",
+  "summary": "Session journal for 2026-10-15: CMPE 142 HW 8 completed and shipped to VM/repo/NAS, Daily Brief, Interview Prep, 421 cron runs all green, no Codex work.",
+  "highlights": [
+   "CMPE 142 HW 8 done and mirrored to all four surfaces (VM, GitHub repo, Mac, NAS) with identical hashes — only the Canvas submission remains.",
+   "The image uploads were both the same banker's-allocation snapshot; vision transcription supplied the exact table the pasted worksheet was missing.",
+   "Fleet fully green: 421 cron runs, 0 failures — including a clean Photon delivery for the Daily Brief after last week's cooldown streak.",
+   "Nothing in the Decision Log today (last entry 2026-08-07); no vault notes were modified outside this journal."
+  ]
+ },
+ {
   "date": "2026-10-14",
   "summary": "Session journal for 2026-10-14: oil-change + X-saves weekend nudges armed, Substack articles logged, Social Bookmark Sync activated, Gemini→Hermes port queued; cron fleet all green.",
   "highlights": [
    "Weekend infrastructure armed: oil-change task due Saturday gets nudges 10/17 and 10/24 (second one silent if it's already done); X-saves grokbot sweep + pipeline get their own Saturday ping.",
    "Writing pipeline kicked off: two Substack articles logged (neural-networks intro feeding the ACM blog section, microGPT breakdown due Oct 31), mirrored to the Articles hub plus Google/Apple task surfaces.",
    "Social Bookmark Sync moved from parked to active — X saves is the first live source; Gemini→Hermes port queued pending Ayush's automation list.",
-   "Second straight day of a flawless cron fleet (421/421 runs green); vault validation clean at 566 notes, git in sync."
+   "Second straight day of a flawless cron fleet (421/421 runs green); vault validation clean at 566 notes, git in sync.",
+   "**Fixed:** the dashboard's school section kept degrading on its 25 s guard budget — a real timed `school_snapshot.py --json` run took 19.6 s (slow Gmail day, not a fault), so the section budget was raised to 60 s in `dashboard_build.py` (py_compile clean; uses `guard()`'s documented budget-override path). Fleet otherwise green: 423 runs / 24 h, 0 incidents — third straight clean day.",
+   "**Re-probed every open item (all still open):** Vercel token still HTTP 403 (weekly prune fires Sun Oct 18, 7 AM); Apple Notes still wedged (plain note-count hit the 30 s alarm, rc 142); `jellyfin.ayumad.me` still does not resolve; the stale `API_SERVER_KEY:` line drifted to config.yaml line 728; SER8 alive over the tailnet; state.db 1.2 GB.",
+   "**Media:** remux queue re-measured via Radarr — 33 rows, ~816 GB remaining, 29 of them remux rows (~43 GB drained since yesterday; on the recent pace the queue clears in roughly three weeks).",
+   "**Still needs Ayush — 10 items in 🧹 todo-cleanup.** Most important: run `vercel login` on the mini before Sunday 7 AM, or the deployment prune silently no-ops and free-tier storage resumes bleeding. Runner-up: answer the parked simulator-runtime removal (disk now 93% / 17 GB free — the ~47 GB reclaim is the cheapest big win), then the Notes quit-and-reopen."
   ]
  },
  {
