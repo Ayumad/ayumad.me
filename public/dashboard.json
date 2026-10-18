@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-18T01:19:19-07:00",
+ "generated_at": "2026-10-18T07:20:19-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.22.2",
@@ -15,11 +15,11 @@
   "mcp_enabled": 1,
   "memory": {
    "working": 1349,
-   "episodic": 541
+   "episodic": 545
   },
   "disk": {
    "used_pct": 92,
-   "free_gb": 15.3,
+   "free_gb": 15.4,
    "size_gb": 228
   },
   "tokens": {
@@ -44,66 +44,324 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-18T01:19:20-07:00",
+  "checked_at": "2026-10-18T07:20:20-07:00",
   "host": {
    "name": "pve-p520",
-   "proxmox": "",
-   "kernel": "",
-   "uptime_s": 0,
-   "load": [],
-   "cpu": "",
-   "cores": 0,
-   "mem_used_gb": 0.0,
-   "mem_total_gb": 0,
+   "proxmox": "9.2.20",
+   "kernel": "7.0.14-17-pve",
+   "uptime_s": 272351,
+   "load": [
+    "10.24",
+    "6.30",
+    "5.64"
+   ],
+   "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
+   "cores": 12,
+   "mem_used_gb": 30.7,
+   "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
    "pve_ui": "https://100.127.82.2:8006",
-   "nics": []
+   "nics": [
+    {
+     "name": "nic0",
+     "speed_mbps": 2500,
+     "state": "up"
+    },
+    {
+     "name": "nic1",
+     "speed_mbps": 0,
+     "state": "down"
+    }
+   ]
   },
-  "guests": [],
-  "guests_running": 0,
-  "pools": [],
-  "datasets": [],
-  "snapshots": 0,
-  "snapshot_newest": "",
+  "guests": [
+   {
+    "id": 200,
+    "name": "ai-vm",
+    "status": "stopped",
+    "mem_mb": 16384,
+    "disk_gb": 64,
+    "type": "qemu",
+    "onboot": false,
+    "gpu": true
+   },
+   {
+    "id": 201,
+    "name": "school-vm",
+    "status": "running",
+    "mem_mb": 6144,
+    "disk_gb": 40,
+    "type": "qemu",
+    "onboot": null,
+    "gpu": false
+   },
+   {
+    "id": 202,
+    "name": "docker-vm",
+    "status": "running",
+    "mem_mb": 16384,
+    "disk_gb": 200,
+    "type": "qemu",
+    "onboot": true,
+    "gpu": false
+   },
+   {
+    "id": 100,
+    "name": "nas",
+    "status": "running",
+    "type": "lxc",
+    "mem_mb": 1024,
+    "disk_gb": 8,
+    "onboot": true,
+    "gpu": false
+   },
+   {
+    "id": 101,
+    "name": "pihole",
+    "status": "running",
+    "type": "lxc",
+    "mem_mb": 1024,
+    "disk_gb": 8,
+    "onboot": true,
+    "gpu": false
+   },
+   {
+    "id": 102,
+    "name": "minecraft",
+    "status": "running",
+    "type": "lxc",
+    "mem_mb": 1024,
+    "disk_gb": 8,
+    "onboot": true,
+    "gpu": false
+   }
+  ],
+  "guests_running": 5,
+  "gpu_owner_vm": 200,
+  "pools": [
+   {
+    "name": "ssd",
+    "size_gb": 3563.52,
+    "alloc_gb": 81.3,
+    "free_gb": 3491.84,
+    "health": "ONLINE",
+    "used_pct": 2,
+    "scan": "scrub repaired 0B in 00:03:48 with 0 errors on Sun Oct 11 00:27:49 2026",
+    "never_scrubbed": false,
+    "errors": "No known data errors",
+    "vdev": [
+     "ssd",
+     "ONLINE",
+     "0",
+     "0"
+    ]
+   },
+   {
+    "name": "tank",
+    "size_gb": 18636.8,
+    "alloc_gb": 16588.8,
+    "free_gb": 2058.24,
+    "health": "ONLINE",
+    "used_pct": 89,
+    "scan": "scrub repaired 0B in 2 days 08:06:31 with 0 errors on Tue Oct 13 08:30:33 2026",
+    "never_scrubbed": false,
+    "errors": "No known data errors",
+    "vdev": [
+     "tank",
+     "ONLINE",
+     "0",
+     "0"
+    ]
+   }
+  ],
+  "datasets": [
+   {
+    "name": "ssd",
+    "used": "389G",
+    "avail": "3.00T"
+   },
+   {
+    "name": "ssd/games",
+    "used": "220K",
+    "avail": "3.00T"
+   },
+   {
+    "name": "ssd/subvol-100-disk-0",
+    "used": "1004M",
+    "avail": "7.12G"
+   },
+   {
+    "name": "ssd/subvol-101-disk-0",
+    "used": "541M",
+    "avail": "3.51G"
+   },
+   {
+    "name": "ssd/subvol-102-disk-0",
+    "used": "1.02G",
+    "avail": "15.0G"
+   },
+   {
+    "name": "ssd/vm-200-cloudinit",
+    "used": "6.67M",
+    "avail": "3.00T"
+   },
+   {
+    "name": "ssd/vm-200-disk-0",
+    "used": "82.8G",
+    "avail": "3.06T"
+   },
+   {
+    "name": "ssd/vm-201-cloudinit",
+    "used": "6.30M",
+    "avail": "3.00T"
+   },
+   {
+    "name": "ssd/vm-201-disk-0",
+    "used": "45.3G",
+    "avail": "3.04T"
+   },
+   {
+    "name": "ssd/vm-202-cloudinit",
+    "used": "6.22M",
+    "avail": "3.00T"
+   },
+   {
+    "name": "ssd/vm-202-disk-0",
+    "used": "258G",
+    "avail": "3.19T"
+   },
+   {
+    "name": "tank",
+    "used": "12.9T",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/MM",
+    "used": "1.84M",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/PC",
+    "used": "1.91T",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/backups",
+    "used": "1.48T",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/media",
+    "used": "9.14T",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/photos",
+    "used": "537M",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/retro",
+    "used": "22.3G",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/shared",
+    "used": "9.64M",
+    "avail": "1.48T"
+   },
+   {
+    "name": "tank/timemachine",
+    "used": "375G",
+    "avail": "1.48T"
+   }
+  ],
+  "snapshots": 356,
+  "snapshot_newest": "tank/shared@autosnap_2026-10-18_14:00:15_hourly",
   "scrub_timers": 0,
   "backups": {
-   "newest": "",
-   "newest_age_h": null,
-   "count": 0,
+   "newest": "vzdump-qemu-202-2026_10_18-03_37_55.vma.zst",
+   "newest_age_h": 3.4,
+   "count": 65,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
    "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
   },
   "containers": {
-   "running": 0,
-   "total": 0,
+   "running": 44,
+   "total": 44,
    "unhealthy": [],
    "restarting": [],
-   "names": []
+   "names": [
+    "jellyfin",
+    "healthchecks",
+    "miniflux",
+    "stirling-pdf",
+    "healthchecks-db",
+    "miniflux-db",
+    "open-webui",
+    "caddy",
+    "qdrant",
+    "diun",
+    "bazarr",
+    "cleanuparr",
+    "dozzle",
+    "vaultwarden",
+    "ntfy",
+    "ollama-cpu",
+    "flaresolverr",
+    "node-red",
+    "mosquitto",
+    "homeassistant",
+    "forgejo",
+    "code-server",
+    "immich_server",
+    "immich_postgres",
+    "immich_machine_learning",
+    "immich_redis",
+    "paperless",
+    "paperless-db",
+    "paperless-broker",
+    "syncthing",
+    "scrutiny-influxdb",
+    "uptime-kuma",
+    "scrutiny",
+    "prometheus",
+    "grafana",
+    "jellyseerr",
+    "calibre-web",
+    "qbittorrent",
+    "gluetun",
+    "navidrome",
+    "audiobookshelf",
+    "radarr",
+    "prowlarr",
+    "sonarr"
+   ]
   },
   "gpu": {
-   "owner_vm": null,
-   "owner_name": null,
-   "mode": "unknown",
+   "owner_vm": 200,
+   "owner_name": "ai-vm",
+   "mode": "ai (ai-vm)",
    "present": false
   },
   "media": {
-   "torrents": 0,
-   "torrents_active": 0,
-   "down_mbps": 0.0,
-   "jellyfin_movies": 0,
-   "jellyfin_series": 0,
-   "jellyfin_episodes": 0,
+   "torrents": 146,
+   "torrents_active": 18,
+   "down_mbps": 0.2,
+   "jellyfin_movies": 209,
+   "jellyfin_series": 1,
+   "jellyfin_episodes": 40,
    "sonarr_queue": 0,
-   "radarr_queue": 0,
-   "mount_free": ""
+   "radarr_queue": 33,
+   "mount_free": "1.5T free of 9.7T (85% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
    "tailnet": "100.65.160.86",
-   "smb_lan": false,
-   "smb_tailnet": false,
+   "smb_lan": true,
+   "smb_tailnet": true,
    "shares": [
     "shared",
     "media",
@@ -119,9 +377,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
-    "up": false,
-    "ms": 10,
-    "code": null
+    "up": true,
+    "ms": 34,
+    "code": 200
    },
    {
     "name": "Jellyseerr",
@@ -129,9 +387,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
-    "up": false,
-    "ms": 9,
-    "code": null
+    "up": true,
+    "ms": 74,
+    "code": 200
    },
    {
     "name": "Prowlarr",
@@ -139,9 +397,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
-    "up": false,
-    "ms": 9,
-    "code": null
+    "up": true,
+    "ms": 21,
+    "code": 200
    },
    {
     "name": "Sonarr",
@@ -149,9 +407,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
-    "up": false,
-    "ms": 8,
-    "code": null
+    "up": true,
+    "ms": 21,
+    "code": 200
    },
    {
     "name": "Radarr",
@@ -159,9 +417,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
-    "up": false,
-    "ms": 8,
-    "code": null
+    "up": true,
+    "ms": 17,
+    "code": 200
    },
    {
     "name": "qBittorrent",
@@ -169,9 +427,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
-    "up": false,
-    "ms": 8,
-    "code": null
+    "up": true,
+    "ms": 20,
+    "code": 200
    },
    {
     "name": "Bazarr",
@@ -179,9 +437,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
-    "up": false,
-    "ms": 7,
-    "code": null
+    "up": true,
+    "ms": 20,
+    "code": 200
    },
    {
     "name": "Audiobookshelf",
@@ -189,9 +447,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
-    "up": false,
-    "ms": 8,
-    "code": null
+    "up": true,
+    "ms": 20,
+    "code": 200
    },
    {
     "name": "Navidrome",
@@ -199,9 +457,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
-    "up": false,
-    "ms": 7,
-    "code": null
+    "up": true,
+    "ms": 33,
+    "code": 200
    },
    {
     "name": "Calibre-Web",
@@ -209,9 +467,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
-    "up": false,
-    "ms": 7,
-    "code": null
+    "up": true,
+    "ms": 67,
+    "code": 200
    },
    {
     "name": "FlareSolverr",
@@ -219,9 +477,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
-    "up": false,
-    "ms": 7,
-    "code": null
+    "up": true,
+    "ms": 19,
+    "code": 200
    },
    {
     "name": "Grafana",
@@ -229,9 +487,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
-    "up": false,
-    "ms": 6,
-    "code": null
+    "up": true,
+    "ms": 41,
+    "code": 200
    },
    {
     "name": "Prometheus",
@@ -239,9 +497,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 33,
+    "code": 200
    },
    {
     "name": "Uptime Kuma",
@@ -249,9 +507,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 35,
+    "code": 200
    },
    {
     "name": "Scrutiny",
@@ -259,9 +517,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 47,
+    "code": 200
    },
    {
     "name": "Dozzle",
@@ -269,9 +527,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 21,
+    "code": 200
    },
    {
     "name": "ntfy",
@@ -279,9 +537,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 18,
+    "code": 200
    },
    {
     "name": "Healthchecks",
@@ -289,9 +547,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 34,
+    "code": 200
    },
    {
     "name": "Immich",
@@ -299,9 +557,9 @@
     "group": "photos",
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 20,
+    "code": 200
    },
    {
     "name": "Paperless-ngx",
@@ -309,9 +567,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 62,
+    "code": 200
    },
    {
     "name": "Syncthing",
@@ -319,9 +577,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 17,
+    "code": 200
    },
    {
     "name": "Stirling-PDF",
@@ -329,9 +587,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 16,
+    "code": 401
    },
    {
     "name": "Miniflux",
@@ -339,9 +597,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 26,
+    "code": 200
    },
    {
     "name": "Forgejo",
@@ -349,9 +607,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 17,
+    "code": 200
    },
    {
     "name": "code-server",
@@ -359,9 +617,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
-    "up": false,
-    "ms": 1,
-    "code": null
+    "up": true,
+    "ms": 31,
+    "code": 200
    },
    {
     "name": "Open WebUI",
@@ -369,9 +627,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 21,
+    "code": 200
    },
    {
     "name": "Qdrant",
@@ -379,9 +637,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 13,
+    "code": 200
    },
    {
     "name": "Home Assistant",
@@ -389,9 +647,9 @@
     "group": "automation",
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 30,
+    "code": 200
    },
    {
     "name": "Node-RED",
@@ -399,9 +657,9 @@
     "group": "automation",
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 16,
+    "code": 200
    },
    {
     "name": "Mosquitto",
@@ -409,8 +667,8 @@
     "group": "automation",
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
-    "up": false,
-    "ms": 0,
+    "up": true,
+    "ms": 9,
     "code": null
    },
    {
@@ -419,9 +677,9 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 14,
+    "code": 200
    },
    {
     "name": "Cleanuparr",
@@ -429,9 +687,9 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 17,
+    "code": 200
    },
    {
     "name": "Caddy",
@@ -439,12 +697,12 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:80/",
-    "up": false,
-    "ms": 0,
-    "code": null
+    "up": true,
+    "ms": 15,
+    "code": 200
    }
   ],
-  "services_up": 0,
+  "services_up": 33,
   "services_total": 33,
   "open_issues": [
    {
@@ -453,24 +711,12 @@
    },
    {
     "severity": "warn",
-    "text": "no ZFS snapshot policy — an accidental delete is unrecoverable"
-   },
-   {
-    "severity": "warn",
     "text": "backups live only on the P520 (/tank/backups) — no off-machine copy"
-   },
-   {
-    "severity": "warn",
-    "text": "33 service(s) not answering: Jellyfin, Jellyseerr, Prowlarr, Sonarr, Radarr, qBittorrent"
-   },
-   {
-    "severity": "warn",
-    "text": "NAS SMB not reachable over the tailnet"
    }
   ],
   "issue_counts": {
    "bad": 0,
-   "warn": 5
+   "warn": 2
   }
  },
  "projects": [
@@ -650,9 +896,242 @@
    "folder": "Planned"
   }
  ],
- "tasks": {},
- "school": {},
- "fleet": [],
+ "tasks": {
+  "open": 39,
+  "overdue": 4,
+  "items": [
+   {
+    "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
+    "list": "Tech",
+    "due": "2026-10-14",
+    "overdue": true
+   },
+   {
+    "title": "PS Vita: finish setup (modded)",
+    "list": "Hardware",
+    "due": "2026-10-17",
+    "overdue": true
+   },
+   {
+    "title": "Get an oil change",
+    "list": "My Tasks",
+    "due": "2026-10-18",
+    "overdue": true
+   },
+   {
+    "title": "Go through my X saves with grokbot",
+    "list": "Tech",
+    "due": "2026-10-18",
+    "overdue": true
+   },
+   {
+    "title": "Make the ACM@SJSU Substack (all our articles)",
+    "list": "Tech",
+    "due": "2026-10-21",
+    "overdue": false
+   },
+   {
+    "title": "New Nintendo 3DS XL: finish setup (modded)",
+    "list": "Hardware",
+    "due": "2026-10-24",
+    "overdue": false
+   },
+   {
+    "title": "Write Substack article: Breaking down microGPT",
+    "list": "Tech",
+    "due": "2026-10-31",
+    "overdue": false
+   },
+   {
+    "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
+    "list": "Tech",
+    "due": "2026-10-31",
+    "overdue": false
+   },
+   {
+    "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
+    "list": "Hardware",
+    "due": "2026-10-31",
+    "overdue": false
+   },
+   {
+    "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
+    "list": "Hardware",
+    "due": "2026-10-31",
+    "overdue": false
+   },
+   {
+    "title": "Cancel subscription of rtings.com",
+    "list": "Subscriptions",
+    "due": "2026-12-15",
+    "overdue": false
+   },
+   {
+    "title": "Port the Gemini automations into Hermes",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   }
+  ],
+  "lists": 9
+ },
+ "school": {
+  "upcoming": 4,
+  "window_days": 7,
+  "later": 24,
+  "courses": [
+   "CMPE-131",
+   "CMPE-142"
+  ],
+  "next": [
+   {
+    "title": "Term Project: Specification Phase Presentation",
+    "course": "CMPE-131",
+    "due": "2026-10-18",
+    "when": "2026-10-18T23:59:00+00:00"
+   },
+   {
+    "title": "Programming project #3",
+    "course": "CMPE-142",
+    "due": "2026-10-18",
+    "when": "2026-10-18T23:59:00+00:00"
+   },
+   {
+    "title": "Chapter 7&8&9 Quiz - Requires Respondus LockDown Browser",
+    "course": "CMPE-131",
+    "due": "2026-10-20",
+    "when": "2026-10-20T16:15:00+00:00"
+   },
+   {
+    "title": "(In-class Activity) Weekly Sprint Meeting - Implementation Status Update (cont'd)",
+    "course": "CMPE-131",
+    "due": "2026-10-20",
+    "when": "2026-10-20T17:15:00+00:00"
+   }
+  ]
+ },
+ "fleet": [
+  {
+   "name": "Ayumacmini",
+   "os": "macOS",
+   "online": true,
+   "self": true
+  },
+  {
+   "name": "ayumad",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
+   "os": "windows",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "docker-vm",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "localhost",
+   "os": "iOS",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "pve-p520",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "school-vm",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "tank",
+   "os": "linux",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayumacpro",
+   "os": "macOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Ayupadpro",
+   "os": "iOS",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Canyon",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "framework",
+   "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "G14",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "g14-omarchy",
+   "os": "linux",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "M16",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Pixel 10 Pro",
+   "os": "android",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Retroid Pocket Nova",
+   "os": "android",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "XPS",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "xps-omarchy",
+   "os": "linux",
+   "online": false,
+   "self": false
+  }
+ ],
  "journal": [
   {
    "date": "2026-10-16",
@@ -671,29 +1150,25 @@
    "summary": "ACM keyboard sale sheet, wishlist→Muse scrape-list bridge, loadout browser spec, AD1865 DAC verdict, bug-bounty feasibility."
   }
  ],
- "errors": {
-  "tasks": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "school": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
-  "fleet": "SectionTimeout: exceeded 25s budget (blocked syscall?)"
- },
+ "errors": {},
  "now": {
   "active_projects": 17,
   "planned_projects": 5,
-  "open_tasks": 0,
-  "overdue_tasks": 0,
-  "assignments_upcoming": 0,
-  "devices_online": 0,
-  "devices_total": 0,
+  "open_tasks": 39,
+  "overdue_tasks": 4,
+  "assignments_upcoming": 4,
+  "devices_online": 8,
+  "devices_total": 20,
   "jobs_failing": 0,
   "jobs_total": 10,
   "homelab_reachable": true,
-  "services_up": 0,
+  "services_up": 33,
   "services_total": 33,
-  "guests_running": 0,
-  "containers_running": 0,
-  "pools_online": 0,
-  "pools_total": 0,
+  "guests_running": 5,
+  "containers_running": 44,
+  "pools_online": 2,
+  "pools_total": 2,
   "homelab_issues_bad": 0,
-  "homelab_issues_warn": 5
+  "homelab_issues_warn": 2
  }
 }
