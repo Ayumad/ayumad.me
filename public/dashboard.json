@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-19T01:23:11-07:00",
+ "generated_at": "2026-10-19T07:24:11-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.22.2",
@@ -18,17 +18,17 @@
    "episodic": 545
   },
   "disk": {
-   "used_pct": 83,
-   "free_gb": 33.4,
+   "used_pct": 84,
+   "free_gb": 32.9,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 1643,
-   "month_in_m": 11.6,
-   "month_out_m": 4.65,
-   "month_cache_m": 180.1,
-   "week_calls": 652,
-   "week_out_m": 1.63,
+   "month_calls": 1750,
+   "month_in_m": 13.0,
+   "month_out_m": 4.79,
+   "month_cache_m": 196.8,
+   "week_calls": 710,
+   "week_out_m": 1.59,
    "cache_share": 94,
    "top_models": [
     {
@@ -38,22 +38,26 @@
     {
      "model": "mimo-v2.5",
      "calls": 568
+    },
+    {
+     "model": "deepseek-v4.1-flash",
+     "calls": 107
     }
    ]
   }
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-19T01:23:11-07:00",
+  "checked_at": "2026-10-19T07:24:12-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 337323,
+   "uptime_s": 358983,
    "load": [
-    "8.83",
-    "8.18",
-    "6.70"
+    "2.44",
+    "4.51",
+    "5.07"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -143,7 +147,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 81.3,
+    "alloc_gb": 81.7,
     "free_gb": 3481.6,
     "health": "ONLINE",
     "used_pct": 2,
@@ -160,8 +164,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 16691.2,
-    "free_gb": 1945.6,
+    "alloc_gb": 16793.6,
+    "free_gb": 1853.44,
     "health": "ONLINE",
     "used_pct": 90,
     "scan": "scrub repaired 0B in 2 days 08:06:31 with 0 errors on Tue Oct 13 08:30:33 2026",
@@ -188,7 +192,7 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "1005M",
+    "used": "1006M",
     "avail": "7.11G"
    },
    {
@@ -233,57 +237,57 @@
    },
    {
     "name": "tank",
-    "used": "13.0T",
-    "avail": "1.39T"
+    "used": "13.1T",
+    "avail": "1.32T"
    },
    {
     "name": "tank/MM",
     "used": "1.84M",
-    "avail": "1.39T"
+    "avail": "1.32T"
    },
    {
     "name": "tank/PC",
     "used": "1.91T",
-    "avail": "1.39T"
+    "avail": "1.32T"
    },
    {
     "name": "tank/backups",
-    "used": "1.48T",
-    "avail": "1.39T"
+    "used": "1.53T",
+    "avail": "1.32T"
    },
    {
     "name": "tank/media",
-    "used": "9.23T",
-    "avail": "1.39T"
+    "used": "9.25T",
+    "avail": "1.32T"
    },
    {
     "name": "tank/photos",
-    "used": "537M",
-    "avail": "1.39T"
+    "used": "555M",
+    "avail": "1.32T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "1.39T"
+    "avail": "1.32T"
    },
    {
     "name": "tank/shared",
-    "used": "9.64M",
-    "avail": "1.39T"
+    "used": "9.72M",
+    "avail": "1.32T"
    },
    {
     "name": "tank/timemachine",
     "used": "377G",
-    "avail": "1.39T"
+    "avail": "1.32T"
    }
   ],
   "snapshots": 360,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-19_08:00:21_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-19_14:00:16_hourly",
   "scrub_timers": 0,
   "backups": {
-   "newest": "vzdump-qemu-202-2026_10_18-03_37_55.vma.zst",
-   "newest_age_h": 21.5,
-   "count": 65,
+   "newest": "vzdump-qemu-202-2026_10_19-03_38_49.vma.zst",
+   "newest_age_h": 3.5,
+   "count": 66,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
    "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
@@ -348,14 +352,14 @@
   },
   "media": {
    "torrents": 146,
-   "torrents_active": 18,
-   "down_mbps": 2.19,
+   "torrents_active": 20,
+   "down_mbps": 1.01,
    "jellyfin_movies": 209,
    "jellyfin_series": 1,
    "jellyfin_episodes": 40,
    "sonarr_queue": 0,
    "radarr_queue": 33,
-   "mount_free": "1.4T free of 9.7T (86% used)"
+   "mount_free": "1.4T free of 9.6T (87% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -378,7 +382,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 34,
+    "ms": 40,
     "code": 200
    },
    {
@@ -388,7 +392,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 111,
+    "ms": 92,
     "code": 200
    },
    {
@@ -398,7 +402,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 21,
+    "ms": 26,
     "code": 200
    },
    {
@@ -408,7 +412,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 20,
+    "ms": 26,
     "code": 200
    },
    {
@@ -418,7 +422,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 17,
+    "ms": 20,
     "code": 200
    },
    {
@@ -428,7 +432,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 18,
+    "ms": 22,
     "code": 200
    },
    {
@@ -438,7 +442,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 37,
+    "ms": 31,
     "code": 200
    },
    {
@@ -448,7 +452,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 19,
+    "ms": 24,
     "code": 200
    },
    {
@@ -458,7 +462,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 27,
+    "ms": 34,
     "code": 200
    },
    {
@@ -478,7 +482,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 22,
+    "ms": 21,
     "code": 200
    },
    {
@@ -488,7 +492,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 32,
+    "ms": 33,
     "code": 200
    },
    {
@@ -498,7 +502,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 42,
+    "ms": 37,
     "code": 200
    },
    {
@@ -508,7 +512,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 34,
+    "ms": 30,
     "code": 200
    },
    {
@@ -518,7 +522,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 40,
+    "ms": 47,
     "code": 200
    },
    {
@@ -528,7 +532,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 94,
+    "ms": 38,
     "code": 200
    },
    {
@@ -538,7 +542,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 62,
+    "ms": 13,
     "code": 200
    },
    {
@@ -548,7 +552,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 44,
+    "ms": 37,
     "code": 200
    },
    {
@@ -558,7 +562,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 12,
+    "ms": 19,
     "code": 200
    },
    {
@@ -568,7 +572,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 77,
+    "ms": 71,
     "code": 200
    },
    {
@@ -578,7 +582,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 15,
+    "ms": 17,
     "code": 200
    },
    {
@@ -588,7 +592,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 24,
+    "ms": 19,
     "code": 401
    },
    {
@@ -598,7 +602,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 79,
+    "ms": 31,
     "code": 200
    },
    {
@@ -608,7 +612,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 14,
+    "ms": 13,
     "code": 200
    },
    {
@@ -618,7 +622,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 31,
+    "ms": 36,
     "code": 200
    },
    {
@@ -628,7 +632,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 23,
+    "ms": 31,
     "code": 200
    },
    {
@@ -638,7 +642,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 73,
+    "ms": 17,
     "code": 200
    },
    {
@@ -648,7 +652,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 28,
+    "ms": 33,
     "code": 200
    },
    {
@@ -658,7 +662,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 12,
+    "ms": 17,
     "code": 200
    },
    {
@@ -668,7 +672,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 4,
+    "ms": 5,
     "code": null
    },
    {
@@ -678,7 +682,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 15,
+    "ms": 21,
     "code": 200
    },
    {
@@ -688,7 +692,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 16,
+    "ms": 21,
     "code": 200
    },
    {
@@ -698,7 +702,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 37,
+    "ms": 21,
     "code": 200
    }
   ],
@@ -721,10 +725,17 @@
  },
  "projects": [
   {
+   "name": "00 Series Overview",
+   "status": "active",
+   "summary": "Series hub for the ACM Fall 2026 'Intro to Agentic AI' workshop series (4 sessions): overview, format conventions, session links, open questions.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
    "name": "ACM Fall 2026 Workshops",
    "status": "active",
-   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Agentic Coding series Oct 7–Dec 2.",
-   "updated": "2026-08-27",
+   "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Intro to Agentic AI series Oct 7–Dec 2 (outlines drafted 10-09).",
+   "updated": "2026-10-09",
    "folder": ""
   },
   {
@@ -738,22 +749,29 @@
    "name": "EchoSphere",
    "status": "active",
    "summary": "EchoSphere Physical AI Robot — Ayush leads SJSU ACM Robotics & Hardware team (6 members: hardware/software/electronics) in a 12-week build with IPMD (Min Lee) for EchoAi's Kickstarter demo. Kickoff Sep 7, 2026. Company meeting Sep 1: Kickstarter confirmed, $300–500 budget ask, EchoAI API still pending.",
-   "updated": "2026-09-03",
+   "updated": "2026-09-15",
    "folder": "EchoSphere"
   },
   {
    "name": "Facebook Marketplace MCP",
    "status": "active",
-   "summary": "Facebook Marketplace MCP server exposing search + listing-detail tools to Hermes, driving a burner-account Chrome profile to feed the marketplace-deal-evaluator flow.",
-   "updated": "2026-09-08",
+   "summary": "Facebook Marketplace MCP server exposing search + listing-detail tools to Hermes via a burner-account Chrome profile, live as of 2026-09-18, consumed interactively by the Marketplace Navigator bot (Meta Muse Spark) and by two monitor-mode sweeps (wishlist roundup + hourly %-off steal sweep).",
+   "updated": "2026-09-18",
    "folder": ""
   },
   {
    "name": "Homelab",
    "status": "active",
    "summary": "Plan the Lenovo ThinkStation P520 homelab for local AI and self-hosted services.",
-   "updated": "2026-09-10",
+   "updated": "2026-09-27",
    "folder": ""
+  },
+  {
+   "name": "Homelab Service Ideas — 2026-09-17 Swarm",
+   "status": "active",
+   "summary": "Swarm research (7 agents + 3,172 r/selfhosted comments) on self-hosted services for the P520: tiered add-list, measured disk/RAM limits, verified skip-list; nothing deployed yet.",
+   "updated": "2026-09-17",
+   "folder": "Homelab"
   },
   {
    "name": "Obsidian RAG Assistant",
@@ -773,7 +791,7 @@
    "name": "Personal Website",
    "status": "active",
    "summary": "Create Ayumad.me as a personal operating system combining projects, interests, notes, media, and playful interactive presentation.",
-   "updated": "2026-09-10",
+   "updated": "2026-09-17",
    "folder": ""
   },
   {
@@ -791,6 +809,34 @@
    "folder": ""
   },
   {
+   "name": "Workshop 1 — The Landscape",
+   "status": "active",
+   "summary": "Workshop 1 of the ACM Fall 2026 'Intro to Agentic AI' series — the landscape: what models, agents, and harnesses are, how we got here, the models in use (Oct 2026), benchmarks, the wider stack (providers, routers, runtimes, environments), and the honest list of things to be aware of.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 2 — Using AI Well",
+   "status": "active",
+   "summary": "Workshop 2 of the ACM Fall 2026 'Intro to Agentic AI' series — using AI well: context management, choosing the right model, effort levels, working modes (ask / plan / agent / debug / goal), and the full working loop.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 3 — Local and Personal AI",
+   "status": "active",
+   "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, the hardware that runs them, and how to start.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 4 — MCP 101",
+   "status": "active",
+   "summary": "Workshop 4 of the ACM Fall 2026 'Intro to Agentic AI' series — MCP 101, co-presented with an industry professional: the problem MCP solves, protocol concepts, live demo, build-along, security, and the production view.",
+   "updated": "2026-10-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
    "name": "YouTube Data Deep Dive",
    "status": "active",
    "summary": "Pull Ayush's personal YouTube data (watch history, saved, liked, subscriptions, playlists) and build a profile of what it says about him. Public findings done; 3 routes to private data (Takeout / CDP cookies / manual sign-in).",
@@ -798,10 +844,10 @@
    "folder": ""
   },
   {
-   "name": "Album Ranking App",
+   "name": "Audio Hub",
    "status": "planned",
-   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Start by end of Aug 2026.",
-   "updated": "2026-08-19",
+   "summary": "Audio Hub: one web app bundling a by-ear EQ trainer (sweep a sine, mark peaks/dips, export an 8-band PEQ), a feed of recent audio articles, and a library of articles explaining audio terms.",
+   "updated": "2026-09-22",
    "folder": "Planned"
   },
   {
@@ -812,17 +858,31 @@
    "folder": ""
   },
   {
+   "name": "Loadout Browser",
+   "status": "planned",
+   "summary": "Vibe-coded website for looking through the Loadout — built with the anatomy skill (interactive isometric figures) and a Claude-driven plan; target end of Oct 2026.",
+   "updated": "2026-10-12",
+   "folder": "Planned"
+  },
+  {
    "name": "P520 GPU Passthrough Runbook",
    "status": "reference",
    "summary": "P520 GPU passthrough runbook + always-accessible OS VM plan (Ubuntu + Fedora)",
-   "updated": "2026-09-05",
+   "updated": "2026-09-16",
+   "folder": "Homelab"
+  },
+  {
+   "name": "School VM Runbook",
+   "status": "reference",
+   "summary": "Runbook for school-vm (P520 vmid 201): the on-demand Ubuntu 24.04 Linux box holding CMPE 131/142/148 coursework. Access, lifecycle, class-work recipes, snapshots/restore, and verified state.",
+   "updated": "2026-10-08",
    "folder": "Homelab"
   },
   {
    "name": "Social Bookmark Sync",
    "status": "planned",
    "summary": "Auto-sync Reddit saves, X bookmarks (and TikTok favorites later) into Hermes + Obsidian vault. Shared ingest pipeline, script-first, zero-token when idle. Deferred — build routes researched.",
-   "updated": "2026-08-11",
+   "updated": "2026-10-14",
    "folder": "Planned"
   },
   {
@@ -830,6 +890,13 @@
    "status": "planned",
    "summary": "Deferred local-first voice interface to Hermes using Raspberry Pi audio hardware and Home Assistant.",
    "updated": "2026-08-05",
+   "folder": "Planned"
+  },
+  {
+   "name": "Album Ranking App",
+   "status": "paused",
+   "summary": "Standalone Beli-style social music app built off the ayumad.me rate-album / Taste Elo feature — album Elo ratings, ranked leaderboards, genre overviews, a constant Spotify-Wrapped-like listening dashboard, and social album recommendations. Web + mobile. Backburnered 2026-10-12 (was: start by end of Aug 2026).",
+   "updated": "2026-10-12",
    "folder": "Planned"
   }
  ],
@@ -1083,8 +1150,8 @@
  ],
  "errors": {},
  "now": {
-  "active_projects": 11,
-  "planned_projects": 4,
+  "active_projects": 17,
+  "planned_projects": 5,
   "open_tasks": 39,
   "overdue_tasks": 4,
   "assignments_upcoming": 3,
