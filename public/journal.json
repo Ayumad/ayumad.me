@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-18",
+  "summary": "Session journal for 2026-10-18: OpenCode key expiry broke cron ~18h (fixed via Codex), Mac mini SSH setup + 3.3 GiB cleanup, Arya/HE1000 vs LCD-X consult, weekly review.",
+  "highlights": [
+   "The OpenCode Go key expired overnight and silently killed every agent-cron until Codex swapped in the replacement mid-afternoon — an ~18h window that ate the Daily Brief and two watchdogs; `deepseek-v4.1-flash` verified working through Hermes afterward.",
+   "Mac mini is now SSH-reachable from any LAN computer (key-based auth) and 3.3 GiB lighter after two cache-cleanup passes (36 GiB free, no swap pressure).",
+   "Headphone verdict of the day: nothing dethrones the LCD-X on impact — Arya/HEK purchases would be staging-and-comfort plays; Arya Organic stays backburnered at $500.",
+   "Vault continuity gap found: the local `~/Documents/Main` checkout lost Session Summaries after 2026-09-10 (git mmap deadlocks locally; remote intact), so this entry and the calendar were written through the `/tmp/vault-mirror` recovery path. Oct 17's entry is still missing entirely."
+  ]
+ },
+ {
   "date": "2026-10-16",
   "summary": "Session journal for 2026-10-16: quiet Friday — Daily Brief + Interview Prep only, 420 cron runs all green, no Codex work, no vault edits, HW8 Canvas submission still pending.",
   "highlights": [
