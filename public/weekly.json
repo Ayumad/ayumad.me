@@ -1,5 +1,72 @@
 [
  {
+  "date": "2026-10-18",
+  "weekStart": "2026-10-11",
+  "summary": "Weekly review for Oct 12–18, 2026: wishlist→Muse bridge live, ACM keyboard sale sheet built, CMPE 142 HW8 shipped, OpenCode key expiry broke cron ~18 h.",
+  "sections": [
+   {
+    "heading": "✅ This Week's Highlights",
+    "items": [
+     "**1. Wishlist → Muse marketplace bridge went live (Oct 13)** — The vault wishlist now drives the Muse Navigator bot's standing scrape list: `wishlist_manifest.py` regenerates `marketplace-watchlist.{md,json}` from the Wishlist Board + Loadout register (with a GitHub-mirror fallback for TCC-blocked processes), and the bot treats the manifest — never a chat paste — as the standing-search truth. Verified against the real bot: it listed all 6 active wants with ceilings. Decision: every wishlist write now ends with manifest regeneration, no new cron.",
+     "**2. ACM keyboard sale got its operating system (Oct 13)** — A fillable Google Sheet on the school ACM account tracks the fleet — WhiteFox ×16, BlackFox ×10, Kira ×14 — with a live COUNTIFS profit model: 32 sale-ready units, **$1,140–$1,460 gross, $570–$730 per side** after the 50/50 split, editable price parameters. Ready to list and sell.",
+     "**3. CMPE 142 HW8 finished end-to-end (Oct 15)** — The deadlock set (8.3/8.6/8.7/8.8/8.10) transcribed from the uploaded banker's-algorithm snapshot, cross-checked against the textbook answer key, docx verified byte-identical across school-vm, `Ayumad/school-cmpe142` (`d10c785`), the Mac mirror, and the NAS. Only the Canvas submission remains.",
+     "**4. Homelab maintenance wins (Oct 12)** — The P520's Proxmox \"No valid subscription\" nag is now permanently patched (proxmoxlib.js gate + `/usr/local/sbin/pve-nag-buster.sh` with an apt DPkg hook; full restore→re-patch cycle tested). The \"why is the P520 so loud\" scare was diagnosed, not a fault: the monthly ZFS scrub of `tank` (15 TB, 0 errors, ~44 h) stacked with docker-vm load. `tank` now scrubs monthly — last week's \"never been scrubbed\" item is closed.",
+     "**5. Gear week: decisions locked, money parked on purpose** — PS5 target locked at **≤$300 with a DualSense / ≤$250 bare** (register + board updated); Steam Machine 512 GB + Controller bought with research-study GC as a ~2-week planned-sale trial with a resale plan; audio verdicts — Bottlehead Crack ($375 kit) is the lane over the re-surfaced $600 WA7, **MOTU M2 settled as the workstation DAC** (RCA mirror keeps scope rig + Crack wired simultaneously, $0 marginal), AD1865 tube DAC = \"buy if verified, offer $85, cap $100\"; stale owned-roster (Focal Clear, Meze 99 — both sold) flushed from skill + vault; iPhone Duo backburnered until GC savings rebuild."
+    ]
+   },
+   {
+    "heading": "📊 Project Progress",
+    "items": [
+     "**School** — HW8 done (above), Canvas submission pending; Google Drives semester reorg overdue since Oct 14; PS Vita setup was due Oct 17. EchoSphere had Sprint W6 check-in plus an IPMD progress check-in on the Oct 16 calendar.",
+     "**Writing / ACM** — two Substack pieces logged and mirrored to [[02 Projects/Articles/Articles Hub|Articles Hub]] + both task surfaces: the ACM@SJSU Substack (due Oct 21), \"Intro to neural networks\" (also feeds the ACM site's new blog section), and \"Breaking down microGPT\" (due Oct 31). [[02 Projects/Planned/Social Bookmark Sync|Social Bookmark Sync]] moved from parked to active: grokbot X-saves sweep due Sat Oct 18 plus pipeline wiring; Gemini→Hermes port queued pending Ayush's automation inventory.",
+     "**Loadout browser** — the gear-site idea became a full 782-line build spec (Oct 13): weapon-select-style public catalog, 14 parametric figure archetypes, Supabase community layer, `loadout.ayumad.me`, v2 \"scanned spaces\" epic; v1 = phases 0–5 (~45–60 h), ~70–95 h total. Three product calls flagged for Ayush (subdomain vs path, lent-out items on the public board, public ratings/notes).",
+     "**Homelab / media** — remux queue draining fast: ~816 GB (Oct 14) → ~663 GB (Oct 15) → 578 GB across 29 remux rows (Oct 16), 85–153 GB/day, 2 TB floor guard in place. Data volume back to **83% / 35 GB free** (was 93% / 15 GB on Oct 16). P520: uptime-kuma flagged burning 127 CPU-hours in 12 days — worth investigating.",
+     "**Hermes / cron** — five straight clean days Oct 12–16 (420–426 runs/day across 11 stores, 0 failures). Then the OpenCode API key expired (see Blockers). The Vercel Deployment Prune's first fire ran Sun Oct 18 7:00 AM — and errored on HTTP 403; the token is still dead.",
+     "**Personal website** — deploy hash unchanged (`index-Y5FAYJlE.js` since Sep 20); the automation kept committing all week (7 nightly journal updates, ~28 dashboard refreshes).",
+     "**GitHub** — ~98 push events: `ayumad.github.io` 51 (publisher sync), `ayumad.me` 21 (journal + dashboard automation), `ayumad.vault` 23 (auto-sync + content), `school-cmpe142` 1 (HW8), `sf-bay-water-quality-explorer` 2 including **PR #8 merged Oct 13 — \"Baywatcher 2.0: station dashboard, wildlife, and reliable fallback.\"** No issues opened."
+    ]
+   },
+   {
+    "heading": "🚧 Blockers & Issues",
+    "items": [
+     "**OpenCode API key expiry broke agent-driven cron for ~18 h (Oct 17 ~6 PM → Oct 18 ~midday).** HTTP 401 hit every agent job that fired: Interview Prep (Oct 17 6 PM), Daily Cleanup (Oct 17 11 PM), the vaultkeeper Session Journal (Oct 17 10 PM), Daily Brief (Oct 18 9:30 AM), Ayumad.me Monitor (Oct 17 + 18 noon), Hermes Update Check (Oct 18 8 AM). Runs after 1 PM Oct 18 are green — the key appears restored — but the casualties stand: **no 2026-10-17 session summary exists** (one-day gap in the journal chain and in ayumad.me/journal), and the Oct 17 nightly journal deploy never happened.",
+     "**Vercel token still dead** — the prune's first fire errored HTTP 403 this morning; deployment storage keeps bleeding until `vercel login` runs on the mini.",
+     "**10 human-blocked items unchanged** — Notes scripting wedge (re-probed Oct 16, still tripping the 25 s alarm), `jellyfin.ayumad.me` NXDOMAIN (Namecheap A record), the stale `API_SERVER_KEY:` line (~config.yaml:728), SER8 node-exporter sudo, Xfinity xFi forwards, Hue pairing, state.db 1.2 GB compaction window, the parked simulator-runtime removal (~47 GB).",
+     "**Journal cron delivery** — Oct 16's bot-chat notification was refused (`permission_denied`), first in 11+ nights; the job itself completed and deployed. Watch for recurrence (fallback: flip to `deliver: local`).",
+     "**Scout Marketplace Sweep** still paused since Oct 9 — no Craigslist-wishlist sweeps since; unpausing is Ayush's call.",
+     "**Interview prep parked** — menus posted nightly, unanswered; DP/sorting/recursion remain the untested SWE surface.",
+     "**Framework 13 remote access** — still unverified; blocks agent-side Omarchy work.",
+     "**Google OAuth \"agentic\" checkbox** — one decision due before **Nov 11** (flip / remind / skip), parked as Mnemosyne pending task `oauth-agentic-flag`."
+    ]
+   },
+   {
+    "heading": "🔜 Next Week's Focus",
+    "items": [
+     "1. **School tail:** submit HW8 on Canvas; clear the overdue Google Drives semester reorg.",
+     "2. **Vercel re-auth** (`vercel login`) — the prune already failed once; storage bleed continues until it's fixed.",
+     "3. **Writing pipeline:** ACM@SJSU Substack due Oct 21; start the two Oct 31 pieces (neural-networks intro, microGPT breakdown).",
+     "4. **X-saves:** run the grokbot sweep (was due Sat Oct 18) and wire the X ingest pipeline end-to-end.",
+     "5. **ACM keyboard sale:** the sheet is ready — start listing the 32 sale-ready boards.",
+     "6. **Audio decisions queued:** Arya Stealth vs Organic vs HE1000 Stealth (today's session), the Bottlehead Crack build call, the AD1865 offer ≤$100.",
+     "7. **Gemini→Hermes port** — needs Ayush's list of what's actually automated in Gemini.",
+     "8. **One-tap human items:** simulator-runtime removal (~47 GB), Notes quit-and-reopen, Namecheap + Xfinity clicks (the public Jellyfin stack is staged and validated).",
+     "9. **Take the interview menu** — DP/sorting/recursion are the last untested SWE surface.",
+     "10. **OAuth agentic flag** — decide before Nov 11."
+    ]
+   },
+   {
+    "heading": "📝 Miscellaneous",
+    "items": [
+     "Fleet detail: the only failed runs install-wide in the last 7 days are the 401 batch above (plus one scout run interrupted by a shutdown); script/watchdog jobs stayed green throughout.",
+     "Vault validator clean at 566 notes (Oct 13–14); Decision Log untouched since Aug 7; no Codex threads all week.",
+     "Disk: 83% / 35 GB free today, up from 93% / 15 GB on Oct 16 (~20 GB appeared; the journals don't record the cause — the simulator-runtime item may have been cleared by hand).",
+     "AD1865 verdict detail: buy if verified, offer $85, cap $100 — coax-only, so it needs an S/PDIF source or a ~$30–50 DDC, 44.1/48k ceiling.",
+     "This review was written by the 4 PM cron while the Oct 17 journal gap is still open; tonight's 10 PM Session Journal should land Oct 18 if the key stays healthy."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-10-11",
   "weekStart": "2026-10-04",
   "summary": "Weekly review for Oct 5–11, 2026: CMPE 148 P2 shipped in a night, ACM agentic-AI workshop series built, Nova PS2 fixed, two cron bug classes patched, Vercel prune staged.",

@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-10-19",
+  "summary": "Session journal for 2026-10-19: week planning + task triage, resume rebuild from vault material, ACM slot completions; 427 cron runs green; vault checkout repaired after the iCloud-resurrection incident.",
+  "highlights": [
+   "Week plan locked with the CMPE 131 quiz (Tue) and midterm (Thu) called out ahead of everything else, and CMPE 142 PA3 named as the day's recovery item.",
+   "Resume rebuilt end-to-end from vault evidence with workshop criteria applied — Drive copy plus a download artifact.",
+   "Vault checkout repaired after the iCloud-resurrection incident; validator clean and sync pushing normally again."
+  ]
+ },
+ {
   "date": "2026-10-18",
   "summary": "Session journal for 2026-10-18: OpenCode key expiry broke cron ~18h (fixed via Codex), Mac mini SSH setup + 3.3 GiB cleanup, Arya/HE1000 vs LCD-X consult, weekly review.",
   "highlights": [
