@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-20",
+  "summary": "Session journal for 2026-10-20: FLCL S1 grab + 15 Mbps remux floor (~332 GiB), homelab service-map generator, green cron fleet.",
+  "highlights": [
+   "**Homelab Service Map is the day's durable artifact**: one regenerable note now indexes every guest, container, port and data path, and it immediately paid for itself with three exposures (open `0.0.0.0` binds, `tank` at 85%, dead `jellyfin.ayumad.me` DNS).",
+   "**The media library got cheaper and smarter**: a 15 Mbps 2160p floor reclaims ~332 GiB while deliberately keeping the four remuxes that earn their space — recorded in `02 Projects/Homelab.md`.",
+   "**FLCL S1 is queued and watched** (script-only watchdog pings photon on 6/6 import); the real blocker surfaced is the PIA VPN tunnel, which caps every download at ~0.5 MB/s.",
+   "Cron fleet fully green — 513/513 runs, no failures."
+  ]
+ },
+ {
   "date": "2026-10-19",
   "summary": "Session journal for 2026-10-19: week planning + task triage, resume rebuild from vault material, ACM slot completions; 427 cron runs green; vault checkout repaired after the iCloud-resurrection incident.",
   "highlights": [
