@@ -1,5 +1,14 @@
 [
  {
+  "date": "2026-10-21",
+  "summary": "Session journal for 2026-10-21: Daily Brief died on an Unsupported-model 400, AI/ML interview rotation posted, quiet vault, no Codex work.",
+  "highlights": [
+   "**The day's only failure is model routing, not infrastructure**: Daily Brief 400'd on \"Unsupported model mimo-v2.5\" at 09:30 while other mimo runs (including this one) succeeded — the job's pinned model/provider combo needs a re-check before tomorrow morning.",
+   "**Interview Prep is mid-conversation**: the AI/ML rotation prompt is out (transformers + RAG depth, untested DP/sorting/recursion flagged) and parked until Ayush answers — nothing to grade or log yet.",
+   "**Quiet vault day**: exactly one file touched (website roadmap last-checked stamp); no notes edited, no decisions logged, no Codex threads."
+  ]
+ },
+ {
   "date": "2026-10-20",
   "summary": "Session journal for 2026-10-20: FLCL S1 grab + 15 Mbps remux floor (~332 GiB), homelab service-map generator, green cron fleet.",
   "highlights": [
