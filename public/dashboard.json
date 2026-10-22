@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-22T01:35:12-07:00",
+ "generated_at": "2026-10-22T07:36:06-07:00",
  "generated_on": "Mac mini",
  "hermes": {
-  "version": "0.22.2",
+  "version": "0.22.4",
   "released": "2026.9.24",
   "commits_behind": 0,
   "cron_total": 17,
@@ -10,7 +10,7 @@
   "cron_no_agent": 10,
   "cron_failing": [],
   "cron_failing_count": 0,
-  "skills": 201,
+  "skills": 202,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
@@ -19,16 +19,16 @@
   },
   "disk": {
    "used_pct": 88,
-   "free_gb": 23.9,
+   "free_gb": 23.6,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 2530,
-   "month_in_m": 18.5,
-   "month_out_m": 5.59,
-   "month_cache_m": 318.6,
-   "week_calls": 1038,
-   "week_out_m": 1.19,
+   "month_calls": 2635,
+   "month_in_m": 18.8,
+   "month_out_m": 5.72,
+   "month_cache_m": 333.1,
+   "week_calls": 1143,
+   "week_out_m": 1.31,
    "cache_share": 95,
    "top_models": [
     {
@@ -37,7 +37,7 @@
     },
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 804
+     "calls": 909
     },
     {
      "model": "mimo-v2.5",
@@ -48,20 +48,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-22T01:35:13-07:00",
+  "checked_at": "2026-10-22T07:36:07-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 597244,
+   "uptime_s": 618898,
    "load": [
-    "48.01",
-    "38.58",
-    "28.25"
+    "15.04",
+    "17.56",
+    "17.59"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 31.1,
+   "mem_used_gb": 31.3,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -147,7 +147,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 80.7,
+    "alloc_gb": 81.1,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -164,8 +164,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 17100.8,
-    "free_gb": 1525.76,
+    "alloc_gb": 17203.2,
+    "free_gb": 1443.84,
     "health": "ONLINE",
     "used_pct": 92,
     "scan": "scrub repaired 0B in 2 days 08:06:31 with 0 errors on Tue Oct 13 08:30:33 2026",
@@ -237,56 +237,56 @@
    },
    {
     "name": "tank",
-    "used": "13.3T",
-    "avail": "1.06T"
+    "used": "13.4T",
+    "avail": "1022G"
    },
    {
     "name": "tank/MM",
     "used": "2.02M",
-    "avail": "1.06T"
+    "avail": "1022G"
    },
    {
     "name": "tank/PC",
     "used": "1.86T",
-    "avail": "1.06T"
+    "avail": "1022G"
    },
    {
     "name": "tank/backups",
-    "used": "1.43T",
-    "avail": "1.06T"
+    "used": "1.48T",
+    "avail": "1022G"
    },
    {
     "name": "tank/media",
-    "used": "9.63T",
-    "avail": "1.06T"
+    "used": "9.65T",
+    "avail": "1022G"
    },
    {
     "name": "tank/photos",
-    "used": "591M",
-    "avail": "1.06T"
+    "used": "609M",
+    "avail": "1022G"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "1.06T"
+    "avail": "1022G"
    },
    {
     "name": "tank/shared",
-    "used": "10.3M",
-    "avail": "1.06T"
+    "used": "10.4M",
+    "avail": "1022G"
    },
    {
     "name": "tank/timemachine",
     "used": "407G",
-    "avail": "1.06T"
+    "avail": "1022G"
    }
   ],
   "snapshots": 374,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-22_08:00:16_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-22_14:00:22_hourly",
   "scrub_timers": 0,
   "backups": {
-   "newest": "vzdump-qemu-202-2026_10_21-03_38_35.vma.zst",
-   "newest_age_h": 21.6,
+   "newest": "vzdump-qemu-202-2026_10_22-03_37_37.vma.zst",
+   "newest_age_h": 3.7,
    "count": 66,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -352,14 +352,14 @@
   },
   "media": {
    "torrents": 147,
-   "torrents_active": 6,
-   "down_mbps": 0.69,
+   "torrents_active": 5,
+   "down_mbps": 0.53,
    "jellyfin_movies": 209,
    "jellyfin_series": 2,
    "jellyfin_episodes": 46,
    "sonarr_queue": 0,
-   "radarr_queue": 7,
-   "mount_free": "1.1T free of 9.6T (89% used)"
+   "radarr_queue": 6,
+   "mount_free": "1022G free of 9.5T (90% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -392,7 +392,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 92,
+    "ms": 112,
     "code": 200
    },
    {
@@ -402,7 +402,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 23,
+    "ms": 26,
     "code": 200
    },
    {
@@ -412,7 +412,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 20,
+    "ms": 26,
     "code": 200
    },
    {
@@ -422,7 +422,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 20,
+    "ms": 28,
     "code": 200
    },
    {
@@ -432,7 +432,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 18,
+    "ms": 24,
     "code": 200
    },
    {
@@ -442,7 +442,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 29,
+    "ms": 48,
     "code": 200
    },
    {
@@ -452,7 +452,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 25,
+    "ms": 36,
     "code": 200
    },
    {
@@ -462,7 +462,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 31,
+    "ms": 40,
     "code": 200
    },
    {
@@ -472,7 +472,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 64,
+    "ms": 87,
     "code": 200
    },
    {
@@ -482,7 +482,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 26,
+    "ms": 40,
     "code": 200
    },
    {
@@ -492,7 +492,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 37,
+    "ms": 40,
     "code": 200
    },
    {
@@ -502,7 +502,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 32,
+    "ms": 45,
     "code": 200
    },
    {
@@ -512,7 +512,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 27,
+    "ms": 32,
     "code": 200
    },
    {
@@ -522,7 +522,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 36,
+    "ms": 44,
     "code": 200
    },
    {
@@ -532,7 +532,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 42,
+    "ms": 48,
     "code": 200
    },
    {
@@ -542,7 +542,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 17,
+    "ms": 33,
     "code": 200
    },
    {
@@ -552,7 +552,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 34,
+    "ms": 39,
     "code": 200
    },
    {
@@ -562,7 +562,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 12,
+    "ms": 16,
     "code": 200
    },
    {
@@ -572,7 +572,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 60,
+    "ms": 76,
     "code": 200
    },
    {
@@ -582,7 +582,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 17,
+    "ms": 16,
     "code": 200
    },
    {
@@ -592,7 +592,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 26,
+    "ms": 20,
     "code": 401
    },
    {
@@ -602,7 +602,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 36,
+    "ms": 60,
     "code": 200
    },
    {
@@ -612,7 +612,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 13,
+    "ms": 15,
     "code": 200
    },
    {
@@ -622,7 +622,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 22,
+    "ms": 53,
     "code": 200
    },
    {
@@ -632,7 +632,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 21,
+    "ms": 24,
     "code": 200
    },
    {
@@ -642,7 +642,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 16,
+    "ms": 64,
     "code": 200
    },
    {
@@ -652,7 +652,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 26,
+    "ms": 30,
     "code": 200
    },
    {
@@ -662,7 +662,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 13,
+    "ms": 15,
     "code": 200
    },
    {
@@ -682,7 +682,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 19,
+    "ms": 20,
     "code": 200
    },
    {
@@ -692,7 +692,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 24,
+    "ms": 22,
     "code": 200
    },
    {
@@ -702,7 +702,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 19,
+    "ms": 31,
     "code": 200
    }
   ],
@@ -727,15 +727,15 @@
   {
    "name": "00 Series Overview",
    "status": "active",
-   "summary": "Series hub for the ACM Fall 2026 'Intro to Agentic AI' workshop series (4 sessions): overview, format conventions, session links, open questions.",
-   "updated": "2026-10-09",
+   "summary": "Series hub for the ACM Fall 2026 'Intro to Agentic AI' workshop series (5 sessions): overview, format conventions, session links, open questions.",
+   "updated": "2026-10-22",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "ACM Fall 2026 Workshops",
    "status": "active",
    "summary": "ACM Fall 2026 workshop series: workshops + team meetings Wednesdays 1 PM, first workshop Sep 2 (LinkedIn-Resume), NSDC Python collab Sep 23, SCE Homelab collab mid-Oct, Intro to Agentic AI series Oct 7–Dec 2 (outlines drafted 10-09).",
-   "updated": "2026-10-19",
+   "updated": "2026-10-22",
    "folder": ""
   },
   {
@@ -772,6 +772,13 @@
    "summary": "Swarm research (7 agents + 3,172 r/selfhosted comments) on self-hosted services for the P520: tiered add-list, measured disk/RAM limits, verified skip-list; nothing deployed yet.",
    "updated": "2026-09-17",
    "folder": "Homelab"
+  },
+  {
+   "name": "Intro to Homelab Workshop",
+   "status": "active",
+   "summary": "Intro to Homelab workshop outline (ACM x SCE, Fall 2026) — hardware ladder, what you actually learn, platform and network choices, services worth running, the presenter's own P520 layout as the worked example, SRE career mapping, and the SCE cloud bridge.",
+   "updated": "2026-10-22",
+   "folder": ""
   },
   {
    "name": "Obsidian RAG Assistant",
@@ -819,21 +826,28 @@
    "name": "Workshop 2 — Using AI Well",
    "status": "active",
    "summary": "Workshop 2 of the ACM Fall 2026 'Intro to Agentic AI' series — using AI well: context management, choosing the right model, effort levels, working modes (ask / plan / agent / debug / goal), and the full working loop.",
-   "updated": "2026-10-09",
+   "updated": "2026-10-22",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "Workshop 3 — Local and Personal AI",
    "status": "active",
    "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, the hardware that runs them, and how to start.",
-   "updated": "2026-10-09",
+   "updated": "2026-10-22",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
    "name": "Workshop 4 — MCP 101",
    "status": "active",
    "summary": "Workshop 4 of the ACM Fall 2026 'Intro to Agentic AI' series — MCP 101, co-presented with an industry professional: the problem MCP solves, protocol concepts, live demo, build-along, security, and the production view.",
-   "updated": "2026-10-09",
+   "updated": "2026-10-22",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
+   "name": "Workshop 5 — Vibecoding",
+   "status": "active",
+   "summary": "Workshop 5 of the ACM Fall 2026 'Intro to Agentic AI' series — vibecoding: what it is, where it works, the build loop, an in-room ship-a-page activity, guardrails, and how to get good at it.",
+   "updated": "2026-10-22",
    "folder": "Intro to Agentic AI Workshops"
   },
   {
@@ -1150,7 +1164,7 @@
  ],
  "errors": {},
  "now": {
-  "active_projects": 17,
+  "active_projects": 19,
   "planned_projects": 5,
   "open_tasks": 45,
   "overdue_tasks": 3,
