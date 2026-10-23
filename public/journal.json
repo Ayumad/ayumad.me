@@ -1,11 +1,26 @@
 [
  {
+  "date": "2026-10-22",
+  "summary": "Session journal for 2026-10-22: ACM workshop outlines rebuilt in Ayush's voice, study-harness idea note, site-monitor sync; Daily Brief cron failed on a model error.",
+  "highlights": [
+   "The ACM workshop series is now consistent end-to-end — five outlines rebuilt in Ayush's voice in one morning session, with provenance lines fixed.",
+   "A study/learning harness idea got captured into `Planned/Study Harness.md` instead of evaporating.",
+   "Only automation breakage today is the Daily Brief's `mimo-v2.5` model error — one config pin, not a systemic issue.",
+   "Life admin crossed off: CMPE 131 midterm submitted, oil change done."
+  ]
+ },
+ {
   "date": "2026-10-21",
   "summary": "Session journal for 2026-10-21: Daily Brief died on an Unsupported-model 400, AI/ML interview rotation posted, quiet vault, no Codex work.",
   "highlights": [
    "**The day's only failure is model routing, not infrastructure**: Daily Brief 400'd on \"Unsupported model mimo-v2.5\" at 09:30 while other mimo runs (including this one) succeeded — the job's pinned model/provider combo needs a re-check before tomorrow morning.",
    "**Interview Prep is mid-conversation**: the AI/ML rotation prompt is out (transformers + RAG depth, untested DP/sorting/recursion flagged) and parked until Ayush answers — nothing to grade or log yet.",
-   "**Quiet vault day**: exactly one file touched (website roadmap last-checked stamp); no notes edited, no decisions logged, no Codex threads."
+   "**Quiet vault day**: exactly one file touched (website roadmap last-checked stamp); no notes edited, no decisions logged, no Codex threads.",
+   "**Daily Brief 400 investigated, no re-pin needed.** Job config verified in `jobs.json` (`model: mimo-v2.5`, `provider: opencode-go`): the same pin ran green Oct 19–20, and other mimo-v2.5 runs today (Interview Prep 6 PM, this cleanup run itself) succeeded — the 9:30 AM `Unsupported model` 400 was a transient upstream rejection, not a config fault. `failure_streak=1`; tomorrow's 9:30 fire is the real test.",
+   "**Fresh probes (23:05–23:07):** Vercel still 403 (Sunday's 7 AM prune no-op'd — `vercel login` remains the fix); Notes still wedged (25 s timeout on note count); config.yaml `API_SERVER_KEY` still exactly 1 match @ line 729; jellyfin.ayumad.me still no DNS; SER8 alive (ping 18 ms avg + SSH ok); disk 25.7 GB free / 89%; state.db 1.30 GB.",
+   "**Radarr remux queue draining fast:** 34 → 7 rows, 148 → 80 GB in one day — should clear within a day or two, after which the remux-verification item becomes checkable.",
+   "**Stale-but-explained standing items:** Update Check 401 (pre-key-swap Oct 18 fire; hermes-ops profile key re-verified byte-identical to the live default tonight — expected to self-clear Sunday) and Weekly Review delivery_failed (review file exists, only the bot-chat line timed out).",
+   "**todo-cleanup:** 10 items, none cleared — all still need Ayush, re-probed in place where a probe exists."
   ]
  },
  {
