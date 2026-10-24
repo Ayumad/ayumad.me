@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-10-23",
+  "summary": "Session journal for 2026-10-23: Hermes audit and repair sprint, MoA presets and routing pins, Notion Desk workspace plus sync engine, Jellyfin Live TV, MiMo vs DeepSeek comparison.",
+  "highlights": [
+   "One overnight session, two big deliverables: Hermes was audited *and* repaired end-to-end (MoA presets, 11-profile routing, memory capture, cron pins, extraction, Vercel), and the Notion Desk engine landed at 107/107 tests.",
+   "Codex billable time on the Desk project lasted ~2 minutes before the Plus usage wall; `PLAN.md` was the valuable output, and the flat-rate opencode-go run finished the implementation — the $20 allowance stays a hard budget, not a background resource.",
+   "The only hard blocker left is human-shaped: a Notion token minted inside the `Ayush / Desk` workspace. Everything downstream of it is already built and tested.",
+   "Two operational habits paid off: pinning cron models removed the Daily Brief failure class, and the vault write-block fell back to `STATE.md` instead of losing the Notion work."
+  ]
+ },
+ {
   "date": "2026-10-22",
   "summary": "Session journal for 2026-10-22: ACM workshop outlines rebuilt in Ayush's voice, study-harness idea note, site-monitor sync; Daily Brief cron failed on a model error.",
   "highlights": [
    "The ACM workshop series is now consistent end-to-end — five outlines rebuilt in Ayush's voice in one morning session, with provenance lines fixed.",
    "A study/learning harness idea got captured into `Planned/Study Harness.md` instead of evaporating.",
    "Only automation breakage today is the Daily Brief's `mimo-v2.5` model error — one config pin, not a systemic issue.",
-   "Life admin crossed off: CMPE 131 midterm submitted, oil change done."
+   "Life admin crossed off: CMPE 131 midterm submitted, oil change done.",
+   "**Daily Brief 9:30 — root-caused and already routed around.** Oct 21 and Oct 22 both died ~3 s in with upstream `400 Unsupported model mimo-v2.5` on `opencode.ai/zen/go/v1`, while the same model ran green at 6 PM and 11 PM both days — the rejection only ever hit the 9:30 scheduled fire. The job's model pin now reads `deepseek-v4.1-flash` (changed between today's 9:30 failure and the 10:06 PM direct re-run; no session record of the edit — WebUI/CLI), and that re-run went green on the new pin and delivered tonight's brief. The scheduler re-reads the pin from jobs.json every tick, so tomorrow's 9:30 fires deepseek — the model that ran 100+ calls green in chat today. Watch tomorrow morning.",
+   "**Hermes Update Check 401 — verified cleared, and it caught a release.** The Oct 18 expired-key error predates the key rotation (both `.env` files rewritten Oct 18 3:13 PM; opencode keys byte-identical across default + hermes-ops, and the default key is provably live). Re-ran the job tonight: `Ran now: succeeded` — and it found **v0.22.4 → v0.22.5** and relayed the notes to Photon. Update itself stays parked until Ayush's go-ahead (launcher re-exec patch must be re-applied after).",
+   "**Weekly Review (Oct 18) delivery_failed — artifact is fine.** The review note sits in the vault (9.4 KB, Oct 18 4:26 PM); only the bot-chat push hit the 600 s timeout, and vaultkeeper's delivery worked again today — treated as a one-off, no config change. Sunday's 4 PM fire re-tests it.",
+   "**Re-probed, still human-blocked (all 10 todo-cleanup items kept, dates refreshed):** Vercel still 403 (Sun Oct 18 prune no-op'd; next Sun no-ops too without `vercel login`), Notes still wedged (25 s timeout), config.yaml `API_SERVER_KEY` still line 729, jellyfin.ayumad.me still no DNS, state.db 1.30 GB, disk 90% / 23.8 GB free, SER8 alive (ping 10 ms + SSH). Radarr remux queue down to **3 rows / 43.3 GB** (was 7 / 80 GB yesterday) — clears within a day.",
+   "**Not touched:** paused jobs left paused, no gateway/backend restarts, no task-surface writes. Vault validator after edits: **580 notes, all counters 0.**"
   ]
  },
  {
