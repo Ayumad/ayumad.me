@@ -1,12 +1,29 @@
 [
  {
+  "date": "2026-10-24",
+  "summary": "Session journal for 2026-10-24: quiet Saturday — AI/ML interview prep self-study packet, Daily Brief task triage, all-green cron fleet.",
+  "highlights": [
+   "The day's only real work was preparation, and it landed: the AI/ML claims that were \"studied 6/29\" now have three written model answers behind them, and evaluation metrics moved off untested.",
+   "The residual prep risk is rehearsal, not coverage — every answer exists on paper and none has been spoken aloud; behavioral STAR drafts are in the same state.",
+   "Fleet is boring in the good way: 513 runs, zero failures, and the cheap-model routing pin has now survived three days across every scheduled job.",
+   "Still parked, both human-shaped: WebUI session persistence (routing change + restart) and the Notion Desk token (one manual mint)."
+  ]
+ },
+ {
   "date": "2026-10-23",
   "summary": "Session journal for 2026-10-23: Hermes audit and repair sprint, MoA presets and routing pins, Notion Desk workspace plus sync engine, Jellyfin Live TV, MiMo vs DeepSeek comparison.",
   "highlights": [
    "One overnight session, two big deliverables: Hermes was audited *and* repaired end-to-end (MoA presets, 11-profile routing, memory capture, cron pins, extraction, Vercel), and the Notion Desk engine landed at 107/107 tests.",
    "Codex billable time on the Desk project lasted ~2 minutes before the Plus usage wall; `PLAN.md` was the valuable output, and the flat-rate opencode-go run finished the implementation — the $20 allowance stays a hard budget, not a background resource.",
    "The only hard blocker left is human-shaped: a Notion token minted inside the `Ayush / Desk` workspace. Everything downstream of it is already built and tested.",
-   "Two operational habits paid off: pinning cron models removed the Daily Brief failure class, and the vault write-block fell back to `STATE.md` instead of losing the Notion work."
+   "Two operational habits paid off: pinning cron models removed the Daily Brief failure class, and the vault write-block fell back to `STATE.md` instead of losing the Notion work.",
+   "**Verified before believing the brief.** All 11 cron stores tick (heartbeats fresh at 23:00) and **zero open incidents** in default, scout and vaultkeeper — the three vaultkeeper incidents (Oct-17 401, two Oct-4 sync timeouts) are already `resolved`. Vaultkeeper's `Weekly Review` `delivery_failed` and the journal's `delivery_queued` are stale status strings over `settled` artifacts, not live retries.",
+   "**Closed: Notes is no longer wedged.** Bounded AppleScript probes answered immediately — 31 notes, 1 folder, 1 account, each well under the 25 s alarm that had failed on every pass from 2026-09-18 through 10-22. The vault cleanup entry is retired; the Google/Apple twin `Notes app hung — quit & reopen` still needs closing by hand (this pass may not write to task surfaces).",
+   "**Closed: Weekly Review model pin.** It already runs `deepseek-v4.1-flash` (the `mimo-v2.5` in its queued artifact is the Oct-18 snapshot), so the `400 Unsupported model` class that killed the Daily Brief cannot hit Sunday's 16:00 run. Real test is Oct 25.",
+   "**Re-measured for accuracy:** data volume 90% / **22.0 GB** free; `state.db` **1.21 GB** (1,295,347,712 bytes); the duplicate `API_SERVER_KEY` line is now **line 832 of 884** in `config.yaml` (file keeps growing, so the number drifts); SER8 alive over tailnet (2/2 packets, 8.5 ms avg).",
+   "**New finding, logged to the ops queue (agent-side, untouched tonight):** 804 `session write refused … Gateway runtime already owns profile /Users/ayumad/.hermes` warnings from `hermes_cli.web_server` today, first at 02:21. Isolated WebUI/desktop backends cannot persist sessions while the gateway holds the profile exclusively. Fixing it needs a routing/config change plus a backend restart this pass is forbidden from doing.",
+   "**Deliberately not touched:** scout `Marketplace Sweep` (paused by Ayush; its Oct-9 pending artifact is `settled`, so the recurring DELIVERY-ERR is display noise), and the Jellyfin remux verification (agent-side, last snapshot 3 rows / 43.3 GB — the `remux_downgrade_tick` job announces when it clears).",
+   "**todo-cleanup reconciled to 9 items:** dropped Notes (verified) and the remux verify (not a human step); added the Notion Desk token mint, now the cheapest unblocker in the vault."
   ]
  },
  {
