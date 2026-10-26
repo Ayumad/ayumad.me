@@ -1,5 +1,67 @@
 [
  {
+  "date": "2026-10-25",
+  "weekStart": "2026-10-18",
+  "summary": "Weekly review for Oct 19–25, 2026: Hermes audit/repair sprint, ~332 GiB media floor, ACM Substack live, Notion Desk built awaiting one token.",
+  "sections": [
+   {
+    "heading": "This Week's Highlights",
+    "items": [
+     "**1. Hermes was audited and repaired in one overnight sprint (Oct 23).** Five MoA presets (`fast`/`default`/`code`/`review`/`max`, each tool-loop tested), explicit cheap auxiliary and delegation routes plus a Go-only MiMo V2.6 Flash fallback on all 11 profiles, Mnemosyne capture repaired, local web extraction restored through an lxml readability path, cron model pins fixed on all nine agent jobs, a Vercel token-refresh preflight installed, and npm advisories triaged (web 449/449 tests; desktop 3,674 passed / 8 failed). Detail: [[90 Operations/Hermes/Configuration/Hermes Audit — 2026-10-23|Hermes Audit — 2026-10-23]].",
+     "**2. The homelab got observability and ~332 GiB back.** `service_map.py` now regenerates [[02 Projects/Active/Homelab/Homelab Service Map|Homelab Service Map]] from live docker/Caddy/ZFS/Proxmox state (44 containers, 7 stacks, 31 `.lan` vhosts, 7 guests) instead of a second hand-maintained doc, and immediately surfaced three exposures. A second remux→encode pass set a 15 Mbps 2160p floor (HTTYD 2010 pinned at 12.5 Mbps as the only exception), kept the four remuxes that earn their space, reclaimed ~332 GiB, and the Radarr remux queue drained 34 rows / 148 GB (Oct 20) → cleared.",
+     "**3. ACM writing and workshops landed.** The chapter Substack went live 2026-10-19 (`acmsjsu.substack.com`), and Oct 22 rebuilt the whole workshop series in your voice — W2 Using AI Well, W3 Local & Personal AI, MCP 101, Vibecoding, plus Intro to Homelab — plain and direct, no generated prose, provenance lines fixed.",
+     "**4. Jellyfin became a real TV service.** An iptv-org US M3U tuner (1,483 channels) with a kanya XMLTV guide (15,694 programs; 12/12 sampled channels served real bytes), Open Subtitles / Trakt / TheTVDB installed, a non-admin guest account verified with a live login token, FLCL S1 queued behind a new script-only import watchdog, and the Lain remux swapped for a 13.7 GB HEVC-10 encode.",
+     "**5. Notion Desk: built, tested, one token from live.** A private `Ayush / Desk` workspace with a Home → School / Projects dashboard, `PLAN.md` from Codex, and a `desk_sync` engine at 107/107 tests. Writes correctly refuse until a token exists for that workspace — the only thing standing between the engine and real data."
+    ]
+   },
+   {
+    "heading": "Project Progress",
+    "items": [
+     "**Hermes / cron** — Two failures all week, both `Daily Brief` dying on `400 Unsupported model mimo-v2.5` (Oct 21, 22). The pin moved to `deepseek-v4.1-flash` and Oct 23–25 ran clean. Fleet steady at ~513 runs/24 h across 32 jobs. The Oct 18 Vercel CLI blocker is fixed and dry-run verified. The journal chain ran 6/6 nights (Oct 19–24).",
+     "**Homelab / media** — Service Map and the storage floor above; `tank` sits at 85%+ with only Radarr's 2 TB import floor as a guard, and 33 of 44 containers bind `0.0.0.0`, so Caddy's `tls internal` front door is bypassable (fix queued: Caddy-first upstreams, then loopback binds). PIA OpenVPN still caps every download at ~0.5 MB/s.",
+     "**School** — CMPE 142 PA3 (thread pool + sleeping TA) finished and submitted Oct 19, committed in `school-cmpe142` (`proj3`). CMPE 131 quiz (Tue) and midterm (Thu) both done. Ch 9 HW for CMPE 142 is due today. Google Drive semester reorg and the X-saves sweep are both overdue.",
+     "**Writing / ACM** — Substack live; *Intro to Agentic AI* article due Oct 26; the W3/W4 decks and the Intro to Homelab outline are still overdue.",
+     "**Personal website** — A fresh production build deployed Oct 20 (bundle hash `Y5FAYJlE` → `BaROTaAH`), the first hash change since Sep 20, though the last *content* change is still Sep 20. LinkedIn URL updated to `/in/ayumad`. Journal deployed nightly Oct 20–25; monitor current through today.",
+     "**Vault** — Validator all-zero at 583 notes (Oct 24); the iCloud-resurrection repair held all week (`.build` workspace excluded from the scan, quarantined items stayed out). Working tree clean, sync clean.",
+     "**GitHub** — 87 commits across repos, almost all automation: `ayumad.me` 36 (dashboard refresh + nightly journal, one manual `contact: update LinkedIn URL`), `ayumad.vault` 50 (auto-sync, site-monitor stamps, plus content commits for the workshops, the study-harness idea and the Jellyfin note), `school-cmpe142` 1 (`proj3: thread pool and sleeping TA`). No PRs merged and no issues opened this week; three old PRs are still open (#30, #29 on ayumad.me; #2 on ayumad.github.io). Joined `edwaddle/EchoSphere-Software` on Oct 21."
+    ]
+   },
+   {
+    "heading": "Blockers & Issues",
+    "items": [
+     "**Notion Desk token** — the only thing between a 107/107 engine and live writes. Also where the Codex Plus allowance ran out (~2 minutes billable on Oct 23).",
+     "**Gateway holds the profile exclusively** — 892 `session write refused` warnings from `hermes_cli.web_server` by Oct 24; isolated WebUI/desktop backends can't persist sessions. Needs a routing change plus a restart in a quiet window.",
+     "**Bot Chat silent for two nights** — the Oct 23 and Oct 24 journal deliveries completed and deployed but left no receipt, and `jobs.json` still carries the Oct 22 receipt id with `delivery_queued`. The same restart clears it.",
+     "**Nine human-click items** — headlined by the simulator runtimes (~47 GB on a 90%-full disk, still an estimate), Xfinity DNS/port-forwards, the Namecheap `jellyfin` A record (still NXDOMAIN, re-checked today), the Hermes Desktop relaunch, PS Vita and New 3DS XL setup, and the OAuth agentic flag due before Nov 11.",
+     "**PIA OpenVPN** — ~0.49 MB/s through gluetun vs 78 MB/s on the host; the WireGuard + port-forward re-check was offered and not started.",
+     "**Interview prep** — the AI/ML self-study packet posted Oct 24; nothing answered or rehearsed out loud, and DP/sorting/recursion remains the untested SWE surface.",
+     "**Carried forward** — the 2026-10-17 journal gap is still unbackfilled; the Electron high advisory and 8 failing desktop tests are still source-only; `state.db` compaction still needs a stopped gateway."
+    ]
+   },
+   {
+    "heading": "Next Week's Focus",
+    "items": [
+     "1. **Clear the one-taps that unblock projects:** Notion token (Desk), simulator runtimes (~47 GB), Namecheap `jellyfin` A record + Xfinity forwards.",
+     "2. **ACM delivery chain:** *Intro to Agentic AI* article (due Oct 26), then the W3/W4 decks and the Homelab outline — the overdue tail of the workshop rebuild.",
+     "3. **School + admin:** Ch 9 HW today, Google Drive reorg, X-saves sweep.",
+     "4. **One maintenance window:** gateway restart (fixes WebUI session persistence and Bot Chat receipts), then `state.db` compaction and the Hermes Desktop relaunch.",
+     "5. **Media:** finish FLCL S1 and Lain, and switch gluetun to WireGuard to lift the 0.5 MB/s ceiling.",
+     "6. **Prep:** say three AI/ML answers out loud, then start DP/sorting/recursion."
+    ]
+   },
+   {
+    "heading": "Miscellaneous",
+    "items": [
+     "Fleet: 998 of the last 1,000 runs completed (executions window Oct 20 19:28 → today 16:00). Both failures are the Oct 21–22 Daily Brief 400s, resolved 2026-10-22 22:08. No open cron incidents.",
+     "Two long-standing blockers retired this week: Vercel CLI auth (fixed and verified Oct 23) and Notes enumeration (no longer wedged after failing every pass since Sep 18).",
+     "Codex logged one thread — the Notion Desk handoff on `gpt-6.1-sol` (512 k tokens) — then hit the Plus usage wall.",
+     "Disk 90% / 22 GB free; `state.db` 1.2 GB; SER8 healthy over tailnet at 9–18 ms.",
+     "Today is quiet so far: no interactive sessions, one vault commit (the site monitor's last-checked stamp)."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-10-18",
   "weekStart": "2026-10-11",
   "summary": "Weekly review for Oct 12–18, 2026: wishlist→Muse bridge live, ACM keyboard sale sheet built, CMPE 142 HW8 shipped, OpenCode key expiry broke cron ~18 h.",

@@ -1,12 +1,30 @@
 [
  {
+  "date": "2026-10-25",
+  "summary": "Session journal for 2026-10-25: CMPE 142 Ch 9 answers, school Drive coursework archive, desktop gateway + Mnemosyne ctor repair, PS Vita setup verified.",
+  "highlights": [
+   "The OS homework got finished *and* made submittable in one pass — Ch 9 paging answers plus a 47-file school Drive archive with an index doc as the entry point.",
+   "Mnemosyne was broken by its own 0.22.5 env rebuild and repaired end-to-end the same evening; the lesson is that the ctor patch lives inside one env hash, not in the install.",
+   "PS Vita is real and inventoried (23 games, 13 PSP ISOs) but invisible in the UI — LiveArea refresh is the single missing tap.",
+   "Second consecutive clean cron day: 517 runs, zero failures, four cron jobs did useful work rather than just health checks."
+  ]
+ },
+ {
   "date": "2026-10-24",
   "summary": "Session journal for 2026-10-24: quiet Saturday — AI/ML interview prep self-study packet, Daily Brief task triage, all-green cron fleet.",
   "highlights": [
    "The day's only real work was preparation, and it landed: the AI/ML claims that were \"studied 6/29\" now have three written model answers behind them, and evaluation metrics moved off untested.",
    "The residual prep risk is rehearsal, not coverage — every answer exists on paper and none has been spoken aloud; behavioral STAR drafts are in the same state.",
    "Fleet is boring in the good way: 513 runs, zero failures, and the cheap-model routing pin has now survived three days across every scheduled job.",
-   "Still parked, both human-shaped: WebUI session persistence (routing change + restart) and the Notion Desk token (one manual mint)."
+   "Still parked, both human-shaped: WebUI session persistence (routing change + restart) and the Notion Desk token (one manual mint).",
+   "Fleet: 10 active jobs in the default store, no open incidents (`hermes cron incidents list` — every row resolved/closed). Five jobs paused by choice (marketplace ×3, Album Elo, oil change fallback) and left paused.",
+   "Disk re-measured: 90% used / 22 GB free. state.db 1.21 GB. config.yaml still has exactly one stale `API_SERVER_KEY:` line, now line 832.",
+   "Vault: validator clean — 583 notes, invalid/duplicate/unresolved/ambiguous/gov all 0. The one uncommitted file is the validator's own report, left for the 15-min sync.",
+   "SER8 reachable (2/2 packets), `jellyfin.ayumad.me` still NXDOMAIN, Hermes Desktop still the Oct 18 15:39 process, Notion Desk engine untouched since Oct 23 (still no token).",
+   "The long-held simulator-runtime item was unfollowable as written — it said \"the session from 2:56 AM\" but that session is titled **\"im at my mac mini, whats broken and needs to be…\"** (started Oct 1 21:26, last active Oct 7 02:56). The cleanup entry now names it. `xcrun simctl` is not reachable from the agent shell (no developer dir selected), so the ~47 GB figure remains an estimate rather than a re-measurement.",
+   "**Vaultkeeper Bot Chat has been silent for two nights.** Both journal runs completed and deployed (Oct 23 22:00, Oct 24 22:00–22:03), but the scheduler logged no delivery receipt for either — and `jobs.json` still carries the **Oct 22** receipt id (`bbd7bf83…`, actually settled at Oct 22 22:08) with status `delivery_queued`. So `hermes cron status` reports \"still in progress\" for a delivery that is a bookkeeping ghost, and no new Bot Chat summary is generated. Clearing it means restarting the gateway (rule: this pass may not), so it is folded into the maintenance-window item in `todo-cleanup`.",
+   "**WebUI backend still refused session writes** — 892 `Gateway runtime already owns profile /Users/ayumad/.hermes` warnings in `gui.log`/`errors.log`/`agent.log`, latest 22:53 tonight. Parked as before: needs the routing change plus a restart.",
+   "**Weekly Review** still carries `delivery_failed` from Oct 18 on the same bot-chat lane; it runs again tomorrow at 4 PM. The model pin that broke the Daily Brief is fine — this is delivery, not execution."
   ]
  },
  {
