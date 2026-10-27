@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-26",
+  "summary": "Session journal for 2026-10-26: CRT box Kodi/Jellyfin repair + how-to note, R9 380 build ruled out, homelab layout generator and map, anime batch queued in Sonarr/Radarr.",
+  "highlights": [
+   "The CRT box went from \"Pi with Kodi somewhere\" to documented-and-working in one session — the real bugs were Kodi running as root (edits were going to a dead profile) and HDMI audio on an analogue TV, not the media stack.",
+   "Ruled out the R9 380 build on evidence: composite output caps what the tube can show, so the Pi 4 is already at the ceiling for 240p retro and 90s anime.",
+   "The homelab finally has one machine-readable description of itself (31 nodes, 46 links) with a renderer, so diagrams stop being hand-drawn artifacts that rot.",
+   "Open thread worth remembering: the Xbox pad is silent at the kernel input layer, so the next step is swapping the pad/cable, not more Kodi config."
+  ]
+ },
+ {
   "date": "2026-10-25",
   "summary": "Session journal for 2026-10-25: CMPE 142 Ch 9 answers, school Drive coursework archive, desktop gateway + Mnemosyne ctor repair, PS Vita setup verified.",
   "highlights": [
