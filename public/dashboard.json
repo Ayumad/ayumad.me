@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-27T19:57:55-07:00",
+ "generated_at": "2026-10-28T01:58:55-07:00",
  "generated_on": "Mac mini",
  "hermes": {
   "commits_behind": 0,
@@ -12,26 +12,26 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1398,
+   "working": 1399,
    "episodic": 553
   },
   "disk": {
    "used_pct": 92,
-   "free_gb": 15.3,
+   "free_gb": 15.1,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 5272,
-   "month_in_m": 28.4,
-   "month_out_m": 7.47,
-   "month_cache_m": 662.5,
-   "week_calls": 2689,
-   "week_out_m": 1.83,
+   "month_calls": 5297,
+   "month_in_m": 28.5,
+   "month_out_m": 7.48,
+   "month_cache_m": 663.9,
+   "week_calls": 2697,
+   "week_out_m": 1.82,
    "cache_share": 96,
    "top_models": [
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 3057
+     "calls": 3082
     },
     {
      "model": "deepseek-flash",
@@ -50,16 +50,16 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-10-27T19:57:55-07:00",
+  "checked_at": "2026-10-28T01:58:55-07:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 1095406,
+   "uptime_s": 1117067,
    "load": [
-    "19.51",
-    "23.48",
-    "22.90"
+    "14.10",
+    "27.51",
+    "26.90"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -149,7 +149,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 79.0,
+    "alloc_gb": 79.6,
     "free_gb": 3491.84,
     "health": "ONLINE",
     "used_pct": 2,
@@ -194,7 +194,7 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "1.01G",
+    "used": "1.02G",
     "avail": "7.09G"
    },
    {
@@ -284,11 +284,11 @@
    }
   ],
   "snapshots": 368,
-  "snapshot_newest": "tank/shared@autosnap_2026-10-28_02:00:17_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-10-28_08:00:15_hourly",
   "scrub_timers": 0,
   "backups": {
    "newest": "vzdump-qemu-202-2026_10_27-03_36_42.vma.zst",
-   "newest_age_h": 16.2,
+   "newest_age_h": 22.2,
    "count": 66,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -384,7 +384,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 36,
+    "ms": 31,
     "code": 200
    },
    {
@@ -394,7 +394,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 103,
+    "ms": 142,
     "code": 200
    },
    {
@@ -404,7 +404,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 20,
+    "ms": 24,
     "code": 200
    },
    {
@@ -414,7 +414,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 18,
+    "ms": 22,
     "code": 200
    },
    {
@@ -424,7 +424,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 23,
+    "ms": 27,
     "code": 200
    },
    {
@@ -434,7 +434,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 22,
+    "ms": 23,
     "code": 200
    },
    {
@@ -444,7 +444,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 26,
+    "ms": 29,
     "code": 200
    },
    {
@@ -454,7 +454,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 22,
+    "ms": 23,
     "code": 200
    },
    {
@@ -464,7 +464,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 33,
+    "ms": 31,
     "code": 200
    },
    {
@@ -474,7 +474,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 60,
+    "ms": 85,
     "code": 200
    },
    {
@@ -484,7 +484,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 20,
+    "ms": 22,
     "code": 200
    },
    {
@@ -494,7 +494,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 35,
+    "ms": 34,
     "code": 200
    },
    {
@@ -504,7 +504,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 32,
+    "ms": 27,
     "code": 200
    },
    {
@@ -514,7 +514,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 30,
+    "ms": 24,
     "code": 200
    },
    {
@@ -524,7 +524,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 39,
+    "ms": 34,
     "code": 200
    },
    {
@@ -534,7 +534,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 20,
+    "ms": 29,
     "code": 200
    },
    {
@@ -544,7 +544,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 19,
+    "ms": 15,
     "code": 200
    },
    {
@@ -554,7 +554,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 44,
+    "ms": 47,
     "code": 200
    },
    {
@@ -574,7 +574,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 66,
+    "ms": 89,
     "code": 200
    },
    {
@@ -584,7 +584,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 15,
+    "ms": 9,
     "code": 200
    },
    {
@@ -594,7 +594,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 24,
+    "ms": 30,
     "code": 401
    },
    {
@@ -604,7 +604,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 26,
+    "ms": 41,
     "code": 200
    },
    {
@@ -614,7 +614,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 18,
+    "ms": 12,
     "code": 200
    },
    {
@@ -624,7 +624,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 25,
+    "ms": 36,
     "code": 200
    },
    {
@@ -634,7 +634,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 22,
+    "ms": 19,
     "code": 200
    },
    {
@@ -644,7 +644,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 22,
+    "ms": 64,
     "code": 200
    },
    {
@@ -654,7 +654,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 27,
+    "ms": 24,
     "code": 200
    },
    {
@@ -664,7 +664,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 11,
+    "ms": 14,
     "code": 200
    },
    {
@@ -674,7 +674,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 8,
     "code": null
    },
    {
@@ -684,7 +684,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 17,
+    "ms": 14,
     "code": 200
    },
    {
@@ -694,7 +694,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 77,
+    "ms": 16,
     "code": 200
    },
    {
@@ -704,7 +704,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 19,
+    "ms": 26,
     "code": 200
    }
   ],
@@ -1005,7 +1005,7 @@
  "school": {
   "upcoming": 4,
   "window_days": 7,
-  "later": 18,
+  "later": 19,
   "courses": [
    "CMPE-131",
    "CMPE-142",
@@ -1168,6 +1168,10 @@
  ],
  "journal": [
   {
+   "date": "2026-10-27",
+   "summary": "Handshake auto-apply pipeline (87 confirmed applications) + daily rate-limit block, five rebuilt one-page resumes scored by GPT-6.1-Sol, Interview Prep hardware slot."
+  },
+  {
    "date": "2026-10-26",
    "summary": "CRT box Kodi/Jellyfin repair + how-to note, R9 380 build ruled out, homelab layout generator and map, anime batch queued in Sonarr/Radarr."
   },
@@ -1178,10 +1182,6 @@
   {
    "date": "2026-10-24",
    "summary": "quiet Saturday — AI/ML interview prep self-study packet, Daily Brief task triage, all-green cron fleet."
-  },
-  {
-   "date": "2026-10-23",
-   "summary": "Hermes audit and repair sprint, MoA presets and routing pins, Notion Desk workspace plus sync engine, Jellyfin Live TV, MiMo vs DeepSeek comparison."
   }
  ],
  "errors": {},
