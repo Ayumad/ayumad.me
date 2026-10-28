@@ -1,12 +1,26 @@
 [
  {
+  "date": "2026-10-27",
+  "summary": "Session journal for 2026-10-27: Handshake auto-apply pipeline (87 confirmed applications) + daily rate-limit block, five rebuilt one-page resumes scored by GPT-6.1-Sol, Interview Prep hardware slot.",
+  "highlights": [
+   "87 real internship applications went out in one day, on one machine, with confirmations — then Handshake locked the account for velocity. The lesson isn't \"apply less\", it's \"the cap is real, ~77/day, and it's a pace limit not a strike record\".",
+   "The resume work found the cheapest possible win: there was **no graduation date anywhere**, which is an ATS filter, not a formatting nicety. A day spent on fonts would have been worth less than that one line.",
+   "Which makes the honesty call the important one: four resume lines were held back because the numbers don't exist yet. Applications are in front of 87 employers, so a fabricated latency figure would be the most expensive sentence in the vault.",
+   "Open thread: the pipeline works but nothing schedules it. The queue sits at 678 dispositions with a stopped runner and no cron — that's the first thing to fix tomorrow, not more resumes."
+  ]
+ },
+ {
   "date": "2026-10-26",
   "summary": "Session journal for 2026-10-26: CRT box Kodi/Jellyfin repair + how-to note, R9 380 build ruled out, homelab layout generator and map, anime batch queued in Sonarr/Radarr.",
   "highlights": [
    "The CRT box went from \"Pi with Kodi somewhere\" to documented-and-working in one session — the real bugs were Kodi running as root (edits were going to a dead profile) and HDMI audio on an analogue TV, not the media stack.",
    "Ruled out the R9 380 build on evidence: composite output caps what the tube can show, so the Pi 4 is already at the ceiling for 240p retro and 90s anime.",
    "The homelab finally has one machine-readable description of itself (31 nodes, 46 links) with a renderer, so diagrams stop being hand-drawn artifacts that rot.",
-   "Open thread worth remembering: the Xbox pad is silent at the kernel input layer, so the next step is swapping the pad/cable, not more Kodi config."
+   "Open thread worth remembering: the Xbox pad is silent at the kernel input layer, so the next step is swapping the pad/cable, not more Kodi config.",
+   "**Last night's probe-rotation fix is holding.** `headless-probe.log` sits at 816 KB (under the 1 MB trigger) and both stderr logs are untouched since the fix — `headless-probe.err.log` Oct 25 19:32, `headless-probe-bg.err.log` Oct 25 22:47. No repeat of the `mv: No such file` storm that had been dumping 231 + 247 lines.",
+   "**vaultkeeper `state.db` is already compacted** — 1,295,347,712 bytes (1.21 GB, measured Oct 25) → 24,977,408 bytes (25 MB), written Oct 26 22:04, 52 sessions still present. The \"compact state.db\" half of the maintenance-window item is done, so that item no longer needs a gateway stop for it.",
+   "**Corrected the bot-chat diagnosis: a gateway restart is not the fix.** The host gateway (PID 97164, serving all 11 profiles) has been up since Oct 25 17:20 — *after* the Oct 22 breakage — and the handoff still wrote nothing. The Journal job's deliver target is now `local` and the job relays to photon itself (today's journal went out that way), so Bot Chat summaries simply aren't attempted any more by design; the `delivery_queued` status is Oct 22 bookkeeping residue (delivery id `bbd7bf83…`, which still has an orphan queue file at `runtime/bot_live_delivery/`, plus an older one from Oct 18 in `cron/bot_chat_pending/`). Re-asserted `--deliver local` through the CLI and ran `hermes cron doctor` → no issues. The maintenance-window item is dropped from todo-cleanup: what's left is cosmetic metadata, not a human step.",
+   "**Scout's delivery error is stale, not live.** `[bot:scout] Marketplace Sweep` last ran Oct 9 03:06 and Ayush paused it that day; the brief's DELIVERY-ERR line is that old attempt. Re-enabling stays his call, so nothing was touched."
   ]
  },
  {
