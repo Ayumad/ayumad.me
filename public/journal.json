@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-10-28",
+  "summary": "Session journal for 2026-10-28: Kindle/NAS library built out (47 books, 5 rebuilt EPUBs), AI + agentic-SWE + RTL/ASIC plans, P520 & school-vm access check, ACM Homelab workshop, homelab service pass.",
+  "highlights": [
+   "The book library stopped being a plan. 47 works catalogued with SHA-256 provenance, five real EPUBs built from web-only sources by a packager written on the spot because the box has no Calibre — and the four PDFs kept as PDFs on purpose, which is the more careful call than a pretty but broken conversion.",
+   "The most useful finding of the day was an absence: **there is no RAG artifact behind the resume line that says there is one.** That's a cheap fix and a live credibility risk, in that order.",
+   "The hardware plan got honest — no HDL, no EDA tools, no board — and still ends at silicon evidence by February, using free EDA Playground runs for the UVM box that Verilator can't tick.",
+   "Nine books are sitting in a queue because the Kindle went to sleep mid-transfer, and a 24-character code-server password is currently beating a purpose-built web IDE. Both are five-minute fixes with outsized annoyance value."
+  ]
+ },
+ {
   "date": "2026-10-27",
   "summary": "Session journal for 2026-10-27: Handshake auto-apply pipeline (87 confirmed applications) + daily rate-limit block, five rebuilt one-page resumes scored by GPT-6.1-Sol, Interview Prep hardware slot.",
   "highlights": [
    "87 real internship applications went out in one day, on one machine, with confirmations — then Handshake locked the account for velocity. The lesson isn't \"apply less\", it's \"the cap is real, ~77/day, and it's a pace limit not a strike record\".",
    "The resume work found the cheapest possible win: there was **no graduation date anywhere**, which is an ATS filter, not a formatting nicety. A day spent on fonts would have been worth less than that one line.",
    "Which makes the honesty call the important one: four resume lines were held back because the numbers don't exist yet. Applications are in front of 87 employers, so a fabricated latency figure would be the most expensive sentence in the vault.",
-   "Open thread: the pipeline works but nothing schedules it. The queue sits at 678 dispositions with a stopped runner and no cron — that's the first thing to fix tomorrow, not more resumes."
+   "Open thread: the pipeline works but nothing schedules it. The queue sits at 678 dispositions with a stopped runner and no cron — that's the first thing to fix tomorrow, not more resumes.",
+   "**Verified green:** cron fleet 0 failures (514 runs, 15 jobs), `cron doctor` \"no issues\", no new incidents in any store. Vault validator 592 notes / all counters 0, git clean with nothing unpushed. Reminders↔Google Tasks sync healthy — last run 01:02 today applied a change, no errors in the log. Log headroom fine: largest file 8.8 MB (`gui.log`), the rotation repair from 10-26 is still holding.",
+   "**Corrected a wrong number carried since Oct 7:** the simulator-runtime item claimed ~47 GB. Measured the actual assets this pass — the four 26.5 runtimes total **21.9 GB** (iOS 26.5 7.9 · visionOS 6.8 · watchOS 3.7 · tvOS 3.5) and the 27.0 runtimes Xcode uses (iOS 7.5 · watchOS 3.6 · tvOS 3.5) are *already* installed beside them. Also surfaced: **visionOS 26.5 has no 27.0 counterpart on disk**, so \"remove everything\" would leave no visionOS simulator. The three options in the item now quote real numbers.",
+   "**Disk:** 93% used / 14.2 GB free at 23:02 — down from the 23.6 GB measured 10-26. Nothing was deleted in this pass (deletes are outside this job's scope), so the sim runtimes remain the only large safe win left.",
+   "**Not fixed, and why:** the vaultkeeper journal job still records `delivery_queued` for 10-26 — a real delivery is the only thing that clears it, and hand-editing `jobs.json` while the gateway owns it isn't safe. Scout's delivery error stays on a job paused since 10-09, so it can't recur.",
+   "**todo-cleanup reconciled:** all 8 carried items re-verified open tonight (jellyfin.ayumad.me still NXDOMAIN, `API_SERVER_KEY` still config.yaml:832, desktop still PID 1564 now 9 d 7 h, SER8:9100 still refusing, `STATE.md` still has no Desk token). Added one new decision item — the internship runner is confirmed stopped (no process, no cron) with ~590 dispositions stalled, and whether to resume is Ayush's call, not a build task. Nine items total, most impactful first."
   ]
  },
  {
