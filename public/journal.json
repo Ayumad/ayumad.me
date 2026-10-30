@@ -1,5 +1,17 @@
 [
  {
+  "date": "2026-10-29",
+  "summary": "Session journal for 2026-10-29: personal qBittorrent+VPN stack, 10-distro Proxmox ISO library, ai-vm resized + abliterated models, OpenRouter wired, Linear MCP OAuth, 10 GB Hermes cleanup, four parallel builds (RAG, Playwright, resumes, SLOs), vault iCloud eviction.",
+  "highlights": [
+   "The torrent work shipped with proof instead of configuration: kill switch verified by `iptables` policy, throughput measured against the real ceiling (42.8 vs 8.5 MB/s), and a checksum checked against Debian's signed sums. Same session found that the \"NAS\" was the P520 talking to itself — that one observation removed SMB, credentials and a boot dependency.",
+   "Ten boot-verified distros plus a weekly timer is the difference between \"I could learn a distro\" and a lab that maintains itself.",
+   "The performance lesson worth keeping: on ai-vm the limit was **vCPU, not VRAM** — 170 → 560 t/s prefill from four extra cores, while the 12 GB card happily held 12B models.",
+   "The day's real risk is infrastructural, not intellectual: the vault was entirely evicted from disk and its `.git` still is, so journal writes, calendar regen and 15-minute syncs are all reading through a `brctl download` that iCloud undoes as soon as space gets tight. 12 GB free will keep doing this.",
+   "Yesterday's \"there is no RAG artifact\" finding got answered with numbers — recall@5 0.95, MRR 0.805, p95 11 ms — in one evening.",
+   "A memory tool that answers \"disabled\" eleven times in a row burned ~480 messages and delivered nothing; the loop breaker has to end the turn."
+  ]
+ },
+ {
   "date": "2026-10-28",
   "summary": "Session journal for 2026-10-28: Kindle/NAS library built out (47 books, 5 rebuilt EPUBs), AI + agentic-SWE + RTL/ASIC plans, P520 & school-vm access check, ACM Homelab workshop, homelab service pass.",
   "highlights": [
