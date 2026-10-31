@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-10-30",
+  "summary": "Session journal for 2026-10-30: Handshake loop fixed (0 → 15 applications today), external-ATS ceiling exposed, resume-routing answer, Daily Brief, Interview Prep behavioral slot, vault re-evicted at 96% disk.",
+  "highlights": [
+   "The job hunt wasn't broken where it looked broken: the runner was healthy, the *queue* was poisoned by two unsubmittable postings and two unsettled rows. Parking them turned two dead days into 15 applications.",
+   "The real constraint is structural — most postings apply through the employer's ATS, which no form filler can touch from Handshake. `external_queue.md` is now the honest measure of that gap.",
+   "A day with almost no interactive Hermes time still had a working automation: 561 cron runs, 0 failures, 15 applications submitted.",
+   "Capacity is the standing risk: 96 % disk keeps handing the vault to iCloud, and every journal/sync run now starts with a `brctl download` sweep that shouldn't be necessary."
+  ]
+ },
+ {
   "date": "2026-10-29",
   "summary": "Session journal for 2026-10-29: personal qBittorrent+VPN stack, 10-distro Proxmox ISO library, ai-vm resized + abliterated models, OpenRouter wired, Linear MCP OAuth, 10 GB Hermes cleanup, four parallel builds (RAG, Playwright, resumes, SLOs), vault iCloud eviction.",
   "highlights": [
@@ -8,7 +18,13 @@
    "The performance lesson worth keeping: on ai-vm the limit was **vCPU, not VRAM** — 170 → 560 t/s prefill from four extra cores, while the 12 GB card happily held 12B models.",
    "The day's real risk is infrastructural, not intellectual: the vault was entirely evicted from disk and its `.git` still is, so journal writes, calendar regen and 15-minute syncs are all reading through a `brctl download` that iCloud undoes as soon as space gets tight. 12 GB free will keep doing this.",
    "Yesterday's \"there is no RAG artifact\" finding got answered with numbers — recall@5 0.95, MRR 0.805, p95 11 ms — in one evening.",
-   "A memory tool that answers \"disabled\" eleven times in a row burned ~480 messages and delivered nothing; the loop breaker has to end the turn."
+   "A memory tool that answers \"disabled\" eleven times in a row burned ~480 messages and delivered nothing; the loop breaker has to end the turn.",
+   "**What today actually shipped** (condensed from the session log above): a personal gluetun + qBittorrent stack with a proven kill switch (42.8 MB/s end-to-end), ten boot-verified distros plus a script-only weekly timer on the P520, ai-vm resized on the real finding (vCPU, not VRAM: 170 → 560 t/s prefill), three abliterated models installed and aliased, OpenRouter added as fallback #2 and verified with real calls, 10 GB of Hermes volume reclaimed, and four parallel builds (RAG recall@5 0.95 / MRR 0.805, Playwright 20/20, five one-page résumés, an observability package deliberately left undeployed).",
+   "**Closed tonight — the 23:00 brief itself.** It died on `OSError errno 11` while reading this journal because iCloud had re-evicted the vault after the 22:00 job materialized it (623 notes dataless again; `stat` still succeeds, which is why it looks healthy). `daily_cleanup_brief.py` now has `vault_read()` (brctl download + retry on EDEADLK), `safe_section()` (a single failing section can no longer kill the whole brief) and `connect_ro()` (a WAL `executions.db` with no live `-shm` cannot be opened `mode=ro`, and `sqlite3.connect` is lazy so the failure surfaced at `execute()` and was being read as \"runs in last 24h: 0 across 0 jobs\"; it now falls back to a plain SELECT-only open). Re-ran the brief end to end: 531 runs across 18 jobs, journal section present, no stderr.",
+   "**Also closed:** all 693 vault documents re-materialized (reads verified, 0 failures); the dashboard payload rebuilt at 23:09 with `errors: {}` and 19 active projects, so the degraded `projects` section cleared itself once the files were back.",
+   "**Dropped from the cleanup list:** \"Relaunch Hermes Desktop\" — the app is no longer running at all (no PID, no `Hermes Desktop.app` process), so there is nothing left to relaunch; the next launch loads current code.",
+   "**Still broken, needs a human:** `handshake_apply_pm.sh` timed out at 3600s twice today — Rapid Applications is still enabled (1 of its 7 runs failed), the Afternoon job is paused. That is a symptom of the internship-pipeline decision sitting with Ayush, not something to patch blind. Capacity is the other one: **95% used / 11 GB free**, which is exactly what drives iCloud to keep re-evicting the vault; nothing safe and reversible buys that back tonight.",
+   "**Late addition (23:15):** the eviction had also taken `.gitignore` and the `.git` internals, so `vault_git_sync.sh` was failing outright (`read error while indexing 90 Operations/Integrations/.hermes-tmp.…: Resource deadlock avoided` → \"git add failed\") and `git status` itself answered `fatal: couldn't read .git/packed-refs`. Materialized all 88 files under `.git`, re-ran the sync: exit 0, commit `d9fb4e6` \"auto-sync 2026-10-29 23:12\", working tree clean, 0 unpushed. `daily_cleanup_brief.py`'s git probe now reports `PROBE FAILED` instead of a fake `0 uncommitted path(s)` when git returns non-zero — that was the reason tonight's brief called a broken repo clean."
   ]
  },
  {
