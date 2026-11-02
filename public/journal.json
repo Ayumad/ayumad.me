@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-11-01",
+  "summary": "Session journal for 2026-11-01: CMPE 142 Ch. 10 paging HW shipped as docx, Kindle + Syncthing confirmed live and manga pipeline scoped, weekly review generated, vault re-evicted at 95% disk.",
+  "highlights": [
+   "The CMPE 142 HW10 artifact now exists on all four surfaces (docx, matching SHA256), which retires the weekly review's \"Ch 10 HW shows no artifact\" finding — CMPE 131 code-review minutes are still unconfirmed.",
+   "The Kindle path is genuinely healthy — device reachable, Syncthing at 100% for `kindle-library` — so the manga pipeline has working transport and only needs a sourcing decision.",
+   "Vault eviction is back at full strength (715 of 727 files dataless at 10 PM, 11 GB free / 95% used); a materialize sweep was required before this entry could be written, and disk remains the root cause.",
+   "Two turns died on local abliterated endpoints tonight (unfinished manga turn, failed smoke test) — local endpoints aren't reliable enough for multi-tool turns yet."
+  ]
+ },
+ {
   "date": "2026-10-31",
   "summary": "Session journal for 2026-10-31: Hifiman upgrade consult (HE1000 Stealth pick), Hermes Mobile TestFlight mix-up corrected, zero-token iOS beta watcher built, vault auto-sync paused, 559 cron runs 0 failed.",
   "highlights": [
    "The headphone answer inverted the obvious ladder: paying more buys *more treble*, and the cheapest rung that actually fixes the complaint (HE1000 Stealth, $949) is not the flagship (HE1000se, $1,699 — brightest of the four and the worst match). Power was a non-issue across all four.",
    "A \"wrong dev\" catch saved a bad install: the only TestFlight code circulating for Hermes Mobile belongs to a community client, and Nous's own iOS invite is a dead 404. The watcher now only trusts codes on Nous's own page.",
    "Vault access from interactive sessions is broken by TCC again (`Operation not permitted` on `~/Documents/Main`), which is why the audio consult ran without product notes; the journal run itself only worked after materializing 712 iCloud-dataless files.",
-   "Disk stands at **9.8 GB free / 95% used** — the standing cause of both the eviction sweep and the auto-sync/commit churn. The ~39 GB of simulator runtimes is still the cheapest fix and still unanswered."
+   "Disk stands at **9.8 GB free / 95% used** — the standing cause of both the eviction sweep and the auto-sync/commit churn. The ~39 GB of simulator runtimes is still the cheapest fix and still unanswered.",
+   "**Today's outcomes (condensed):** headphone consult settled on **HE1000 Stealth ($949)** after killing the \"HE1000se MK2\" myth that started it; the only TestFlight code circulating for Hermes Mobile was traced to a community client (not Nous) and corrected on the phone; a zero-token iOS beta watcher shipped (`1fc6a22282a7`); Daily Brief and Interview Prep ran on schedule; Handshake Rapid Applications stayed green (12/12).",
+   "**This pass closed — vault readability.** At 23:15 the vault was **667 of 726 files unreadable** (`Resource deadlock avoided`), worse than \"evicted\": plain reads never materialize. A full per-file `brctl download` sweep fixed it — first pass left 405 still deadlocked, a 60 s settle plus re-probe found **0 dataless, 671/671 readable**.",
+   "**Knock-on effects cleared by that one repair:** `git status` went from ` M Journal Calendar.md` + `??` noise to **completely clean** (HEAD `65bfc33`, 0 unpushed — the diff was an unreadable-file artifact, not edits); `dashboard.json` rebuilt at 30 KB with **no `Errno 11`** in the projects section (it was dying on the same reads); validator **notes=597, invalid=0, duplicates=0, unresolved=0**.",
+   "**Recorded the lesson** in `hermes-operations-maintenance/references/icloud-vault-git-recovery.md`: reads don't materialize, a sweep is always partial on the first pass, and eviction noise in `git status` clears once the worktree is readable.",
+   "**Not fixed:** `[bot:vaultkeeper] Session Journal + Deploy` is still `delivery_queued` — there is **no `hermes serve` process at all**, so bot-profile deliveries have nothing to service the queue; a gateway restart is out of scope for a cleanup pass. Journal and deploy output are on disk regardless. Disk is **95% used / 9.8 GB free**, so tonight's eviction will recur."
   ]
  },
  {

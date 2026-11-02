@@ -1,5 +1,75 @@
 [
  {
+  "date": "2026-11-01",
+  "weekStart": "2026-10-25",
+  "summary": "Weekly review for Oct 26–Nov 1, 2026: 147 applications, working RAG (recall@5 0.95), VPN torrent stack + 10-distro lab; vault still evicted at 95% disk.",
+  "sections": [
+   {
+    "heading": null,
+    "items": [
+     "Oct 26 – Nov 1, 2026"
+    ]
+   },
+   {
+    "heading": "This Week's Highlights",
+    "items": [
+     "**The internship hunt became a running pipeline — 147 applications submitted.** 87 went out on 10-27 alone, then the queue was un-poisoned on 10-30 (two unsubmittable postings were stalling every cycle: 0 applications in two days → 15 in one afternoon). The real ceiling is now visible and measured: ~77 submissions in ~2h triggers a Handshake velocity lock, and 653 of 963 logged dispositions are **external-ATS** handoffs that no form filler can submit. Five targeted one-page résumés were rebuilt (expected graduation Dec 2027 added — it was missing everywhere, which is an ATS filter, not a nicety), then regenerated as 12 Google Docs + a full CV on 10-30.",
+     "**A real local RAG over the vault exists now, with numbers.** 623 notes → 6,790 chunks, recall@5 **0.95** (recall@10 1.0), MRR 0.805, p95 11 ms, FastAPI `/search` live. That directly answers last week's finding that a résumé line claimed an index with nothing behind it.",
+     "**Homelab got a second, independent torrent stack and a distro lab.** Personal gluetun + qBittorrent with a proven kill switch, 42.8 MB/s with 59 peers vs the media stack's 8.5 MB/s OpenVPN ceiling, checksum-verified and landing outside the Servarr paths. Also: ten boot-verified distros on the P520 with a script-only weekly timer and four ready-to-install VMs, plus ai-vm resized on the real bottleneck (**vCPU, not VRAM** — prefill 170 → 560 t/s).",
+     "**The reading library stopped being a plan.** 47 works catalogued with SHA-256 provenance per acquisition, five real EPUBs built by a packager written on the spot (the box has no Calibre), four reference PDFs deliberately kept as PDFs. Kindle transfer is 38/47 — nine books (99.6 MB) queued when the device slept mid-copy.",
+     "**Smaller shipped things that unblock later work:** the CRT box is documented and working (the actual bugs were Kodi running as root and HDMI audio on an analogue TV — R9 380 build ruled out on evidence), the homelab has one machine-readable layout (`layout.yaml` → 31 nodes / 46 links / four rendered views) instead of hand-drawn diagrams, and the ACM *Intro to Homelab* workshop ran on 10-28."
+    ]
+   },
+   {
+    "heading": "Project Progress",
+    "items": [
+     "**Internship pipeline** (`~/workspace/internship-hunt`, [[90 Operations/Hermes/TODO Master|TODO Master]]) — 147 submitted this week (87 + 23 + 15 + 17 + 5/day); runner is live on a 30-minute cadence, 4 candidates queued at last check. `external_queue.md` is the honest 653-item manual worklist. The Afternoon job stays paused after its 3600 s script timeout; Rapid is green.",
+     "**[[02 Projects/Personal Website|Personal Website]]** — no content commits this week. The site is current on deploy hash `BaROTaAH` (unchanged since 10-20) and only automated `dashboard: refresh` / `journal:` commits landed. The Playwright e2e suite + CI workflow built on 10-29 (20/20 passing, desktop + 390×844) is still **untracked on disk**, so nothing runs in CI.",
+     "**[[02 Projects/Homelab|Homelab]]** — new personal torrent stack, `/tank/shared/iso` as a host bind mount registered as Proxmox storage, 10 distros (39 GB), ai-vm at 200 GB disk / 24 GB RAM / 6 vCPU with three abliterated models aliased (`abl`, `ablgemma`, `gemma-abl`), and an observability package (6 SLOs, 34 alerts, 11 recording rules, runbooks) that is deliberately **deployable but not deployed**. Service Map regenerated 10-29; Home Assistant still sees no MQTT entities.",
+     "**Hermes / vault ops** — 998 of 1,000 cron executions completed in the retained window; the only two failures are the 10-29 `handshake_apply_pm.sh` 3600 s timeouts, then three consecutive clean days. Vault: `.git` was moved to `~/vault-git` on 10-31 with the index rebuilt from `HEAD` (a single `git add -A` would have committed a vault-wide deletion), and reads keep dying on iCloud eviction — 667 of 726 files were unreadable on 10-31 until a per-file `brctl download` sweep.",
+     "**School** — nothing new landed in the school Drive all week. CMPE 142 HW9 (10-25) is still the latest deliverable; **CMPE 131 term-project code-review minutes and CMPE 142 Ch 10 HW were both due Nov 1 with no artifact visible**. Next hard edges: Nov 5 (CMPE 148 MiniTCP + two quizzes, CMPE 142 Ch 9–10 quiz 7 PM under Respondus).",
+     "**[[02 Projects/EchoSphere/EchoSphere|EchoSphere]]** — Sprint W8 check-in closed 10-30; Sprint W9 runs Nov 2–6 with the IPMD progress check-in at 3 PM on Nov 6.",
+     "**ACM** — *Intro to Homelab* delivered 10-28 from the outline, slides were never built; the **Agentic Coding Series workshop is Nov 4** and has no deck either.",
+     "**Interview prep** — 7/7 nightly runs (Hardware/Systems → Behavioral/STAR → AI/ML). Coverage is still written, never spoken: no STAR story, no OS answer, has been said out loud under time.",
+     "**[[02 Projects/Facebook Marketplace MCP|FB Marketplace MCP]]** — no code touched; the audit findings stand (no tests, no git, no CI, bare `except → str(e)`, fixed 6 s + 20 s waits, a new browser per call)."
+    ]
+   },
+   {
+    "heading": "Blockers & Issues",
+    "items": [
+     "**Disk is the standing cause of nearly everything below: 95% used, ~11 GB free.** iCloud re-evicts the vault nightly; `stat` succeeds while every read returns `errno 11`, which is why the 15-minute sync used to report `ok` over a broken repo. The cheapest fix is still the **39 GB of simulator runtimes** (four 26.5 builds = 23.4 GB) and it has been waiting on a one-word answer since Oct 7.",
+     "**Vault auto-sync is paused** (`63f3967a4860`, off since 10-31 20:06). Nothing commits on a timer — only the journal and website-monitor jobs push. This review note is uncommitted until it is re-enabled.",
+     "**Bot-profile journal delivery is still stalled** — `[bot:vaultkeeper] Session Journal + Deploy` records `delivery_queued` for 10-29/10-30/10-31. There is no `hermes serve` process to service the queue, so it neither delivers nor times out. Output is on disk either way.",
+     "**TCC still blocks vault reads from interactive sessions** even though the \"Re-grant Full Disk Access\" Tech task was completed 10-29: the 10-31 headphone consult ran `Operation not permitted` on `~/Documents/Main` and had to work without product notes.",
+     "**Two Nov 1 school deliverables show no artifact** (CMPE 131 code-review minutes, CMPE 142 Ch 10 HW). Either they went in through Canvas only or they are late — worth confirming tonight.",
+     "**Uncommitted work is fragile:** the Playwright e2e + CI, `internship-hunt`, `rag-assistant`, and the observability package are not in git at all. One bad cleanup pass loses them."
+    ]
+   },
+   {
+    "heading": "Next Week's Focus",
+    "items": [
+     "1. **Mon Nov 2, 2:00 PM — Career Launch AI video interview** (30 min, hard slot). Same day: upload the SJSU transcript to the Nissan Workday application (R00214213), which was submitted without it.",
+     "2. **Clear the Nov 1 school items, then hit Nov 5:** CMPE 131 code-review minutes and CMPE 142 Ch 10 HW now; then CMPE 148 Project 3 MiniTCP + Quiz 4-1 + Quiz 5, and the CMPE 142 Ch 9–10 quiz (7 PM, Respondus).",
+     "3. **Free the disk so the vault stops evaporating** — answer \"go\" on the simulator runtimes, then re-enable vault auto-sync and let the 15-minute cycle catch up on a week of uncommitted notes.",
+     "4. **Get the website work under version control** — commit and push the e2e suite + CI workflow, then push `rag-assistant`, `internship-hunt`, and the observability package so the week's builds survive.",
+     "5. **Build the Nov 4 Agentic Coding workshop deck** (and the Intro to Homelab slides that never got made), and walk the 653-item `external_queue.md` at a sane ~10/day.",
+     "6. **EchoSphere Sprint W9** check-in Nov 6, and one out-loud interview answer per night — the STAR drafts have existed since 10-04 and none has been spoken."
+    ]
+   },
+   {
+    "heading": "Miscellaneous",
+    "items": [
+     "**Headphones:** the upgrade ladder inverted — more money buys *more* treble. Pick is **Hifiman HE1000 Stealth at $949**; the \"HE1000se MK2\" does not exist (line is HE1000 Stealth → HE1000se → HE1000 Unveiled), all four candidates are power-saturated on the K13, and Arya Stealth would be harsher than the Edition XS. No purchase made.",
+     "**Hermes Mobile (iOS):** the official TestFlight code `U8e1zmbc` is a dead 404 and the only code circulating belongs to a community client (`goncharik/hermes-mobile`), not Nous — caught and corrected on the phone. Watcher `1fc6a22282a7` now pings only on codes published on Nous's own page.",
+     "**Vault health:** 589 notes at the 10-26 metrics run, validator 0 invalid / 0 dupes / 0 unresolved; 597 notes by the 10-31 run. 92 sessions this week across five profiles (76 in `default`), 36 of them cron.",
+     "**Fleet:** 559–561 runs/day typical, peaking at 282 in a day during the retained window; new job added 10-31 (iOS beta watch, every 30 min, zero tokens).",
+     "**Audio/gear, media:** False Memory installed at 1080p with the 2160p upgrade argued down (HDR10 banding on gradients); manga shadow-library pulls declined twice in favour of VIZ Manga at $1.99/mo.",
+     "**No Codex work this week** beyond the 10-29 \"make me a cv\" pass, which edited the Docs in place and regenerated 12 one-page résumés plus a two-page CV."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-10-25",
   "weekStart": "2026-10-18",
   "summary": "Weekly review for Oct 19–25, 2026: Hermes audit/repair sprint, ~332 GiB media floor, ACM Substack live, Notion Desk built awaiting one token.",
