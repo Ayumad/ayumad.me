@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-11-02",
+  "summary": "Session journal for 2026-11-02: NAS cleanup (96→81%), IBM Research internship applied (San Jose), Kindle manga rebuilt into real volumes + ghost-prune timer, crosswalk agent mesh, digicam verdict.",
+  "highlights": [
+   "`tank` went 96% → 81% (2.63 TiB free), the single biggest capacity win this month.",
+   "**IBM Research internship 2027 (San Jose) is applied** — req 132725, application received; that was the day's real-world win.",
+   "The Kindle manga library now has one file per volume, no nested folders, and a 10-minute prune timer that stops ghost copies from re-accumulating — the ordering bug can't come back silently.",
+   "The agent mesh is wired end-to-end, but **Muse is keyless** after the account claim — that is the gating step for the whole sweep loop."
+  ]
+ },
+ {
   "date": "2026-11-01",
-  "summary": "Session journal for 2026-11-01: CMPE 142 Ch. 10 paging HW shipped as docx, Kindle + Syncthing confirmed live and manga pipeline scoped, weekly review generated, vault re-evicted at 95% disk.",
+  "summary": "Session journal for 2026-11-01: CMPE 142 Ch. 10 paging HW shipped as docx, Kindle + manga/comics pipeline built end-to-end (1,865 CBZ, Junji Ito shelf, homelab CLI), weekly review generated, vault re-evicted at 95% disk.",
   "highlights": [
    "The CMPE 142 HW10 artifact now exists on all four surfaces (docx, matching SHA256), which retires the weekly review's \"Ch 10 HW shows no artifact\" finding — CMPE 131 code-review minutes are still unconfirmed.",
    "The Kindle path is genuinely healthy — device reachable, Syncthing at 100% for `kindle-library` — so the manga pipeline has working transport and only needs a sourcing decision.",
    "Vault eviction is back at full strength (715 of 727 files dataless at 10 PM, 11 GB free / 95% used); a materialize sweep was required before this entry could be written, and disk remains the root cause.",
-   "Two turns died on local abliterated endpoints tonight (unfinished manga turn, failed smoke test) — local endpoints aren't reliable enough for multi-tool turns yet."
+   "Two turns died on local abliterated endpoints tonight (unfinished manga turn, failed smoke test) — local endpoints aren't reliable enough for multi-tool turns yet.",
+   "**Vault re-eviction swept.** At 23:00 every note was dataless again — `.git` was the pointer file `gitdir: /Users/ayumad/vault-git` and returned `Resource deadlock avoided`, so every `git` call died at startup, the dashboard's `projects` section raised errno 11, and the brief's journal read failed. Per-file `brctl download` over 728 files (728 ok / 0 fail), one `brctl download` on the `.git` pointer itself (a directory-level sweep does not materialize it), 45 s settle. Verified after: `git status --porcelain` empty at HEAD `8b7adde`, 0 unpushed; validator `notes=599 invalid=0 duplicate_groups=0 unresolved=0 ambiguous=0 gov_errors=0 reviews_due=0`; `dashboard_build.py` rebuilt the payload at 30,023 bytes with `projects` = 28 entries and an empty `errors` map, no `Errno 11`/`deadlock` strings anywhere in it.",
+   "**Fixed the packaged Kindle probe.** `kindle-library-sync/scripts/kindle_status.py` died with `TypeError: unhashable type: 'dict'` — current Syncthing returns `/rest/db/file.availability` entries as objects, not bare device-ID strings, so `set(av)` blew up on the first file. Normalized both shapes; it now runs end to end.",
+   "**Journal chat copy still stranded.** `Session Journal + Deploy` is `delivery_queued`; `pgrep -fl \"hermes serve\"` returns nothing, so no process drains the bot-profile queue. Third occurrence (10/18, 10/29, tonight). Content itself landed and committed — only the chat copy is stuck. Fixing it means restarting the gateway, which is out of scope for a cleanup pass.",
+   "**scout `Marketplace Sweep` delivery timeout** (600 s to its own bot-chat) — the job is paused by design, so this is a stale delivered-attempt record, not a live regression.",
+   "**Disk is still the root cause** of everything above: 94% used, 13.9 GB free. Tonight's sweep is a patch; the eviction returns."
   ]
  },
  {
