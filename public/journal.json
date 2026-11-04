@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-03",
+  "summary": "Session journal for 2026-11-03: MCP 101 workshop deck + handout, CMPE 142 Ch. 10 submitted, Kindle two-tier library + The Climber, Pi CIFS stall fix, wt/verify tooling, agy setup.",
+  "highlights": [
+   "**MCP 101 shipped** — 16 slides, a Drive handout and a 25-line server verified end-to-end for the 1:00 PM session in MQH 227; the build is half the workshop, which was the requirement.",
+   "**CMPE 142 Ch. 10 is submitted** — the last overdue school item (due Nov 1, upload-only gap) is closed.",
+   "The Pi stutter was a **`soft` CIFS mount**, not a codec: one fstab line removed the seek loop that file swaps never fixed. Same class of control-experiment instinct as the smbclient proof.",
+   "Kindle now has both tiers it needed (WebDAV on demand + Syncthing keep-set) and The Climber is published — but the device is offline, so 20.44 GB is still queued."
+  ]
+ },
+ {
   "date": "2026-11-02",
   "summary": "Session journal for 2026-11-02: NAS cleanup (96→81%), IBM Research internship applied (San Jose), Kindle manga rebuilt into real volumes + ghost-prune timer, crosswalk agent mesh, digicam verdict.",
   "highlights": [
