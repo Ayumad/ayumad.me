@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-04",
+  "summary": "Session journal for 2026-11-04: CMPE 148 Project 3 MiniTCP built and delivered, CRT shelf mount failure + Hi10P re-encode, Kodi button map, Daily Brief, interview prep.",
+  "highlights": [
+   "**MiniTCP is delivered** with measured evidence rather than asserted numbers — the 10%-loss comparison against Project 2 is the result that makes the writeup worth reading.",
+   "Both CRT symptoms were one failure: a NAS mount that died 10 seconds into boot. 66 dangling symlinks, zero corrupt media, zero 0-byte files.",
+   "Hi10P explained Boogiepop; Paranoia Agent inverted the assumption — the label was fine and the hardware decoder simply never engaged.",
+   "The vault is now the bottleneck: 635 notes are iCloud-evicted and TCC blocks hydration from cron, so tonight's journal ran off the GitHub mirror."
+  ]
+ },
+ {
   "date": "2026-11-03",
   "summary": "Session journal for 2026-11-03: MCP 101 workshop deck + handout, CMPE 142 Ch. 10 submitted, Kindle two-tier library + The Climber, Pi CIFS stall fix, wt/verify tooling, agy setup.",
   "highlights": [
