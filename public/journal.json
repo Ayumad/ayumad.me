@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-05",
+  "summary": "Session journal for 2026-11-05: RetroPie emulation audit + Nova ROM import, save-sync reconciliation across Pi/Nova, Wii/PS2/PS3 CRT paths, WEGA RGB mod decision, Isvarna headphone compare.",
+  "highlights": [
+   "The Pi's problems were mostly files, not hardware: eight fake 170-byte ROMs, GB/GBC misfiled into `gba/`, and PSX CD audio/XA disabled in core options. Systems went 11 → 20 without reflashing anything.",
+   "Save sync was never real — a phone app setting (Nova Autostart off since 10/9) plus tailnet-only peer addresses. Now three peers, LAN-direct, round-trip proven, and `save-sync-audit` reports 0 issues.",
+   "Hardware verdict: nothing 20\" fits the 512 mm shelf, so the $65 Sunthar 1.4C RGB mod (due 12/31) is the real upgrade — PS2/PS1 get native RGB, the Wii needs an $80 transcoder and stays marginal, the PS3 is stuck at soft 480i.",
+   "The constraint has moved to storage: card at 94 %, so bin/cue → CHD is what unblocks both breathing room and the Dreamcast library."
+  ]
+ },
+ {
   "date": "2026-11-04",
   "summary": "Session journal for 2026-11-04: CMPE 148 Project 3 MiniTCP built and delivered, CRT shelf mount failure + Hi10P re-encode, Kodi button map, Daily Brief, interview prep.",
   "highlights": [
