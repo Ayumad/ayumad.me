@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-06",
+  "summary": "Session journal for 2026-11-06: IBM internship pipeline to 5 applications, Estate Sale Watch cron build, Mnemosyne 0.7.7 repair, opencode relay fallback diagnosis, SFF parts allocation, CMPE 142 Ch 11 homework.",
+  "highlights": [
+   "The Estate Sale Watch is a genuinely new capability, not a one-off answer: script-only, self-updating vault table, and it already surfaced a 1,000+ record/vintage-audio sale in East San Jose for Nov 12–14.",
+   "Hermes' recurring memory failure was a dependency pin, not a provider problem — fixed at the `uv.lock` level so the next env rebuild can't resurrect it.",
+   "The \"model fallback\" banner is now explained end-to-end (relay TLS corruption + saturated cells, not the Mac) — but the fix choice is still Ayush's.",
+   "IBM is at 5 live applications and the Stanford DBDS mentoring form is one short answer session from done."
+  ]
+ },
+ {
   "date": "2026-11-05",
   "summary": "Session journal for 2026-11-05: RetroPie emulation audit + Nova ROM import, save-sync reconciliation across Pi/Nova, Wii/PS2/PS3 CRT paths, WEGA RGB mod decision, Isvarna headphone compare.",
   "highlights": [
