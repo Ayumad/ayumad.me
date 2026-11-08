@@ -1,12 +1,28 @@
 [
  {
+  "date": "2026-11-07",
+  "summary": "Session journal for 2026-11-07: Voice Memo Vault project note filed, four IBM assessments landed and prioritised (137214 first, all expire Nov 14), iCloud vault eviction repaired, Interview Prep SWE slot.",
+  "highlights": [
+   "The Voice Memo Vault note is framed against what already exists, so it is a decision document rather than a wish: the gap is appendable, agent-readable labelled threads — not transcription.",
+   "IBM's pipeline converted: 5 applications in, 4 assessments out today, all on the same 7-day clock. The ranking is what matters more than the tests — 137214 is the only one that is real engineering in this batch.",
+   "iCloud eviction is now a twice-daily operational tax on the vault (noon sweep + 67 more files at 6 PM); the Full Disk Access grant + capacity headroom are still the real fixes, and both sit with Ayush.",
+   "Interview Prep has shipped 7 unanswered questions in a row — the log now says the 6 PM slot itself, not the question format, is the thing to change."
+  ]
+ },
+ {
   "date": "2026-11-06",
   "summary": "Session journal for 2026-11-06: IBM internship pipeline to 5 applications, Estate Sale Watch cron build, Mnemosyne 0.7.7 repair, opencode relay fallback diagnosis, SFF parts allocation, CMPE 142 Ch 11 homework.",
   "highlights": [
    "The Estate Sale Watch is a genuinely new capability, not a one-off answer: script-only, self-updating vault table, and it already surfaced a 1,000+ record/vintage-audio sale in East San Jose for Nov 12–14.",
    "Hermes' recurring memory failure was a dependency pin, not a provider problem — fixed at the `uv.lock` level so the next env rebuild can't resurrect it.",
    "The \"model fallback\" banner is now explained end-to-end (relay TLS corruption + saturated cells, not the Mac) — but the fix choice is still Ayush's.",
-   "IBM is at 5 live applications and the Stanford DBDS mentoring form is one short answer session from done."
+   "IBM is at 5 live applications and the Stanford DBDS mentoring form is one short answer session from done.",
+   "**Scope swept:** 13 sessions across 11 profiles (incl. yesterday's over-run threads) plus every cron store. Nothing in the fleet needed repair tonight — p520's `iso-sync` failure and the `tank`-pool alert threshold were already closed this evening, and the Mnemosyne pin, Muse key and Estate Sale Watch all verified live.",
+   "**Filed (needs Ayush, on Tech → mirrored to Apple at 23:03):** IBM assessment accommodation form for reqs 128345 + 132533 (assessments aren't sent until it's in, so no clock is running); Stanford DBDS mentoring — three form answers left (years of college, math, stats).",
+   "**Retitled, not duplicated:** IBM Quantum (132533) was already closed today; the stale Tech \"Muse: re-key…\" is now \"Muse: paste the crosswalk connector block into Muse's chat\" because the key was minted at 4:29 PM — only the paste into Muse remains.",
+   "**Stale claim corrected:** the internship runner is *not* stopped. Handshake Rapid Applications is enabled and green every 30 min but idle — `queue: 0 candidates`, 1 applied today, one posting parked after 3 failed attempts. So the pipeline decision is still open, but nothing is being submitted while he decides.",
+   "**Could not fix:** host volume at **94% / 15.3 GB free** (only cache deletion outside this job's scope would move it) — the iCloud eviction risk is still his setting, and 25 vault paths stay uncommitted until the 22:00 job commits, since `Vault auto-sync` has been disabled since 10/31. Both are documented, not new.",
+   "**Unconfirmed:** whether the Career Launch AI video interview was recorded inside its 12:00–12:30 PM window — the Tech task is still open, so it sits in todo-cleanup as a one-word confirmation."
   ]
  },
  {
