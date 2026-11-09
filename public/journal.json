@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-11-08",
+  "summary": "Session journal for 2026-11-08: PS5 wishlist re-pointed to a firmware ≤13.60 jailbreak gate + Muse task R73, weekly review written (IBM assessments due Nov 14), interview prep 8th unanswered packet.",
+  "highlights": [
+   "The PS5 lane now encodes the real constraint: a cheap console on 14.00+ is a dead end, and a jailbreakable one is worth paying for. Removing the price ceiling is the whole decision.",
+   "The same session caught the thing that matters more than the lane: **Muse has never called the board**, so every task and sweep pointed at it — R73, the CRT hunt, the sell-side queue — is currently writing into a void.",
+   "The week closes on one hard wall (IBM's four assessments, Sat Nov 14) and one root blocker (disk at 94%, which is what keeps re-evicting the vault and stalling cron reads).",
+   "Interview Prep has shipped 8 questions and received 0 answers in 8 sessions; the log now names the 6 PM slot itself as the defect, which is the right diagnosis."
+  ]
+ },
+ {
   "date": "2026-11-07",
   "summary": "Session journal for 2026-11-07: Voice Memo Vault project note filed, four IBM assessments landed and prioritised (137214 first, all expire Nov 14), iCloud vault eviction repaired, Interview Prep SWE slot.",
   "highlights": [
    "The Voice Memo Vault note is framed against what already exists, so it is a decision document rather than a wish: the gap is appendable, agent-readable labelled threads — not transcription.",
    "IBM's pipeline converted: 5 applications in, 4 assessments out today, all on the same 7-day clock. The ranking is what matters more than the tests — 137214 is the only one that is real engineering in this batch.",
    "iCloud eviction is now a twice-daily operational tax on the vault (noon sweep + 67 more files at 6 PM); the Full Disk Access grant + capacity headroom are still the real fixes, and both sit with Ayush.",
-   "Interview Prep has shipped 7 unanswered questions in a row — the log now says the 6 PM slot itself, not the question format, is the thing to change."
+   "Interview Prep has shipped 7 unanswered questions in a row — the log now says the 6 PM slot itself, not the question format, is the thing to change.",
+   "**Closed:** the IBM accommodation-form item was retired because its premise expired — IBM sent all four assessments anyway (three coding OAs + the 128345 recorded interview, 2:08–3:03 PM), so no form stands between Ayush and the clock. The Tech task was retitled in place to the four assessments with the 3-day target (Tue Nov 10, hard expiry Sat Nov 14) and mirrored to Apple Reminders in the same pass.",
+   "**Verified:** the Apple ↔ Google mirror is healthy — one `updated->Apple` line at 23:01, then a dry run reporting `0 action(s) planned`.",
+   "**Cron:** both flagged jobs are cosmetic, not broken. The vaultkeeper journal job finished and wrote its 24 KB output at 22:02; only its delivery state reads \"in progress\" (`deliver: local`, no incident recorded). The scout marketplace sweep's 600 s delivery timeout belongs to a job Ayush paused.",
+   "**Not fixed:** disk is still 94% used / 15.3 GB free (deleting outside scope), and the vault syncer is still paused since 10/31 with 23 paths uncommitted — the 15-minute sync that would commit them is not running.",
+   "**todo-cleanup:** reconciled to 10 items, rebuilt around what is genuinely blocked on him — iCloud eviction, the Full Disk Access grant, the Career Launch recording confirmation, the Stanford DBDS three answers, then the pipeline decision and the standing infra clicks."
   ]
  },
  {

@@ -1,5 +1,75 @@
 [
  {
+  "date": "2026-11-08",
+  "weekStart": "2026-11-01",
+  "summary": "Weekly review for Nov 2–8, 2026: five IBM applications, four assessments due Nov 14, MiniTCP shipped, NAS 96→80%, MCP 101 delivered; disk is the bottleneck.",
+  "sections": [
+   {
+    "heading": "This Week's Highlights",
+    "items": [
+     "**The IBM internship pipeline converted from applications to assessments.** Five reqs are live — 132725 codesign (11-02), then 131307, 137214, 132533 and 128345 all on 11-06 — and four assessments landed on 11-07: coding OAs for 137214 (AI Software Engineer, IBM Z), 131307 (Granite research) and 132533 (Quantum Innovation Centers), plus a recorded competency interview for 128345. All four links expire **Sat Nov 14**, so the target is Tue Nov 10, in the order 137214 → 131307 → 132533 → 128345.",
+     "**CMPE 148 Project 3 MiniTCP was built, measured and delivered.** Reliable UDP with seq/cumulative ACKs, checksum, FIN handshake, cwnd/ssthresh, slow start, congestion avoidance, RTO doubling and fast retransmit: 1 MB at 10% loss went from 40.3 s / 1334 retransmits (Project 2) to **10.5 s / 239 retransmits** — 3.8× faster, 5.6× fewer resends, every number read off real logs. Pushed to `Ayumad/school-cmpe148` with a `submittables/` folder (11-06); Canvas upload is the only step left.",
+     "**`tank` went 96% → 80%.** Seven streaming-available titles deleted (~313 GiB), snapshot retention cut to 2 daily / 1 weekly / 0 monthly, the stalled Happy Together remux removed, and three 4K titles restored — 427 GiB → **2.68 TiB usable**, fragmentation 52% → 23%. ZFS scrub timers were enabled the same night (first run Dec 1).",
+     "**The RetroPie CRT box went from 11 to 20 visible systems and the save sync became real.** 19 systems / ~13.7 GB imported from the Nova over adb plus 812 ES-DE entries; the Pi joined Syncthing with LAN-direct peers and round-trip saves proven both ways (`save-sync-audit` 0 issues). The \"Seeking\" stutter was a `soft` CIFS mount returning false EOFs — one fstab line (`hard` + `actimeo=60`).",
+     "**MCP 101 shipped.** 16 slides, a Drive handout (`Fall 2026 / 6. Workshop / MCP 101 Starter` with `server.py` + zip) and a verified 25-line stdio server, with the build taking half the 1 PM session on Tue Nov 3."
+    ]
+   },
+   {
+    "heading": "Project Progress",
+    "items": [
+     "**Internship pipeline** ([[90 Operations/Hermes/TODO Master|TODO Master]]) — 5 IBM applications submitted, 4 assessments outstanding on a 7-day clock. Handshake Rapid Applications is enabled and green every 30 min but **idle** (`queue: 0 candidates`); Handshake Afternoon Applications is still paused from its 10-29 timeout; U.S. Tech Force SWE closed Nov 6 and IBM Codesign 2027 is still unsubmitted, so both look lapsed unless they went in outside a session.",
+     "**School** — CMPE 142 Ch 10 HW submitted (confirmed 11-03 04:05, clearing the last overdue item). Next hard edges: **CMPE 142 Programming Project #4 due Nov 12**, **CMPE 131 Alpha release TR + sprint minutes due Nov 15**, **CMPE 142 Ch 12 HW due Nov 15**. Quizzes 4-1 and 5 (due Nov 4) have no confirmation either way.",
+     "**[[02 Projects/Homelab|Homelab]]** — storage cleanup landed (80% / 2.68 TiB), `sanoid` retention trimmed, scrub timers enabled, `tank` alert threshold retuned to 98%, the p520 `iso-sync` failure closed, and the Crosswalk board/queue scripts now run script-only. Still open: off-machine backup copy, HA ↔ MQTT, dashboard health summary, Phase 8 class VMs.",
+     "**[[02 Projects/RetroPie CRT Setup|RetroPie CRT Setup]]** — 20 systems visible, save sync proven, boot mount hardened with `x-systemd.automount` after a reboot killed the NAS mount and dangled 66 shelf symlinks, Boogiepop re-encoded from Hi10P to true 8-bit, Trigun imported (26/27). Open: PSX BIOS absent, card at 94% so bin/cue → CHD is the next step, Paranoia Agent's MMAL decoder never engages, and the $65 RGB mux mod is due Dec 31.",
+     "**[[02 Projects/Personal Website|Personal Website]]** — no content work beyond a gear-table alignment/style pass on 11-05; everything else in the repo is automated `dashboard: refresh` and `journal:` commits. Deploy hash `weWxz1NI` is current, `/journal` and `/weekly.json` feeds are updating nightly.",
+     "**ACM workshops** ([[02 Projects/ACM Fall 2026 Workshops|ACM Fall 2026 Workshops]]) — MCP 101 delivered Nov 3; **W3 Local & Personal AI (Nov 4) still has no deck and no session record**, so its status is unconfirmed. Next is W5 Vibecoding on Nov 18 (his birthday).",
+     "**Kindle library** — published view rebuilt to 880 files / 20 GB, one file per volume, no nested folders, and both tiers are live (WebDAV on demand + Syncthing keep-set). The device itself has been offline since Nov 3 10:58 UTC, so the backlog is still queued, not transferred.",
+     "**Agent Mesh / Crosswalk** — the `to/hermes` board, price history, purchase ledger and sell-side queue are all live and script-only. **Muse is keyed but not reading the board** — 3 posts for it are waiting and its daily marketplace sweeps have missed 5–6 runs.",
+     "**Interview prep** — eight nightly runs, seven consecutive unanswered packets (10/31 → 11/07). The log now concludes the 6 PM slot itself, not the question format, is what has to change.",
+     "**Vault ops** — 616 notes, validator clean, 51 notes touched this week; iCloud eviction recurred twice (6 files at noon, 67 more before the 6 PM run) and was swept each time."
+    ]
+   },
+   {
+    "heading": "Blockers & Issues",
+    "items": [
+     "**Disk is the root blocker again: 94% used / 15.3 GB free.** It is why iCloud re-evicts the vault nightly, and why every cron that reads the vault may have to `brctl download` first. Both real fixes are one human step each: turn **Optimize Mac Storage** off / \"Keep Downloaded\" on `~/Documents/Main`, and grant **Full Disk Access** to `~/.hermes/hermes-agent/venv/bin/python3` so cron can hydrate files itself.",
+     "**Vault auto-sync is still paused since Oct 31** — nothing commits on a 15-minute timer; the journal and deploy-check jobs commit by hand (their messages literally say `auto-sync paused`). A week of notes is only as safe as the nightly job.",
+     "**The IBM clock is the week's hard constraint.** Four assessments, all expiring Sat Nov 14; the 128345 recorded interview needs a quiet room and spoken STAR stories, which the prep log says have never been rehearsed out loud.",
+     "**Muse is not reading the Crosswalk board**, so the PS5 firmware hunt and the 20-inch CRT hunt have no watcher behind them. Three posts are parked and the recurring sweeps are missing.",
+     "**Interview prep has produced 7 questions and 0 answers** — the backlog is now larger than the value of any new packet, and IBM behavioral is two days away.",
+     "**Unconfirmed, not closed:** whether the Career Launch AI video interview was recorded in its Nov 6 window, whether Quizzes 4-1/5 went in, and whether W3 ran on Nov 4.",
+     "**Small human-gated items still open:** SJSU transcript PDF for Nissan R00214213 + Riot Games; Stanford DBDS mentoring (3 answers); Antigravity's two GUI clicks (Google sign-in + crosswalk Authenticate); Muse's connector-block paste; Namecheap `jellyfin` A record; SER8 node exporter; Xfinity DHCP reservations + Pi-hole flip."
+    ]
+   },
+   {
+    "heading": "Next Week's Focus",
+    "items": [
+     "1. **Tue Nov 10 — run the IBM assessments** in order 137214 → 131307 → 132533 → 128345, and treat Sat Nov 14 as a hard wall. Recorded interview last, with STAR stories spoken out loud beforehand.",
+     "2. **School, in date order:** CMPE 142 Programming Project #4 (Nov 12), CMPE 131 Alpha release TR + sprint minutes (Nov 15), CMPE 142 Ch 12 HW (Nov 15); confirm or clear Quiz 4-1/5.",
+     "3. **Fix the disk, then re-enable vault auto-sync** — FDA grant + iCloud \"Keep Downloaded\", then let the 15-minute cycle catch up on the uncommitted notes.",
+     "4. **Decide the internship runner's fate** — \"schedule it\" (~10/day), \"manual\" (run on request), or \"park it\"; nothing is being submitted while it sits idle.",
+     "5. **Get Muse back on the board** (paste the connector block) so the PS5 ≤13.60 firmware hunt and the CRT hunt actually run.",
+     "6. **Clear the interview backlog out loud** — start with the 11/01 priority-inversion answer, then IBM behavioral; the questions already exist, only the speech is missing.",
+     "7. **ACM:** confirm what happened with W3 and build the W5 Vibecoding deck for Nov 18.",
+     "Calendar for the week: ACM Officer Meeting Mon Nov 9, 7:30 PM · CMPE 131 Tue/Thu 9:00 AM, CMPE 142 Tue/Thu 10:30 AM, POLS 15 Mon 10:30 AM, CMPE 148 Thu 6:00 PM · Canvas sprint meeting Tue Nov 10, 10:15 AM · ACM Workshop Meeting Wed Nov 11, 1:00 PM · Estate sale (1,000+ vinyl/audio) Thu Nov 12, 7:00 AM · EchoSphere Sprint W10 check-in Fri Nov 13, 3:00 PM."
+    ]
+   },
+   {
+    "heading": "Miscellaneous",
+    "items": [
+     "**Throughput:** 78 sessions / ~9,460 messages across 5 profiles this week (62 in `default`: 31 desktop, 20 cron, 9 webui). Ten Codex-free days except one Mac-to-NAS session on 11-05; no Codex work otherwise.",
+     "**Cron fleet:** 1,000 retained runs, **0 failed**; 11 deliveries, 989 suppressed. Three incidents, all self-resolved: a 429 on the 11-05 cleanup job, a `homelab-monitor.sh` syntax error on 11-05, and the throwaway Kindle rebuild watcher on 11-02.",
+     "**GitHub:** commits in `school-cmpe148` (mini-tcp-cc + submittables), `school-cmpe142` (HW10), and ~28 automated `ayumad.me` dashboard/journal commits plus the 11-05 style fix; `ayumad.vault` gets a hand commit per day. **No PRs or issues opened anywhere** — all five owned repos have zero open issues, so the Monday issue-watch stays dormant.",
+     "**Today (Nov 8):** the PS5 hunt was re-pointed to a firmware gate — **jailbreakable = 13.60 or older**, price ceiling deleted, evidence tiers (verified photo / seller claim / unknown), plus recurring task R73 (daily 09:00) that reports every listing with a firmware version and flags the first ≤13.60 unit immediately. The session also surfaced that Muse has never called the board.",
+     "**Today's other build:** the Estate Sale Watch cron (zero-token, scrapes EstateSales.NET + Craigslist, rewrites its own vault table) shipped 11-06 and already surfaced a 1,000+ record/vintage-audio sale for Nov 12–14.",
+     "**Hermes fixes:** Mnemosyne's repeating memory banner was a `uv.lock` pin (`mnemosyne-hermes 0.7.4` → 0.7.7 with `mnemosyne-memory 4.0.0`); the model-fallback banner was traced end-to-end to the `opencode.ai/zen/go` relay (90 × `SSLV3_ALERT_BAD_RECORD_MAC`, 56 × 429 capacity) with the three fix options still unapplied; `agy` (Antigravity 1.4.12) is configured and waiting on two GUI clicks.",
+     "**Gear/media verdicts:** RGB-mux mod chosen over replacing the WEGA (no 20\" set fits the 512 mm shelf); the $300 Sony HX20V camera was skipped; the SFF lot was mapped to the fleet (RTX 2070 → the i7-9700K box, 5600X → NCASE M1, rest flip) but not purchased; Isvarna vs owned headphones was a conversational compare only.",
+     "**Reading:** Goodreads/MyAnimeList status notes now regenerate daily with valid frontmatter (the missing `aliases: []` bug was patched at the script level), Kindle library at 880 files / 20.44 GB across 17 series plus Literature."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-11-01",
   "weekStart": "2026-10-25",
   "summary": "Weekly review for Oct 26–Nov 1, 2026: 147 applications, working RAG (recall@5 0.95), VPN torrent stack + 10-distro lab; vault still evicted at 95% disk.",
