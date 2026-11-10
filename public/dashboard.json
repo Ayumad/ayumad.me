@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T13:48:18-08:00",
+ "generated_at": "2026-11-09T19:49:17-08:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.23.0",
@@ -14,26 +14,26 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1730,
-   "episodic": 673
+   "working": 1736,
+   "episodic": 675
   },
   "disk": {
-   "used_pct": 96,
-   "free_gb": 8.1,
+   "used_pct": 85,
+   "free_gb": 30.8,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 6180,
-   "month_in_m": 19.2,
-   "month_out_m": 4.16,
-   "month_cache_m": 870.7,
-   "week_calls": 4046,
-   "week_out_m": 2.74,
+   "month_calls": 6272,
+   "month_in_m": 19.5,
+   "month_out_m": 4.21,
+   "month_cache_m": 874.5,
+   "week_calls": 3787,
+   "week_out_m": 2.62,
    "cache_share": 98,
    "top_models": [
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 5283
+     "calls": 5372
     },
     {
      "model": "deepseek/deepseek-v4.1-flash-1017",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.6-flash",
-     "calls": 341
+     "calls": 344
     },
     {
      "model": "abl-4b:latest",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-11-09T13:48:19-08:00",
+  "checked_at": "2026-11-09T19:49:18-08:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 2200030,
+   "uptime_s": 2221690,
    "load": [
-    "19.06",
-    "25.47",
-    "19.58"
+    "15.20",
+    "23.03",
+    "22.43"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 51.7,
+   "mem_used_gb": 52.7,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -201,7 +201,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 193.0,
+    "alloc_gb": 185.0,
     "free_gb": 3379.2,
     "health": "ONLINE",
     "used_pct": 5,
@@ -218,8 +218,8 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 17408.0,
-    "free_gb": 1239.04,
+    "alloc_gb": 17305.6,
+    "free_gb": 1341.44,
     "health": "ONLINE",
     "used_pct": 93,
     "scan": "scrub in progress since Sun Nov  8 00:24:02 2026",
@@ -236,7 +236,7 @@
   "datasets": [
    {
     "name": "ssd",
-    "used": "796G",
+    "used": "793G",
     "avail": "2.60T"
    },
    {
@@ -246,8 +246,8 @@
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "1.33G",
-    "avail": "6.88G"
+    "used": "1.34G",
+    "avail": "6.87G"
    },
    {
     "name": "ssd/subvol-101-disk-0",
@@ -261,12 +261,12 @@
    },
    {
     "name": "ssd/vm-200-cloudinit",
-    "used": "6.15M",
+    "used": "6.07M",
     "avail": "2.60T"
    },
    {
     "name": "ssd/vm-200-disk-0",
-    "used": "310G",
+    "used": "306G",
     "avail": "2.80T"
    },
    {
@@ -276,7 +276,7 @@
    },
    {
     "name": "ssd/vm-201-disk-0",
-    "used": "48.3G",
+    "used": "47.8G",
     "avail": "2.64T"
    },
    {
@@ -286,8 +286,8 @@
    },
    {
     "name": "ssd/vm-202-disk-0",
-    "used": "272G",
-    "avail": "2.79T"
+    "used": "274G",
+    "avail": "2.80T"
    },
    {
     "name": "ssd/vm-211-disk-0",
@@ -311,116 +311,67 @@
    },
    {
     "name": "tank",
-    "used": "13.6T",
-    "avail": "860G"
+    "used": "13.5T",
+    "avail": "943G"
    },
    {
     "name": "tank/MM",
     "used": "2.44M",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/PC",
     "used": "1.57T",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/backups",
     "used": "1.90T",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/media",
-    "used": "9.56T",
-    "avail": "860G"
+    "used": "9.47T",
+    "avail": "943G"
    },
    {
     "name": "tank/photos",
     "used": "947M",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/shared",
     "used": "71.6G",
-    "avail": "860G"
+    "avail": "943G"
    },
    {
     "name": "tank/timemachine",
     "used": "468G",
-    "avail": "860G"
+    "avail": "943G"
    }
   ],
-  "snapshots": 330,
-  "snapshot_newest": "tank/shared@autosnap_2026-11-09_21:00:30_hourly",
+  "snapshots": 337,
+  "snapshot_newest": "tank/shared@autosnap_2026-11-10_03:01:15_hourly",
   "scrub_timers": 2,
   "backups": {
    "newest": "vzdump-qemu-214-2026_11_09-03_57_36.vma.zst",
-   "newest_age_h": 9.8,
+   "newest_age_h": 15.9,
    "count": 111,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
    "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
   },
   "containers": {
-   "running": 48,
-   "total": 49,
+   "running": 0,
+   "total": 0,
    "unhealthy": [],
    "restarting": [],
-   "names": [
-    "suwayomi",
-    "open-webui",
-    "kamiyomu",
-    "qbittorrent-personal",
-    "gluetun-personal",
-    "calibre-web",
-    "actual",
-    "qbittorrent",
-    "gluetun",
-    "jellyfin",
-    "healthchecks",
-    "miniflux",
-    "stirling-pdf",
-    "healthchecks-db",
-    "miniflux-db",
-    "caddy",
-    "qdrant",
-    "diun",
-    "bazarr",
-    "cleanuparr",
-    "vaultwarden",
-    "ntfy",
-    "ollama-cpu",
-    "flaresolverr",
-    "node-red",
-    "mosquitto",
-    "homeassistant",
-    "forgejo",
-    "code-server",
-    "immich_server",
-    "immich_postgres",
-    "immich_machine_learning",
-    "immich_redis",
-    "paperless",
-    "paperless-db",
-    "paperless-broker",
-    "syncthing",
-    "scrutiny-influxdb",
-    "uptime-kuma",
-    "scrutiny",
-    "prometheus",
-    "grafana",
-    "jellyseerr",
-    "navidrome",
-    "audiobookshelf",
-    "radarr",
-    "prowlarr",
-    "sonarr"
-   ]
+   "names": []
   },
   "gpu": {
    "owner_vm": 200,
@@ -429,15 +380,15 @@
    "present": false
   },
   "media": {
-   "torrents": 159,
+   "torrents": 0,
    "torrents_active": 0,
    "down_mbps": 0.0,
-   "jellyfin_movies": 223,
-   "jellyfin_series": 13,
-   "jellyfin_episodes": 401,
-   "sonarr_queue": 26,
-   "radarr_queue": 2,
-   "mount_free": "860G free of 11T (92% used)"
+   "jellyfin_movies": 0,
+   "jellyfin_series": 0,
+   "jellyfin_episodes": 0,
+   "sonarr_queue": 0,
+   "radarr_queue": 0,
+   "mount_free": ""
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -460,7 +411,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 44,
+    "ms": 2416,
     "code": 200
    },
    {
@@ -469,9 +420,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
-    "up": true,
-    "ms": 167,
-    "code": 200
+    "up": false,
+    "ms": 3014,
+    "code": null
    },
    {
     "name": "Prowlarr",
@@ -479,9 +430,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
-    "up": true,
-    "ms": 31,
-    "code": 200
+    "up": false,
+    "ms": 3012,
+    "code": null
    },
    {
     "name": "Sonarr",
@@ -489,9 +440,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
-    "up": true,
-    "ms": 113,
-    "code": 200
+    "up": false,
+    "ms": 3011,
+    "code": null
    },
    {
     "name": "Radarr",
@@ -499,9 +450,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
-    "up": true,
-    "ms": 24,
-    "code": 200
+    "up": false,
+    "ms": 3012,
+    "code": null
    },
    {
     "name": "qBittorrent",
@@ -510,7 +461,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 27,
+    "ms": 2164,
     "code": 200
    },
    {
@@ -519,9 +470,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
-    "up": true,
-    "ms": 35,
-    "code": 200
+    "up": false,
+    "ms": 3013,
+    "code": null
    },
    {
     "name": "Audiobookshelf",
@@ -529,9 +480,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
-    "up": true,
-    "ms": 35,
-    "code": 200
+    "up": false,
+    "ms": 3012,
+    "code": null
    },
    {
     "name": "Navidrome",
@@ -539,9 +490,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
-    "up": true,
-    "ms": 42,
-    "code": 200
+    "up": false,
+    "ms": 3013,
+    "code": null
    },
    {
     "name": "Calibre-Web",
@@ -549,9 +500,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
-    "up": true,
-    "ms": 89,
-    "code": 200
+    "up": false,
+    "ms": 3011,
+    "code": null
    },
    {
     "name": "FlareSolverr",
@@ -559,9 +510,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
-    "up": true,
-    "ms": 27,
-    "code": 200
+    "up": false,
+    "ms": 3010,
+    "code": null
    },
    {
     "name": "Grafana",
@@ -569,9 +520,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
-    "up": true,
-    "ms": 81,
-    "code": 200
+    "up": false,
+    "ms": 3013,
+    "code": null
    },
    {
     "name": "Prometheus",
@@ -579,9 +530,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
-    "up": true,
-    "ms": 51,
-    "code": 200
+    "up": false,
+    "ms": 3006,
+    "code": null
    },
    {
     "name": "Uptime Kuma",
@@ -589,9 +540,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
-    "up": true,
-    "ms": 23,
-    "code": 200
+    "up": false,
+    "ms": 3007,
+    "code": null
    },
    {
     "name": "Scrutiny",
@@ -599,9 +550,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
-    "up": true,
-    "ms": 69,
-    "code": 200
+    "up": false,
+    "ms": 3013,
+    "code": null
    },
    {
     "name": "Dozzle",
@@ -610,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": false,
-    "ms": 5,
+    "ms": 9,
     "code": null
    },
    {
@@ -619,9 +570,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
-    "up": true,
-    "ms": 24,
-    "code": 200
+    "up": false,
+    "ms": 3012,
+    "code": null
    },
    {
     "name": "Healthchecks",
@@ -629,9 +580,9 @@
     "group": "observability",
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
-    "up": true,
-    "ms": 41,
-    "code": 200
+    "up": false,
+    "ms": 3007,
+    "code": null
    },
    {
     "name": "Immich",
@@ -639,9 +590,9 @@
     "group": "photos",
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
-    "up": true,
-    "ms": 24,
-    "code": 200
+    "up": false,
+    "ms": 3012,
+    "code": null
    },
    {
     "name": "Paperless-ngx",
@@ -649,9 +600,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
-    "up": true,
-    "ms": 103,
-    "code": 200
+    "up": false,
+    "ms": 3011,
+    "code": null
    },
    {
     "name": "Syncthing",
@@ -659,9 +610,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
-    "up": true,
-    "ms": 39,
-    "code": 200
+    "up": false,
+    "ms": 3011,
+    "code": null
    },
    {
     "name": "Stirling-PDF",
@@ -669,9 +620,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
-    "up": true,
-    "ms": 19,
-    "code": 401
+    "up": false,
+    "ms": 3011,
+    "code": null
    },
    {
     "name": "Miniflux",
@@ -679,9 +630,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
-    "up": true,
-    "ms": 71,
-    "code": 200
+    "up": false,
+    "ms": 3010,
+    "code": null
    },
    {
     "name": "Forgejo",
@@ -689,9 +640,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
-    "up": true,
-    "ms": 20,
-    "code": 200
+    "up": false,
+    "ms": 3009,
+    "code": null
    },
    {
     "name": "code-server",
@@ -699,9 +650,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
-    "up": true,
-    "ms": 33,
-    "code": 200
+    "up": false,
+    "ms": 3007,
+    "code": null
    },
    {
     "name": "Open WebUI",
@@ -709,9 +660,9 @@
     "group": "dev",
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
-    "up": true,
-    "ms": 30,
-    "code": 200
+    "up": false,
+    "ms": 3009,
+    "code": null
    },
    {
     "name": "Qdrant",
@@ -720,7 +671,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 48,
+    "ms": 1097,
     "code": 200
    },
    {
@@ -729,9 +680,9 @@
     "group": "automation",
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
-    "up": true,
-    "ms": 39,
-    "code": 200
+    "up": false,
+    "ms": 3008,
+    "code": null
    },
    {
     "name": "Node-RED",
@@ -739,9 +690,9 @@
     "group": "automation",
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
-    "up": true,
-    "ms": 15,
-    "code": 200
+    "up": false,
+    "ms": 3010,
+    "code": null
    },
    {
     "name": "Mosquitto",
@@ -750,7 +701,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 7,
     "code": null
    },
    {
@@ -760,7 +711,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 16,
+    "ms": 2237,
     "code": 200
    },
    {
@@ -769,9 +720,9 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
-    "up": true,
-    "ms": 115,
-    "code": 200
+    "up": false,
+    "ms": 3009,
+    "code": null
    },
    {
     "name": "Caddy",
@@ -779,12 +730,12 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:80/",
-    "up": true,
-    "ms": 38,
-    "code": 200
+    "up": false,
+    "ms": 3009,
+    "code": null
    }
   ],
-  "services_up": 32,
+  "services_up": 5,
   "services_total": 33,
   "open_issues": [
    {
@@ -793,7 +744,7 @@
    },
    {
     "severity": "warn",
-    "text": "1 service(s) not answering: Dozzle"
+    "text": "28 service(s) not answering: Jellyseerr, Prowlarr, Sonarr, Radarr, Bazarr, Audiobookshelf"
    }
   ],
   "issue_counts": {
@@ -915,6 +866,13 @@
    "folder": "Intro to Agentic AI Workshops"
   },
   {
+   "name": "Workshop 3 — Expansion Brief (for Antigravity)",
+   "status": "active",
+   "summary": "Working context dump for expanding Workshop 3 (Local and Personal AI) — audit of gaps, verified setup facts, anecdote bank, and slide numbers, written to be fed into Antigravity for outline cleanup + slide generation.",
+   "updated": "2026-11-09",
+   "folder": "Intro to Agentic AI Workshops"
+  },
+  {
    "name": "Workshop 3 — Local and Personal AI",
    "status": "active",
    "summary": "Workshop 3 of the ACM Fall 2026 'Intro to Agentic AI' series — local and personal AI: what personal agents (Hermes, Muse, Dots) are for, why local models matter, the hardware that runs them, and how to start.",
@@ -1015,7 +973,7 @@
  ],
  "tasks": {
   "open": 51,
-  "overdue": 8,
+  "overdue": 9,
   "items": [
    {
     "title": "Handshake: apply to U.S. Tech Force SWE (closes Nov 6) + IBM Codesign 2027",
@@ -1069,7 +1027,7 @@
     "title": "IBM assessments: 3 coding OAs (137214 / 131307 / 132533) + recorded interview (128345) — expire Sat Nov 14",
     "list": "Tech",
     "due": "2026-11-10",
-    "overdue": false
+    "overdue": true
    },
    {
     "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
@@ -1135,6 +1093,12 @@
    "self": true
   },
   {
+   "name": "ayumacair",
+   "os": "macOS",
+   "online": true,
+   "self": false
+  },
+  {
    "name": "ayumad",
    "os": "linux",
    "online": true,
@@ -1174,12 +1138,6 @@
    "name": "tank",
    "os": "linux",
    "online": true,
-   "self": false
-  },
-  {
-   "name": "ayumacair",
-   "os": "macOS",
-   "online": false,
    "self": false
   },
   {
@@ -1275,20 +1233,20 @@
  ],
  "errors": {},
  "now": {
-  "active_projects": 20,
+  "active_projects": 21,
   "planned_projects": 7,
   "open_tasks": 51,
-  "overdue_tasks": 8,
+  "overdue_tasks": 9,
   "assignments_upcoming": 4,
-  "devices_online": 8,
+  "devices_online": 9,
   "devices_total": 21,
   "jobs_failing": 0,
   "jobs_total": 21,
   "homelab_reachable": true,
-  "services_up": 32,
+  "services_up": 5,
   "services_total": 33,
   "guests_running": 6,
-  "containers_running": 48,
+  "containers_running": 0,
   "pools_online": 2,
   "pools_total": 2,
   "homelab_issues_bad": 0,
