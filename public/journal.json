@@ -1,12 +1,31 @@
 [
  {
+  "date": "2026-11-09",
+  "summary": "Session journal for 2026-11-09: whisper.cpp dictation server on the mini + omarchy small.en bump, X @Ayumad123 reinstatement clock (≈Dec 6), Edition XV headphone pick, Tailscale OAuth apps GA read, Workshop 3 expansion brief.",
+  "highlights": [
+   "Dictation became infrastructure: one model on the mini, every other machine a thin client. The win was discovering omarchy already had `voxtype` and deleting the custom recorder — the engine needed upgrading, not duplicating.",
+   "The X lock is a **clock**, not a puzzle: reinstatement dies ≈ Dec 6, and one `hermes vault add` (or five minutes on the iPhone) is the entire remaining cost.",
+   "The headphone answer is a template worth reusing — pick the option whose *failure modes* you can live with under a no-returns constraint, and prove the amp isn't the bottleneck before recommending one.",
+   "Workshop 3 moved from 9 thin sections to an 11-gap brief with measured numbers; what's left is a production pass in Antigravity, and the env note (local model ≠ local agent) is the fix that makes the talk land."
+  ]
+ },
+ {
   "date": "2026-11-08",
   "summary": "Session journal for 2026-11-08: PS5 wishlist re-pointed to a firmware ≤13.60 jailbreak gate + Muse task R73, weekly review written (IBM assessments due Nov 14), interview prep 8th unanswered packet.",
   "highlights": [
    "The PS5 lane now encodes the real constraint: a cheap console on 14.00+ is a dead end, and a jailbreakable one is worth paying for. Removing the price ceiling is the whole decision.",
    "The same session caught the thing that matters more than the lane: **Muse has never called the board**, so every task and sweep pointed at it — R73, the CRT hunt, the sell-side queue — is currently writing into a void.",
    "The week closes on one hard wall (IBM's four assessments, Sat Nov 14) and one root blocker (disk at 94%, which is what keeps re-evicting the vault and stalling cron reads).",
-   "Interview Prep has shipped 8 questions and received 0 answers in 8 sessions; the log now names the 6 PM slot itself as the defect, which is the right diagnosis."
+   "Interview Prep has shipped 8 questions and received 0 answers in 8 sessions; the log now names the 6 PM slot itself as the defect, which is the right diagnosis.",
+   "**CMPE-148 Project 3 MiniTCP had no live twin.** Built, measured and pushed by the weekly review, but the Canvas upload existed only as a vault line. Added to Google Tasks `School` (due 2026-11-08) and mirrored — sync log: `School: created->Apple 'CMPE-148 Project 3 MiniTCP: upload to Canvas'`. The vault Focus line was retitled from the stale four-submission Nov 4 bundle (Quiz 4-1, Quiz 5 and the CMPE-142 Ch 9&10 quiz all cleared Nov 5–6) down to this single step.",
+   "**Filed the IBM 134486 work-authorization wall** — Tech task `IBM 134486: work-auth reads No on review page — approve submit or fix field` (`Tech: created->Apple`), with a matching todo-cleanup entry. Five more IBM applications are queued behind that one field.",
+   "Mirror health verified: `reminders_gtasks_sync.py --dry-run` → `0 action(s) planned`.",
+   "Dropped the Kindle sync from todo-cleanup — it already has a Tech task and a Focus line, so the slot it freed went to the IBM item and the section stays at 10.",
+   "No incident ack needed: all 29 recorded cron incidents are `resolved` or `closed`.",
+   "**Disk 94% used, 14.1 GB free** — the named root blocker behind the eviction churn; deletion is outside a cleanup pass.",
+   "**Vault auto-sync paused since Oct 31** → 26 uncommitted paths and no 15-minute job to pick them up. Re-enabling is Ayush's call; hand-committing is out of scope for this job.",
+   "**IBM 134486** needs his eyes on the review page (cleanup item), and the five queued applications wait behind it.",
+   "**CMPE-142 Chapter 11 HW** still renders as overdue even though the PDF was rendered at 6:33 PM today — Canvas upload unconfirmed, so it stays a candidate until he says done."
   ]
  },
  {
