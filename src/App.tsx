@@ -519,10 +519,12 @@ function JournalArticlePage({ post }: { post: JournalPost }) {
         </nav>
       ) : null}
       <article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} />
-      <nav className="article-pager" aria-label="More journal entries">
-        {older ? <Link className="article-pager-link" to={`/journal/${older.slug}`}><span className="label">← Previous</span><strong>{older.title}</strong></Link> : <span aria-hidden="true" />}
-        {newer ? <Link className="article-pager-link is-next" to={`/journal/${newer.slug}`}><span className="label">Next →</span><strong>{newer.title}</strong></Link> : null}
-      </nav>
+      {older || newer ? (
+        <nav className="article-pager" aria-label="More journal entries">
+          {older ? <Link className="article-pager-link" to={`/journal/${older.slug}`}><span className="label">← Previous</span><strong>{older.title}</strong></Link> : null}
+          {newer ? <Link className="article-pager-link is-next" to={`/journal/${newer.slug}`}><span className="label">Next →</span><strong>{newer.title}</strong></Link> : null}
+        </nav>
+      ) : null}
       <a className="article-top" href="#main-content">↑ Back to top</a>
     </section>
   );

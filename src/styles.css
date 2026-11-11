@@ -6022,6 +6022,11 @@ button.jcal-cell.is-week {
   text-align: right;
 }
 
+/* a lone neighbour takes the whole row instead of leaving a dead half */
+.article-pager-link:only-child {
+  grid-column: 1 / -1;
+}
+
 .article-top {
   display: inline-block;
   margin-top: 30px;
