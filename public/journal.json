@@ -1,12 +1,30 @@
 [
  {
+  "date": "2026-11-10",
+  "summary": "Session journal for 2026-11-10: IBM 128345 Knockri interview prep + live portal format, 4080 desktop spec sheet for a buyer, Schiit Modius/Magnius stack scored SKIP.",
+  "highlights": [
+   "IBM Knockri format is now known exactly: 14 questions (6 recorded + 8 form), no retries, 24 minutes — prep targets the transcript, not the tape.",
+   "Real constraint on the interview is the calendar, not the content: record Wed morning before Project 4 lands.",
+   "Schiit stack was a genuine below-market price but a redundant buy — the loadout check, not the comps, made the call.",
+   "Quiet infrastructure day: 796 cron runs, zero failures, vault syncing clean."
+  ]
+ },
+ {
   "date": "2026-11-09",
   "summary": "Session journal for 2026-11-09: whisper.cpp dictation server on the mini + omarchy small.en bump, X @Ayumad123 reinstatement clock (≈Dec 6), Edition XV headphone pick, Tailscale OAuth apps GA read, Workshop 3 expansion brief.",
   "highlights": [
    "Dictation became infrastructure: one model on the mini, every other machine a thin client. The win was discovering omarchy already had `voxtype` and deleting the custom recorder — the engine needed upgrading, not duplicating.",
    "The X lock is a **clock**, not a puzzle: reinstatement dies ≈ Dec 6, and one `hermes vault add` (or five minutes on the iPhone) is the entire remaining cost.",
    "The headphone answer is a template worth reusing — pick the option whose *failure modes* you can live with under a no-returns constraint, and prove the amp isn't the bottleneck before recommending one.",
-   "Workshop 3 moved from 9 thin sections to an 11-gap brief with measured numbers; what's left is a production pass in Antigravity, and the env note (local model ≠ local agent) is the fix that makes the talk land."
+   "Workshop 3 moved from 9 thin sections to an 11-gap brief with measured numbers; what's left is a production pass in Antigravity, and the env note (local model ≠ local agent) is the fix that makes the talk land.",
+   "**Closed the one untracked open item of the day:** the X reinstatement clock. @Ayumad123's under-13 appeal (ticket AGEA-1045165) opened Nov 5 and dies **≈ Dec 6**, and every automated path is walled by Full Disk Access plus password entry — so it is now a todo-cleanup entry with a Google Tasks + Apple Reminders twin (`created->Apple` confirmed 23:02).",
+   "**Corrected a stale claim:** the iCloud entry still said disk was at its worst (94%, 14.1 GB free). Today it is **87%, 26 GB free** and Vault auto-sync is running again (16 commits), so the entry now states the current numbers instead of the Nov 8 ones.",
+   "**Dropped from todo-cleanup:** the Notion token entry — Notion is paused, so a token prompt was noise; its Google twin is left in place until the sync resumes.",
+   "**Verified, not assumed:** Reminders ↔ Google Tasks dry-run reads `0 action(s) planned`; Vault auto-sync last ran 22:45 ok; the 22:00 journal job wrote, deployed and pushed its entry.",
+   "**Not fixed:** vaultkeeper's Session Journal delivery is still `delivery_queued`, the known cause being that no bot gateway runs to service the bot-chat turn (payload sits in `runtime/bot_live_delivery/`, no error). No services were started or restarted.",
+   "**Left as mentions, not tasks:** Cisco Workday account creation + profile pass (needs his password and the verification email) and adding the Replit mission app to the Handshake profile — both optional, both one step on his side.",
+   "**School, still candidates not facts:** CMPE-148 Project 3 MiniTCP upload (was Nov 5) and CMPE-142 Chapter 11 HW (was Nov 8) both still render overdue; no graded or submitted email has landed, so neither was cleared.",
+   "**Waiting on Ayush:** 10 todo-cleanup items; top is IBM 134486's work-auth contradiction, which is holding five more IBM applications at 99%."
   ]
  },
  {
