@@ -1,8 +1,8 @@
 ---
-title: My Headphone Collection: Why I Keep So Many and What Each One Does for Me
+title: My Headphone Collection
 slug: my-headphone-collection
 date: 2026-11-11
-summary: The full collection — five full-size headphones, four IEMs, three wireless pairs, two speaker systems and one tube amp — plus the store visit that started it, and what I've learned from comparing all of it.
+summary: Why I keep so many and what each one does for me — five full-size headphones, four IEMs, three wireless pairs, two speaker systems and one tube amp.
 tags: Audio, Headphones, Audeze, Sennheiser, HIFIMAN, Focal, IEMs
 kind: article
 status: published
@@ -18,7 +18,9 @@ Eventually, I picked up a JDS Labs EL DAC II and a first-generation Atom amplifi
 
 The XS was one of the first headphones I really enjoyed, and it became a familiar reference for a lot of what I tried afterward. Even now, after spending time with considerably more expensive headphones, I still think of it as my baseline for good audio and impressive soundstage.
 
-Not every purchase worked out as well. I also owned a pair of the original Meze 99 Classics, which I found utterly underwhelming. Compared with everything else I owned at the time, they felt like a downgrade. On the other hand, I really enjoyed the Sennheiser HD 6XX, which eventually led me to the HD 660S2 and a very different sort of listening experience from what I enjoyed about the XS.
+Not every purchase worked out as well. I also owned a pair of the original Meze 99 Classics, which I found utterly underwhelming. Compared with everything else I owned at the time, they felt like a downgrade.
+
+On the other hand, I really enjoyed the Sennheiser HD 6XX, which eventually led me to the HD 660S2 and a very different sort of listening experience from what I enjoyed about the XS.
 
 Something I've come to appreciate through all of this is that headphones don't necessarily get better in every aspect as you spend more money. I've listened to headphones that are technically impressive but ultimately don't do much for me, and I've found others with obvious tradeoffs that offer a presentation I really enjoy.
 
@@ -32,7 +34,9 @@ One experience that really pushed me further into audio was visiting an audio st
 
 I auditioned a variety of headphones, but the pair that stood out most was the Focal Utopia 2022. At the time, I found them quite literally perfect.
 
-They had an incredibly effortless presentation, and I couldn't identify anything about the sound that I wanted to change. The bass was tight and controlled, the mids sounded accurate and textured, and the treble was generally unoffensive in the best possible way. I loved how everything came together. There wasn't a particular part of the presentation that distracted me or felt like something I had to accept in exchange for what the headphones did well.
+They had an incredibly effortless presentation, and I couldn't identify anything about the sound that I wanted to change. The bass was tight and controlled, the mids sounded accurate and textured, and the treble was generally unoffensive in the best possible way.
+
+I loved how everything came together. There wasn't a particular part of the presentation that distracted me or felt like something I had to accept in exchange for what the headphones did well.
 
 The entire setup was far more expensive than anything I had listened to beforehand. Even the source and amplification stack cost several thousand dollars, so this was a fairly substantial jump from the equipment I knew at the time.
 
@@ -68,7 +72,9 @@ The HD 660S2 occupy a very different role in my collection.
 
 I use them primarily for rock or shoegaze-adjacent genres where melting textures together in a satisfying way is most valuable, and I almost always use them with my Fosi Audio GR70 tube amplifier.
 
-Before the 660S2, I had an HD 6XX that I really enjoyed. Moving to the 660S2 wasn't an improvement in every regard. I found the vocals a little weaker, and I missed some of the particular warmth I liked from the 6XX. At the same time, the 660S2 had more texture in the midrange and a slightly warmer, more bass-forward overall presentation that I preferred for the rock-adjacent genres I mostly used it for.
+Before the 660S2, I had an HD 6XX that I really enjoyed. Moving to the 660S2 wasn't an improvement in every regard. I found the vocals a little weaker, and I missed some of the particular warmth I liked from the 6XX.
+
+At the same time, the 660S2 had more texture in the midrange and a slightly warmer, more bass-forward overall presentation that I preferred for the rock-adjacent genres I mostly used it for.
 
 Paired with the GR70, this is probably one of my favorite ways to listen to music involving heavily distorted guitars, layered instrumentation, and dense atmospheric production.
 
@@ -362,7 +368,9 @@ I also appreciate the individual characteristics of different headphones and don
 
 For example, I like the LCD-X because of how it presents bass and texture, and I like the 660S2 because of the way it blends sounds together. Those differences are part of why I own both.
 
-I realize that I already enjoy a deliberately changed presentation when I use the GR70 with the 660S2. I'm open to experimenting with EQ in a similar spirit, but I think I'd find it easier to approach through a specific adjustment with a clear purpose.
+I realize that I already enjoy a deliberately changed presentation when I use the GR70 with the 660S2.
+
+I'm open to experimenting with EQ in a similar spirit, but I think I'd find it easier to approach through a specific adjustment with a clear purpose.
 
 If there's something about a headphone that bothers me, I can try changing that and decide whether I prefer the result. That feels easier to evaluate than applying a whole correction profile and trying to understand several changes at once.
 
@@ -396,11 +404,13 @@ I'm looking forward to hearing them, even if owning something at that level is a
 
 Similar reasons apply to my speaker choices. I think my systems deliver incredible price to performance, while still being very much the tip of the iceberg in terms of what's available. There's plenty more I'd enjoy exploring eventually, but I'm incredibly satisfied with where I've gotten so far.
 
-I'm also especially grateful to be part of the Bay Audio Enclave. It's introduced me to several interesting people, given me opportunities to try a variety of headphones, and provided a real community to discuss and interact with around this hobby. Having people to share impressions with and hear different perspectives from has become a substantial part of what I enjoy about audio.
+I'm also especially grateful to be part of the Bay Audio Enclave. It's introduced me to several interesting people, given me opportunities to try a variety of headphones, and provided a real community to discuss and interact with around this hobby.
+
+Having people to share impressions with and hear different perspectives from has become a substantial part of what I enjoy about audio.
 
 I'll likely write a companion article sometime about the actual music I enjoy listening to, since that's a fairly large part of the story that I've only touched on here. In the meantime, here are two of my Tidal playlists if you'd like to hear some of what I listen to:
 
-- [Tidal playlist one](https://tidal.com/playlist/becded3a-e9ed-43f2-a403-550bda3c2ef6)
-- [Tidal playlist two](https://tidal.com/playlist/94358376-b160-4523-ac8f-e780041f7409)
+- [HIFI](https://tidal.com/playlist/becded3a-e9ed-43f2-a403-550bda3c2ef6)
+- [Recommendations](https://tidal.com/playlist/94358376-b160-4523-ac8f-e780041f7409)
 
 Thank you for reading, and feel free to reach out if you have any questions or just want to have a general chat about audio. I'm always interested in hearing what other people are listening to.

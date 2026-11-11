@@ -195,28 +195,26 @@ describe("Ayumad.me", () => {
 
   it("renders the headphone collection article with its sections and playlist links", () => {
     renderAt("/journal/my-headphone-collection");
-    expect(
-      screen.getByRole("heading", {
-        name: "My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
-        level: 1,
-      }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "My Headphone Collection", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Audeze LCD-X/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Where I Go From Here/ })).toBeInTheDocument();
     expect(screen.getByText(/Ananda Unveiled stays fairly bright/)).toBeInTheDocument();
     expect(screen.getByText(/Q500 floorstanders/)).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /Tidal playlist/ })[0]).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "HIFI" })).toHaveAttribute(
       "href",
       "https://tidal.com/playlist/becded3a-e9ed-43f2-a403-550bda3c2ef6",
+    );
+    expect(screen.getByRole("link", { name: "Recommendations" })).toHaveAttribute(
+      "href",
+      "https://tidal.com/playlist/94358376-b160-4523-ac8f-e780041f7409",
     );
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
     renderAt("/journal");
-    expect(
-      screen.getByRole("link", {
-        name: "Read My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
-      }),
-    ).toHaveAttribute("href", "/journal/my-headphone-collection");
+    expect(screen.getByRole("link", { name: "Read My Headphone Collection" })).toHaveAttribute(
+      "href",
+      "/journal/my-headphone-collection",
+    );
   });
 
   it("redirects legacy clean routes and hash routes", async () => {
