@@ -49,7 +49,7 @@
    "**Disk 94% used, 14.1 GB free** — the named root blocker behind the eviction churn; deletion is outside a cleanup pass.",
    "**Vault auto-sync paused since Oct 31** → 26 uncommitted paths and no 15-minute job to pick them up. Re-enabling is Ayush's call; hand-committing is out of scope for this job.",
    "Job application pipeline work — details stay in the vault.",
-   "Job application pipeline work — details stay in the vault."
+   "Coursework — details stay in the vault."
   ]
  },
  {
@@ -810,7 +810,7 @@
   "summary": "Session journal for 2026-09-05: sub-1kg laptop deep-dive (XPS 13 vs Zenbook A14 vs alternatives, ARM VM compat), Omarchy Tablet Mode project plan created with 5-phase roadmap for Sep 30 meetup demo.",
   "highlights": [
    "**Laptop research concluded** — ARM VM gap is the deciding factor: x86 machines (XPS 13, X1 Carbon) win for CS classes needing Ubuntu VMs. Zenbook A14's ARM chip can't run x86 Linux guests at useful speed.",
-   "**Omarchy Tablet Mode project launched** — Full plan drafted with community-sourced architecture, 5-phase timeline, and demo criteria. Awaiting review before Sep 10 Phase 0 start. Meeting the Sep 30 meetup deadline will require tight execution alongside school deadlines (CMPE-131 spec 09-27, CMPE-142 prog #2 due 09-30).",
+   "Coursework — details stay in the vault.",
    "**Reminders sync instability** — recurring failures overnight suggest a transient auth or network issue; not blocking but noisy."
   ]
  },

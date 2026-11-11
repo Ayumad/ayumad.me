@@ -46,7 +46,7 @@ const PUBLIC_FEED_CHECKS: { name: string; pattern: RegExp }[] = [
   { name: "requisition number", pattern: /\b\d{6}\b/ },
   { name: "assessment platform", pattern: /\b(?:Knockri|HireVue|HackerRank|CodeSignal|Codility|Pymetrics|SHL|Workday|Greenhouse|Lever)\b/i },
   { name: "job-application detail", pattern: /\b(?:interview|interviews|recruiter|assessment|assessments|offer letter)\b/i },
-  { name: "coursework detail", pattern: /\b(?:CMPE\s?\d{3}|HW\s?\d+|Ch\.\s?\d+|assignment|homework|quiz|midterm|syllabus|graded|Respondus|LockDown Browser|Project \d)\b/i },
+  { name: "coursework detail", pattern: /\b(?:(?:CMPE|CS|MATH|ENGR|SE)[\s-]?\d{3}|HW\s?\d+|Ch\.\s?\d+|assignment|homework|quiz|midterm|syllabus|graded|Respondus|LockDown Browser|Project \d)\b/i },
   { name: "contact details", pattern: /[\w.+-]+@[\w-]+\.[a-z]{2,}|\b(?:\d{1,3}\.){3}\d{1,3}\b/ },
 ];
 
