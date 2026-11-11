@@ -1,5 +1,5 @@
 ---
-title: GPU Passthrough on the P520
+title: GPU Passthrough on the P520: IOMMU Groups, Kernel Parameters, and What Bit Me
 slug: gpu-passthrough-p520
 date: 2026-06-18
 summary: How I got an RTX 3060 passed through to a Proxmox VM — IOMMU groups, kernel parameters, and the mistakes I made along the way.

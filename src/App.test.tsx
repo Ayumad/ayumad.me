@@ -152,11 +152,11 @@ describe("Ayumad.me", () => {
     renderAt("/journal");
     expect(screen.getByRole("heading", { name: "Journal" })).toBeInTheDocument();
     expect(screen.getByText("Daily journal")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini" })).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
+    expect(screen.getByRole("link", { name: "Read Why I Moved Hermes to a Mac Mini: Headless macOS, Tailscale, and Always-On Automation" })).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
     expect(screen.queryByText(/Session journal for 2026/)).not.toBeInTheDocument();
 
     renderAt("/journal/gpu-passthrough-p520");
-    expect(screen.getByRole("heading", { name: "GPU Passthrough on the P520", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "GPU Passthrough on the P520: IOMMU Groups, Kernel Parameters, and What Bit Me", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Host setup" })).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByText(/Lenovo ThinkStation P520/)).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe("Ayumad.me", () => {
 
   it("renders the school VM article with its chart and table", () => {
     renderAt("/journal/school-vm-p520");
-    expect(screen.getByRole("heading", { name: "An On-Demand School VM on the P520", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "An On-Demand School VM on the P520: Headless Ubuntu, Off by Default", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Things that bit me" })).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByText(/no GUI anywhere in that list/)).toBeInTheDocument();
@@ -174,19 +174,19 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
     renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read An On-Demand School VM on the P520" })).toHaveAttribute("href", "/journal/school-vm-p520");
+    expect(screen.getByRole("link", { name: "Read An On-Demand School VM on the P520: Headless Ubuntu, Off by Default" })).toHaveAttribute("href", "/journal/school-vm-p520");
   });
 
   it("renders the gaming fleet benchmark article with gear links", () => {
     renderAt("/journal/gaming-fleet-roundup");
-    expect(screen.getByRole("heading", { name: "Gaming Across My Fleet", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Gaming Across My Fleet: Thirteen Machines on One Scale", level: 1 })).toBeInTheDocument();
     expect(screen.getAllByRole("table").length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByRole("link", { name: "Alienware m16" })[0]).toHaveAttribute("href", "/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
     expect(screen.getAllByRole("link", { name: "Steam Deck OLED" })[0]).toHaveAttribute("href", "/gear/gaming-valve-steam-deck-oled");
     expect(screen.getByText(/384 fps/)).toBeInTheDocument();
 
     renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read Gaming Across My Fleet" })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
+    expect(screen.getByRole("link", { name: "Read Gaming Across My Fleet: Thirteen Machines on One Scale" })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
 
     renderAt("/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
     expect(screen.getByRole("heading", { name: "Dell Alienware m16 (Ryzen 9, GeForce RTX 4080)" })).toBeInTheDocument();
@@ -195,7 +195,12 @@ describe("Ayumad.me", () => {
 
   it("renders the headphone collection article with its sections and playlist links", () => {
     renderAt("/journal/my-headphone-collection");
-    expect(screen.getByRole("heading", { name: "Why I Keep Five Headphones", level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: "My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
+        level: 1,
+      }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Audeze LCD-X/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Where I Go From Here/ })).toBeInTheDocument();
     expect(screen.getByText(/Ananda Unveiled stays fairly bright/)).toBeInTheDocument();
@@ -211,7 +216,11 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
     renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read Why I Keep Five Headphones" })).toHaveAttribute(
+    expect(
+      screen.getByRole("link", {
+        name: "Read My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
+      }),
+    ).toHaveAttribute(
       "href",
       "/journal/my-headphone-collection",
     );

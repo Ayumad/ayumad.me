@@ -1,5 +1,5 @@
 ---
-title: Rating My Desktop Fleet
+title: Rating My Desktop Fleet: Five PCs and What Each One Is For
 slug: desktop-fleet-review
 date: 2026-07-28
 summary: I have five desktop PCs. Here's what each one is for, how good it actually is, and what I'd change.

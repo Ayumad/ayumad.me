@@ -1,5 +1,5 @@
 ---
-title: Gaming Across My Fleet
+title: Gaming Across My Fleet: Thirteen Machines on One Scale
 slug: gaming-fleet-roundup
 date: 2026-09-08
 summary: Thirteen machines that play games. Same games, published benchmark numbers, so I actually know which one to grab.

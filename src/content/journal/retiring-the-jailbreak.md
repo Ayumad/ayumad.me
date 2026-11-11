@@ -1,5 +1,5 @@
 ---
-title: Retiring the Jailbreak
+title: Retiring the Jailbreak: Seven Years, and Why I Reset My Phone to Stock iOS
 slug: retiring-the-jailbreak
 date: 2023-09-18
 summary: From 9.3.3 to Xina to Dopamine — seven years of jailbreaking, and why I finally reset my phone to stock iOS.

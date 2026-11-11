@@ -1,5 +1,5 @@
 ---
-title: Running Arch as a Daily Driver
+title: Running Arch as a Daily Driver: What Breaks and What Just Works
 slug: arch-daily-driver
 date: 2025-11-04
 summary: What it actually takes to use Arch Linux day-to-day — Hyprland, rolling releases, and the things that break vs. the things that just work.

@@ -1,5 +1,5 @@
 ---
-title: Building a 2.1 System on a Budget
+title: Building a 2.1 System on a Budget: Crossover, Placement, and the WiiM Ultra
 slug: building-a-2.1-system
 date: 2026-02-12
 summary: Desktop and living-room speaker setups — crossover tuning, subwoofer placement, and why the WiiM Ultra changed my desktop chain.

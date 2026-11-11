@@ -1,5 +1,5 @@
 ---
-title: An On-Demand School VM on the P520
+title: An On-Demand School VM on the P520: Headless Ubuntu, Off by Default
 slug: school-vm-p520
 date: 2026-09-17
 summary: Two classes this semester require Linux, and the instructions said VirtualBox on my laptop. I built a headless Ubuntu VM on the workstation instead — off by default, one command to start.

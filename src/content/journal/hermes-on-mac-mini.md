@@ -1,5 +1,5 @@
 ---
-title: Why I Moved Hermes to a Mac Mini
+title: Why I Moved Hermes to a Mac Mini: Headless macOS, Tailscale, and Always-On Automation
 slug: hermes-on-mac-mini
 date: 2026-07-22
 summary: Running one AI agent server instead of rebuilding on every device. The tradeoffs of headless macOS, Tailscale mesh, and always-on automation.
