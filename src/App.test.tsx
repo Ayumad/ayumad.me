@@ -215,6 +215,18 @@ describe("Ayumad.me", () => {
     );
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
+    // reading aids: read time, section ids, section index, pager, back to top
+    expect(screen.getByText(/\d+ min read/)).toBeInTheDocument();
+    expect(document.querySelector("#audeze-lcd-x-my-favorite-headphones-easily")).toBeInTheDocument();
+    const sections = screen.getByRole("navigation", { name: "Sections in this article" });
+    expect(within(sections).getByRole("link", { name: /The Listening Session/ })).toHaveAttribute(
+      "href",
+      "#the-listening-session-that-made-me-fall-in-love-with-audio",
+    );
+    // next-newest journal entry by date
+    expect(screen.getByRole("link", { name: /← Previous/ })).toHaveAttribute("href", "/journal/school-vm-p520");
+    expect(screen.getByRole("link", { name: /Back to top/ })).toHaveAttribute("href", "#main-content");
+
     renderAt("/journal");
     expect(
       screen.getByRole("link", {

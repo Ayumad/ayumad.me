@@ -4,6 +4,7 @@ import {
   type ErrorInfo,
   type PropsWithChildren,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -17,6 +18,7 @@ import {
 } from "react-router-dom";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import { marked } from "marked";
+import { enhanceArticle } from "./articleReading";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import RendererPage from "./RendererPage";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
@@ -488,8 +490,42 @@ function JournalPage() {
 }
 
 function JournalArticlePage({ post }: { post: JournalPost }) {
-  const html = marked.parse(post.body, { gfm: true, breaks: false });
-  return <section className="section-shell page-section article-page"><Link className="article-back" to="/journal">← All journal entries</Link><header className="article-header"><p className="label">{post.date}</p><h1>{post.title}</h1><p className="article-summary">{post.summary}</p><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></header><article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} /></section>;
+  const { html, headings, minutes } = useMemo(
+    () => enhanceArticle(marked.parse(post.body, { gfm: true, breaks: false, async: false }) as string),
+    [post.body],
+  );
+  const position = journalPosts.findIndex((entry) => entry.slug === post.slug);
+  const newer = position > 0 ? journalPosts[position - 1] : undefined;
+  const older = position >= 0 && position + 1 < journalPosts.length ? journalPosts[position + 1] : undefined;
+  const sections = headings.filter((heading) => heading.level === 2);
+
+  return (
+    <section className="section-shell page-section article-page">
+      <Link className="article-back" to="/journal">← All journal entries</Link>
+      <header className="article-header">
+        <div className="article-meta">
+          <p className="label"><time dateTime={post.date}>{post.date}</time></p>
+          <span className="article-dot" aria-hidden="true" />
+          <p className="label">{minutes} min read</p>
+        </div>
+        <h1>{post.title}</h1>
+        <p className="article-summary">{post.summary}</p>
+        <ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
+      </header>
+      {sections.length >= 5 ? (
+        <nav className="article-toc" aria-label="Sections in this article">
+          <span className="article-toc-label">In this article</span>
+          <ol>{sections.map((heading) => <li key={heading.id}><a href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>
+        </nav>
+      ) : null}
+      <article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} />
+      <nav className="article-pager" aria-label="More journal entries">
+        {older ? <Link className="article-pager-link" to={`/journal/${older.slug}`}><span className="label">← Previous</span><strong>{older.title}</strong></Link> : <span aria-hidden="true" />}
+        {newer ? <Link className="article-pager-link is-next" to={`/journal/${newer.slug}`}><span className="label">Next →</span><strong>{newer.title}</strong></Link> : null}
+      </nav>
+      <a className="article-top" href="#main-content">↑ Back to top</a>
+    </section>
+  );
 }
 
 function AboutPage() {
