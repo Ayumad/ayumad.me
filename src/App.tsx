@@ -515,7 +515,13 @@ function JournalArticlePage({ post }: { post: JournalPost }) {
       {sections.length >= 5 ? (
         <nav className="article-toc" aria-label="Sections in this article">
           <span className="article-toc-label">In this article</span>
-          <ol>{sections.map((heading) => <li key={heading.id}><a href={`#${heading.id}`}>{heading.text}</a></li>)}</ol>
+          <ol>
+            {sections.map((heading, index) => (
+              <li key={heading.id} className={sections.length % 2 === 1 && index === sections.length - 1 ? "is-wide" : undefined}>
+                <a href={`#${heading.id}`}>{heading.text}</a>
+              </li>
+            ))}
+          </ol>
         </nav>
       ) : null}
       <article className="article-body article-markdown" dangerouslySetInnerHTML={{ __html: html }} />

@@ -5917,19 +5917,28 @@ button.jcal-cell.is-week {
 }
 
 .article-toc li {
+  display: flex;
   counter-increment: article-toc;
   min-width: 0;
   margin: 0;
 }
 
+/* the link fills its cell so the rule below it lands on the row baseline,
+   even when one title wraps and its neighbour does not */
 .article-toc a {
   display: flex;
+  flex: 1;
+  align-items: flex-start;
   gap: 10px;
-  padding: 9px 0;
+  padding: 9px 0 10px;
   border-bottom: 1px solid var(--fine);
   color: var(--soft);
   font: 500 0.78rem/1.35 var(--mono);
   text-decoration: none;
+}
+
+.article-toc li.is-wide {
+  grid-column: 1 / -1;
 }
 
 .article-toc a::before {
@@ -5939,6 +5948,7 @@ button.jcal-cell.is-week {
   font-size: 0.68rem;
   line-height: 1.55;
 }
+
 
 .article-toc a:hover,
 .article-toc a:focus-visible {
