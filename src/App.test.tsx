@@ -197,7 +197,7 @@ describe("Ayumad.me", () => {
     renderAt("/journal/my-headphone-collection");
     expect(
       screen.getByRole("heading", {
-        name: "My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
+        name: "My Audio Journey: How I Got Here and What I've Learned Along the Way",
         level: 1,
       }),
     ).toBeInTheDocument();
@@ -230,7 +230,7 @@ describe("Ayumad.me", () => {
     renderAt("/journal");
     expect(
       screen.getByRole("link", {
-        name: "Read My Headphone Collection: Why I Keep So Many and What Each One Does for Me",
+        name: "Read My Audio Journey: How I Got Here and What I've Learned Along the Way",
       }),
     ).toHaveAttribute(
       "href",

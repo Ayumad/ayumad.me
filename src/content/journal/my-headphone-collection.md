@@ -1,5 +1,5 @@
 ---
-title: My Headphone Collection: Why I Keep So Many and What Each One Does for Me
+title: My Audio Journey: How I Got Here and What I've Learned Along the Way
 slug: my-headphone-collection
 date: 2026-11-11
 summary: Five full-size headphones, four IEMs, three wireless pairs, two speaker systems and one tube amp — what each one does for me, why I keep it, and why the best-reviewed ones aren't the ones I kept.
@@ -8,7 +8,7 @@ kind: article
 status: published
 ---
 
-I've been into headphones for a while now, and over time I've ended up with a collection that covers a pretty wide range of sound signatures, driver technologies, and price points. I've also had the opportunity to borrow and audition quite a few headphones outside of what I own.
+I've been into audio for a while now, and over time I've had the opportunity to own, borrow, and audition a pretty wide range of headphones, as well as put together a couple of speaker systems. Those experiences have helped me figure out what I actually enjoy listening to and what I want from my setup.
 
 My actual introduction to audio was pretty modest. Before getting into any of this, I mostly used random Bluetooth headphones. My first more deliberate setup was a pair of Superlux HD 668Bs paired with a $20 audio interface.
 
@@ -26,7 +26,7 @@ Something I've come to appreciate through all of this is that headphones don't n
 
 I also don't necessarily want all my headphones to sound the same. I think there's value in having different sound signatures that complement different genres, recordings, and listening situations. Some of my favorite comparisons have involved finding out that a quality I enjoy on one recording becomes something I dislike on another.
 
-Here's where everything in my current collection fits, what I've learned from comparing them, and why I keep each one around.
+I wanted to put that journey into words, from the headphones that first got me interested to the setup I enjoy using today.
 
 ## The Listening Session That Made Me Fall in Love With Audio
 
