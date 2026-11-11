@@ -35,6 +35,8 @@ The reference piece is **`src/content/journal/my-headphone-collection.md` — "M
 - **Title:** `Main title: explanatory clause`, title case on both halves. Descriptive, not a hook. No questions. Unquoted in frontmatter (the parser splits on the first colon).
 - **Frontmatter:** `title`, `slug` (unchanged from the existing article), `date` (unchanged), `summary` (rewrite to match the new piece, one sentence, no hype), `tags`, `kind: article`, `status: published`.
 - **Body:** no `#` heading — the H1 comes from the title. Sections are `##`, sub-items `###`. Six to twelve `##` sections is normal for a long piece; a short build write-up may have four.
+- **Section headings stay in his voice:** specific and a little wry — "Things that bit me", "Proving it before trusting it", "The one that never turns off", "Which one do I actually grab". Never flatten them into generic nouns ("Fixes", "Testing It", "Hardware"); that regression happened once on a full batch and had to be undone by hand.
+- **Never delete a data visual.** If the existing piece has a `fleet-chart` block or a table, it survives any edit, with every row intact. Losing half a chart's rows is a data regression, not a tightening.
 - **Visuals:** exactly one where it is honest. A `text` code block for a signal chain or topology is the house format. Never invent a chart, and never chart numbers that don't exist — a table only where a table is genuinely clearest.
 - **Paragraphs:** two to five sentences. One idea each.
 - **Length:** as long as the material is and no longer. A single build write-up is 900–1,500 words. Fleet surveys and collection pieces can run 2,000–5,000. Padding to hit a length is a failure.

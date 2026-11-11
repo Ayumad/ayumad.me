@@ -1,16 +1,16 @@
 ---
-title: Gaming Across My Fleet: Thirteen Machines on One Scale
+title: Gaming Across My Fleet: How Thirteen Machines Compare
 slug: gaming-fleet-roundup
 date: 2026-09-08
-summary: Thirteen machines that play games. Same games, published benchmark numbers, so I actually know which one to grab.
+summary: Published benchmarks for my thirteen gaming machines, what each one drives, and which one I reach for.
 tags: Hardware, Gaming, Benchmarks
 kind: article
 status: published
 ---
 
-I own thirteen machines that can play games. Since they overlap more than they should, I pulled together published benchmark numbers from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites, and figured out where everything actually stands. The full cited breakdown lives in my vault; this is the readable version.
+I own thirteen machines that can play games, and they overlap more than they should. I pulled together published benchmarks from Notebookcheck, TechSpot, GamersNexus, Tom's Hardware, and a few smaller review sites to see where they stand.
 
-Here's the whole fleet on one scale. Creekwood is 100, everything else is a percentage of it:
+Creekwood is 100 on this scale, and everything else is a percentage of it:
 
 <div class="fleet-chart" role="img" aria-label="Bar chart of fleet GPU performance, Creekwood RTX 5080 = 100">
   <div class="fleet-row"><span class="fleet-name">Creekwood (RTX 5080)</span><span class="fleet-track"><span class="fleet-fill" style="width: 100%"></span></span><span class="fleet-value">100</span></div>
@@ -28,7 +28,7 @@ Here's the whole fleet on one scale. Creekwood is 100, everything else is a perc
   <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"><span class="fleet-fill" style="width: 16%"></span></span><span class="fleet-value">16</span></div>
 </div>
 
-The ranked table, with what each machine drives (panel type where I know it) and the fps it targets:
+Each machine’s display and target framerate:
 
 | Machine | GPU | Rel. speed | Display | Resolution / target fps |
 | --- | --- | --- | --- | --- |
@@ -48,7 +48,7 @@ The ranked table, with what each machine drives (panel type where I know it) and
 
 ## What if the top of the list was a 5090
 
-I don't own one, but the numbers are public, so here's the same fleet re-based to a maxed 5090 build instead of Creekwood. Tom's Hardware's 2026 hierarchy puts the 5090 at 100 and the 5080 at 69.8 at 4K raster, which puts the 5090 build at ~143 on the scale above. Flip the baseline:
+I don't own a 5090, but Tom's Hardware's 2026 hierarchy puts it at 100 and the 5080 at 69.8 at 4K raster, which puts a maxed 5090 build at ~143 on my scale. That's a 43% jump over the 5080 at 4K, bigger than the 5080-to-9070 XT spread, but it only pays off with a matching CPU. The 5800X3D would hold it back in esports titles.
 
 <div class="fleet-chart" role="img" aria-label="Bar chart of fleet GPU performance, hypothetical RTX 5090 build = 100">
   <div class="fleet-row"><span class="fleet-name">RTX 5090 build (hypothetical)</span><span class="fleet-track"><span class="fleet-fill" style="width: 100%"></span></span><span class="fleet-value">100</span></div>
@@ -67,39 +67,37 @@ I don't own one, but the numbers are public, so here's the same fleet re-based t
   <div class="fleet-row"><span class="fleet-name">Retroid Nova</span><span class="fleet-track"><span class="fleet-fill" style="width: 11%"></span></span><span class="fleet-value">11</span></div>
 </div>
 
-That's a 43% jump over the 5080 at 4K — the biggest single gap in the whole list, bigger than the 5080-to-9070 XT spread. It only pays off with a matching CPU, though. Put a 5090 behind the 5800X3D and it just sits there bored in esports titles.
-
 ## The five desktops
 
-Creekwood is the fastest thing I own and it's not close. RTX 5080 Founders Edition with a Ryzen 7 5800X3D, hooked to the 4K 240 Hz Odyssey OLED G8. Tom's Hardware's 2026 hierarchy is scored against the RTX 5090, and the 5080 lands at 81.9% at 1080p, 76.7% at 1440p, 69.8% at 4K — against a 4090 that's roughly 91/90/87%. That translates to: max settings, always, with DLSS reserved for path-traced Cyberpunk and games that are rude about it. It's the reference point for every other machine in this list.
+Creekwood is the fastest thing I own, with an RTX 5080 Founders Edition and Ryzen 7 5800X3D hooked to the 4K 240 Hz Odyssey OLED G8. In Tom's Hardware's 2026 hierarchy, the 5080 lands at 81.9% of the 5090 at 1080p, 76.7% at 1440p and 69.8% at 4K, or roughly 91/90/87% against a 4090. I use max settings, with DLSS reserved for path-traced Cyberpunk and similarly demanding games.
 
-The 12900K / RTX 4080 desktop is Creekwood-lite. TechSpot's Cyberpunk 2077 run on the 4080 averages 128 fps at 1440p. When it's home it sits basically even with the 9070 XT build — within a few percent across a whole suite.
+TechSpot's Cyberpunk 2077 run on the RTX 4080 averages 128 fps at 1440p. My 12900K / RTX 4080 desktop sits within a few percent of the 9070 XT build across a whole suite.
 
-The [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) is the living-room Steam machine: Ryzen 5 5600 and a PowerColor 9070 XT in a KXRORS S300 case, Bazzite, under the Sony Bravia, controller in the coffee table drawer. The numbers here are the fun ones. Clair Obscur: Expedition 33 runs 64 fps at 1440p on the Epic preset. Red Dead Redemption 2 does 83 fps at 4K Ultra. Forza Horizon 5 clears 200 fps at 1440p. The 5600 is the weak link — it holds the GPU back in high-FPS games, same story as Creekwood's AM4 platform. The GPU runs ahead of the CPU and that's the upgrade path.
+The [SFF 9070 XT](/gear/computers-sff-pc-ryzen-5-5600-radeon-rx-9070-xt) is my living-room Steam machine, with a Ryzen 5 5600 and PowerColor 9070 XT in a KXRORS S300 case, running Bazzite under the Sony Bravia, with the controller in the coffee table drawer. Clair Obscur: Expedition 33 runs at 64 fps at 1440p Epic, Red Dead Redemption 2 does 83 fps at 4K Ultra, and Forza Horizon 5 clears 200 fps at 1440p. The 5600 holds the GPU back in high-FPS games, much like Creekwood's AM4 platform, so the CPU is the upgrade path.
 
-The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) is an RX 9060 XT 16 GB with a Ryzen 5 3600, in an NCASE M1. It's a 1080p box — 98 fps average across Tom's suite at 1080p — but the 16 GB of VRAM is why it stays worth owning. Textures last longer than the GPU does.
+The [SFF 9060 XT](/gear/computers-sff-pc-ryzen-5-3600-radeon-rx-9060-xt) pairs an RX 9060 XT 16 GB with a Ryzen 5 3600 in an NCASE M1. It averages 98 fps across Tom's suite at 1080p, but the 16 GB of VRAM is why I keep it.
 
-The [RX 6600 build](/gear/computers-desktop-pc-radeon-rx-6600) is the engineering desktop — a SolidWorks machine, not a gaming rig. It doesn't get used for games, but for completeness it stacks at 31, comfortably above the whole laptop floor. It's a real 1080p box if anyone ever asks it to be one.
+The [RX 6600 build](/gear/computers-desktop-pc-radeon-rx-6600) is my SolidWorks desktop, and I don't use it for games. It scores 31 on my scale and can handle 1080p gaming.
 
 ## The two laptops
 
-The [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) is the big-screen option: RTX 4080 at 175 W, Ryzen 9 7845HX, 2560×1600 at 240 Hz. Notebookcheck's numbers say Cyberpunk 2077 runs 128 fps at 1080p ultra and 84.5 fps at QHD native. I bought it secondhand for $600 and replaced a motherboard fan, and it runs hot — it's a desk machine, not a lap machine. I grab it when I want a bigger screen than the G14.
+I bought the [Alienware m16](/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080) secondhand for $600 and replaced a motherboard fan. It has an RTX 4080 at 175 W, a Ryzen 9 7845HX and a 2560×1600 240 Hz screen, and Notebookcheck measured Cyberpunk 2077 at 128 fps at 1080p ultra and 84.5 fps at QHD native. It runs hot enough that I use it on a desk, and I grab it when I want a bigger screen than the G14.
 
-The [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) is my main portable. RTX 5070 Ti at 110 W, which is a real cap — the chip wants more but the case is thin. It still manages 170 fps in CS2 at its native 2.8K resolution, and path-traced Cyberpunk hits 100+ fps with DLSS 4 Multi Frame Generation. That's the part the m16 can't do — MFG is Blackwell-only, so the 4080 tops out at regular frame gen, one frame per rendered frame. The DLSS 4 upscaler runs on both. Raw raster goes to the m16 by about 15–20%. Anything that leans on multi-frame gen goes to the G14.
+The [Zephyrus G14](/gear/computers-asus-rog-zephyrus-g14) is my main portable, with an RTX 5070 Ti capped at 110 W by the thin case. It manages 170 fps in CS2 at its native 2.8K resolution, and path-traced Cyberpunk hits 100+ fps with DLSS 4 Multi Frame Generation. MFG is Blackwell-only, so the m16's 4080 tops out at one generated frame per rendered frame, though both run the DLSS 4 upscaler. The m16 is about 15–20% faster in raw raster, while the G14 does better in games that lean on multi-frame generation.
 
 ## Tablets, handhelds, and the leftovers
 
-The [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) is a tablet with a 16-core Strix Halo chip in it. The iGPU is Radeon 8060S, roughly an RTX 4070 laptop, and the CPU is the fastest in my whole fleet. Result: Cyberpunk 2077 at 75.6 fps on 1080p ultra, and CS2 at 384 fps on 1080p low — the framerates are a CPU flex more than a GPU flex. It docks to the TV via USB4 and disappears behind it.
+The [ROG Flow Z13](/gear/computers-asus-rog-flow-z13-2025) is a tablet with a 16-core Strix Halo chip, the fastest CPU in my fleet, and a Radeon 8060S iGPU roughly equivalent to an RTX 4070 laptop. Cyberpunk 2077 runs at 75.6 fps at 1080p ultra, and CS2 reaches 384 fps at 1080p low. It docks to the TV via USB4 and disappears behind it.
 
-The [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) is an 800p machine and it knows it. GamersNexus measured RDR2 at 53 fps, Cyberpunk at 44.6 fps with FSR, Baldur's Gate 3 at 23.9 fps — all at its native resolution. The catch: Valorant and Fortnite don't run on it at all. Kernel-level anti-cheat doesn't do Linux. That's the gap the Ally exists for.
+GamersNexus measured the [Steam Deck OLED](/gear/gaming-valve-steam-deck-oled) at 53 fps in RDR2, 44.6 fps in Cyberpunk with FSR and 23.9 fps in Baldur's Gate 3, all at its native 800p. Valorant and Fortnite don't run because of kernel-level anti-cheat on Linux, which is why I have the Ally.
 
-The [ROG Ally](/gear/gaming-asus-rog-ally) is the Windows handheld: Z1 Extreme, 1080p at 120 Hz. It does the esports thing properly — around 162 fps in Valorant, 118 in CS2, 109 in Rocket League at 1080p with tuned settings. Demanding AAA drops it to 720–900p territory. It's technically redundant next to the Deck, so it's on the sell list, but on the days a Windows-only game exists, it's the one.
+The [ROG Ally](/gear/gaming-asus-rog-ally) is my Windows handheld, with a Z1 Extreme and a 1080p 120 Hz screen. With tuned settings at 1080p, it runs Valorant at around 162 fps, CS2 at 118 and Rocket League at 109, though demanding AAA games need 720–900p. It's on the sell list because of the overlap with the Deck, but I still reach for it for Windows-only games.
 
-The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order, so these numbers come from its Snapdragon 8 Gen 2 chip rather than the device itself. The Adreno 740 averages around 3,667 in 3DMark Wild Life Extreme — call it a Steam Deck and a half in raw raster. That means light and medium Android games run natively at 60-class frames (Genshin and Fortnite sit around 56–60), emulation covers PS2/GameCube-era stuff, and "streaming screen" is a bonus rather than the whole job. I scored it 16, which slots it between the Ally and the Blade. It's still a Pokémon ROM hack machine and a Moonlight client for the real hardware — just one with a GPU that shows up for work.
+The [Retroid Nova](/gear/gaming-retroid-pocket-nova) is on order, so these numbers come from its Snapdragon 8 Gen 2 chip rather than the device itself. The Adreno 740 averages around 3,667 in 3DMark Wild Life Extreme, about a Steam Deck and a half in raw raster, and I scored it 16, between the Ally and the Blade. Genshin and Fortnite run around 56–60 fps, and emulation covers PS2/GameCube-era games. For me, it's still a Pokémon ROM hack machine and a Moonlight client.
 
-The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) is the modest one: an RTX 3050 pushing a 1080p 60 Hz OLED. The GPU and the panel agree on the target — it's a 1080p-60 box, unapologetically.
+The [Vivobook Pro 15](/gear/computers-asus-vivobook-pro-15-oled-rtx-4050) has an RTX 3050 and a 1080p 60 Hz OLED. The GPU and panel suit the same 1080p-60 target.
 
-The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is the oldest gamer here: GTX 1650 Ti Max-Q, four cores of Tiger Lake. Cyberpunk 2077 at 63 fps on 1080p low. Rocket League and Fortnite at comfortable framerates on medium. It plays its role — a small Windows laptop for light games — and it doesn't pretend to do more.
+The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is my oldest gaming machine, with a GTX 1650 Ti Max-Q and four Tiger Lake cores. It runs Cyberpunk 2077 at 63 fps at 1080p low, and Rocket League and Fortnite at comfortable framerates on medium.
 
 ## Which one do I actually grab
 
@@ -113,8 +111,6 @@ The [Razer Blade Stealth 13](/gear/computers-razer-blade-stealth-13) is the olde
 | Windows-only or esports handheld | ROG Ally |
 | Tabletop or docked | ROG Flow Z13 |
 
-A couple of honest gaps: Rocket League and Valorant don't have lab-published numbers for the desktop tier — they're so CPU-bound that review sites skip them — and TechPowerUp blocks bots, so the 5080's per-game table is still riding on the aggregate suite. The numbers that exist are all linked below.
+Rocket League and Valorant don't have lab-published numbers for the desktop tier because they're so CPU-bound that review sites skip them. TechPowerUp blocks bots, so the 5080's per-game table still relies on the aggregate suite.
 
 Sources: [Tom's Hardware GPU hierarchy](https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html) · [TechSpot 9070 XT vs 5070](https://www.techspot.com/review/3168-geforce-rtx-5070-vs-radeon-rx-9070-xt/) · [TechSpot RTX 4080 review](https://www.techspot.com/review/2569-nvidia-geforce-rtx-4080/) · [GamersNexus Steam Deck OLED](https://gamersnexus.net/handheld-pcs/valve-goes-hard-steam-deck-oled-review-benchmarks-vs-asus-rog-ally-z1-extreme-deck-lcd) · [Notebookcheck m16 review](https://www.notebookcheck.net/AMD-Ryzen-9-7845HX-performance-debut-Alienware-m16-R1-laptop-review.742228.0.html) · [Notebookcheck G14 2025](https://www.notebookcheck.net/RTX-5070-Ti-laptop-GPU-almost-as-fast-as-RTX-5080-laptop-GPU-Asus-ROG-Zephyrus-G14-2025-review.1030284.0.html) · [Notebookcheck Flow Z13](https://www.notebookcheck.net/Asus-ROG-Flow-Z13-GZ302EA-Convertible-Review-AMD-s-Strix-Halo-GPU-is-neck-and-neck-with-the-RTX-4070-Laptop.963266.0.html) · [ultrabookreview G14](https://www.ultrabookreview.com/71435-asus-rog-zephyrus-g14-2025-review/) · [LaptopMedia G14](https://laptopmedia.com/gb/review/asus-rog-zephyrus-g14-ga403-ryzen-ai-300-review-rtx-5070-ti-oled-and-true-portability/) · [LaptopMedia Flow Z13](https://laptopmedia.com/review/asus-rog-flow-z13-gz302-review-the-radeon-8060s-challenges-the-rtx-4060/) · [PCWorld ROG Ally](https://d33gy59ovltp76.cloudfront.net/news/asus-rog-ally-review-z1-extreme-lighter-and-brighter) · [Notebookcheck GTX 1650 Ti Max-Q](https://www.notebookcheck.net/NVIDIA-GeForce-GTX-1650-Ti-Max-Q-GPU-Benchmarks-and-Specs.459210.0.html) · [Notebookcheck Adreno 740](https://www.notebookcheck.net/Qualcomm-Adreno-740-GPU-Benchmarks-and-Specs.669947.0.html)
-
-Now I know the numbers, so the next game I buy gets matched to the right machine instead of whichever is closest.
