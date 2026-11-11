@@ -195,7 +195,7 @@ describe("Ayumad.me", () => {
 
   it("renders the headphone collection article with its sections and playlist links", () => {
     renderAt("/journal/my-headphone-collection");
-    expect(screen.getByRole("heading", { name: "My Headphone Collection", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Why I Keep Five Headphones", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Audeze LCD-X/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Where I Go From Here/ })).toBeInTheDocument();
     expect(screen.getByText(/Ananda Unveiled stays fairly bright/)).toBeInTheDocument();
@@ -211,7 +211,7 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
     renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read My Headphone Collection" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Read Why I Keep Five Headphones" })).toHaveAttribute(
       "href",
       "/journal/my-headphone-collection",
     );

@@ -1,8 +1,8 @@
 ---
-title: My Headphone Collection
+title: Why I Keep Five Headphones
 slug: my-headphone-collection
 date: 2026-11-11
-summary: Why I keep so many and what each one does for me — five full-size headphones, four IEMs, three wireless pairs, two speaker systems and one tube amp.
+summary: Five full-size headphones, four IEMs, three wireless pairs, two speaker systems and one tube amp — what each one does for me, and why the best-reviewed ones aren't the ones I kept.
 tags: Audio, Headphones, Audeze, Sennheiser, HIFIMAN, Focal, IEMs
 kind: article
 status: published
