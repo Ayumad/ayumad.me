@@ -3,7 +3,7 @@ title: Hermes on a Mac Mini: Headless macOS and Always-On Automation
 slug: hermes-on-mac-mini
 date: 2026-07-22
 summary: I moved Hermes to an always-on Mac mini to keep context, skills, and scheduled work in one place.
-tags: Hermes, macOS, Tailscale
+tags: Hermes, macOS, Networking
 kind: article
 status: published
 ---
@@ -12,7 +12,7 @@ Hermes used to live wherever I was working, then I moved it to a Mac mini that n
 
 ## The setup
 
-The Mac mini sits on my desk at home, headless and joined to the Tailscale mesh. The operating system manages the web interface so it survives reboots, and I reach it from my phone through the same private network.
+The Mac mini sits on my desk at home, headless and joined to my private mesh. The operating system manages the web interface so it survives reboots, and I reach it from my phone through the same private network.
 
 ```text
   MANY DEVICES                    ONE BACKEND

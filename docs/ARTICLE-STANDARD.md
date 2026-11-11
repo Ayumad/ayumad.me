@@ -45,6 +45,14 @@ The reference piece is **`src/content/journal/my-headphone-collection.md` — "M
 
 **`retiring-the-jailbreak.md`** is adapted from his own Reddit post and is treated as final draft: only spelling, capitalisation and site formatting may change. It is not to be re-voiced or restructured.
 
+## Privacy: the journal is public
+
+**Never publish:** IP addresses, MAC addresses, tailnet/mesh topology, hostnames that resolve on his network, the physical location of any machine (which room, or whether it's at home at all), which hardware is lent out and to whom, credentials of any kind, street addresses, phone numbers, student or government IDs, or a live service described closely enough to be targetable.
+
+**Always fine:** product and tool names (Tailscale included — the tooling is the subject, his topology isn't), machine names, hardware specs, prices, measurements, course codes, failure stories, and the exact commands that fixed something.
+
+`src/journalPrivacy.test.ts` enforces this on `npm run validate`. When it fails, generalise the line rather than cutting the paragraph, and log what was removed in the vault note `99 System/Journal Publication Rules.md`.
+
 ## The check before anything ships
 
 1. Does every paragraph contain a specific fact, number, name or observation?

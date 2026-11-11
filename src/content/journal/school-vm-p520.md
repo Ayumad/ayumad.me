@@ -10,7 +10,7 @@ status: published
 
 Two of my classes this semester require Linux, CMPE 142 for Operating Systems and CMPE 148 for Computer Networks, and both came with the same install instructions. Download VirtualBox, download Ubuntu Desktop, give it 4 CPUs and 4 GB of RAM, allocate at least 25 GB of disk, and work inside that. That works, I just didn't want my coursework living on my laptop.
 
-I have a P520 workstation in the closet running Proxmox with 62 GB of RAM and a ZFS pool, and it's on anyway for the NAS and the AI VM, so the school Linux box went there. It's the same machine from [the GPU passthrough writeup](/journal/gpu-passthrough-p520), minus the GPU, because this one doesn't need it. It cost nothing extra, the workstation was already on.
+I have a P520 workstation running Proxmox with 62 GB of RAM and a ZFS pool, and it's on anyway for the NAS and the AI VM, so the school Linux box went there. It's the same machine from [the GPU passthrough writeup](/journal/gpu-passthrough-p520), minus the GPU, because this one doesn't need it. It cost nothing extra, the workstation was already on.
 
 ## What the classes actually need
 
@@ -27,7 +27,7 @@ I used the Ubuntu 24.04 cloud image for the Proxmox VM. Cloud images boot throug
 | OS | Ubuntu 24.04 LTS, cloud image |
 | CPU / RAM | 4 vCPU / 6 GB |
 | Disk | 40 GB on the ZFS SSD pool |
-| Access | SSH keys only, over the tailnet |
+| Access | SSH keys only, over the private mesh |
 | State | Off by default |
 
 I matched the class doc at 4 vCPU, with RAM up to 6 GB and disk to 40 GB because both are cheap here and a ZFS volume can only grow in one direction. The disk stays reserved either way.
@@ -61,13 +61,13 @@ The P520 already runs a nightly `vzdump`, so the new VM was covered the day it w
 
 - `qemu-guest-agent` installs as a static systemd unit on cloud images, so `systemctl enable --now` prints a warning and does nothing for the next boot. The agent runs until you reboot, then the host's guest tools stop answering, so I pinned it with a symlink.
 - `pkill -f "tailscale serve"` killed my own SSH session because the pattern matched the shell running the script. Nothing after that line executed, and the command looked like it succeeded.
-- `tailscale serve` needs a one-time toggle in the tailnet admin before it serves anything, and until then it hangs instead of erroring. The first time, I piped its output through `tail` and lost the URL it printed.
+- `tailscale serve` needs a one-time toggle in the admin console before it serves anything, and until then it hangs instead of erroring. The first time, I piped its output through `tail` and lost the URL it printed.
 - `dmesg` is root-only on Ubuntu now, the textbook says plain `dmesg`.
 - The homelab watchdog counted only `.vma.zst` backups, so a fresh uncompressed backup read as 9.9 hours stale. I fixed the file glob.
 - The class doc warns that powering the VM off instead of saving machine state loses your work, which is VirtualBox advice. This VM has a real disk, and shutting it down is how it gives the RAM back.
 
 ## How I use it
 
-I use `ssh school-vm` from the Macs, or VS Code's remote SSH when I want an editor. On the iPad, code-server runs in the browser with full VS Code and no client install, and it only listens on the tailnet address, so nothing is exposed to the internet. Before each graded project I take a snapshot, so a wrecked VM rolls back instead of getting rebuilt.
+I use `ssh school-vm` from the Macs, or VS Code's remote SSH when I want an editor. On the iPad, code-server runs in the browser with full VS Code and no client install, and it only listens on the private network, so nothing is exposed to the internet. Before each graded project I take a snapshot, so a wrecked VM rolls back instead of getting rebuilt.
 
 A desktop is a one-flag change if a class ever asks for a GUI, and neither of these does. The quizzes that require Respondus LockDown Browser can't run on Linux at all, those stay on the Mac.

@@ -2,13 +2,13 @@
 title: My Desktop Fleet: What I Use and What I'd Change
 slug: desktop-fleet-review
 date: 2026-07-28
-summary: I own five desktop PCs for gaming and self-hosting, and two are currently at a friend's house.
+summary: I own five desktop PCs for gaming and self-hosting, and two of them are currently lent out.
 tags: Hardware, Desktops, Gaming
 kind: article
 status: published
 ---
 
-I own five desktop PCs, and I've stopped trying to justify it. I use one every day, one lives under the TV as a Steam machine, one is a server that never turns off, and two are at a friend's house.
+I own five desktop PCs, and I've stopped trying to justify it. I use one every day, one lives under the TV as a Steam machine, one is a server that never turns off, and two are lent out.
 
 ## The main one
 
@@ -23,7 +23,7 @@ The CPU is the only real ceiling, and while the 5800X3D is the best AM4 has, the
 ```text
   [ MAIN DESK ]        Creekwood          RTX 5080 / 4K OLED
   [ LIVING ROOM ]      SFF 9070 XT        Steam machine under the TV
-  [ CLOSET ]           P520               Proxmox server, always on
+  [ STORAGE ]          P520               Proxmox server, always on
   [ LENT OUT ]         12900K prebuilt    DDR5 spare
   [ LENT OUT ]         SFF 9060 XT        the budget SFF
 ```
@@ -68,7 +68,7 @@ The other loaner is the budget SFF, with a Ryzen 5 3600 and a Gigabyte RX 9060 X
 
 ## What I'd actually change
 
-I have three high-end gaming machines, and two of them are sitting at a friend's house. That's redundant.
+I have three high-end gaming machines, and two of them are lent out. That's redundant.
 
 1. Put a 5700X3D in the living room SFF, the best upgrade per dollar I can do, and it takes 15 minutes.
 2. Do the same for the budget SFF when it comes back, plus 32 GB of RAM, fixing both weak points for about $250.
