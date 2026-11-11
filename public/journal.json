@@ -1,60 +1,66 @@
 [
  {
   "date": "2026-11-10",
-  "summary": "Session journal for 2026-11-10: IBM 128345 Knockri interview prep + live portal format, 4080 desktop spec sheet for a buyer, Schiit Modius/Magnius stack scored SKIP.",
+  "summary": "Session journal for 2026-11-10: job application pipeline work, 4080 desktop spec sheet for a buyer, Schiit Modius/Magnius stack scored SKIP.",
   "highlights": [
-   "IBM Knockri format is now known exactly: 14 questions (6 recorded + 8 form), no retries, 24 minutes — prep targets the transcript, not the tape.",
-   "Real constraint on the interview is the calendar, not the content: record Wed morning before Project 4 lands.",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
    "Schiit stack was a genuine below-market price but a redundant buy — the loadout check, not the comps, made the call.",
-   "Quiet infrastructure day: 796 cron runs, zero failures, vault syncing clean."
+   "Quiet infrastructure day: 796 cron runs, zero failures, vault syncing clean.",
+   "Coursework — details stay in the vault.",
+   "**4080 desktop** — buyer-ready spec sheet produced (machine still lent out).",
+   "**Schiit Modius + Magnius ($230)** — scored **SKIP**: fair price, role already covered by the FiiO K13 R2R + Fosi GR70.",
+   "**LCD-4 comparison** — answered against the owned collection (LCD-X is the nearest, one rung down, 600 g, discontinued).",
+   "**Replit mission app** — certifi/port/Flask bugs fixed, then re-detached under launchd; verified `200` on `localhost:5057` at 23:05, survives gateway shutdown.",
+   "**Crons** — 798 runs across 24 jobs, no failure incidents detected. The scout Craigslist sweep's delivery error is the stale record of a job paused since Oct 9 (Muse replaced it); left paused."
   ]
  },
  {
   "date": "2026-11-09",
-  "summary": "Session journal for 2026-11-09: whisper.cpp dictation server on the mini + omarchy small.en bump, X @Ayumad123 reinstatement clock (≈Dec 6), Edition XV headphone pick, Tailscale OAuth apps GA read, Workshop 3 expansion brief.",
+  "summary": "Session journal for 2026-11-09: whisper.cpp dictation server on the mini + omarchy small.en bump, account recovery, Edition XV headphone pick, Tailscale OAuth apps GA read, Workshop 3 expansion brief.",
   "highlights": [
    "Dictation became infrastructure: one model on the mini, every other machine a thin client. The win was discovering omarchy already had `voxtype` and deleting the custom recorder — the engine needed upgrading, not duplicating.",
-   "The X lock is a **clock**, not a puzzle: reinstatement dies ≈ Dec 6, and one `hermes vault add` (or five minutes on the iPhone) is the entire remaining cost.",
+   "Account recovery — details stay in the vault.",
    "The headphone answer is a template worth reusing — pick the option whose *failure modes* you can live with under a no-returns constraint, and prove the amp isn't the bottleneck before recommending one.",
    "Workshop 3 moved from 9 thin sections to an 11-gap brief with measured numbers; what's left is a production pass in Antigravity, and the env note (local model ≠ local agent) is the fix that makes the talk land.",
-   "**Closed the one untracked open item of the day:** the X reinstatement clock. @Ayumad123's under-13 appeal (ticket AGEA-1045165) opened Nov 5 and dies **≈ Dec 6**, and every automated path is walled by Full Disk Access plus password entry — so it is now a todo-cleanup entry with a Google Tasks + Apple Reminders twin (`created->Apple` confirmed 23:02).",
+   "Account recovery — details stay in the vault.",
    "**Corrected a stale claim:** the iCloud entry still said disk was at its worst (94%, 14.1 GB free). Today it is **87%, 26 GB free** and Vault auto-sync is running again (16 commits), so the entry now states the current numbers instead of the Nov 8 ones.",
    "**Dropped from todo-cleanup:** the Notion token entry — Notion is paused, so a token prompt was noise; its Google twin is left in place until the sync resumes.",
    "**Verified, not assumed:** Reminders ↔ Google Tasks dry-run reads `0 action(s) planned`; Vault auto-sync last ran 22:45 ok; the 22:00 journal job wrote, deployed and pushed its entry.",
    "**Not fixed:** vaultkeeper's Session Journal delivery is still `delivery_queued`, the known cause being that no bot gateway runs to service the bot-chat turn (payload sits in `runtime/bot_live_delivery/`, no error). No services were started or restarted.",
-   "**Left as mentions, not tasks:** Cisco Workday account creation + profile pass (needs his password and the verification email) and adding the Replit mission app to the Handshake profile — both optional, both one step on his side.",
-   "**School, still candidates not facts:** CMPE-148 Project 3 MiniTCP upload (was Nov 5) and CMPE-142 Chapter 11 HW (was Nov 8) both still render overdue; no graded or submitted email has landed, so neither was cleared.",
-   "**Waiting on Ayush:** 10 todo-cleanup items; top is IBM 134486's work-auth contradiction, which is holding five more IBM applications at 99%."
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
   "date": "2026-11-08",
-  "summary": "Session journal for 2026-11-08: PS5 wishlist re-pointed to a firmware ≤13.60 jailbreak gate + Muse task R73, weekly review written (IBM assessments due Nov 14), interview prep 8th unanswered packet.",
+  "summary": "Session journal for 2026-11-08: PS5 wishlist re-pointed to a firmware ≤13.60 jailbreak gate + Muse task R73, job application pipeline work",
   "highlights": [
    "The PS5 lane now encodes the real constraint: a cheap console on 14.00+ is a dead end, and a jailbreakable one is worth paying for. Removing the price ceiling is the whole decision.",
    "The same session caught the thing that matters more than the lane: **Muse has never called the board**, so every task and sweep pointed at it — R73, the CRT hunt, the sell-side queue — is currently writing into a void.",
-   "The week closes on one hard wall (IBM's four assessments, Sat Nov 14) and one root blocker (disk at 94%, which is what keeps re-evicting the vault and stalling cron reads).",
-   "Interview Prep has shipped 8 questions and received 0 answers in 8 sessions; the log now names the 6 PM slot itself as the defect, which is the right diagnosis.",
-   "**CMPE-148 Project 3 MiniTCP had no live twin.** Built, measured and pushed by the weekly review, but the Canvas upload existed only as a vault line. Added to Google Tasks `School` (due 2026-11-08) and mirrored — sync log: `School: created->Apple 'CMPE-148 Project 3 MiniTCP: upload to Canvas'`. The vault Focus line was retitled from the stale four-submission Nov 4 bundle (Quiz 4-1, Quiz 5 and the CMPE-142 Ch 9&10 quiz all cleared Nov 5–6) down to this single step.",
-   "**Filed the IBM 134486 work-authorization wall** — Tech task `IBM 134486: work-auth reads No on review page — approve submit or fix field` (`Tech: created->Apple`), with a matching todo-cleanup entry. Five more IBM applications are queued behind that one field.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "Mirror health verified: `reminders_gtasks_sync.py --dry-run` → `0 action(s) planned`.",
-   "Dropped the Kindle sync from todo-cleanup — it already has a Tech task and a Focus line, so the slot it freed went to the IBM item and the section stays at 10.",
+   "Job application pipeline work — details stay in the vault.",
    "No incident ack needed: all 29 recorded cron incidents are `resolved` or `closed`.",
    "**Disk 94% used, 14.1 GB free** — the named root blocker behind the eviction churn; deletion is outside a cleanup pass.",
    "**Vault auto-sync paused since Oct 31** → 26 uncommitted paths and no 15-minute job to pick them up. Re-enabling is Ayush's call; hand-committing is out of scope for this job.",
-   "**IBM 134486** needs his eyes on the review page (cleanup item), and the five queued applications wait behind it.",
-   "**CMPE-142 Chapter 11 HW** still renders as overdue even though the PDF was rendered at 6:33 PM today — Canvas upload unconfirmed, so it stays a candidate until he says done."
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
   "date": "2026-11-07",
-  "summary": "Session journal for 2026-11-07: Voice Memo Vault project note filed, four IBM assessments landed and prioritised (137214 first, all expire Nov 14), iCloud vault eviction repaired, Interview Prep SWE slot.",
+  "summary": "Session journal for 2026-11-07: Voice Memo Vault project note filed, job application pipeline work, iCloud vault eviction repaired",
   "highlights": [
    "The Voice Memo Vault note is framed against what already exists, so it is a decision document rather than a wish: the gap is appendable, agent-readable labelled threads — not transcription.",
-   "IBM's pipeline converted: 5 applications in, 4 assessments out today, all on the same 7-day clock. The ranking is what matters more than the tests — 137214 is the only one that is real engineering in this batch.",
+   "Job application pipeline work — details stay in the vault.",
    "iCloud eviction is now a twice-daily operational tax on the vault (noon sweep + 67 more files at 6 PM); the Full Disk Access grant + capacity headroom are still the real fixes, and both sit with Ayush.",
-   "Interview Prep has shipped 7 unanswered questions in a row — the log now says the 6 PM slot itself, not the question format, is the thing to change.",
-   "**Closed:** the IBM accommodation-form item was retired because its premise expired — IBM sent all four assessments anyway (three coding OAs + the 128345 recorded interview, 2:08–3:03 PM), so no form stands between Ayush and the clock. The Tech task was retitled in place to the four assessments with the 3-day target (Tue Nov 10, hard expiry Sat Nov 14) and mirrored to Apple Reminders in the same pass.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "**Verified:** the Apple ↔ Google mirror is healthy — one `updated->Apple` line at 23:01, then a dry run reporting `0 action(s) planned`.",
    "**Cron:** both flagged jobs are cosmetic, not broken. The vaultkeeper journal job finished and wrote its 24 KB output at 22:02; only its delivery state reads \"in progress\" (`deliver: local`, no incident recorded). The scout marketplace sweep's 600 s delivery timeout belongs to a job Ayush paused.",
    "**Not fixed:** disk is still 94% used / 15.3 GB free (deleting outside scope), and the vault syncer is still paused since 10/31 with 23 paths uncommitted — the 15-minute sync that would commit them is not running.",
@@ -63,18 +69,18 @@
  },
  {
   "date": "2026-11-06",
-  "summary": "Session journal for 2026-11-06: IBM internship pipeline to 5 applications, Estate Sale Watch cron build, Mnemosyne 0.7.7 repair, opencode relay fallback diagnosis, SFF parts allocation, CMPE 142 Ch 11 homework.",
+  "summary": "Session journal for 2026-11-06: job application pipeline work, Estate Sale Watch cron build, Mnemosyne 0.7.7 repair, opencode relay fallback diagnosis, SFF parts allocation, coursework",
   "highlights": [
    "The Estate Sale Watch is a genuinely new capability, not a one-off answer: script-only, self-updating vault table, and it already surfaced a 1,000+ record/vintage-audio sale in East San Jose for Nov 12–14.",
    "Hermes' recurring memory failure was a dependency pin, not a provider problem — fixed at the `uv.lock` level so the next env rebuild can't resurrect it.",
    "The \"model fallback\" banner is now explained end-to-end (relay TLS corruption + saturated cells, not the Mac) — but the fix choice is still Ayush's.",
-   "IBM is at 5 live applications and the Stanford DBDS mentoring form is one short answer session from done.",
+   "Job application pipeline work — details stay in the vault.",
    "**Scope swept:** 13 sessions across 11 profiles (incl. yesterday's over-run threads) plus every cron store. Nothing in the fleet needed repair tonight — p520's `iso-sync` failure and the `tank`-pool alert threshold were already closed this evening, and the Mnemosyne pin, Muse key and Estate Sale Watch all verified live.",
-   "**Filed (needs Ayush, on Tech → mirrored to Apple at 23:03):** IBM assessment accommodation form for reqs 128345 + 132533 (assessments aren't sent until it's in, so no clock is running); Stanford DBDS mentoring — three form answers left (years of college, math, stats).",
-   "**Retitled, not duplicated:** IBM Quantum (132533) was already closed today; the stale Tech \"Muse: re-key…\" is now \"Muse: paste the crosswalk connector block into Muse's chat\" because the key was minted at 4:29 PM — only the paste into Muse remains.",
-   "**Stale claim corrected:** the internship runner is *not* stopped. Handshake Rapid Applications is enabled and green every 30 min but idle — `queue: 0 candidates`, 1 applied today, one posting parked after 3 failed attempts. So the pipeline decision is still open, but nothing is being submitted while he decides.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "**Could not fix:** host volume at **94% / 15.3 GB free** (only cache deletion outside this job's scope would move it) — the iCloud eviction risk is still his setting, and 25 vault paths stay uncommitted until the 22:00 job commits, since `Vault auto-sync` has been disabled since 10/31. Both are documented, not new.",
-   "**Unconfirmed:** whether the Career Launch AI video interview was recorded inside its 12:00–12:30 PM window — the Tech task is still open, so it sits in todo-cleanup as a one-word confirmation."
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
@@ -89,9 +95,9 @@
  },
  {
   "date": "2026-11-04",
-  "summary": "Session journal for 2026-11-04: CMPE 148 Project 3 MiniTCP built and delivered, CRT shelf mount failure + Hi10P re-encode, Kodi button map, Daily Brief, interview prep.",
+  "summary": "Session journal for 2026-11-04: coursework, CRT shelf mount failure + Hi10P re-encode, Kodi button map, Daily Brief, job application pipeline work",
   "highlights": [
-   "**MiniTCP is delivered** with measured evidence rather than asserted numbers — the 10%-loss comparison against Project 2 is the result that makes the writeup worth reading.",
+   "Coursework — details stay in the vault.",
    "Both CRT symptoms were one failure: a NAS mount that died 10 seconds into boot. 66 dangling symlinks, zero corrupt media, zero 0-byte files.",
    "Hi10P explained Boogiepop; Paranoia Agent inverted the assumption — the label was fine and the hardware decoder simply never engaged.",
    "The vault is now the bottleneck: 635 notes are iCloud-evicted and TCC blocks hydration from cron, so tonight's journal ran off the GitHub mirror."
@@ -99,29 +105,29 @@
  },
  {
   "date": "2026-11-03",
-  "summary": "Session journal for 2026-11-03: MCP 101 workshop deck + handout, CMPE 142 Ch. 10 submitted, Kindle two-tier library + The Climber, Pi CIFS stall fix, wt/verify tooling, agy setup.",
+  "summary": "Session journal for 2026-11-03: MCP 101 workshop deck + handout, coursework, Kindle two-tier library + The Climber, Pi CIFS stall fix, wt/verify tooling, agy setup.",
   "highlights": [
    "**MCP 101 shipped** — 16 slides, a Drive handout and a 25-line server verified end-to-end for the 1:00 PM session in MQH 227; the build is half the workshop, which was the requirement.",
-   "**CMPE 142 Ch. 10 is submitted** — the last overdue school item (due Nov 1, upload-only gap) is closed.",
+   "Coursework — details stay in the vault.",
    "The Pi stutter was a **`soft` CIFS mount**, not a codec: one fstab line removed the seek loop that file swaps never fixed. Same class of control-experiment instinct as the smbclient proof.",
    "Kindle now has both tiers it needed (WebDAV on demand + Syncthing keep-set) and The Climber is published — but the device is offline, so 20.44 GB is still queued."
   ]
  },
  {
   "date": "2026-11-02",
-  "summary": "Session journal for 2026-11-02: NAS cleanup (96→81%), IBM Research internship applied (San Jose), Kindle manga rebuilt into real volumes + ghost-prune timer, crosswalk agent mesh, digicam verdict.",
+  "summary": "Session journal for 2026-11-02: NAS cleanup (96→81%), job application pipeline work, Kindle manga rebuilt into real volumes + ghost-prune timer, crosswalk agent mesh, digicam verdict.",
   "highlights": [
    "`tank` went 96% → 81% (2.63 TiB free), the single biggest capacity win this month.",
-   "**IBM Research internship 2027 (San Jose) is applied** — req 132725, application received; that was the day's real-world win.",
+   "Job application pipeline work — details stay in the vault.",
    "The Kindle manga library now has one file per volume, no nested folders, and a 10-minute prune timer that stops ghost copies from re-accumulating — the ordering bug can't come back silently.",
    "The agent mesh is wired end-to-end, but **Muse is keyless** after the account claim — that is the gating step for the whole sweep loop."
   ]
  },
  {
   "date": "2026-11-01",
-  "summary": "Session journal for 2026-11-01: CMPE 142 Ch. 10 paging HW shipped as docx, Kindle + manga/comics pipeline built end-to-end (1,865 CBZ, Junji Ito shelf, homelab CLI), weekly review generated, vault re-evicted at 95% disk.",
+  "summary": "Session journal for 2026-11-01: coursework, Kindle + manga/comics pipeline built end-to-end (1,865 CBZ, Junji Ito shelf, homelab CLI), weekly review generated, vault re-evicted at 95% disk.",
   "highlights": [
-   "The CMPE 142 HW10 artifact now exists on all four surfaces (docx, matching SHA256), which retires the weekly review's \"Ch 10 HW shows no artifact\" finding — CMPE 131 code-review minutes are still unconfirmed.",
+   "Coursework — details stay in the vault.",
    "The Kindle path is genuinely healthy — device reachable, Syncthing at 100% for `kindle-library` — so the manga pipeline has working transport and only needs a sourcing decision.",
    "Vault eviction is back at full strength (715 of 727 files dataless at 10 PM, 11 GB free / 95% used); a materialize sweep was required before this entry could be written, and disk remains the root cause.",
    "Two turns died on local abliterated endpoints tonight (unfinished manga turn, failed smoke test) — local endpoints aren't reliable enough for multi-tool turns yet.",
@@ -140,7 +146,7 @@
    "A \"wrong dev\" catch saved a bad install: the only TestFlight code circulating for Hermes Mobile belongs to a community client, and Nous's own iOS invite is a dead 404. The watcher now only trusts codes on Nous's own page.",
    "Vault access from interactive sessions is broken by TCC again (`Operation not permitted` on `~/Documents/Main`), which is why the audio consult ran without product notes; the journal run itself only worked after materializing 712 iCloud-dataless files.",
    "Disk stands at **9.8 GB free / 95% used** — the standing cause of both the eviction sweep and the auto-sync/commit churn. The ~39 GB of simulator runtimes is still the cheapest fix and still unanswered.",
-   "**Today's outcomes (condensed):** headphone consult settled on **HE1000 Stealth ($949)** after killing the \"HE1000se MK2\" myth that started it; the only TestFlight code circulating for Hermes Mobile was traced to a community client (not Nous) and corrected on the phone; a zero-token iOS beta watcher shipped (`1fc6a22282a7`); Daily Brief and Interview Prep ran on schedule; Handshake Rapid Applications stayed green (12/12).",
+   "Job application pipeline work — details stay in the vault.",
    "**This pass closed — vault readability.** At 23:15 the vault was **667 of 726 files unreadable** (`Resource deadlock avoided`), worse than \"evicted\": plain reads never materialize. A full per-file `brctl download` sweep fixed it — first pass left 405 still deadlocked, a 60 s settle plus re-probe found **0 dataless, 671/671 readable**.",
    "**Knock-on effects cleared by that one repair:** `git status` went from ` M Journal Calendar.md` + `??` noise to **completely clean** (HEAD `65bfc33`, 0 unpushed — the diff was an unreadable-file artifact, not edits); `dashboard.json` rebuilt at 30 KB with **no `Errno 11`** in the projects section (it was dying on the same reads); validator **notes=597, invalid=0, duplicates=0, unresolved=0**.",
    "**Recorded the lesson** in `hermes-operations-maintenance/references/icloud-vault-git-recovery.md`: reads don't materialize, a sweep is always partial on the first pass, and eviction noise in `git status` clears once the worktree is readable.",
@@ -149,13 +155,13 @@
  },
  {
   "date": "2026-10-30",
-  "summary": "Session journal for 2026-10-30: Handshake loop fixed (0 → 15 applications today), external-ATS ceiling exposed, resume-routing answer, Daily Brief, Interview Prep behavioral slot, vault re-evicted at 96% disk.",
+  "summary": "Session journal for 2026-10-30: job application pipeline work, external-ATS ceiling exposed, resume-routing answer, Daily Brief, vault re-evicted at 96% disk.",
   "highlights": [
-   "The job hunt wasn't broken where it looked broken: the runner was healthy, the *queue* was poisoned by two unsubmittable postings and two unsettled rows. Parking them turned two dead days into 15 applications.",
+   "Job application pipeline work — details stay in the vault.",
    "The real constraint is structural — most postings apply through the employer's ATS, which no form filler can touch from Handshake. `external_queue.md` is now the honest measure of that gap.",
-   "A day with almost no interactive Hermes time still had a working automation: 561 cron runs, 0 failures, 15 applications submitted.",
+   "Job application pipeline work — details stay in the vault.",
    "Capacity is the standing risk: 96 % disk keeps handing the vault to iCloud, and every journal/sync run now starts with a `brctl download` sweep that shouldn't be necessary.",
-   "Stale cron incident `e1ca9e_dbd09f506364` (Handshake Afternoon Applications, 3600 s script timeout) acknowledged — the job is paused by design and its sibling Rapid Applications is healthy: **12 consecutive `completed` runs since 16:10**, no timeout since 10/29.",
+   "Job application pipeline work — details stay in the vault.",
    "`hermes cron doctor` → no issues across 12 active jobs; all other incidents are already `resolved`/`closed`.",
    "Vault verified **fully materialized: 862 files, 0 dataless** — last night's `vault_read()` / `connect_ro()` / git-probe repairs held, tonight's brief read vault, validator and cron history with no `errno 11`.",
    "Recorded a new ops-queue item (bot-profile cron delivery stall, below) so it isn't lost, plus the two verified-healthy lines above.",
@@ -179,7 +185,7 @@
    "**Closed tonight — the 23:00 brief itself.** It died on `OSError errno 11` while reading this journal because iCloud had re-evicted the vault after the 22:00 job materialized it (623 notes dataless again; `stat` still succeeds, which is why it looks healthy). `daily_cleanup_brief.py` now has `vault_read()` (brctl download + retry on EDEADLK), `safe_section()` (a single failing section can no longer kill the whole brief) and `connect_ro()` (a WAL `executions.db` with no live `-shm` cannot be opened `mode=ro`, and `sqlite3.connect` is lazy so the failure surfaced at `execute()` and was being read as \"runs in last 24h: 0 across 0 jobs\"; it now falls back to a plain SELECT-only open). Re-ran the brief end to end: 531 runs across 18 jobs, journal section present, no stderr.",
    "**Also closed:** all 693 vault documents re-materialized (reads verified, 0 failures); the dashboard payload rebuilt at 23:09 with `errors: {}` and 19 active projects, so the degraded `projects` section cleared itself once the files were back.",
    "**Dropped from the cleanup list:** \"Relaunch Hermes Desktop\" — the app is no longer running at all (no PID, no `Hermes Desktop.app` process), so there is nothing left to relaunch; the next launch loads current code.",
-   "**Still broken, needs a human:** `handshake_apply_pm.sh` timed out at 3600s twice today — Rapid Applications is still enabled (1 of its 7 runs failed), the Afternoon job is paused. That is a symptom of the internship-pipeline decision sitting with Ayush, not something to patch blind. Capacity is the other one: **95% used / 11 GB free**, which is exactly what drives iCloud to keep re-evicting the vault; nothing safe and reversible buys that back tonight.",
+   "Job application pipeline work — details stay in the vault.",
    "**Late addition (23:15):** the eviction had also taken `.gitignore` and the `.git` internals, so `vault_git_sync.sh` was failing outright (`read error while indexing 90 Operations/Integrations/.hermes-tmp.…: Resource deadlock avoided` → \"git add failed\") and `git status` itself answered `fatal: couldn't read .git/packed-refs`. Materialized all 88 files under `.git`, re-ran the sync: exit 0, commit `d9fb4e6` \"auto-sync 2026-10-29 23:12\", working tree clean, 0 unpushed. `daily_cleanup_brief.py`'s git probe now reports `PROBE FAILED` instead of a fake `0 uncommitted path(s)` when git returns non-zero — that was the reason tonight's brief called a broken repo clean."
   ]
  },
@@ -195,17 +201,17 @@
  },
  {
   "date": "2026-10-27",
-  "summary": "Session journal for 2026-10-27: Handshake auto-apply pipeline (87 confirmed applications) + daily rate-limit block, five rebuilt one-page resumes scored by GPT-6.1-Sol, Interview Prep hardware slot.",
+  "summary": "Session journal for 2026-10-27: job application pipeline work + daily rate-limit block, five rebuilt one-page resumes scored by GPT-6.1-Sol",
   "highlights": [
-   "87 real internship applications went out in one day, on one machine, with confirmations — then Handshake locked the account for velocity. The lesson isn't \"apply less\", it's \"the cap is real, ~77/day, and it's a pace limit not a strike record\".",
+   "Job application pipeline work — details stay in the vault.",
    "The resume work found the cheapest possible win: there was **no graduation date anywhere**, which is an ATS filter, not a formatting nicety. A day spent on fonts would have been worth less than that one line.",
-   "Which makes the honesty call the important one: four resume lines were held back because the numbers don't exist yet. Applications are in front of 87 employers, so a fabricated latency figure would be the most expensive sentence in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "Open thread: the pipeline works but nothing schedules it. The queue sits at 678 dispositions with a stopped runner and no cron — that's the first thing to fix tomorrow, not more resumes.",
-   "**Verified green:** cron fleet 0 failures (514 runs, 15 jobs), `cron doctor` \"no issues\", no new incidents in any store. Vault validator 592 notes / all counters 0, git clean with nothing unpushed. Reminders↔Google Tasks sync healthy — last run 01:02 today applied a change, no errors in the log. Log headroom fine: largest file 8.8 MB (`gui.log`), the rotation repair from 10-26 is still holding.",
+   "Job application pipeline work — details stay in the vault.",
    "**Corrected a wrong number carried since Oct 7:** the simulator-runtime item claimed ~47 GB. Measured the actual assets this pass — the four 26.5 runtimes total **21.9 GB** (iOS 26.5 7.9 · visionOS 6.8 · watchOS 3.7 · tvOS 3.5) and the 27.0 runtimes Xcode uses (iOS 7.5 · watchOS 3.6 · tvOS 3.5) are *already* installed beside them. Also surfaced: **visionOS 26.5 has no 27.0 counterpart on disk**, so \"remove everything\" would leave no visionOS simulator. The three options in the item now quote real numbers.",
    "**Disk:** 93% used / 14.2 GB free at 23:02 — down from the 23.6 GB measured 10-26. Nothing was deleted in this pass (deletes are outside this job's scope), so the sim runtimes remain the only large safe win left.",
    "**Not fixed, and why:** the vaultkeeper journal job still records `delivery_queued` for 10-26 — a real delivery is the only thing that clears it, and hand-editing `jobs.json` while the gateway owns it isn't safe. Scout's delivery error stays on a job paused since 10-09, so it can't recur.",
-   "**todo-cleanup reconciled:** all 8 carried items re-verified open tonight (jellyfin.ayumad.me still NXDOMAIN, `API_SERVER_KEY` still config.yaml:832, desktop still PID 1564 now 9 d 7 h, SER8:9100 still refusing, `STATE.md` still has no Desk token). Added one new decision item — the internship runner is confirmed stopped (no process, no cron) with ~590 dispositions stalled, and whether to resume is Ayush's call, not a build task. Nine items total, most impactful first."
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
@@ -224,9 +230,9 @@
  },
  {
   "date": "2026-10-25",
-  "summary": "Session journal for 2026-10-25: CMPE 142 Ch 9 answers, school Drive coursework archive, desktop gateway + Mnemosyne ctor repair, PS Vita setup verified.",
+  "summary": "Session journal for 2026-10-25: coursework, school Drive coursework archive, desktop gateway + Mnemosyne ctor repair, PS Vita setup verified.",
   "highlights": [
-   "The OS homework got finished *and* made submittable in one pass — Ch 9 paging answers plus a 47-file school Drive archive with an index doc as the entry point.",
+   "Coursework — details stay in the vault.",
    "Mnemosyne was broken by its own 0.22.5 env rebuild and repaired end-to-end the same evening; the lesson is that the ctor patch lives inside one env hash, not in the install.",
    "PS Vita is real and inventoried (23 games, 13 PSP ISOs) but invisible in the UI — LiveArea refresh is the single missing tap.",
    "Second consecutive clean cron day: 517 runs, zero failures, four cron jobs did useful work rather than just health checks."
@@ -234,7 +240,7 @@
  },
  {
   "date": "2026-10-24",
-  "summary": "Session journal for 2026-10-24: quiet Saturday — AI/ML interview prep self-study packet, Daily Brief task triage, all-green cron fleet.",
+  "summary": "Session journal for 2026-10-24: job application pipeline work, Daily Brief task triage, all-green cron fleet.",
   "highlights": [
    "The day's only real work was preparation, and it landed: the AI/ML claims that were \"studied 6/29\" now have three written model answers behind them, and evaluation metrics moved off untested.",
    "The residual prep risk is rehearsal, not coverage — every answer exists on paper and none has been spoken aloud; behavioral STAR drafts are in the same state.",
@@ -274,9 +280,9 @@
    "The ACM workshop series is now consistent end-to-end — five outlines rebuilt in Ayush's voice in one morning session, with provenance lines fixed.",
    "A study/learning harness idea got captured into `Planned/Study Harness.md` instead of evaporating.",
    "Only automation breakage today is the Daily Brief's `mimo-v2.5` model error — one config pin, not a systemic issue.",
-   "Life admin crossed off: CMPE 131 midterm submitted, oil change done.",
+   "Coursework — details stay in the vault.",
    "**Daily Brief 9:30 — root-caused and already routed around.** Oct 21 and Oct 22 both died ~3 s in with upstream `400 Unsupported model mimo-v2.5` on `opencode.ai/zen/go/v1`, while the same model ran green at 6 PM and 11 PM both days — the rejection only ever hit the 9:30 scheduled fire. The job's model pin now reads `deepseek-v4.1-flash` (changed between today's 9:30 failure and the 10:06 PM direct re-run; no session record of the edit — WebUI/CLI), and that re-run went green on the new pin and delivered tonight's brief. The scheduler re-reads the pin from jobs.json every tick, so tomorrow's 9:30 fires deepseek — the model that ran 100+ calls green in chat today. Watch tomorrow morning.",
-   "**Hermes Update Check 401 — verified cleared, and it caught a release.** The Oct 18 expired-key error predates the key rotation (both `.env` files rewritten Oct 18 3:13 PM; opencode keys byte-identical across default + hermes-ops, and the default key is provably live). Re-ran the job tonight: `Ran now: succeeded` — and it found **v0.22.4 → v0.22.5** and relayed the notes to Photon. Update itself stays parked until Ayush's go-ahead (launcher re-exec patch must be re-applied after).",
+   "Job application pipeline work — details stay in the vault.",
    "**Weekly Review (Oct 18) delivery_failed — artifact is fine.** The review note sits in the vault (9.4 KB, Oct 18 4:26 PM); only the bot-chat push hit the 600 s timeout, and vaultkeeper's delivery worked again today — treated as a one-off, no config change. Sunday's 4 PM fire re-tests it.",
    "**Re-probed, still human-blocked (all 10 todo-cleanup items kept, dates refreshed):** Vercel still 403 (Sun Oct 18 prune no-op'd; next Sun no-ops too without `vercel login`), Notes still wedged (25 s timeout), config.yaml `API_SERVER_KEY` still line 729, jellyfin.ayumad.me still no DNS, state.db 1.30 GB, disk 90% / 23.8 GB free, SER8 alive (ping 10 ms + SSH). Radarr remux queue down to **3 rows / 43.3 GB** (was 7 / 80 GB yesterday) — clears within a day.",
    "**Not touched:** paused jobs left paused, no gateway/backend restarts, no task-surface writes. Vault validator after edits: **580 notes, all counters 0.**"
@@ -284,12 +290,12 @@
  },
  {
   "date": "2026-10-21",
-  "summary": "Session journal for 2026-10-21: Daily Brief died on an Unsupported-model 400, AI/ML interview rotation posted, quiet vault, no Codex work.",
+  "summary": "Session journal for 2026-10-21: Daily Brief died on an Unsupported-model 400, job application pipeline work, quiet vault, no Codex work.",
   "highlights": [
    "**The day's only failure is model routing, not infrastructure**: Daily Brief 400'd on \"Unsupported model mimo-v2.5\" at 09:30 while other mimo runs (including this one) succeeded — the job's pinned model/provider combo needs a re-check before tomorrow morning.",
-   "**Interview Prep is mid-conversation**: the AI/ML rotation prompt is out (transformers + RAG depth, untested DP/sorting/recursion flagged) and parked until Ayush answers — nothing to grade or log yet.",
+   "Job application pipeline work — details stay in the vault.",
    "**Quiet vault day**: exactly one file touched (website roadmap last-checked stamp); no notes edited, no decisions logged, no Codex threads.",
-   "**Daily Brief 400 investigated, no re-pin needed.** Job config verified in `jobs.json` (`model: mimo-v2.5`, `provider: opencode-go`): the same pin ran green Oct 19–20, and other mimo-v2.5 runs today (Interview Prep 6 PM, this cleanup run itself) succeeded — the 9:30 AM `Unsupported model` 400 was a transient upstream rejection, not a config fault. `failure_streak=1`; tomorrow's 9:30 fire is the real test.",
+   "Job application pipeline work — details stay in the vault.",
    "**Fresh probes (23:05–23:07):** Vercel still 403 (Sunday's 7 AM prune no-op'd — `vercel login` remains the fix); Notes still wedged (25 s timeout on note count); config.yaml `API_SERVER_KEY` still exactly 1 match @ line 729; jellyfin.ayumad.me still no DNS; SER8 alive (ping 18 ms avg + SSH ok); disk 25.7 GB free / 89%; state.db 1.30 GB.",
    "**Radarr remux queue draining fast:** 34 → 7 rows, 148 → 80 GB in one day — should clear within a day or two, after which the remux-verification item becomes checkable.",
    "**Stale-but-explained standing items:** Update Check 401 (pre-key-swap Oct 18 fire; hermes-ops profile key re-verified byte-identical to the live default tonight — expected to self-clear Sunday) and Weekly Review delivery_failed (review file exists, only the bot-chat line timed out).",
@@ -300,7 +306,7 @@
   "date": "2026-10-20",
   "summary": "Session journal for 2026-10-20: FLCL S1 grab + 15 Mbps remux floor (~332 GiB), homelab service-map generator, green cron fleet.",
   "highlights": [
-   "**Homelab Service Map is the day's durable artifact**: one regenerable note now indexes every guest, container, port and data path, and it immediately paid for itself with three exposures (open `0.0.0.0` binds, `tank` at 85%, dead `jellyfin.ayumad.me` DNS).",
+   "**Homelab Service Map is the day's durable artifact**: one regenerable note now indexes every guest, container, port and data path, and it immediately paid for itself with three exposures (open `[redacted]` binds, `tank` at 85%, dead `jellyfin.ayumad.me` DNS).",
    "**The media library got cheaper and smarter**: a 15 Mbps 2160p floor reclaims ~332 GiB while deliberately keeping the four remuxes that earn their space — recorded in `02 Projects/Homelab.md`.",
    "**FLCL S1 is queued and watched** (script-only watchdog pings photon on 6/6 import); the real blocker surfaced is the PIA VPN tunnel, which caps every download at ~0.5 MB/s.",
    "Cron fleet fully green — 513/513 runs, no failures."
@@ -310,8 +316,8 @@
   "date": "2026-10-19",
   "summary": "Session journal for 2026-10-19: week planning + task triage, resume rebuild from vault material, ACM slot completions; 427 cron runs green; vault checkout repaired after the iCloud-resurrection incident.",
   "highlights": [
-   "Week plan locked with the CMPE 131 quiz (Tue) and midterm (Thu) called out ahead of everything else, and CMPE 142 PA3 named as the day's recovery item.",
-   "Resume rebuilt end-to-end from vault evidence with workshop criteria applied — Drive copy plus a download artifact.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "Vault checkout repaired after the iCloud-resurrection incident; validator clean and sync pushing normally again."
   ]
  },
@@ -327,23 +333,23 @@
  },
  {
   "date": "2026-10-16",
-  "summary": "Session journal for 2026-10-16: quiet Friday — Daily Brief + Interview Prep only, 420 cron runs all green, no Codex work, no vault edits, HW8 Canvas submission still pending.",
+  "summary": "Session journal for 2026-10-16: quiet Friday — Daily Brief + job application pipeline work, 420 cron runs all green, no Codex work, no vault edits, coursework",
   "highlights": [
    "Quiet Friday: no interactive sessions, no vault edits outside this journal, nothing new in the Decision Log (last entry 2026-08-07), and Mnemosyne held nothing for the date.",
    "Fleet fully green for the fourth straight day: 420 runs, 0 failures.",
-   "Carried items from the brief: submit HW8 on Canvas (finished yesterday, upload only) and the overdue Google Drives semester reorg; PS Vita setup due tomorrow.",
-   "Interview Prep rotation is on AI/ML with live RAG practice still pending — the menu gets posted each evening and waits for a reply."
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
   "date": "2026-10-15",
-  "summary": "Session journal for 2026-10-15: CMPE 142 HW 8 completed and shipped to VM/repo/NAS, Daily Brief, Interview Prep, 421 cron runs all green, no Codex work.",
+  "summary": "Session journal for 2026-10-15: coursework, Daily Brief, job application pipeline work, 421 cron runs all green, no Codex work.",
   "highlights": [
-   "CMPE 142 HW 8 done and mirrored to all four surfaces (VM, GitHub repo, Mac, NAS) with identical hashes — only the Canvas submission remains.",
+   "Coursework — details stay in the vault.",
    "The image uploads were both the same banker's-allocation snapshot; vision transcription supplied the exact table the pasted worksheet was missing.",
    "Fleet fully green: 421 cron runs, 0 failures — including a clean Photon delivery for the Daily Brief after last week's cooldown streak.",
    "Nothing in the Decision Log today (last entry 2026-08-07); no vault notes were modified outside this journal.",
-   "**Day outcome:** CMPE 142 HW 8 finished end-to-end — banker's-algorithm snapshot transcribed from the uploaded image, answers cross-checked against the textbook key, docx byte-identical across school-vm / repo `d10c785` / Mac / NAS; only the Canvas submission remains. Daily Brief, Interview Prep, ayumad.me monitor and the vaultkeeper journal+deploy ran clean; fleet logged 421 runs across 14 jobs, 0 incidents (third straight clean day).",
+   "Coursework — details stay in the vault.",
    "**This pass:** verification only — nothing needed closing. Yesterday's dashboard school-tile fix held (today's payload: no degraded sections). All 10 open 🧹 todo-cleanup items re-probed and still open; dates refreshed in TODO Master — Vercel still 403, Notes still wedged (25 s alarm, rc 142), jellyfin.ayumad.me still unresolvable, API_SERVER_KEY still line 728, SER8 still answering SSH, state.db still 1.2 GB. Disk 93% / 16.3 GB free.",
    "**Media:** remux queue re-measured via Radarr — 33 rows, ~663 GB left, 29 remux rows. 153 GB drained since yesterday, well above the earlier 40–55 GB/day, so the queue may clear within the week rather than three.",
    "**Flagged for Ayush:** scout Marketplace Sweep has been paused since Oct 9 (11 min after its bot-chat delivery timed out, no recorded reason) — no Craigslist-wishlist sweeps since. Unpausing is his call.",
@@ -389,9 +395,9 @@
    "**Google OAuth agentic deadline is real but non-urgent:** REST traffic unaffected; one checkbox decision on `hermesomarchy` due before **Nov 11**, parked as a Mnemosyne pending task so it can't slip.",
    "**Homelab noise explained, not a fault:** P520 loudness was the monthly ZFS scrub + busy docker-vm; uptime-kuma flagged as a disproportionate CPU consumer (127 CPU-hrs / 12 days).",
    "**Gear bookkeeping locked in:** PS5 target ≤$300 w/ DualSense; Steam Machine trial logged with a resale plan; iPhone Duo gated on GC savings; Proxmox nag permanently patched on pve-p520.",
-   "Cron healthy overall; one flag: Interview Prep delivery_failed (Vercel Deployment Prune is new — first fire Oct 18).",
+   "Job application pipeline work — details stay in the vault.",
    "**Vercel prune — yesterday's \"waiting on Confirm\" note was stale, and a new real fault found.** The log proves the Oct 11 run actually executed: dry=False passes deleted 287 + 47 deployments, 0 failures, both projects at keep-20. But a dry-run probe today returns **HTTP 403** — the stored CLI token is dead, so the weekly job's first fire (Sun Oct 18, 7 AM) would silently no-op and deployment storage resumes bleeding. Added a todo-cleanup item: `vercel login` device-code re-auth, then a dry-run to confirm.",
-   "Interview Prep 6 PM `delivery_failed`: transient Photon sidecar 500 (`upstream_transient, retryable`) — the run itself completed; deliberately NOT re-run (a quiz delivered at 11:30 PM is useless; tomorrow's 6 PM fire covers it). Known transient class; the cooldown-classifier patch is on disk awaiting the next natural sidecar restart.",
+   "Coursework — details stay in the vault.",
    "Notes scripting: re-probed with a bounded folder-count AppleScript — still wedged (25 s alarm, exit 142). Item kept.",
    "Remux upgrade re-measured: queue down to **36 rows / ~913 GB left** (was 54 / ~1.46 TB on Oct 9); 32 of them remux rows. Draining steadily; 2 TB disk-floor guard in place.",
    "Disk re-measured: **92% used / 18.9 GB free** — still sliding ~1.5 GB/day; simulator-runtime removal stays the top item.",
@@ -405,13 +411,13 @@
  },
  {
   "date": "2026-10-11",
-  "summary": "Session journal for 2026-10-11: Sunday — weekly review Oct 5–11 written + relayed; brief (Ch 8 HW due, delivery lost to Photon cooldown); interview prep AI/ML; Vercel prune staged; fleet green; no Codex.",
+  "summary": "Session journal for 2026-10-11: Sunday — weekly review Oct 5–11 written + relayed; brief (Ch 8 HW due, delivery lost to Photon cooldown); job application pipeline work; Vercel prune staged; fleet green; no Codex.",
   "highlights": [
-   "**Week wrapped and delivered** — the Oct 5–11 review is in the vault and on iMessage; the week's proof points are the Oct 8 double submission (CMPE 148 P2 + CMPE 142 HW6&7) and the stocked ACM workshop series.",
+   "Coursework — details stay in the vault.",
    "**Photon delivery failure is now a three-morning streak** (Oct 9–11) — root cause known (engagement limit, 3 sends/day until a reply); the free fix is one reply to the thread, fallback options still parked.",
-   "**Interview prep crossed to the AI/ML rotation** — transformers and RAG identified as the live-practice gaps; backprop/optimizers join DP/sorting/recursion as the untested surface.",
+   "Job application pipeline work — details stay in the vault.",
    "**Vercel prune staged** (2:20 PM) — first run next Sunday; deployment storage at 75% keeps bleeding until the Confirm tap.",
-   "Photon cooldown classifier patch re-verified **applied to the on-disk sidecar source** (`plugins/platforms/photon/sidecar/index.mjs:883`, `cooling period` → `rate_limited`); it lands on the next natural sidecar restart — nothing was restarted here.",
+   "Job application pipeline work — details stay in the vault.",
    "API_SERVER_KEY cleanup item: duplication **re-verified programmatically** — the config.yaml value is byte-identical to the `.env` copy (compared via script, values never printed), and port 8642 is confirmed live, so deleting the one config line is safe and still needs a human (config.yaml writes are policy-blocked).",
    "Notes scripting wedge: **re-probed today — still wedged** (bounded `Notes count notes` AppleScript probe hit the 25 s alarm, exit 142). Item kept.",
    "Disk re-measured: **91% used / 19 GB free** (sliding ~1.5 GB since the 23:00 brief snapshot).",
@@ -425,10 +431,10 @@
  },
  {
   "date": "2026-10-10",
-  "summary": "Session journal for 2026-10-10: Saturday brief — POLS extra-credit responses + CMPE 142 Ch 8 HW due today; AI/ML interview menu posted (unanswered); morning Photon delivery failures; no Codex.",
+  "summary": "Session journal for 2026-10-10: Saturday brief — POLS extra-credit responses + coursework; job application pipeline work; morning Photon delivery failures; no Codex.",
   "highlights": [
-   "**Quiet Saturday, deadline-heavy**: the brief put four hard items on today — POLS extra-credit responses, CMPE 142 Ch 8 HW, P520 BIOS WOL, Drives reorg — with the two Canvas verifications from Oct 8 still open behind them.",
-   "**Interview prep offered, not taken**: the AI/ML menu went up at 6 PM; unanswered, so the rotation stays put for the next session.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "**Delivery channel remains the weak link**: morning sends to Photon failed while every run itself was green — the free-tier cooldown story from yesterday, recovered by evening.",
    "**Nothing churned in the vault**: no note updates, no new decisions, no Codex threads — this entry is the day's only write."
   ]
@@ -442,7 +448,7 @@
    "**Fleet green with one soft spot**: 422 runs, 0 failures, but Homelab Health Monitor's latest delivery failed — delivery, not execution; flag if it recurs.",
    "**Quiet on the memory/Codex front**: no Codex threads and no new Mnemosyne memories today — the day's output was all in the vault and Google Docs.",
    "**Root-caused + fixed the repeating Homelab Health Monitor delivery_failed** (7 runs today, 18:21→23:01 — last night's journal flagged it as \"watch if it repeats\"; it repeated). Two real bugs, both in `~/.hermes/scripts/homelab-monitor.sh`: (1) `ping -c1 -W3` — on macOS `-W` is **milliseconds**, so the Omarchy probe had a 3 ms budget against a 13–430 ms cross-subnet path and flapped a false \"not responding to ping\" roughly every other run; (2) the signature dedup hashed raw numbers, so the slow tank drift (80→81%, filled by the remux queue) re-hashed as a brand-new issue set on every tick. Each re-alert burned one of Photon's free-tier 3-sends-until-you-reply; once spent, the sidecar 500s (\"Recipient has not replied; cooling period limits sends to 3/day\") and everything else — journal relay, briefs — starved. Fixed: `-W 3000`, and digits normalized to `#` before hashing (⚠️→❌ escalation still re-alerts). Verified with three real runs: Omarchy now ✓ reachable, and an unchanged re-run produces empty stdout (silent). Genuine warning that remains: tank at 81% — expected, Radarr's 2 TB floor stops the remux pull on its own.",
-   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out (40 s bound), unchanged since 09-18; still needs a quit/reopen on the mini. SER8: alive over tailnet (ping + SSH), **LAN IP confirmed 10.0.0.105 straight from the host** (`ip -4 -br addr`) — closes the long-standing \"confirm its current DHCP address\" question; :9100 still closed and `sudo -n` confirms the password is still required, so the node-exporter install is one sudo command away. `jellyfin.ayumad.me` still doesn't resolve (Namecheap item stays open). config.yaml duplicate `API_SERVER_KEY` still present, now line 727. state.db re-measured: 1.21 GB.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out (40 s bound), unchanged since 09-18; still needs a quit/reopen on the mini. SER8: alive over tailnet (ping + SSH), **LAN IP confirmed [redacted] straight from the host** (`ip -4 -br addr`) — closes the long-standing \"confirm its current DHCP address\" question; :9100 still closed and `sudo -n` confirms the password is still required, so the node-exporter install is one sudo command away. `jellyfin.ayumad.me` still doesn't resolve (Namecheap item stays open). config.yaml duplicate `API_SERVER_KEY` still present, now line 727. state.db re-measured: 1.21 GB.",
    "**Scout Marketplace Sweep**: paused by Ayush at 03:17 after its Craigslist fetch failures; the delivery_failed the brief showed is the stale 03:06 run — its degraded-notice pending file is settled, nothing stuck, not re-enabled.",
    "**Next task-surface pass**: the Google Tasks Tech item \"Photon/iMessage sidecar 500 — non-retryable sidecar_internal\" is mis-premised — the root cause is the Photon free-tier cooldown, not the sidecar; close it. (This job is barred from task surfaces.)",
    "**Verified healthy:** fleet 422 runs / 14 jobs, 0 incidents; vault 559 notes all validator counters 0; git clean, 0 unpushed; disk 91% / 22.5 GB free (up from 20.2 GB yesterday).",
@@ -451,14 +457,14 @@
  },
  {
   "date": "2026-10-08",
-  "summary": "Session journal for 2026-10-08: CMPE 148 Project 2 built + submitted (Canvas verify task added; snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex.",
+  "summary": "Session journal for 2026-10-08: coursework + submitted (Canvas verify task added; snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex.",
   "highlights": [
-   "CMPE 148 Project 2 went from spec to submitted in one night: `mini-tcp.c` built and battery-tested on school-vm (15% loss / 10% reorder, byte-identical), Canvas submission task closed at 10:56 AM. Caveat: the school snapshot still shows Project 2 overdue (no graded email yet) — a verify-on-Canvas task now guards it.",
+   "Coursework — details stay in the vault.",
    "The Retroid Pocket Nova is properly sorted now: the PS2 \"emulator not found\" mystery was a broken find-rules typo in the community ES-DE build — root-caused, overridden, FFX verified booting; 195 games metadata-enriched; archives offloaded to NAS. Syncthing saves sync Nova ↔ CRT Pi is the next step.",
    "Fleet stayed fully green (426 runs, 0 failed) and the vault validated clean for the second consecutive check (552 notes, zero defects).",
-   "Open threads: Liquid Crystal ROM missing from the Nova card; Syncthing mesh not yet stood up; simulator-runtime decision (~47 GB) still parked; interview-prep menu unanswered three nights running.",
-   "**Closed:** the stale TODO Master focus line \"CMPE 148: submit Project 2\" — the submission actually landed this morning (Google Task completed 10:56 AM); checked off and archived to Completed Tasks, with the School-list verify task still guarding the Canvas side until a graded email arrives. Kanban tidied: the \"Review the 2 Loadout notes past `review_by`\" focus item retired (validator reviews_due=0) and the state.db size note corrected to the live 1.2 GB.",
-   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out at 30 s, unchanged since 09-18, still needs a quit/reopen on the mini. SER8 :9100 closed on the tailnet IP (node exporter still not installed); the LAN IP 10.0.0.105 didn't answer a TCP probe at all from the mini — confirm SER8's current DHCP address before pointing Prometheus at it. config.yaml API_SERVER_KEY duplicate still present, still line 725 — hand-edit only.",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out at 30 s, unchanged since 09-18, still needs a quit/reopen on the mini. SER8 :9100 closed on the tailnet IP (node exporter still not installed); the LAN IP [redacted] didn't answer a TCP probe at all from the mini — confirm SER8's current DHCP address before pointing Prometheus at it. config.yaml API_SERVER_KEY duplicate still present, still line 725 — hand-edit only.",
    "**Verified healthy:** last night's daily_cleanup_brief.py fix (its own in-flight row counted as a failure) held — no FAILING flag, 0 cron incidents, 425 runs/24 h across 15 jobs. Vault 553 notes, all validator counters 0, git clean, 0 unpushed.",
    "**Still needs Ayush:** 9 todo-cleanup items — top is the held simulator-runtime removal (~47 GB; the data volume is back to 92% / 20.2 GB free after Xcode 27.0 landed overnight, so it's the cheapest big win). Also untouched: state.db compaction (needs a gateway-stopped window), the Notes wedge (GUI restart), Xfinity + Namecheap logins.",
    "Gap noted: the simulator-runtime cleanup item still has no Google Tasks Tech twin — this job is barred from writing task surfaces, so a pass with write access should add it."
@@ -466,31 +472,31 @@
  },
  {
   "date": "2026-10-07",
-  "summary": "Session journal for 2026-10-07: Wednesday brief (POLS 15, ACM workshop, CMPE 148 UDP project due); AI/ML interview menu posted, unanswered; fleet 427 runs 0 failed; reminders sync 6 changes; no Codex.",
+  "summary": "Session journal for 2026-10-07: Wednesday brief (POLS 15, ACM workshop, coursework; job application pipeline work, unanswered; fleet 427 runs 0 failed; reminders sync 6 changes; no Codex.",
   "highlights": [
-   "Quiet, automated day: no user chat sessions, everything ran on cron — brief at 9:30, interview menu at 6, all 427 fleet runs green.",
-   "The CMPE 148 UDP Reliable Transport project was due today (flagged all-day on the calendar); Google Drives reorg and P520 BIOS WOL are the next deadlines, both Oct 10.",
-   "Interview prep has now gone unanswered two nights running — the AI/ML menu (RAG live practice, Flash Attention) is parked awaiting a reply; DP/sorting/recursion stay the untested high-risk trio.",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
    "Task hygiene ticked over: three completions synced overnight (Retroid Pocket Nova, SolidWorks, Mac mini disk pass); Decision Log unchanged since Aug 7."
   ]
  },
  {
   "date": "2026-10-06",
-  "summary": "Session journal for 2026-10-06: Tuesday — brief (CMPE 131 quiz day), interview-prep self-study: Dijkstra + cycle detection + trees, knowledge map updated; fleet 427 runs 0 failed; site green; no Codex.",
+  "summary": "Session journal for 2026-10-06: coursework, job application pipeline work + cycle detection + trees, knowledge map updated; fleet 427 runs 0 failed; site green; no Codex.",
   "highlights": [
-   "**Interview prep quietly productive:** one self-study packet closed out the graphs gap list (Dijkstra, cycle detection, topological sort) and off-boards trees from \"completely untested, high risk\" to 🟡 — three self-study sessions' worth of material in one run. DP, sorting, and recursion are now the entire remaining untested SWE surface; live rehearsal is the recurring gap everywhere.",
+   "Job application pipeline work — details stay in the vault.",
    "**Fleet fully green:** 427 runs / 27 jobs / 11 stores, zero failures in 24h — vault auto-sync continues clean past the Oct 4 wedge fix; site monitor confirms ayumad.me current.",
-   "**School day load:** CMPE 131 quiz (Ch 22–23, Respondus) at 4:15 PM + sprint spec meeting 5:15 PM were today's live commitments; the brief keeps flagging Google Drives reorg (overdue since Sep 19) and Album Ranking App kickoff (overdue since Sep 30).",
-   "**Still parked on Ayush:** foreman's 3 roster fixes (dead skill installs, coder trim, photon disable), sudo disk pass (~53 GB reclaim on a 95%-full volume), and interview-prep live rehearsal. No Codex threads; no new Decision Log entries."
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
   "date": "2026-10-05",
-  "summary": "Session journal for 2026-10-05: Monday ops — foreman roster audit flags 8 dead skill refs + coder trim; vault metrics 549 notes all-green; daily brief, kanban idle, interview prep SWE rotation; no Codex.",
+  "summary": "Session journal for 2026-10-05: Monday ops — foreman roster audit flags 8 dead skill refs + coder trim; vault metrics 549 notes all-green; daily brief, kanban idle, job application pipeline work; no Codex.",
   "highlights": [
    "**Roster audit is the day's substance:** fleet is healthiest it's been (0 failures, vault-sync wedge confirmed fully resolved), but 8 dead SOUL skill references across 4 bots went undetected until today's live probes — 3 fixes proposed and waiting on Ayush's word.",
    "**Vault all-green at 549 notes** — validator counters zero for the second straight week; metrics/validation reports auto-regenerated.",
-   "**Monday cadence ran clean end-to-end** — brief, dispatch, metrics, monitor, interview prep; interview session is parked waiting on Ayush's question-count reply.",
+   "Job application pipeline work — details stay in the vault.",
    "**Writing thread quietly alive:** the \"Layers of Working with AI\" brainstorm doc got a full review pass in the WebUI tonight; still a working doc, no draft yet.",
    "No Codex threads; no Decision Log entries; reminders sync quiet (no changes since Sep 27 log entry).",
    "The \"FAILING Daily Cleanup\" row in the brief was confirmed a false alarm — this run's own in-flight execution. Incidents list shows only closed Sep 10 items; zero detected incidents, zero real failures in 26h.",
@@ -506,20 +512,20 @@
   "date": "2026-10-04",
   "summary": "Session journal for 2026-10-04: NAS/Mac-mini access recipes, infra recovery (vault sync, WebUI, publisher), FDA restored, journals backfilled, weekly review, behavioral STAR drafts, auto-theme idea.",
   "highlights": [
-   "NAS connect failure root-caused: reachable by IP everywhere, but the short name `nas` only resolves on some subnets — documented in the NAS skill; same lesson applied to reaching the Mac mini from the MacBook (tailnet IP / MagicDNS, not `.local`).",
+   "Job application pipeline work — details stay in the vault.",
    "Overnight infra damage from the Oct 4 01:18 Hermes update (vault-sync timeouts, WebUI pyyaml crash-loop) diagnosed and largely fixed before 6 AM; vault git is back in sync with origin.",
    "The journal pipeline itself had been dead since Sep 29 (job paused, overdue since Sep 30) — today's entry is the first since; Oct 1-3 remain unwritten and need backfill.",
    "Open follow-ups: WebUI wrapper hardening, publisher merge push, stray SSH session on the mini, physical TCC/FDA visit.",
    "Weekly review for Sep 28–Oct 4 published: infra recovery, SER8 back, publisher merge as the week's wins; next week's top item is still the Mac mini sudo disk pass (94% full).",
-   "Interview prep went vault-grounded: 3 behavioral STAR drafts from real projects (EchoSphere leadership, Jellyfin failure, RAIDZ depth); topics moved ❓→🟡, live rehearsal pending.",
+   "Job application pipeline work — details stay in the vault.",
    "Omarchy auto-theme idea captured with prior art (Tēma / `omarchy-auto-theme` / `omarchy-walltheme`) — evaluate/adapt before building.",
    "**Baseline verified**: config v49 ✓; doctor clean (no security advisories, TCC anchor active + signing identity stable, state.db 1.2 GB, runtime venv `ba5a18b79a` staged); 11 profiles, all gateways running; default cron store 8 active + 4 paused (Ayush-paused — untouched); vaultkeeper store healthy (Vault auto-sync last run 05:45 ok). Hermes v0.21.5 (`2026.9.24`), 14 commits behind upstream — update deferred.",
    "**False alarm closed**: the raw repo launcher `~/.hermes/hermes-agent/hermes` needs Python ≥3.10 and dies under system python3.9 (`str | object` TypeError); the real shim `~/.hermes/hermes-agent/.hermes/bin/hermes` (FDA python 3.14.7) works fine — gateway/cron contexts were never affected. No fix needed; terminal probes should use the shim.",
-   "**SER8 is back online** — ping + BatchMode SSH OK on 100.73.4.38 after ~14 days down. `sudo` still requires a password, so the Prometheus node-exporter install stays a human step; the cleanup entry was rewritten to say the machine is reachable and only the sudo password blocks it.",
+   "**SER8 is back online** — ping + BatchMode SSH OK on [redacted] after ~14 days down. `sudo` still requires a password, so the Prometheus node-exporter install stays a human step; the cleanup entry was rewritten to say the machine is reachable and only the sudo password blocks it.",
    "**todo-cleanup reconciled**: 9 items kept, none dropped; disk stat updated to 94% / 13.7 GB free (worse than Sep 29's 19 GB — the sudo pass is the single biggest win left); state.db size corrected to 1.2 GB per doctor's live reading.",
    "**Vault validation after edits**: all counters 0 (548 notes, 0 invalid, 0 duplicates). One uncommitted path (the auto-generated validation report) left for the 15-min sync — not committed by hand.",
    "**Still open for Ayush**: the 9 todo-cleanup items (top: the sudo disk pass). Not queued here — agent-side, tracked elsewhere: Oct 1–3 journal backfill (vaultkeeper job's own open item), publisher merge push, WebUI wrapper hardening (the infra recovery thread's work — not touched by this pass).",
-   "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook (100.73.7.67); Full Disk Access live for every Hermes process (all three grants working — no clicks left).",
+   "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook ([redacted]); Full Disk Access live for every Hermes process (all three grants working — no clicks left).",
    "**\"FAILING Daily Cleanup\" flag = false alarm.** The brief's `1/1 — running: (no message)` row was this run's own in-flight execution (claimed 23:00:22, `finished_at: NULL` because the agent hadn't replied yet). Verified across all 11 cron stores: zero stuck-running rows >90 min, zero non-ok runs in the last 26 h except the already-resolved overnight vaultkeeper `vault_git_sync.sh` timeouts (6× 3600 s + 1 scheduler-restart `unknown`, all incidents closed 03:21). Nothing to ack.",
    "**todo-cleanup reconciled**: 9 items kept, none dropped — every one is still genuinely human-blocked (verified the `API_SERVER_KEY` line is still in config.yaml at line 729, was ~722; SER8 node-exporter port probe blocked by the cron security scanner's raw-IP-HTTP rule, so that entry stays as \"blocked on sudo password\"). Disk stat refreshed to **94.8% / 12.6 GB free** (measured 23:07; 13.7 GB this morning, 19 GB Sep 29 — still shrinking).",
    "**Vault validation after edits**: run after this append — counters reported in the job's final message.",
@@ -573,12 +579,12 @@
  },
  {
   "date": "2026-09-28",
-  "summary": "Session journal for 2026-09-28: P520 health sweep — three unclean overnight reboots (no trace; power-side suspected), guests/storage/backups healthy; cron jobs all green; POLS-15 midterm graded 34/50.",
+  "summary": "Session journal for 2026-09-28: P520 health sweep — three unclean overnight reboots (no trace; power-side suspected), guests/storage/backups healthy; cron jobs all green; coursework",
   "highlights": [
    "P520 stable after the overnight reboot cluster; crash cause open (power-side suspect) — recurrence watch.",
    "Two standing ops gaps surfaced to Ayush: `tank` never scrubbed; PVE notification mail not delivering.",
    "Product-note drift (pre-Sep-16 build description) found and fixed; vault validated (541 notes, 0 issues) and pushed.",
-   "POLS-15 midterm graded 34/50 — flagged for review. Kanban board clean and empty, ready for new work."
+   "Coursework — details stay in the vault."
   ]
  },
  {
@@ -592,7 +598,7 @@
    "Fixed stale ops-queue note: Omarchy Health Monitor item incorrectly said \"SER8 is online again\" — corrected to reflect SER8 still offline (Tailscale 7d+, 100% packet loss re-confirmed).",
    "Updated disk stats in todo-cleanup (89% / 21 GB free — improved from 93% / 14 GB).",
    "Updated SER8 offline duration in todo-cleanup (now 7d+).",
-   "SER8 (100.73.4.38) offline 7+ days. No ping, no Tailscale. Blocks: Prometheus node exporter, Omarchy Health Monitor restoration. May need physical power cycle.",
+   "SER8 ([redacted]) offline 7+ days. No ping, no Tailscale. Blocks: Prometheus node exporter, Omarchy Health Monitor restoration. May need physical power cycle.",
    "Notes app still hangs on osascript (since Sep 18). Quit & reopen didn't help."
   ]
  },
@@ -604,7 +610,7 @@
    "Lumix LX100 eval — decided not to purchase (below market).",
    "Daily Brief delivery hit a Photon sidecar 500 — needs monitoring if it recurs.",
    "**Notes scripting still hung** — osascript `count notes` timed out after 20s. Needs Ayush to quit & reopen Notes + grant any permission prompt.",
-   "**SER8 (100.73.4.38) offline** — Tailscale shows last seen 6 days ago, 100% packet loss. Prometheus node exporter install blocked until it comes back. Omarchy Health Monitor restoration also blocked (decision in ops-queue).",
+   "**SER8 ([redacted]) offline** — Tailscale shows last seen 6 days ago, 100% packet loss. Prometheus node exporter install blocked until it comes back. Omarchy Health Monitor restoration also blocked (decision in ops-queue).",
    "**Daily Brief delivery failed** (9:31 AM) — Photon sidecar returned 500; sidecar is configured and likely recovered, but the morning brief never reached iMessage. Transient — monitor for recurrence.",
    "**Disk 92% / 16 GB free** — stable but tight. The sudo disk pass (53 GB reclaim) is still the single biggest win.",
    "**API_SERVER_KEY on config.yaml line 728** — duplicate, needs manual delete."
@@ -612,7 +618,7 @@
  },
  {
   "date": "2026-09-25",
-  "summary": "Session journal for 2026-09-25: quiet day — routine cron only (Mnemosyne Sleep, Daily Brief, Interview Prep); all 69 executions green.",
+  "summary": "Session journal for 2026-09-25: quiet day — routine cron only (Mnemosyne Sleep, Daily Brief, job application pipeline work; all 69 executions green.",
   "highlights": [
    "Quiet day — routine cron only, no interactive sessions or vault writes.",
    "All infrastructure monitoring healthy; no incidents."
@@ -627,7 +633,7 @@
   "date": "2026-09-23",
   "summary": "Quiet day — article brainstorm (Layers of Working with AI), audio gear research, vault maintenance. All cron green.",
   "highlights": [
-   "Article brainstorm for \"Layers of Working with AI\" created — full working doc with verbatim capture, harness/memory/provider layers, two candidate structures. Ready for backbone confirmation before promoting to draft.",
+   "Job application pipeline work — details stay in the vault.",
    "Vault validation ran clean: 532 active notes, 0 invalid metadata, 0 duplicate titles.",
    "All 8 cron jobs green across 94 total runs — zero failures.",
    "Research updated on three loadout products (LG UltraFine 5K, LG 38WN95C-W, Logitech Brio 4K)."
@@ -691,7 +697,7 @@
  },
  {
   "date": "2026-09-18",
-  "summary": "Marketplace Navigator bot created (Meta Muse Spark 1.3); fb-marketplace MCP went fully live — burner login completed, search hardened + verified with real listings; Bonsai 2 27B local-LLM deploy on ai-vm; Jev (TypeSafe) decision model wired; Time Machine → tank NAS; Interview Prep cron.",
+  "summary": "Marketplace Navigator bot created (Meta Muse Spark 1.3); fb-marketplace MCP went fully live — burner login completed, search hardened + verified with real listings; Bonsai 2 27B local-LLM deploy on ai-vm; Jev (TypeSafe) decision model wired; Time Machine → tank NAS; job application pipeline work",
   "highlights": [
    "Muse Spark now runs a specialist bot on the flat-rate plan — first non-default model in the bot fleet, zero marginal per-token cost.",
    "The bot's first-ever tool round behaved exactly per spec (search → cookie check → honest diagnosis) — SOUL + skill encoding validated.",
@@ -703,12 +709,12 @@
  },
  {
   "date": "2026-09-17",
-  "summary": "Massive homelab day: P520 full services stack built (33 containers, extras, alerting), media pipeline live end-to-end, restore drill passed, Creekwood display outage diagnosed, CMPE148 assignment completed, task-mirror fix, display issues debugged.",
+  "summary": "Massive homelab day: P520 full services stack built (33 containers, extras, alerting), media pipeline live end-to-end, restore drill passed, Creekwood display outage diagnosed, coursework, task-mirror fix, display issues debugged.",
   "highlights": [
    "**P520 is a full homelab now** — 33 containers across 7 compose files, internal TLS via Caddy, alerting via Grafana→ntfy, restore drill passed. The \"services stack\" saga that started weeks ago is effectively done.",
    "**Media pipeline works end-to-end** — Prowlarr indexers → Radarr/Sonarr → qBittorrent → Jellyfin. FlareSolverr cracked Cloudflare; the 6 live indexers cover movies, TV, anime, and ebooks.",
-   "**Creekwood diagnosed remotely** — display dead but OS healthy (port scan proved it alive at 10.0.0.186). No remote-control path exists yet; Sunshine is running but unpaired. Gaps logged for when it's back up.",
-   "**School work landed** — CMPE148 Project 1 completed (packet captures, PDF, GitHub push, NAS sync). The school-vm is functional for Linux coursework."
+   "**Creekwood diagnosed remotely** — display dead but OS healthy (port scan proved it alive at [redacted]). No remote-control path exists yet; Sunshine is running but unpaired. Gaps logged for when it's back up.",
+   "Coursework — details stay in the vault."
   ]
  },
  {
@@ -747,7 +753,7 @@
   "highlights": [
    "**Vault auto-sync restored** — 4-day outage ended. Reconcile contract decision logged (`99 System/Decisions/2026-09-14 Vault Auto-Sync Reconcile Contract.md`). The fix: `git fetch` + `git pull --rebase --autostash` before checking for changes and before pushing. Prevents permanent wedge from remote-side writers.",
    "**TCC blocker resolved** — Full Disk Access granted to Hermes binary. Vault reads from cron no longer fail with `Interrupted system call`. This unblocks journal cron, calendar regen, and vault auto-sync.",
-   "**Reminders sync active** — 4 changes applied (TCC task updates, Google Drive reorg reminder, Retroid Pocket setup).",
+   "Job application pipeline work — details stay in the vault.",
    "**Knowledge site test fixed** — `sourceCount > 1000` assertion in `tests/content.test.ts` was failing (actual: 542). Lowered threshold to 400. All 6 tests pass now; nightly deploy should resume.",
    "**TCC confirmed resolved** — vault reads working (stat, directory listing, git log all succeed). Removed from todo-cleanup.",
    "**Vault auto-sync healthy** — 9 commits today, most recent 22:24. Reconcile fix holding.",
@@ -810,10 +816,10 @@
  },
  {
   "date": "2026-09-04",
-  "summary": "Task rescheduling, marketplace sweep (DS Lite candidate), routine cron ops, interview prep menu delivered.",
+  "summary": "Task rescheduling, job application pipeline work, routine cron ops",
   "highlights": [
    "**Monday Sep 7 is stacked**: 7 tasks due (6 rescheduled today + engineering desktop). EchoSphere ACM kickoff same day — high-load Sunday.",
-   "**Marketplace candidate**: White DS Lite at $75 in SF — worth an offer at $60 but no rush. Same seller appears to have two listings.",
+   "Job application pipeline work — details stay in the vault.",
    "**Reminders sync instability**: ~50% failure rate all day. Not blocking (task mutations went through via gtasks_mutate), but the sync script needs investigation.",
    "**No Codex or vault writes today** — light day, mostly automated cron ops and one desktop task session."
   ]
@@ -856,7 +862,7 @@
   "date": "2026-08-30",
   "summary": "Session journal for 2026-08-30: school snapshot tool, Canvas calendar discovery, task rescheduling, cron sync failures.",
   "highlights": [
-   "**School snapshot tool landed.** \"todo school\" now pulls all 66 Canvas assignments from the school calendar import — no Canvas API token needed. Semester arc visible at a glance.",
+   "Coursework — details stay in the vault.",
    "**Google Tasks housekeeping.** 6 tasks pushed to Sep 3; clean slate for the weekend.",
    "**Reminders sync is broken.** The Apple↔Google Tasks sync cron failed ~95% of the day. Only one successful run at 9:15 PM. Needs root-cause investigation."
   ]
@@ -881,12 +887,12 @@
  },
  {
   "date": "2026-08-27",
-  "summary": "AI-Engineering sub-vault deepened and published, SJSU school email connected, EchoSphere project kicked off, CMPE 142 class added, task system reorg.",
+  "summary": "AI-Engineering sub-vault deepened and published, SJSU school email connected, EchoSphere project kicked off, coursework, task system reorg.",
   "highlights": [
    "**Massive AI-Engineering push** — sub-vault went from 48 stubs to 475+ deep notes in one day: sourced write waves, plain-English gists, prev/next navigation, vector search note, mirror repo publish. Curriculum is now a complete course-first learning path.",
-   "**SJSU school email connected** — OAuth working for `ayush.madhukar@sjsu.edu`, all 9 scopes. Canvas integration pending. ⚠️ Token expires ~Sep 3 (testing mode).",
+   "**SJSU school email connected** — OAuth working for `[redacted]`, all 9 scopes. Canvas integration pending. ⚠️ Token expires ~Sep 3 (testing mode).",
    "**EchoSphere launched** — 12-week ACM Robotics project (Physical AI Robot, Min Lee collab). Build starts Sep 7.",
-   "**CMPE 142 added** — Operating Systems class, Tue/Thu 10:30 AM, calendar events verified."
+   "Coursework — details stay in the vault."
   ]
  },
  {
@@ -914,7 +920,7 @@
   "summary": "Session journal for 2026-08-24: ACM workshop planning doc + Echosphere interest form created, Retroid Pocket Nova setup guide from RGC video, Alienware m16 deal evaluated (skip → user bought for $600), Min email draft ready (blocked on school mail).",
   "highlights": [
    "**ACM Fall 2026 workshop rolling** — planning doc + Echosphere interest form created; Min email draft blocked only on school-email access.",
-   "**Retroid Pocket Nova setup guide** distilled from RGC video; Sunshine/Moonlight streaming task now due Fri Aug 28.",
+   "Coursework — details stay in the vault.",
    "**Omarchy Monitor persistent failure** (86/86 today) — SER8 has been offline since Aug 12; needs physical power-on or removal from cron.",
    "**Alienware m16 deal evaluated (skip → bought anyway)** — scored weak on overlap with G14, but user grabbed it for $600; strong value at ~50% below fair used price."
   ]
@@ -924,7 +930,7 @@
   "summary": "Session journal for 2026-08-23: live-tasks outage fixed (Google OAuth re-auth + Reminders TCC grant + sync ping-pong bug), weekly review delivered, cron health mixed.",
   "highlights": [
    "**Live-tasks sync fully restored** — Google Tasks OAuth re-authed, Apple Reminders TCC re-granted, and the long-standing ping-pong bug (6 items cycling endlessly) patched and verified converged. Most impactful single fix today.",
-   "**Weekly review delivered** — comprehensive Aug 16–23 summary covering 5 major accomplishments (vault cleanup, CRT Lab v3, publish pipeline, interview prep, gear acquisitions) and 10 project statuses. Flagged the OAuth production-publish as the highest-priority single action.",
+   "Job application pipeline work — details stay in the vault.",
    "**Google OAuth token dying repeatedly remains the top recurring pain** — testing-mode refresh tokens expire ~7 days; 3 re-auths in 8 days. Publishing the OAuth app to production (manual, in Google Cloud Console) is the permanent fix. Ayush still needs to do this step.",
    "**No Codex activity** — database file inaccessible; no coding sessions tracked today."
   ]
@@ -941,9 +947,9 @@
  },
  {
   "date": "2026-08-20",
-  "summary": "Session journal for 2026-08-20: interview prep framework for ASIC DV + 8 company plans, calendar event for major advising, cron health mixed.",
+  "summary": "Session journal for 2026-08-20: job application pipeline work + 8 company plans, calendar event for major advising, cron health mixed.",
   "highlights": [
-   "**Interview prep framework complete** — 8 company plans + 3-tier strategy + landscape index all built, validated, and pushed. This is the foundational map for Fall '26 internship applications.",
+   "Job application pipeline work — details stay in the vault.",
    "**Omarchy Health Monitor is chronically failing** — 87 consecutive failures today suggests a systemic issue (SSH connectivity or service check broken). Needs a focused debug session.",
    "**Reminders ↔ Google Tasks sync is unstable** — intermittently completing suggests the Google OAuth token may be nearing its testing-mode expiry window again (~7 days since last auth).",
    "**Major advising appointment locked** — Tue Aug 25 on the Class calendar; hold removal is the stated purpose."
@@ -974,7 +980,7 @@
   "summary": "Session journal for 2026-08-17: oscilloscopes picked up (HP 54600B + Tektronix 465B), CRT TV purchase evaluation (Sylvania 6420FF negotiate, Trinitron alternatives), 34\\\" ultrawide shopping, desk-space planning.",
   "highlights": [
    "**Both oscilloscopes now owned** — Tektronix 465B ($120) + HP 54600B ($80). Electronics Workbench scope-half complete; scope music (XY visuals) is the immediate next use via SV1 → TRS→BNC.",
-   "**CRT TV hunt narrowing:** Sylvania 6420FF is a negotiate-to-$80 for the vibes slot (Pi-composite primary), with Trinitron KV-20FS100 as the better-tube alternative. CRT Monitor lane (workbench function monitor) also active with NEC 2A as a negotiate candidate.",
+   "Job application pipeline work — details stay in the vault.",
    "**Desk-space question open:** 72×30\" desk with two scopes + 34\" ultrawide + CRT TV — layout computation pending (cut off by error).",
    "**Noted correction:** the \"FREE\" Portland CRT was a mislabel — seller wants cash (trades for a moped)."
   ]
@@ -1033,12 +1039,12 @@
  },
  {
   "date": "2026-08-11",
-  "summary": "Session journal for 2026-08-11: cron-heavy day, Ayumad.me deploy detected, Omarchy health monitor failing all day, interview prep session offered.",
+  "summary": "Session journal for 2026-08-11: cron-heavy day, Ayumad.me deploy detected, Omarchy health monitor failing all day, job application pipeline work",
   "highlights": [
    "**Omarchy health monitor failing all day** — ~70+ consecutive failures. Needs investigation; either Omarchy is down or the check script needs debugging.",
    "**Reminders sync unreliable** — only ~10-15% of sync cycles succeed today. Pattern suggests a transient auth or network issue with Apple Reminders.",
    "**Ayumad.me got a new deploy** — hash changed (DuvDBtHL → Cb7c16pI), vault updated. Site is live and current.",
-   "**Interview prep gap growing** — 7 weeks since last session (Jun 29). Most of the knowledge map remains untested; fall semester starts Aug 19."
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
@@ -1055,7 +1061,7 @@
   "highlights": [
    "**Ayumad.me deployed new bundle** (`DuvDBtHL`) — site is current and live, vault record updated.",
    "**Notion Progress Check is broken and redundant** — skills are missing and Notion is paused. Should be disabled to stop wasting cron cycles.",
-   "**Quiet Saturday** — no interactive sessions, all automated. Weekly review ran on schedule; reminders sync applied 6 task updates."
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
@@ -1123,7 +1129,7 @@
   "summary": "Question Prompt (20:01) — Read Questions Dashboard, picked a reflective question for Ayush",
   "highlights": [
    "Notion progress checker now runs as standalone Python script (works in cron without approval)",
-   "Interview prep surfaced Hardware/Systems as next category — 8 untested topics",
+   "Job application pipeline work — details stay in the vault.",
    "All 8 Notion tasks and 6 projects stable — no blockers"
   ]
  },
@@ -1137,7 +1143,7 @@
   "summary": "Daily Brief (09:31) — Morning brief covering vault state, email, calendar",
   "highlights": [
    "Ayumad.me site overhaul fully captured in vault — Spotify integration partially live, Gear page with 35 items added",
-   "Interview Prep Knowledge Map path fixed (moved to 90 Operations/)",
+   "Job application pipeline work — details stay in the vault.",
    "Two Notion check runs confirmed no drift; cron job stable"
   ]
  },
