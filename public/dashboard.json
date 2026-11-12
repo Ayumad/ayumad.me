@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-11-11T19:57:01-08:00",
+ "generated_at": "2026-11-12T01:59:01-08:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.23.1",
   "released": "2026.9.24",
   "commits_behind": 0,
   "cron_total": 28,
-  "cron_active": 21,
+  "cron_active": 20,
   "cron_no_agent": 21,
   "cron_failing": [],
   "cron_failing_count": 0,
@@ -14,26 +14,26 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1783,
+   "working": 1784,
    "episodic": 684
   },
   "disk": {
-   "used_pct": 92,
-   "free_gb": 15.7,
+   "used_pct": 93,
+   "free_gb": 13.4,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 6864,
-   "month_in_m": 20.8,
-   "month_out_m": 4.65,
-   "month_cache_m": 958.9,
-   "week_calls": 2554,
-   "week_out_m": 1.75,
+   "month_calls": 6900,
+   "month_in_m": 20.9,
+   "month_out_m": 4.67,
+   "month_cache_m": 961.9,
+   "week_calls": 2399,
+   "week_out_m": 1.63,
    "cache_share": 98,
    "top_models": [
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 5954
+     "calls": 5990
     },
     {
      "model": "deepseek/deepseek-v4.1-flash-1017",
@@ -52,16 +52,16 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-11-11T19:57:02-08:00",
+  "checked_at": "2026-11-12T01:59:02-08:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 2394954,
+   "uptime_s": 2416673,
    "load": [
-    "9.43",
-    "11.66",
-    "13.52"
+    "12.55",
+    "15.56",
+    "15.77"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -201,7 +201,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 188.0,
+    "alloc_gb": 189.0,
     "free_gb": 3379.2,
     "health": "ONLINE",
     "used_pct": 5,
@@ -287,7 +287,7 @@
    {
     "name": "ssd/vm-202-disk-0",
     "used": "276G",
-    "avail": "2.80T"
+    "avail": "2.79T"
    },
    {
     "name": "ssd/vm-211-disk-0",
@@ -356,11 +356,11 @@
    }
   ],
   "snapshots": 337,
-  "snapshot_newest": "tank/shared@autosnap_2026-11-12_03:00:50_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-11-12_09:01:35_hourly",
   "scrub_timers": 2,
   "backups": {
    "newest": "vzdump-qemu-214-2026_11_11-04_13_53.vma.zst",
-   "newest_age_h": 15.7,
+   "newest_age_h": 21.7,
    "count": 111,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -369,11 +369,7 @@
   "containers": {
    "running": 48,
    "total": 49,
-   "unhealthy": [
-    "gluetun-personal",
-    "gluetun",
-    "healthchecks"
-   ],
+   "unhealthy": [],
    "restarting": [],
    "names": [
     "suwayomi",
@@ -433,7 +429,7 @@
    "present": false
   },
   "media": {
-   "torrents": 151,
+   "torrents": 149,
    "torrents_active": 0,
    "down_mbps": 0.0,
    "jellyfin_movies": 223,
@@ -464,7 +460,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 35,
+    "ms": 38,
     "code": 200
    },
    {
@@ -474,7 +470,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 253,
+    "ms": 171,
     "code": 200
    },
    {
@@ -484,7 +480,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 33,
+    "ms": 25,
     "code": 200
    },
    {
@@ -504,7 +500,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
     "up": true,
-    "ms": 24,
+    "ms": 19,
     "code": 200
    },
    {
@@ -514,7 +510,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 24,
+    "ms": 28,
     "code": 200
    },
    {
@@ -524,7 +520,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 33,
+    "ms": 30,
     "code": 200
    },
    {
@@ -534,7 +530,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 62,
+    "ms": 54,
     "code": 200
    },
    {
@@ -544,7 +540,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 61,
+    "ms": 48,
     "code": 200
    },
    {
@@ -554,7 +550,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 143,
+    "ms": 79,
     "code": 200
    },
    {
@@ -564,7 +560,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 24,
+    "ms": 27,
     "code": 200
    },
    {
@@ -574,7 +570,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 156,
+    "ms": 123,
     "code": 200
    },
    {
@@ -584,7 +580,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 30,
+    "ms": 55,
     "code": 200
    },
    {
@@ -594,7 +590,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 109,
+    "ms": 48,
     "code": 200
    },
    {
@@ -604,7 +600,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 83,
+    "ms": 61,
     "code": 200
    },
    {
@@ -614,7 +610,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": false,
-    "ms": 7,
+    "ms": 4,
     "code": null
    },
    {
@@ -624,7 +620,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 81,
+    "ms": 40,
     "code": 200
    },
    {
@@ -634,7 +630,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 70,
+    "ms": 38,
     "code": 200
    },
    {
@@ -644,7 +640,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 47,
+    "ms": 18,
     "code": 200
    },
    {
@@ -654,7 +650,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 205,
+    "ms": 107,
     "code": 200
    },
    {
@@ -664,7 +660,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 52,
+    "ms": 50,
     "code": 200
    },
    {
@@ -674,7 +670,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 27,
+    "ms": 20,
     "code": 401
    },
    {
@@ -684,7 +680,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 91,
+    "ms": 87,
     "code": 200
    },
    {
@@ -694,7 +690,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 96,
+    "ms": 39,
     "code": 200
    },
    {
@@ -704,7 +700,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 86,
+    "ms": 61,
     "code": 200
    },
    {
@@ -714,7 +710,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 37,
+    "ms": 33,
     "code": 200
    },
    {
@@ -724,7 +720,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 43,
+    "ms": 50,
     "code": 200
    },
    {
@@ -734,7 +730,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 38,
+    "ms": 41,
     "code": 200
    },
    {
@@ -754,7 +750,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 6,
+    "ms": 4,
     "code": null
    },
    {
@@ -764,7 +760,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 50,
+    "ms": 15,
     "code": 200
    },
    {
@@ -774,7 +770,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 45,
+    "ms": 22,
     "code": 200
    },
    {
@@ -784,7 +780,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 47,
+    "ms": 51,
     "code": 200
    }
   ],
@@ -796,24 +792,12 @@
     "text": "backups live only on the P520 (/tank/backups) — no off-machine copy"
    },
    {
-    "severity": "bad",
-    "text": "container unhealthy: gluetun-personal"
-   },
-   {
-    "severity": "bad",
-    "text": "container unhealthy: gluetun"
-   },
-   {
-    "severity": "bad",
-    "text": "container unhealthy: healthchecks"
-   },
-   {
     "severity": "warn",
     "text": "1 service(s) not answering: Dozzle"
    }
   ],
   "issue_counts": {
-   "bad": 3,
+   "bad": 0,
    "warn": 2
   }
  },
@@ -1037,7 +1021,7 @@
   }
  ],
  "tasks": {
-  "open": 52,
+  "open": 54,
   "overdue": 9,
   "items": [
    {
@@ -1287,6 +1271,10 @@
  ],
  "journal": [
   {
+   "date": "2026-11-11",
+   "summary": "headphone collection ranked (Isvarna vs LCD-X level-matched), public journal feed privacy sweep + redaction pipeline, Arya Unveiled on the GR70 tube path."
+  },
+  {
    "date": "2026-11-10",
    "summary": "job application pipeline work, 4080 desktop spec sheet for a buyer, Schiit Modius/Magnius stack scored SKIP."
   },
@@ -1297,23 +1285,19 @@
   {
    "date": "2026-11-08",
    "summary": "PS5 wishlist re-pointed to a firmware ≤13.60 jailbreak gate + Muse task R73, job application pipeline work"
-  },
-  {
-   "date": "2026-11-07",
-   "summary": "Voice Memo Vault project note filed, job application pipeline work, iCloud vault eviction repaired"
   }
  ],
  "errors": {},
  "now": {
   "active_projects": 21,
   "planned_projects": 7,
-  "open_tasks": 52,
+  "open_tasks": 54,
   "overdue_tasks": 9,
   "assignments_upcoming": 5,
   "devices_online": 8,
   "devices_total": 21,
   "jobs_failing": 0,
-  "jobs_total": 21,
+  "jobs_total": 20,
   "homelab_reachable": true,
   "services_up": 32,
   "services_total": 33,
@@ -1321,7 +1305,7 @@
   "containers_running": 48,
   "pools_online": 2,
   "pools_total": 2,
-  "homelab_issues_bad": 3,
+  "homelab_issues_bad": 0,
   "homelab_issues_warn": 2
  }
 }
