@@ -1,11 +1,27 @@
 [
  {
+  "date": "2026-11-12",
+  "summary": "Session journal for 2026-11-12: coursework + pager) shipped, P520 OOM/KamiYomu crawl storm fixed, job application pipeline work, cron all green.",
+  "highlights": [
+   "Coursework — details stay in the vault.",
+   "The P520 \"outage\" was self-inflicted load, not hardware: one broken crawler agent behind a stale backlog plus an OOM-killed process. Throttling plus a WAL checkpoint took host load from 15.9 to 6–7.",
+   "A 3,353-chapter manga backlog is parked behind a stopped KamiYomu — deliberately left for a human decision rather than silently re-queued.",
+   "Job application pipeline work — details stay in the vault."
+  ]
+ },
+ {
   "date": "2026-11-11",
   "summary": "Session journal for 2026-11-11: headphone collection ranked (Isvarna vs LCD-X level-matched), public journal feed privacy sweep + redaction pipeline, Arya Unveiled on the GR70 tube path.",
   "highlights": [
    "Job application pipeline work — details stay in the vault.",
    "\"More texture\" was about 6 dB of free bass: the Isvarna preference did not survive a sensitivity check, and one broad shelf explains both the \"Angel\" win and the \"Fill the Void\" bloat. Level-match in the bass before recording a texture preference.",
    "Arya Unveiled closed as a no-buy on a non-sonic reason (exposed-driver storage anxiety); the GR70's real ceiling is ~24.5 mW clean into 32 Ω, an order of magnitude under the 300 mW vendor claim.",
+   "Job application pipeline work — details stay in the vault.",
+   "**Vault auto-sync** — dead since Oct 31 (job disabled, `.git` pointer + 25 tracked files evicted). Re-armed, re-scheduled, eviction-hardened, and running on the 15-min tick again (`9e64df3`, origin in sync).",
+   "**Public journal feed** — 138 daily entries and 9 weekly reviews had been publishing verbatim; `journal_redact.py` now sits in the export path with a build-failing test.",
+   "**Headphone ranking** — collection ordered by sonic identity, and the \"Isvarna has more sub-bass texture\" call was retired as an unmatched-level artifact (LCD-X is 7.1 dB more sensitive at 1 Vrms).",
+   "Job application pipeline work — details stay in the vault.",
+   "**Replit mission app** — re-detached under launchd, `200` on local/LAN/tailnet at `:5057`; Handshake submission still needs a public link.",
    "Job application pipeline work — details stay in the vault."
   ]
  },
