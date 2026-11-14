@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-13",
+  "summary": "Session journal for 2026-11-13: quiet day — no interactive sessions, cron fleet 802 runs 0 failures, scout Craigslist sweep delivery target broken, job application pipeline work, disk 12 GB / 95%.",
+  "highlights": [
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Disk is the slow-moving risk: 12 GB free at 95% (14.8 GB / 93% on Nov 12). `cache/scratch/chrome-cdp` is a live 5.2 GB Chrome profile and `state.db` is ~1 GB — both still need Ayush's go-ahead or a maintenance window.",
+   "New low-severity breakage: the scout Craigslist sweep has been completing for days but cannot deliver, because `deliver=photon` has no target in that profile."
+  ]
+ },
+ {
   "date": "2026-11-12",
   "summary": "Session journal for 2026-11-12: coursework + pager) shipped, P520 OOM/KamiYomu crawl storm fixed, job application pipeline work, cron all green.",
   "highlights": [
