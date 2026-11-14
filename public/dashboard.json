@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-13T20:06:02-08:00",
+ "generated_at": "2026-11-14T02:07:02-08:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.23.1",
@@ -18,22 +18,22 @@
    "episodic": 688
   },
   "disk": {
-   "used_pct": 94,
-   "free_gb": 12.6,
+   "used_pct": 93,
+   "free_gb": 14.4,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 7203,
-   "month_in_m": 21.7,
-   "month_out_m": 4.83,
-   "month_cache_m": 982.3,
-   "week_calls": 1322,
-   "week_out_m": 0.84,
+   "month_calls": 7358,
+   "month_in_m": 22.0,
+   "month_out_m": 4.91,
+   "month_cache_m": 995.1,
+   "week_calls": 1440,
+   "week_out_m": 0.91,
    "cache_share": 98,
    "top_models": [
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 6291
+     "calls": 6444
     },
     {
      "model": "deepseek/deepseek-v4.1-flash-1017",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.6-flash",
-     "calls": 356
+     "calls": 358
     },
     {
      "model": "abl-4b:latest",
@@ -52,16 +52,16 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-11-13T20:06:03-08:00",
+  "checked_at": "2026-11-14T02:07:03-08:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 2568295,
+   "uptime_s": 2589954,
    "load": [
-    "12.86",
-    "14.32",
-    "21.46"
+    "9.94",
+    "16.04",
+    "15.90"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
@@ -201,8 +201,8 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 193.0,
-    "free_gb": 3379.2,
+    "alloc_gb": 194.0,
+    "free_gb": 3368.96,
     "health": "ONLINE",
     "used_pct": 5,
     "scan": "scrub repaired 0B in 00:12:59 with 0 errors on Sun Nov  8 00:37:00 2026",
@@ -219,7 +219,7 @@
     "name": "tank",
     "size_gb": 18636.8,
     "alloc_gb": 17817.6,
-    "free_gb": 802.0,
+    "free_gb": 801.0,
     "health": "ONLINE",
     "used_pct": 96,
     "scan": "scrub repaired 0B in 4 days 09:22:50 with 0 errors on Thu Nov 12 09:46:52 2026",
@@ -312,55 +312,55 @@
    {
     "name": "tank",
     "used": "13.9T",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/MM",
     "used": "2.61M",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/PC",
     "used": "1.57T",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/backups",
     "used": "2.32T",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/media",
     "used": "9.47T",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/photos",
-    "used": "1018M",
-    "avail": "513G"
+    "used": "1.01G",
+    "avail": "512G"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/shared",
     "used": "71.6G",
-    "avail": "513G"
+    "avail": "512G"
    },
    {
     "name": "tank/timemachine",
-    "used": "475G",
-    "avail": "513G"
+    "used": "476G",
+    "avail": "512G"
    }
   ],
-  "snapshots": 334,
-  "snapshot_newest": "tank/shared@autosnap_2026-11-14_04:00:03_hourly",
+  "snapshots": 333,
+  "snapshot_newest": "tank/shared@autosnap_2026-11-14_10:00:06_hourly",
   "scrub_timers": 2,
   "backups": {
    "newest": "vzdump-qemu-214-2026_11_13-04_25_01.vma.zst",
-   "newest_age_h": 15.7,
+   "newest_age_h": 21.7,
    "count": 111,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -428,7 +428,7 @@
    "present": false
   },
   "media": {
-   "torrents": 138,
+   "torrents": 136,
    "torrents_active": 0,
    "down_mbps": 0.0,
    "jellyfin_movies": 223,
@@ -436,7 +436,7 @@
    "jellyfin_episodes": 401,
    "sonarr_queue": 26,
    "radarr_queue": 2,
-   "mount_free": "513G free of 9.8T (95% used)"
+   "mount_free": "512G free of 9.8T (95% used)"
   },
   "nas": {
    "lan": "10.0.0.220",
@@ -459,7 +459,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 60,
+    "ms": 35,
     "code": 200
    },
    {
@@ -469,7 +469,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 328,
+    "ms": 138,
     "code": 200
    },
    {
@@ -479,7 +479,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 30,
+    "ms": 23,
     "code": 200
    },
    {
@@ -489,7 +489,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
     "up": true,
-    "ms": 27,
+    "ms": 22,
     "code": 200
    },
    {
@@ -509,7 +509,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
     "up": true,
-    "ms": 26,
+    "ms": 20,
     "code": 200
    },
    {
@@ -519,7 +519,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 401,
+    "ms": 47,
     "code": 200
    },
    {
@@ -529,7 +529,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 27,
+    "ms": 47,
     "code": 200
    },
    {
@@ -539,7 +539,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 34,
+    "ms": 32,
     "code": 200
    },
    {
@@ -549,7 +549,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 76,
+    "ms": 79,
     "code": 200
    },
    {
@@ -559,7 +559,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 29,
+    "ms": 30,
     "code": 200
    },
    {
@@ -569,7 +569,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 48,
+    "ms": 34,
     "code": 200
    },
    {
@@ -589,7 +589,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 32,
+    "ms": 33,
     "code": 200
    },
    {
@@ -599,7 +599,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 52,
+    "ms": 53,
     "code": 200
    },
    {
@@ -609,7 +609,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": false,
-    "ms": 7,
+    "ms": 8,
     "code": null
    },
    {
@@ -619,7 +619,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 55,
+    "ms": 16,
     "code": 200
    },
    {
@@ -629,7 +629,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 279,
+    "ms": 186,
     "code": 200
    },
    {
@@ -639,7 +639,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 18,
+    "ms": 15,
     "code": 200
    },
    {
@@ -649,7 +649,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 191,
+    "ms": 104,
     "code": 200
    },
    {
@@ -659,7 +659,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 12,
+    "ms": 13,
     "code": 200
    },
    {
@@ -669,7 +669,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 49,
+    "ms": 32,
     "code": 401
    },
    {
@@ -679,7 +679,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 177,
+    "ms": 56,
     "code": 200
    },
    {
@@ -689,7 +689,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 26,
+    "ms": 17,
     "code": 200
    },
    {
@@ -699,7 +699,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 51,
+    "ms": 36,
     "code": 200
    },
    {
@@ -709,7 +709,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 132,
+    "ms": 29,
     "code": 200
    },
    {
@@ -719,7 +719,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 60,
+    "ms": 26,
     "code": 200
    },
    {
@@ -729,7 +729,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 32,
+    "ms": 33,
     "code": 200
    },
    {
@@ -739,7 +739,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 25,
+    "ms": 20,
     "code": 200
    },
    {
@@ -749,7 +749,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 7,
+    "ms": 5,
     "code": null
    },
    {
@@ -759,7 +759,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 33,
+    "ms": 17,
     "code": 200
    },
    {
@@ -769,7 +769,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
     "up": true,
-    "ms": 82,
+    "ms": 21,
     "code": 200
    },
    {
@@ -779,7 +779,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 28,
+    "ms": 20,
     "code": 200
    }
   ],
@@ -1020,27 +1020,9 @@
   }
  ],
  "tasks": {
-  "open": 57,
-  "overdue": 10,
+  "open": 51,
+  "overdue": 3,
   "items": [
-   {
-    "title": "Handshake: apply to U.S. Tech Force SWE (closes Nov 6) + IBM Codesign 2027",
-    "list": "Tech",
-    "due": "2026-11-06",
-    "overdue": true
-   },
-   {
-    "title": "Write Intro to Agentic AI article",
-    "list": "Tech",
-    "due": "2026-11-06",
-    "overdue": true
-   },
-   {
-    "title": "Flesh out the W3 workshop deck (W4 shipped)",
-    "list": "Tech",
-    "due": "2026-11-07",
-    "overdue": true
-   },
    {
     "title": "Reorganize Google Drives for the semester (school + personal) — due Wed",
     "list": "Tech",
@@ -1048,33 +1030,9 @@
     "overdue": true
    },
    {
-    "title": "P520 BIOS: enable Wake-on-LAN + restore-on-AC-power-loss",
-    "list": "Hardware",
-    "due": "2026-11-07",
-    "overdue": true
-   },
-   {
-    "title": "CMPE-148 Project 3 MiniTCP: upload to Canvas",
-    "list": "School",
-    "due": "2026-11-08",
-    "overdue": true
-   },
-   {
     "title": "Drop off XBOX Wireless Controller return at UPS",
     "list": "My Tasks",
-    "due": "2026-11-09",
-    "overdue": true
-   },
-   {
-    "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
-    "list": "Tech",
-    "due": "2026-11-09",
-    "overdue": true
-   },
-   {
-    "title": "Submit CMPE142 Project 4 (Ch9 allocator + Ch10 page replacement) to Canvas - due Nov 13",
-    "list": "School",
-    "due": "2026-11-13",
+    "due": "2026-11-14",
     "overdue": true
    },
    {
@@ -1082,6 +1040,12 @@
     "list": "Tech",
     "due": "2026-11-14",
     "overdue": true
+   },
+   {
+    "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
+    "list": "Tech",
+    "due": "2026-11-16",
+    "overdue": false
    },
    {
     "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
@@ -1093,6 +1057,42 @@
     "title": "New Nintendo 3DS XL: finish setup (modded)",
     "list": "Hardware",
     "due": "2026-11-30",
+    "overdue": false
+   },
+   {
+    "title": "PS Vita: finish setup (modded)",
+    "list": "Hardware",
+    "due": "2026-11-30",
+    "overdue": false
+   },
+   {
+    "title": "Cancel subscription of rtings.com",
+    "list": "Subscriptions",
+    "due": "2026-12-15",
+    "overdue": false
+   },
+   {
+    "title": "RGB mod the WEGA CRT (KV-20FS12): order Sunthar 1.4C kit + SCART socket + PS2 RGB cable, then install",
+    "list": "Hardware",
+    "due": "2026-12-31",
+    "overdue": false
+   },
+   {
+    "title": "Spring 2027 registration: enrollment opened Nov 12 — register for classes",
+    "list": "School",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Manga backlog: KamiYomu mangakatana agent broken (all chapter fetches time out) — route the 3.3k queued chapters through Suwayomi/Weeb Central or re-bind to a working KamiYomu agent, then start the container",
+    "list": "Tech",
+    "due": null,
+    "overdue": false
+   },
+   {
+    "title": "Good Gamer Group: answer the smart-glasses question to finish the screener",
+    "list": "Tech",
+    "due": null,
     "overdue": false
    }
   ],
@@ -1173,14 +1173,14 @@
    "self": false
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "Ayumacpro",
+   "os": "macOS",
    "online": true,
    "self": false
   },
   {
-   "name": "Creekwood",
-   "os": "windows",
+   "name": "ayumad",
+   "os": "linux",
    "online": true,
    "self": false
   },
@@ -1215,12 +1215,6 @@
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
-   "online": false,
-   "self": false
-  },
-  {
    "name": "Ayupadpro",
    "os": "iOS",
    "online": false,
@@ -1228,6 +1222,12 @@
   },
   {
    "name": "Canyon",
+   "os": "windows",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
    "os": "windows",
    "online": false,
    "self": false
@@ -1289,6 +1289,10 @@
  ],
  "journal": [
   {
+   "date": "2026-11-13",
+   "summary": "quiet day — no interactive sessions, cron fleet 802 runs 0 failures, scout Craigslist sweep delivery target broken, job application pipeline work, disk 12 GB / 95%."
+  },
+  {
    "date": "2026-11-12",
    "summary": "coursework + pager) shipped, P520 OOM/KamiYomu crawl storm fixed, job application pipeline work, cron all green."
   },
@@ -1299,18 +1303,14 @@
   {
    "date": "2026-11-10",
    "summary": "job application pipeline work, 4080 desktop spec sheet for a buyer, Schiit Modius/Magnius stack scored SKIP."
-  },
-  {
-   "date": "2026-11-09",
-   "summary": "whisper.cpp dictation server on the mini + omarchy small.en bump, account recovery, Edition XV headphone pick, Tailscale OAuth apps GA read, Workshop 3 expansion brief."
   }
  ],
  "errors": {},
  "now": {
   "active_projects": 21,
   "planned_projects": 7,
-  "open_tasks": 57,
-  "overdue_tasks": 10,
+  "open_tasks": 51,
+  "overdue_tasks": 3,
   "assignments_upcoming": 8,
   "devices_online": 9,
   "devices_total": 21,
