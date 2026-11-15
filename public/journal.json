@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-11-14",
+  "summary": "Session journal for 2026-11-14: AI-Engineering wiki review loop, Google Drive reorg + backups, agent queue and media-stack fixes, Chrome tab leak, coursework, WebUI 404.",
+  "highlights": [
+   "Maintenance day, not a build day: the AI-Engineering wiki gained its missing maintenance loop (index + log + lint + monthly cron), and the first trial run caught two defects in the generator itself.",
+   "Storage and secrets both got healthier — Drive reorganized with real weekly backups, and the qBittorrent auth problem was solved by subnet whitelisting instead of rotating a password in use.",
+   "Two \"broken things\" were misdiagnoses worth remembering: the Radarr file was fine (name parser, no year) and the 8787 \"404\" was a Host-header miss, not a dead WebUI.",
+   "Codex ran a full Hermes system audit at 02:53 (memory discovery repaired, zero Python/JS advisories, encrypted P520 backups)."
+  ]
+ },
+ {
   "date": "2026-11-13",
   "summary": "Session journal for 2026-11-13: quiet day — no interactive sessions, cron fleet 802 runs 0 failures, scout Craigslist sweep delivery target broken, job application pipeline work, disk 12 GB / 95%.",
   "highlights": [
    "Job application pipeline work — details stay in the vault.",
    "Job application pipeline work — details stay in the vault.",
    "Disk is the slow-moving risk: 12 GB free at 95% (14.8 GB / 93% on Nov 12). `cache/scratch/chrome-cdp` is a live 5.2 GB Chrome profile and `state.db` is ~1 GB — both still need Ayush's go-ahead or a maintenance window.",
-   "New low-severity breakage: the scout Craigslist sweep has been completing for days but cannot deliver, because `deliver=photon` has no target in that profile."
+   "New low-severity breakage: the scout Craigslist sweep has been completing for days but cannot deliver, because `deliver=photon` has no target in that profile.",
+   "**Fixed: scout deal alerts had no destination.** `[bot:scout] Marketplace Sweep` was pinned to `deliver: photon`, but the scout profile holds no `PHOTON_*` credentials, so every 3-hourly run was lost to `delivery_failed — no delivery target resolved for deliver=photon`. Job switched to `deliver: local` and the shim now self-sends its stdout through the default store (same pipe-stdin contract as `vault_metrics.sh`). Verified with a forced run at 23:05 → `last_status ok`; next fire 1:15 AM.",
+   "**Fixed the dashboard's degraded `projects` section.** The logic was fine; the vault is in iCloud with most notes `compressed,dataless` (656 of 657 at 23:10; reads raise `Errno 11 Resource deadlock avoided`), and a directory-level `brctl download` is a no-op. `dashboard_build.py` now reads each project note through a `read_note()` helper that asks `brctl` for that one file and retries with backoff, skipping a note only if it stays unreadable. Verified: payload rebuilt 23:10 with 31 project rows and `errors: {}`.",
+   "**Hydration is a treadmill, not a fix.** Sweeping all 559 dataless notes through `brctl` did not stick — the flag came back within minutes, and this very journal file went dataless again mid-edit. Per-file hydration only works on demand; the durable fix is the iCloud setting, which is Ayush's.",
+   "Coursework — details stay in the vault.",
+   "**Not fixed:** disk 13.0 GB free at 95% (14.8 GB yesterday); Full Disk Access and \"Optimize Mac Storage\" still need Ayush. Both remain in `todo-cleanup` with their original dates."
   ]
  },
  {
