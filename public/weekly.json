@@ -1,5 +1,74 @@
 [
  {
+  "date": "2026-11-15",
+  "weekStart": "2026-11-08",
+  "summary": "Weekly review for Nov 9–15, 2026: coursework + MiniTCP uploaded, journal feed redacted, AI-Engineering wiki loop, P520 I/O root-caused; job application pipeline work",
+  "sections": [
+   {
+    "heading": "This Week's Highlights",
+    "items": [
+     "Coursework — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "**The AI-Engineering sub-vault got the maintenance loop it was missing.** `index.md` (generated catalog, 73 notes), `log.md` (append-only build/lint/review history), `AGENTS.md` (layer schema, generated-file ownership, verification contract, lint duties), `99 System/Tools/ai_wiki.py` (build + lint, idempotent, always exits 0), and a monthly cron at 09:00 on the 1st. Measured baseline: 55 of 73 notes never verified, 1 orphan, 0 broken outward links, 0 navigation defects. The trial run caught two defects *in the generator* — a missing `last_verified` on the root entry (17 vs 18 stamped) and a review queue that ranked nav notes ahead of content notes.",
+     "**The P520 was root-caused twice, and its power bill is no longer a guess.** Sunday's load average of 42 with zero CPU pressure came from `docker-vm`: 96.4% I/O pressure, 6.55 GB of an 8 GB swapfile in use, qBittorrent holding 7.7 GB of 15.6 GB, with `tank` at 97% and 333 snapshots hiding ~1.3 TB of stale bulk — disks themselves clean (0 reallocated, 0 pending, 0 CRC). Two days earlier the same box's \"outage\" was a dead KamiYomu crawler cycling a 3,353-chapter backlog every five minutes: 1.6M queue rows in six hours, an 8 GB WAL, two kernel OOM kills, load 15.9 → 6–7 after throttling. And the first real power measurement: **40.1 W at the socket, ~128 W at the wall, ~$29/month** on E-TOU-C.",
+     "**Drive, backups and the manga pipeline all became real.** Both Drive roots reorganized (personal 11 folders / 0 loose files, school 7 / 0), with actual backups at `Tech/Backups/{vault,mnemosyne,hermes-config}` — one artifact each, contents verified by download, and a Sunday 04:30 job whose first unattended run completed cleanly this morning. Separately, the manga pipeline was re-routed from dead KamiYomu to the Suwayomi instance already on the box: 442 missing chapters found, 135 downloaded at a measured ~49 chapters per 2 minutes, auto-download of new chapters now on."
+    ]
+   },
+   {
+    "heading": "Project Progress",
+    "items": [
+     "Coursework — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "**[[02 Projects/Homelab|Homelab]]** — Cleanuparr finished setup and went Health-green against Radarr, Sonarr and qBittorrent (solved by whitelisting the docker subnets rather than rotating a password his browser sessions depend on); Dozzle rescued from a six-day crash loop; the media-mount collector's 300 s timeout fixed with a deterministic stride sample (5m00 → 1m41); `state.db` measured instead of assumed (freelist 0.7 MB of 1.05 GB — no VACUUM warranted). Still open: the RAM rebalance and snapshot prune on the P520 (plan written, approval pending), off-machine backup copy, HA ↔ MQTT, Phase 8 class VMs.",
+     "**Vault & Hermes ops** — auto-sync, **dead since Oct 31, was found disabled and re-armed** on 11-09, then hardened: `vault_git_sync.sh` now pre-flights `.git` and evicts, `vault_evict_sweep.sh` scans all files instead of just `*.md`/`*.json`. The bare `hermes` CLI was also dead (shebang resolving to Apple's Python 3.9.6 → `TypeError` on `X | Y`) and is pinned to the venv (3.11.15). Validator at 634 notes, 0 invalid, 0 duplicates, 0 unresolved.",
+     "**[[02 Projects/Personal Website|Personal Website]]** — the privacy/redaction pass plus article standard work above; deploy hash advanced `weWxz1NI` → **`Ce3TRNb2`**, `/journal` and `/weekly.json` feeds updating nightly. Everything else in the repo this week was automated `dashboard: refresh` and `journal:` commits.",
+     "**AI-Engineering curriculum** — the level-3 wiki layer landed (index + log + lint + monthly review cron), mirrored to `Ayumad/AI-Engineering-Curriculum` and republished at `ayumad.me/ai`. Review queue now starts at `01 Foundations` and works outward.",
+     "**Audio / loadout** ([[04 Resources/Audio/Headphone Audition Log|Headphone Audition Log]]) — the \"Isvarna has more sub-bass texture\" call was **retired as a measurement artifact**: the LCD-X is 7.1 dB more sensitive at 1 Vrms, so the Isvarna's +5.7 dB shelf arrived as ~6 dB of free level. Collection re-ranked by sonic identity; three cheap level-matched tests queued but not run. Edition XV taken as the open-back pick for a no-returns buyer; Arya Unveiled closed as a no-buy on storage anxiety, not sound; the GR70's real ceiling measured at ~24.5 mW into 32 Ω versus a 300 mW vendor claim. Schiit Modius + Magnius ($230) and the Dell T3600 ($200) both scored and skipped.",
+     "Job application pipeline work — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "**RetroPie CRT Setup** — no movement this week; the $65 RGB mux mod is still due Dec 31."
+    ]
+   },
+   {
+    "heading": "Blockers & Issues",
+    "items": [
+     "Job application pipeline work — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "**Disk is still the accelerant: 92% used, 16 GiB free.** The eviction *symptom* cleared (0 of 663 notes dataless on 11-14, down from 656 of 657), but the cause is untouched: Optimize Mac Storage is on and the Hermes python has no Full Disk Access, so cron cannot hydrate a file itself.",
+     "Coursework — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "**P520 fix plan is written but unapproved** — ai-vm 24 GB → 16, docker-vm 16 → 24, qBittorrent capped at 4 GB with seed limits, ~1.3 TB of stale snapshots pruned, then `swapoff/swapon`. `tank` is at 97% capacity / 213 GB free / 69% fragmentation until that lands.",
+     "Job application pipeline work — details stay in the vault.",
+     "**Two delivery paths are still broken in the fleet:** the vaultkeeper Session Journal job records `delivery_queued` (no gateway services that bot's queue), and the Handshake automation was found dead since Nov 9 — every hourly run logged `chrome/CDP unavailable - skipping` because Chrome binds `[redacted]` or `[::1]` depending on how it launches."
+    ]
+   },
+   {
+    "heading": "Next Week's Focus",
+    "items": [
+     "1. **Register for Spring 2027.** Enrollment is open now and nothing has moved; this is the highest-leverage hour of the week.",
+     "Coursework — details stay in the vault.",
+     "Job application pipeline work — details stay in the vault.",
+     "4. **Approve and run the P520 plan** — RAM rebalance, qBittorrent cap, snapshot prune. It fixes the load average and buys back capacity at the same time.",
+     "5. **Fix disk properly** — Optimize Mac Storage off / Keep Downloaded on `Documents/Main`, Full Disk Access for the venv python. Then the eviction treadmill stops being a nightly tax.",
+     "Job application pipeline work — details stay in the vault.",
+     "7. **Build the W5 Vibecoding deck** for Wed Nov 18 — the in-room ship-a-page activity is the part that needs the most lead time.",
+     "Coursework — details stay in the vault."
+    ]
+   },
+   {
+    "heading": "Miscellaneous",
+    "items": [
+     "**Throughput:** 66 sessions / ~4,680 messages across 10 profiles (default: 46 sessions / 3,558 messages — 24 cron, 18 desktop, 4 webui; vaultkeeper 9 / 770; homelab 8 / 195; hermes-ops 2 / 69; foreman 1 / 88). Nov 13 was genuinely empty — zero interactive sessions, all vault churn generated.",
+     "**Cron fleet:** 776–813 runs/day across 11 stores, **0 failed** all week. Two `missed` records, both benign catch-up collapses: vault auto-sync's 839 ticks from the Oct 31 pause, and one homelab tick. No incident backlog.",
+     "Coursework — details stay in the vault.",
+     "**Codex:** one heavy session on 11-14 — a full Hermes system audit (memory discovery repaired, Python and JS workspace advisories to zero, encrypted P520 backups), plus an article-editing burst on 11-11 (~1.5M tokens across nine passes).",
+     "**Gear verdicts:** Dell T3600 SKIP (P520 is +48% multi / +57% single for the same money; DDR3 capped at 64 GB, no native NVMe boot, Win 10 EOL) · Schiit Modius + Magnius SKIP (fair price, role covered twice) · HiFiMAN Edition XV the open-back pick · Arya Unveiled no-buy · P520 measured at ~$29/month.",
+     "**Reading/media:** Goodreads and MyAnimeList status notes regenerating daily; manga library at ~1,090 `.cbz` after the Suwayomi re-route, though 306 MangaFire-sourced chapters still fail on an SSL error inside the extension."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-11-08",
   "weekStart": "2026-11-01",
   "summary": "Weekly review for Nov 2–8, 2026: job application pipeline work, MiniTCP shipped, NAS 96→80%, MCP 101 delivered; disk is the bottleneck.",

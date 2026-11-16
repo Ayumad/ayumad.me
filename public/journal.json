@@ -1,12 +1,30 @@
 [
  {
+  "date": "2026-11-15",
+  "summary": "Session journal for 2026-11-15: T3600 skipped, P520 I/O root-caused and 240 GiB reclaimed, $400 Logitech RS50 rig scored strong buy, marketplace sweep relevance bug fixed, Bokeh Open loaner briefed.",
+  "highlights": [
+   "**The P520's space problem turned out to be accounting, not capacity.** 549 GiB of remux files plus 764 GiB of \"stale\" seed data yielded only ~240 GiB of real free space — hardlinked seed copies free nothing while a torrent still owns them. The pool is still 98%; the fix that actually moves the needle is the snapshot prune, not more file deletion.",
+   "**The RS50 listing is the best deal scored this month** — ~$1,450–1,600 of current-generation direct-drive gear for $400, and the only real risk is the 40-minute drive to Vallejo.",
+   "**A silent bug in the hunt pipeline was hiding the thing it was built to find.** The sweep was reporting whole Craigslist pages; every listing it saw once was marked seen, so the center-channel hunt could never have produced a real hit.",
+   "Job application pipeline work — details stay in the vault."
+  ]
+ },
+ {
   "date": "2026-11-14",
   "summary": "Session journal for 2026-11-14: AI-Engineering wiki review loop, Google Drive reorg + backups, agent queue and media-stack fixes, Chrome tab leak, coursework, WebUI 404.",
   "highlights": [
    "Maintenance day, not a build day: the AI-Engineering wiki gained its missing maintenance loop (index + log + lint + monthly cron), and the first trial run caught two defects in the generator itself.",
    "Storage and secrets both got healthier — Drive reorganized with real weekly backups, and the qBittorrent auth problem was solved by subnet whitelisting instead of rotating a password in use.",
    "Two \"broken things\" were misdiagnoses worth remembering: the Radarr file was fine (name parser, no year) and the 8787 \"404\" was a Host-header miss, not a dead WebUI.",
-   "Codex ran a full Hermes system audit at 02:53 (memory discovery repaired, zero Python/JS advisories, encrypted P520 backups)."
+   "Codex ran a full Hermes system audit at 02:53 (memory discovery repaired, zero Python/JS advisories, encrypted P520 backups).",
+   "Vault validator back to zero on every counter it flagged: `Google Drive Layout.md` had `status: live` (not a controlled value) and no `visibility` / `summary` / `aliases`; `Manga Library.md` had no `aliases`; and the one unresolved link was a wikilink to the `ayush-google-dual-accounts` skill name, which is not a note — now inline code. Both notes were created today by the Drive and manga sessions, so this is drift from today's own writes, not old debt.",
+   "Coursework — details stay in the vault.",
+   "Confirmed last night's Scout delivery repair held: `[bot:scout] Marketplace Sweep` last run 22:22, `last_status: ok`, `last_delivery_error: null`, next fire 01:22.",
+   "Reminders ↔ Google Tasks parity: `--dry-run` → `0 action(s) planned`, so no completion is stranded on one surface.",
+   "The iCloud eviction sweep has cleared: **0 of 663 `.md` files are dataless placeholders** at 23:1x (656 of 657 were last night), and the dashboard payload reports no degraded sections. The *setting* behind it is still on, so this is a cleared symptom, not a fixed cause.",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Disk sits at 91% with 18 GiB free (13.0 GB last night) — better, but still the accelerant behind the eviction."
   ]
  },
  {
