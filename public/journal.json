@@ -1,11 +1,30 @@
 [
  {
+  "date": "2026-11-16",
+  "summary": "Session journal for 2026-11-16: NAS storage recovery (98%→84%) and remux driver seed-leak fix, RTX 4080 resale estimate, job application pipeline work, Hermes mobile server URL/password fix, school task cleared.",
+  "highlights": [
+   "The storage \"emergency\" was a bug, not a capacity wall: 19 completed remux swaps had been freeing zero bytes because the old seed torrent never matched by inode. Fixed at the driver, not by deleting more.",
+   "`tank` went 98% → 84% in one afternoon (33 GiB → 2.10 TiB) and the queue is now ordered largest-first, so each swap returns 40–60 GiB.",
+   "Job application pipeline work — details stay in the vault.",
+   "Mobile app rule worth remembering: `ayumacmini:8787` and the 32-char WebUI password. The raw Tailscale IP 404s and the dashboard creds belong to :9119."
+  ]
+ },
+ {
   "date": "2026-11-15",
   "summary": "Session journal for 2026-11-15: T3600 skipped, P520 I/O root-caused and 240 GiB reclaimed, $400 Logitech RS50 rig scored strong buy, marketplace sweep relevance bug fixed, Bokeh Open loaner briefed.",
   "highlights": [
    "**The P520's space problem turned out to be accounting, not capacity.** 549 GiB of remux files plus 764 GiB of \"stale\" seed data yielded only ~240 GiB of real free space — hardlinked seed copies free nothing while a torrent still owns them. The pool is still 98%; the fix that actually moves the needle is the snapshot prune, not more file deletion.",
    "**The RS50 listing is the best deal scored this month** — ~$1,450–1,600 of current-generation direct-drive gear for $400, and the only real risk is the 40-minute drive to Vallejo.",
    "**A silent bug in the hunt pipeline was hiding the thing it was built to find.** The sweep was reporting whole Craigslist pages; every listing it saw once was marked seen, so the center-channel hunt could never have produced a real hit.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "**RS50 sim rig filed:** the $400 Vallejo direct-drive rig (STRONG BUY, ~72% off replacement) is on the `Hardware` list due Nov 16 and mirrored to Apple — it was the day's only time-sensitive purchase and existed nowhere but the chat.",
+   "Job application pipeline work — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "Cron: 812 runs / 28 jobs in 24 h, 0 failures, no incidents. Vault validator all-zero before this pass; git is clean apart from the auto-sync's own queue-age lines.",
+   "**`Write Intro to Agentic AI article` is ticked completed on Tech (2026-11-14) but no artifact exists** — nothing in the vault, and the live site's journal index has no such entry. Left the Articles-hub line open rather than closing a claim I can't verify; needs a yes from Ayush.",
+   "**Two overdue school items** need his word (submit or already-done) before the import calendar clears.",
    "Job application pipeline work — details stay in the vault."
   ]
  },
