@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-16T20:17:50-08:00",
+ "generated_at": "2026-11-17T02:18:50-08:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.23.1",
@@ -14,26 +14,26 @@
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
-   "working": 1834,
+   "working": 1843,
    "episodic": 710
   },
   "disk": {
-   "used_pct": 91,
-   "free_gb": 18.1,
+   "used_pct": 92,
+   "free_gb": 16.7,
    "size_gb": 228
   },
   "tokens": {
-   "month_calls": 8058,
-   "month_in_m": 24.1,
-   "month_out_m": 5.34,
-   "month_cache_m": 1065.3,
-   "week_calls": 1786,
-   "week_out_m": 1.13,
+   "month_calls": 8232,
+   "month_in_m": 24.7,
+   "month_out_m": 5.47,
+   "month_cache_m": 1077.6,
+   "week_calls": 1942,
+   "week_out_m": 1.24,
    "cache_share": 98,
    "top_models": [
     {
      "model": "deepseek-v4.1-flash",
-     "calls": 7138
+     "calls": 7310
     },
     {
      "model": "deepseek/deepseek-v4.1-flash-1017",
@@ -41,7 +41,7 @@
     },
     {
      "model": "mimo-v2.6-flash",
-     "calls": 364
+     "calls": 366
     },
     {
      "model": "abl-4b:latest",
@@ -52,20 +52,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-11-16T20:17:50-08:00",
+  "checked_at": "2026-11-17T02:18:50-08:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 2828202,
+   "uptime_s": 2849862,
    "load": [
-    "14.33",
-    "21.38",
-    "25.21"
+    "6.22",
+    "4.31",
+    "8.54"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 49.7,
+   "mem_used_gb": 48.6,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -201,7 +201,7 @@
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 198.0,
+    "alloc_gb": 199.0,
     "free_gb": 3368.96,
     "health": "ONLINE",
     "used_pct": 6,
@@ -219,7 +219,7 @@
     "name": "tank",
     "size_gb": 18636.8,
     "alloc_gb": 15360.0,
-    "free_gb": 3276.8,
+    "free_gb": 3235.84,
     "health": "ONLINE",
     "used_pct": 82,
     "scan": "scrub repaired 0B in 4 days 09:22:50 with 0 errors on Thu Nov 12 09:46:52 2026",
@@ -247,7 +247,7 @@
    {
     "name": "ssd/subvol-100-disk-0",
     "used": "1.37G",
-    "avail": "6.81G"
+    "avail": "6.80G"
    },
    {
     "name": "ssd/subvol-101-disk-0",
@@ -287,7 +287,7 @@
    {
     "name": "ssd/vm-202-disk-0",
     "used": "285G",
-    "avail": "2.79T"
+    "avail": "2.78T"
    },
    {
     "name": "ssd/vm-211-disk-0",
@@ -312,42 +312,42 @@
    {
     "name": "tank",
     "used": "12.0T",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/MM",
     "used": "2.61M",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/PC",
     "used": "1.57T",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/backups",
     "used": "1.52T",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/media",
-    "used": "8.33T",
-    "avail": "2.43T"
+    "used": "8.36T",
+    "avail": "2.40T"
    },
    {
     "name": "tank/photos",
-    "used": "1.05G",
-    "avail": "2.43T"
+    "used": "1.07G",
+    "avail": "2.40T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/shared",
     "used": "79.4G",
-    "avail": "2.43T"
+    "avail": "2.40T"
    },
    {
     "name": "tank/timemachine",
@@ -355,12 +355,12 @@
     "avail": "1.53T"
    }
   ],
-  "snapshots": 335,
-  "snapshot_newest": "tank/shared@autosnap_2026-11-17_04:00:18_hourly",
+  "snapshots": 332,
+  "snapshot_newest": "tank/shared@autosnap_2026-11-17_10:00:15_hourly",
   "scrub_timers": 2,
   "backups": {
    "newest": "vzdump-qemu-214-2026_11_16-04_32_24.vma.zst",
-   "newest_age_h": 15.8,
+   "newest_age_h": 21.8,
    "count": 115,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
@@ -429,9 +429,9 @@
    "present": false
   },
   "media": {
-   "torrents": 110,
+   "torrents": 109,
    "torrents_active": 1,
-   "down_mbps": 0.92,
+   "down_mbps": 2.99,
    "jellyfin_movies": 219,
    "jellyfin_series": 13,
    "jellyfin_episodes": 401,
@@ -460,7 +460,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
     "up": true,
-    "ms": 33,
+    "ms": 43,
     "code": 200
    },
    {
@@ -470,7 +470,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 93,
+    "ms": 83,
     "code": 200
    },
    {
@@ -520,7 +520,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
     "up": true,
-    "ms": 42,
+    "ms": 45,
     "code": 200
    },
    {
@@ -530,7 +530,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
     "up": true,
-    "ms": 23,
+    "ms": 24,
     "code": 200
    },
    {
@@ -540,7 +540,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
     "up": true,
-    "ms": 41,
+    "ms": 31,
     "code": 200
    },
    {
@@ -550,7 +550,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
     "up": true,
-    "ms": 81,
+    "ms": 74,
     "code": 200
    },
    {
@@ -560,7 +560,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 28,
+    "ms": 29,
     "code": 200
    },
    {
@@ -570,7 +570,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 39,
+    "ms": 41,
     "code": 200
    },
    {
@@ -580,7 +580,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 26,
+    "ms": 28,
     "code": 200
    },
    {
@@ -590,7 +590,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 29,
+    "ms": 27,
     "code": 200
    },
    {
@@ -600,7 +600,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 36,
+    "ms": 35,
     "code": 200
    },
    {
@@ -610,7 +610,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 20,
+    "ms": 23,
     "code": 200
    },
    {
@@ -620,7 +620,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 14,
+    "ms": 23,
     "code": 200
    },
    {
@@ -630,7 +630,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 53,
+    "ms": 188,
     "code": 200
    },
    {
@@ -640,7 +640,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
     "up": true,
-    "ms": 13,
+    "ms": 12,
     "code": 200
    },
    {
@@ -650,7 +650,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
     "up": true,
-    "ms": 63,
+    "ms": 69,
     "code": 200
    },
    {
@@ -660,7 +660,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
     "up": true,
-    "ms": 11,
+    "ms": 10,
     "code": 200
    },
    {
@@ -670,7 +670,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 31,
+    "ms": 25,
     "code": 401
    },
    {
@@ -680,7 +680,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 50,
+    "ms": 37,
     "code": 200
    },
    {
@@ -690,7 +690,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 16,
+    "ms": 12,
     "code": 200
    },
    {
@@ -700,7 +700,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 30,
+    "ms": 27,
     "code": 200
    },
    {
@@ -710,7 +710,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 20,
+    "ms": 18,
     "code": 200
    },
    {
@@ -720,7 +720,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 33,
+    "ms": 23,
     "code": 200
    },
    {
@@ -730,7 +730,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 32,
+    "ms": 25,
     "code": 200
    },
    {
@@ -750,7 +750,7 @@
     "kind": "tcp",
     "url": "http://100.113.99.29:1883/",
     "up": true,
-    "ms": 8,
+    "ms": 7,
     "code": null
    },
    {
@@ -760,7 +760,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 17,
+    "ms": 14,
     "code": 200
    },
    {
@@ -1018,17 +1018,11 @@
  ],
  "tasks": {
   "open": 48,
-  "overdue": 2,
+  "overdue": 1,
   "items": [
    {
     "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
     "list": "Tech",
-    "due": "2026-11-16",
-    "overdue": true
-   },
-   {
-    "title": "RS50 sim rig (USD 400, Vallejo): inspect + pick up",
-    "list": "Hardware",
     "due": "2026-11-16",
     "overdue": true
    },
@@ -1048,6 +1042,12 @@
     "title": "PS Vita: finish setup (modded)",
     "list": "Hardware",
     "due": "2026-11-30",
+    "overdue": false
+   },
+   {
+    "title": "SJSU Bursar: submit IRS W-9S (SSN/ITIN) to the Registrar by Dec 15",
+    "list": "School",
+    "due": "2026-12-15",
     "overdue": false
    },
    {
@@ -1286,6 +1286,10 @@
  ],
  "journal": [
   {
+   "date": "2026-11-16",
+   "summary": "NAS storage recovery (98%→84%) and remux driver seed-leak fix, RTX 4080 resale estimate, job application pipeline work, Hermes mobile server URL/password fix, school task cleared."
+  },
+  {
    "date": "2026-11-15",
    "summary": "T3600 skipped, P520 I/O root-caused and 240 GiB reclaimed, $400 Logitech RS50 rig scored strong buy, marketplace sweep relevance bug fixed, Bokeh Open loaner briefed."
   },
@@ -1296,10 +1300,6 @@
   {
    "date": "2026-11-13",
    "summary": "quiet day — no interactive sessions, cron fleet 802 runs 0 failures, scout Craigslist sweep delivery target broken, job application pipeline work, disk 12 GB / 95%."
-  },
-  {
-   "date": "2026-11-12",
-   "summary": "coursework + pager) shipped, P520 OOM/KamiYomu crawl storm fixed, job application pipeline work, cron all green."
   }
  ],
  "errors": {},
@@ -1307,7 +1307,7 @@
   "active_projects": 21,
   "planned_projects": 7,
   "open_tasks": 48,
-  "overdue_tasks": 2,
+  "overdue_tasks": 1,
   "assignments_upcoming": 8,
   "devices_online": 8,
   "devices_total": 21,
