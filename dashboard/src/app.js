@@ -18,7 +18,7 @@ const SECTIONS = [
 ];
 
 const S = {
-  source: "sync", // "sync" | "snapshot" | "live" | "seed" | "stale" | "error"
+  source: "sync", // "sync" | "public" | "snapshot" | "live" | "seed" | "stale" | "error"
   data: null, // v2-shaped payload (seed fixture or adapted live v1)
   params: {},
   theme: "dark",
@@ -293,8 +293,9 @@ async function loadData() {
     return;
   }
   try {
-    S.data = adaptV1(await fetchJson(AUTH_DATA, LIVE_TIMEOUT_MS));
-    S.source = "snapshot";
+    const raw = await fetchJson(AUTH_DATA, LIVE_TIMEOUT_MS);
+    S.data = adaptV1(raw);
+    S.source = raw.public ? "public" : "snapshot";
     S.lastLiveOk = new Date();
   } catch (err) {
     if (err.status === 401 && location.protocol !== "file:") {
@@ -323,6 +324,7 @@ async function loadData() {
 
 function pillFor(source) {
   if (source === "live") return pill("live", "LIVE · partial");
+  if (source === "public") return pill("seed", "PUBLIC · read-only");
   if (source === "snapshot") return pill("snapshot", "SNAPSHOT · partial");
   if (source === "seed") return pill("seed", "SEED");
   if (source === "stale") return pill("stale", "STALE");
@@ -334,6 +336,7 @@ function pillFor(source) {
    SEED → design fixture note · SNAPSHOT → snapshot + age · LIVE → nothing. */
 function modeBannerHtml() {
   if (!S.data) return S.source === "error" ? banner("warn", "DATA UNAVAILABLE · snapshot could not be read") : "";
+  if (S.source === "public") return banner("mute", "PUBLIC VIEW · read-only · sign in for full detail");
   if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
   if (S.source === "snapshot") {
     return banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`);
@@ -410,6 +413,7 @@ function headerHtml() {
       <nav class="tabs" aria-label="Sections">${tabs}</nav>
       <div class="hdr-r" aria-live="polite">
         ${pillFor(src)}
+        ${S.source === "public" ? `<a class="signin" href="/dashboard/login?next=%2Fdashboard">SIGN IN</a>` : ""}
         <span class="updated">updated <span class="js-age">${S.data ? fmtAge(g(S.data, "generated_at")) : "—"}</span> ago</span>
         <button class="theme-btn" data-theme-toggle>${S.theme === "dark" ? "LIGHT" : "DARK"}</button>
       </div>

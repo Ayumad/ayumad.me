@@ -1,0 +1,149 @@
+/* Public projection of the encrypted dashboard snapshot.
+   Counts and health only: no hostnames, IPs, task titles, school items,
+   peer names, container names, or timeline text. */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { readSnapshot } from "./snapshot";
+
+const n = (v: any) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+
+export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
+  const raw = await readSnapshot(env);
+  if (!raw) return null;
+
+  let v1: any;
+  try {
+    v1 = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+
+  const h = v1.hermes ?? {};
+  const hl = v1.homelab ?? {};
+  const now = v1.now ?? {};
+  const tasks = v1.tasks ?? {};
+  const school = v1.school ?? {};
+
+  const guests = Array.isArray(hl.guests)
+    ? hl.guests.map((g: any, i: number) => ({
+        id: n(g.id),
+        name: `${g.type === "lxc" ? "lxc" : "vm"}-${String(i + 1).padStart(2, "0")}`,
+        type: g.type ?? null,
+        status: g.status ?? null,
+        mem_mb: null,
+        disk_gb: null,
+      }))
+    : [];
+
+  const pools = Array.isArray(hl.pools)
+    ? hl.pools.map((p: any) => ({
+        name: p.name ?? null,
+        size_gb: n(p.size_gb),
+        alloc_gb: n(p.alloc_gb),
+        free_gb: n(p.free_gb),
+        used_pct: n(p.used_pct),
+        health: p.health ?? null,
+      }))
+    : [];
+
+  return JSON.stringify({
+    schema: "ayumad.dashboard/2",
+    public: true,
+    generated_at: v1.generated_at ?? null,
+    generated_on: "Mac mini",
+    hermes: {
+      cron_total: n(h.cron_total),
+      cron_active: n(h.cron_active),
+      cron_no_agent: n(h.cron_no_agent),
+      cron_failing_count: n(h.cron_failing_count),
+      skills: n(h.skills),
+      memory: h.memory ?? null,
+      disk: h.disk ?? null,
+      tokens: h.tokens
+        ? {
+            month_calls: n(h.tokens.month_calls),
+            month_out_m: n(h.tokens.month_out_m),
+            cache_share: n(h.tokens.cache_share),
+          }
+        : null,
+    },
+    homelab: {
+      reachable: hl.reachable ?? null,
+      host: hl.host
+        ? {
+            name: "pve-host",
+            uptime_s: n(hl.host.uptime_s),
+            load: Array.isArray(hl.host.load) ? hl.host.load : null,
+            cores: n(hl.host.cores),
+            mem_used_gb: n(hl.host.mem_used_gb),
+            mem_total_gb: n(hl.host.mem_total_gb),
+            failed_units: n(hl.host.failed_units),
+          }
+        : null,
+      guests,
+      guests_running: n(now.guests_running),
+      pools,
+      datasets: [],
+      snapshots: n(hl.snapshots),
+      scrub_timers: n(hl.scrub_timers),
+      backups: hl.backups
+        ? {
+            count: n(hl.backups.count),
+            newest_age_h: n(hl.backups.newest_age_h),
+            schedule: hl.backups.schedule ?? null,
+            offsite: hl.backups.offsite ?? null,
+          }
+        : null,
+      containers: hl.containers
+        ? {
+            running: n(hl.containers.running),
+            total: n(hl.containers.total),
+            unhealthy: [],
+            restarting: [],
+            names: [],
+          }
+        : null,
+      media: hl.media
+        ? {
+            torrents: n(hl.media.torrents),
+            torrents_active: n(hl.media.torrents_active),
+            down_mbps: n(hl.media.down_mbps),
+            jellyfin_movies: n(hl.media.jellyfin_movies),
+            jellyfin_series: n(hl.media.jellyfin_series),
+            jellyfin_episodes: n(hl.media.jellyfin_episodes),
+            sonarr_queue: n(hl.media.sonarr_queue),
+            radarr_queue: n(hl.media.radarr_queue),
+          }
+        : null,
+      services_up: n(hl.services_up),
+      services_total: n(hl.services_total),
+      gpu: hl.gpu
+        ? { owner_vm: n(hl.gpu.owner_vm), owner_name: null, mode: hl.gpu.mode ?? null }
+        : null,
+    },
+    tasks: { open: n(tasks.open), overdue: n(tasks.overdue), items: [] },
+    school: { upcoming: n(school.upcoming), courses: [], next: [] },
+    fleet: [],
+    journal: [],
+    now: {
+      active_projects: n(now.active_projects),
+      planned_projects: n(now.planned_projects),
+      open_tasks: n(now.open_tasks),
+      overdue_tasks: n(now.overdue_tasks),
+      assignments_upcoming: n(now.assignments_upcoming),
+      devices_online: null,
+      devices_total: null,
+      jobs_failing: n(now.jobs_failing),
+      jobs_total: n(now.jobs_total),
+      homelab_reachable: now.homelab_reachable ?? null,
+      services_up: n(now.services_up),
+      services_total: n(now.services_total),
+      guests_running: n(now.guests_running),
+      containers_running: n(now.containers_running),
+      pools_online: n(now.pools_online),
+      pools_total: n(now.pools_total),
+      homelab_issues_bad: n(now.homelab_issues_bad),
+      homelab_issues_warn: n(now.homelab_issues_warn),
+    },
+    errors: {},
+  });
+}

@@ -114,6 +114,22 @@
   border-color: var(--cyan);
 }
 
+.signin {
+  border: 1px solid var(--cyan);
+  border-radius: 2px;
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+}
+
+.signin:hover {
+  color: var(--ink);
+  background: var(--cyan);
+}
+
 /* ---------- hero ---------- */
 
 .hero {

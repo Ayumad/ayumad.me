@@ -33,14 +33,18 @@ describe("dashboard access", () => {
   });
   afterEach(() => vi.unstubAllEnvs());
 
-  it("protects dashboard views and snapshot data before authentication", async () => {
-    for (const page of ["/dashboard", "/dashboard/hermes", "/dashboard/homelab"]) {
+  it("serves the public overview, keeps legacy views and full data behind login", async () => {
+    const overview = await GET(request("/dashboard"));
+    expect(overview.status).toBe(200);
+    expect(await overview.text()).toContain("Ayumad");
+    for (const page of ["/dashboard/hermes", "/dashboard/homelab"]) {
       const response = await GET(request(page));
       expect(response.status).toBe(303);
       expect(response.headers.get("location")).toBe("/dashboard/login?next=" + encodeURIComponent(page));
     }
+    // No snapshot key in this test env: the public projection cannot read the encrypted file.
     const data = await GET(request("data"));
-    expect(data.status).toBe(401);
+    expect(data.status).toBe(503);
     expect(data.headers.get("cache-control")).toContain("no-store");
   });
 

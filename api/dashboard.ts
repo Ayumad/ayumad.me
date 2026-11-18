@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createSession, dashboardAccount, expiredSession, readSession, verifyPassword } from "../server/dashboard/auth.js";
 import { loginPage } from "../server/dashboard/login.js";
+import { readPublicSnapshot } from "../server/dashboard/public.js";
 import { dashboardDirectory, readSnapshot } from "../server/dashboard/snapshot.js";
 
 const headers = {
@@ -43,8 +44,7 @@ export async function GET(request: Request) {
   const signedIn = account && readSession(request, account);
 
   if (action === "data") {
-    if (!signedIn) return Response.json({ error: "Sign in required." }, { status: 401, headers });
-    const snapshot = await readSnapshot();
+    const snapshot = signedIn ? await readSnapshot() : await readPublicSnapshot();
     if (!snapshot) return Response.json({ error: "Snapshot unavailable." }, { status: 503, headers });
     return new Response(snapshot, { headers: { ...headers, "Content-Type": "application/json; charset=utf-8" } });
   }
@@ -55,7 +55,8 @@ export async function GET(request: Request) {
   }
 
   const path = pagePath(action);
-  if (!signedIn) return redirect("/dashboard/login?next=" + encodeURIComponent(path));
+  // The overview is public; the legacy detail pages stay behind login.
+  if (path !== "/dashboard" && !signedIn) return redirect("/dashboard/login?next=" + encodeURIComponent(path));
   return html(await readFile(join(dashboardDirectory, routes[path]), "utf8"));
 }
 
