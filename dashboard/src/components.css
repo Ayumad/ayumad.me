@@ -119,6 +119,33 @@
   overflow-wrap: anywhere;
 }
 
+.cell-m {
+  display: block;
+  height: 3px;
+  margin-top: 2px;
+  background: var(--fine);
+}
+
+.cell-m i {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+}
+
+.cell-m i.warn {
+  background: var(--warn);
+}
+
+.cell-m i.bad {
+  background: var(--bad);
+}
+
+.cell-l .dot {
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: 1px;
+}
+
 /* stacked sub-items: inline with · separators on wide screens, one per line
    on narrow ones — no orphan separator can wrap alone */
 .slist {

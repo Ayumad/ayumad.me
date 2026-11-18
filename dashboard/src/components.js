@@ -27,11 +27,12 @@ function pill(kind, text) {
 }
 
 /* ---- Cell ---- */
-function cell({ label, value = "—", sub = "", state = "", small = "" }) {
+function cell({ label, value = "—", sub = "", state = "", small = "", meter = null, dotState = "" }) {
   const v = value === "—" ? '<span class="dash">—</span>' : value;
   return `<div class="cell">
-    <span class="cell-l">${esc(label)}</span>
+    <span class="cell-l">${dotState ? dot(dotState) : ""}${esc(label)}</span>
     <span class="cell-v ${state}">${v}${small ? `<small> ${esc(small)}</small>` : ""}</span>
+    ${meter ? `<span class="cell-m"><i class="${meter.cls || ""}" style="width:${Math.max(0, Math.min(100, Number(meter.pct) || 0))}%"></i></span>` : ""}
     ${sub ? `<span class="cell-s">${sub}</span>` : ""}
   </div>`;
 }

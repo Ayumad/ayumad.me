@@ -17,12 +17,11 @@
       <header class="lh">
         <div class="lh-l">
           <a class="brand" href="/">AYUMAD<span>/</span>LIFE</a>
-          <span class="sep">·</span>
-          <span class="src" id="source">…</span>
+          <span class="src"><i class="sdot" id="sdot"></i><span id="source">…</span></span>
         </div>
         <div class="lh-r">
           <span class="hdate" id="hdate">—</span>
-          <a class="lnk" href="/status">STATUS <span aria-hidden="true">→</span></a>
+          <a class="lnk" href="/status"><i class="lnk-dot"></i>STATUS</a>
           <a class="lnk signin" id="signin" href="/dashboard/login?next=%2Fdashboard" hidden>SIGN IN</a>
         </div>
       </header>
@@ -34,14 +33,28 @@
           </div>
           <div class="dayline" id="dayline">—</div>
 
-          <div class="weather" id="weather">
-            <div class="wmain">
-              <span class="wglyph" id="wglyph">·</span>
+          <div class="weather">
+            <div class="wtop">
+              <span class="wicon" id="wicon"></span>
               <span class="wtemp" id="wtemp">—°</span>
             </div>
             <div class="wcond" id="wcond">WEATHER UNAVAILABLE</div>
-            <div class="whl" id="whl">H — · L —</div>
-            <div class="wplace" id="wplace">SAN JOSE · CA</div>
+            <div class="trange">
+              <span class="tlo" id="tlo">—</span>
+              <span class="tbar"><i id="tfill"></i><b id="tmark"></b></span>
+              <span class="thi" id="thi">—</span>
+            </div>
+            <div class="sunarc" id="sunarc">
+              <svg viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+                <path class="arc" d="M18 80 A132 66 0 0 1 282 80" />
+                <line class="horizon" x1="6" y1="80" x2="294" y2="80" />
+                <circle class="sundot" id="sundot" cx="150" cy="14" r="3.5" />
+              </svg>
+              <div class="sunlabels">
+                <span><i class="sicon rise"></i>SUNRISE <b id="sunrise">—</b></span>
+                <span><i class="sicon set"></i>SUNSET <b id="sunset">—</b></span>
+              </div>
+            </div>
           </div>
 
           <div class="forecast" id="forecast" hidden>
@@ -55,6 +68,12 @@
             <span class="slabel">TODAY</span>
             <span class="smeta" id="calmeta">—</span>
           </div>
+          <div class="dayrail" aria-hidden="true">
+            <div class="rail-line"></div>
+            <div class="rail-now" id="railnow"></div>
+            <div class="rail-events" id="railevents"></div>
+            <div class="rail-hours"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+          </div>
           <div class="events" id="events">
             <div class="empty">loading the day…</div>
           </div>
@@ -64,6 +83,7 @@
               <span class="smeta" id="weekmeta">—</span>
             </div>
             <div class="weekrows" id="weekrows"></div>
+            <div class="weekchart" id="weekchart" hidden></div>
           </div>
         </section>
 
@@ -87,10 +107,22 @@
               <span class="slabel">QUICK</span>
             </div>
             <div class="lgrid">
-              <a href="/vault">VAULT</a>
-              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">CANVAS</a>
-              <a href="https://mail.google.com" target="_blank" rel="noreferrer">GMAIL</a>
-              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">GITHUB</a>
+              <a href="/vault">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h10v10H3zM3 6h10M6 6v7" /></svg>
+                VAULT
+              </a>
+              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1" /><path d="M5 8h6M8 5v6" /></svg>
+                CANVAS
+              </a>
+              <a href="https://mail.google.com" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1" /><path d="m2 5 6 5 6-5" /></svg>
+                GMAIL
+              </a>
+              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 13c-3 1-3-2-4-2m8 4v-2c0-1 .3-1.4 0-2-2 0-3-1-3-3 0-1 .3-1.7 1-2 0-.8 0-1.5-.3-2 0 0-1 0-2 1a5 5 0 0 0-4 0c-1-1-2-1-2-1-.3.5-.3 1.2-.3 2 .7.3 1 1 1 2 0 2-1 3-3 3-.3.6 0 1 0 2v2" /></svg>
+                GITHUB
+              </a>
             </div>
           </div>
         </section>
@@ -98,9 +130,13 @@
 
       <footer class="lf">
         <a class="pulse" href="/status">
-          <i class="dot" id="dot"></i>
-          <span class="ptext" id="pulse">SYSTEM —</span>
-          <span class="pmeta" id="pmeta"></span>
+          <span class="pstate"><i class="dot" id="dot"></i><b id="pulse">SYSTEM —</b></span>
+          <span class="pstats">
+            <span class="pstat"><small>JOBS</small><i><b id="bar-jobs"></b></i><em id="val-jobs">—</em></span>
+            <span class="pstat"><small>CTR</small><i><b id="bar-ctr"></b></i><em id="val-ctr">—</em></span>
+            <span class="pstat"><small>DEV</small><i><b id="bar-dev"></b></i><em id="val-dev">—</em></span>
+            <span class="pstat"><small>ISS</small><i class="iss"><b id="bar-iss"></b></i><em id="val-iss">—</em></span>
+          </span>
         </a>
         <div class="fright">
           <span id="updated">—</span>

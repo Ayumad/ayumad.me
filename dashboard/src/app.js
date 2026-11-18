@@ -378,29 +378,72 @@ function heroCells() {
   const alerts = num(o.alerts);
   const st = o.status === undefined ? null : o.status;
   const score = num(o.score);
+  const ratio = (a, b) => {
+    const x = num(a);
+    const y = num(b);
+    return x === null || !y ? 0 : Math.min(100, (x / y) * 100);
+  };
+  const stDot = st === "ok" ? "good" : st === "warn" ? "warn" : st === "bad" ? "bad" : "off";
+  const ctrShort = cts && num(L.containers_running) !== null && num(cts.defined) !== null
+    ? num(L.containers_running) < num(cts.defined)
+    : false;
+  const overdue = num(L.overdue_tasks) ?? 0;
   return [
     cell({
       label: "status",
       value: statusWord(st),
       state: st === "ok" ? "good" : st === "warn" ? "warn" : st === "bad" ? "bad" : "",
+      dotState: stDot,
+      meter: {
+        pct: score ?? (st === "ok" ? 100 : st === "warn" ? 55 : st === "bad" ? 15 : 0),
+        cls: st === "bad" ? "bad" : st === "warn" ? "warn" : "",
+      },
       sub: score === null ? "derived from live counts" : `score ${score}`,
     }),
-    cell({ label: "alerts", value: valNum(alerts), state: alerts > 0 ? "warn" : "good", sub: '<span class="slist">failing</span><span class="slist">bad issues</span><span class="slist">overdue</span>' }),
+    cell({
+      label: "alerts",
+      value: valNum(alerts),
+      state: alerts > 0 ? "warn" : "good",
+      dotState: alerts > 0 ? "warn" : "good",
+      meter: { pct: alerts ? Math.min(100, alerts * 20) : 0, cls: alerts > 0 ? "warn" : "" },
+      sub: '<span class="slist">failing</span><span class="slist">bad issues</span><span class="slist">overdue</span>',
+    }),
     cell({
       label: "jobs enabled",
       value: valNum(cron.enabled),
       small: `/ ${num(cron.total) ?? "—"}`,
       state: failing > 0 ? "bad" : "good",
+      dotState: failing > 0 ? "bad" : "good",
+      meter: { pct: ratio(cron.enabled, cron.total), cls: failing > 0 ? "bad" : "" },
       sub: failing === null ? "" : failing > 0 ? `${failing} failing` : "none failing",
     }),
     cell({
       label: "containers running",
       value: valNum(L.containers_running),
       small: cts ? `/ ${num(cts.defined) ?? "—"}` : "",
+      dotState: ctrShort ? "warn" : "good",
+      meter: { pct: ratio(L.containers_running, cts?.defined), cls: ctrShort ? "warn" : "" },
       sub: cts ? "docker-vm" : waitCopy("total pending v2 collector"),
     }),
-    cell({ label: "devices online", value: valNum(L.devices_online), small: `/ ${num(L.devices_total) ?? "—"}`, state: "good", sub: "tailnet" }),
-    cell({ label: "open tasks", value: valNum(L.open_tasks), sub: num(L.overdue_tasks) > 0 ? `${L.overdue_tasks} overdue` : "none overdue" }),
+    cell({
+      label: "devices online",
+      value: valNum(L.devices_online),
+      small: `/ ${num(L.devices_total) ?? "—"}`,
+      state: "good",
+      dotState: "good",
+      meter: { pct: ratio(L.devices_online, L.devices_total) },
+      sub: "tailnet",
+    }),
+    cell({
+      label: "open tasks",
+      value: valNum(L.open_tasks),
+      dotState: overdue > 0 ? "warn" : "good",
+      meter: {
+        pct: ratio(L.open_tasks, (num(L.open_tasks) ?? 0) + overdue),
+        cls: overdue > 0 ? "warn" : "",
+      },
+      sub: overdue > 0 ? `${L.overdue_tasks} overdue` : "none overdue",
+    }),
   ].join("");
 }
 

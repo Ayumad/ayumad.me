@@ -167,13 +167,18 @@ select {
   }
 }
 
-/* life.css — one-screen life view. Deliberately sparse: clock, weather,
-   today's agenda, the next few tasks and deadlines, one system pulse. */
+/* life.css — one-screen life view. Sparse, visual, status-page grammar:
+   one large state marker, bars for quantities, rings for totals, icons for
+   categories. Text is for names and times, not for encoding status. */
 
 html,
 body {
   height: 100%;
   overflow: hidden;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -182,7 +187,7 @@ body {
 
 .life {
   display: grid;
-  grid-template-rows: 68px minmax(0, 1fr) 56px;
+  grid-template-rows: 68px minmax(0, 1fr) 70px;
   height: 100dvh;
   max-height: 100dvh;
   overflow: hidden;
@@ -203,7 +208,7 @@ body {
 .lh-r {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -222,17 +227,35 @@ body {
   color: var(--cyan);
 }
 
-.sep,
-.fsep {
-  color: var(--muted);
-}
-
 .src {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+.sdot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+.sdot.public {
+  background: var(--soft);
+}
+
+.sdot.snapshot {
+  background: var(--cyan);
+}
+
+.sdot.offline {
+  background: var(--bad);
 }
 
 .hdate {
@@ -245,6 +268,9 @@ body {
 }
 
 .lnk {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   color: var(--soft);
   font-family: var(--mono);
   font-size: 10.5px;
@@ -253,8 +279,11 @@ body {
   white-space: nowrap;
 }
 
-.lnk span {
-  color: var(--cyan);
+.lnk-dot {
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--cyan);
+  border-radius: 50%;
 }
 
 .lnk:hover {
@@ -282,7 +311,7 @@ body {
 .lnext {
   min-width: 0;
   min-height: 0;
-  padding: 34px 44px 30px;
+  padding: 32px 44px 26px;
 }
 
 .ltime {
@@ -299,9 +328,9 @@ body {
 .lnext {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 30px;
   border-left: 1px solid var(--line);
-  padding-right: 38px;
+  padding-right: 36px;
 }
 
 /* clock */
@@ -316,7 +345,7 @@ body {
 .clock {
   color: var(--text);
   font-family: var(--mono);
-  font-size: clamp(96px, 10.4vw, 196px);
+  font-size: clamp(88px, 9.7vw, 182px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.075em;
@@ -326,15 +355,15 @@ body {
 .ampm {
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: clamp(18px, 1.7vw, 30px);
+  font-size: clamp(17px, 1.6vw, 28px);
   letter-spacing: 0.02em;
 }
 
 .dayline {
-  margin-top: 18px;
+  margin-top: 16px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -342,82 +371,173 @@ body {
 /* weather */
 
 .weather {
-  margin-top: 44px;
-  padding-bottom: 4px;
+  margin-top: 30px;
 }
 
-.wmain {
+.wtop {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
 }
 
-.wglyph {
+.wicon {
+  display: grid;
+  width: clamp(48px, 4.2vw, 68px);
+  height: clamp(48px, 4.2vw, 68px);
+  place-items: center;
   color: var(--cyan);
-  font-size: clamp(30px, 2.6vw, 44px);
-  line-height: 1;
+}
+
+.wicon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
 }
 
 .wtemp {
   color: var(--text);
   font-family: var(--mono);
-  font-size: clamp(42px, 3.9vw, 68px);
+  font-size: clamp(40px, 3.7vw, 64px);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.04em;
   line-height: 1;
 }
 
 .wcond {
-  margin-top: 12px;
+  margin-top: 10px;
   color: var(--text);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.whl {
-  margin-top: 7px;
+.trange {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  max-width: 340px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: 10px;
+  letter-spacing: 0.04em;
 }
 
-.wplace {
-  margin-top: 14px;
+.tbar {
+  position: relative;
+  height: 3px;
+  flex: 1;
+  background: var(--fine);
+}
+
+.tfill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
+}
+
+.tbar b {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 7px;
+  background: var(--text);
+}
+
+.sunarc {
+  width: 100%;
+  max-width: 350px;
+  margin-top: 12px;
+}
+
+.sunarc svg {
+  display: block;
+  width: 100%;
+  height: 72px;
+}
+
+.sunarc .arc {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.sunarc .horizon {
+  stroke: var(--fine);
+  stroke-width: 1;
+}
+
+.sunarc .sundot {
+  fill: var(--warn);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.sunlabels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sunlabels b {
+  color: var(--soft);
+  font-weight: 400;
+}
+
+.sicon {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  border-radius: 50%;
+  vertical-align: 1px;
+}
+
+.sicon.rise {
+  background: var(--warn);
+}
+
+.sicon.set {
+  background: var(--muted);
 }
 
 /* forecast */
 
 .forecast {
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 16px;
   border-top: 1px solid var(--fine);
 }
 
 .flabel {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 9px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .frows {
-  margin-top: 8px;
+  margin-top: 7px;
 }
 
 .frow {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: baseline;
-  padding: 6px 0;
+  grid-template-columns: 38px 18px minmax(0, 1fr) 66px;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
   border-bottom: 1px solid var(--fine);
 }
 
@@ -428,27 +548,48 @@ body {
 .fday {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
 }
 
-.fcond {
-  overflow: hidden;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.08em;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
+.ficon {
+  display: grid;
+  width: 17px;
+  height: 17px;
+  place-items: center;
+  color: var(--soft);
+}
+
+.ficon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.fbar {
+  position: relative;
+  height: 3px;
+  background: var(--fine);
+}
+
+.fbar i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--cyan);
 }
 
 .fhl {
   color: var(--text);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
+  text-align: right;
   white-space: nowrap;
 }
 
@@ -459,24 +600,94 @@ body {
   align-items: baseline;
   justify-content: space-between;
   gap: 14px;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--line);
 }
 
 .slabel {
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 10px;
   letter-spacing: 0.2em;
 }
 
 .smeta {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-align: right;
   text-transform: uppercase;
+}
+
+/* day rail */
+
+.dayrail {
+  position: relative;
+  height: 36px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.rail-line {
+  position: absolute;
+  top: 15px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.rail-now {
+  position: absolute;
+  top: 4px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--cyan);
+}
+
+.rail-now::before {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  content: "";
+}
+
+.rail-events {
+  position: absolute;
+  inset: 0;
+}
+
+.rail-events .rev {
+  position: absolute;
+  top: 10px;
+  width: 2px;
+  height: 11px;
+  background: var(--cyan);
+}
+
+.rail-events .rev.allday {
+  top: 8px;
+  width: 10px;
+  height: 3px;
+  background: var(--violet);
+}
+
+.rail-hours {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.06em;
 }
 
 /* agenda */
@@ -485,14 +696,14 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .ev {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
-  gap: 18px;
-  padding: 16px 0 15px;
+  grid-template-columns: 3px 74px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px 0 13px;
   border-bottom: 1px solid var(--fine);
 }
 
@@ -500,19 +711,38 @@ body {
   border-bottom: 0;
 }
 
+.ev-bar {
+  align-self: stretch;
+  width: 3px;
+  min-height: 30px;
+  background: var(--line);
+}
+
+.ev-bar.class {
+  background: var(--cyan);
+}
+
+.ev-bar.canvas {
+  background: var(--violet);
+}
+
+.ev-bar.personal {
+  background: var(--warn);
+}
+
 .ev-t {
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 11px;
   letter-spacing: 0.04em;
-  line-height: 1.6;
+  line-height: 1.55;
   white-space: nowrap;
 }
 
 .ev-t.allday {
   color: var(--soft);
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
 }
 
 .ev-n {
@@ -522,33 +752,48 @@ body {
   font-size: clamp(16px, 1.25vw, 22px);
   font-weight: 400;
   letter-spacing: -0.005em;
-  line-height: 1.32;
+  line-height: 1.3;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
 .ev-c {
-  margin-top: 4px;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
-  text-overflow: ellipsis;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.ev.now .ev-t,
-.ev.now .ev-n {
-  color: var(--cyan);
+.ev-c::before {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--line);
+  content: "";
+}
+
+.ev-c.class::before {
+  background: var(--cyan);
+}
+
+.ev-c.canvas::before {
+  background: var(--violet);
+}
+
+.ev-c.personal::before {
+  background: var(--warn);
 }
 
 .more {
-  padding-top: 13px;
+  padding-top: 12px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -557,19 +802,19 @@ body {
 
 .week {
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 16px;
   border-top: 1px solid var(--fine);
 }
 
 .weekrows {
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .wrow {
   display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
-  gap: 14px;
-  align-items: start;
+  grid-template-columns: 78px 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid var(--fine);
 }
@@ -581,35 +826,92 @@ body {
 .wday {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 9.5px;
   letter-spacing: 0.08em;
   white-space: nowrap;
+}
+
+.wcount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wcount b {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.wcount i {
+  position: relative;
+  height: 3px;
+  flex: 1;
+  background: var(--fine);
+}
+
+.wcount i em {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
 }
 
 .wname {
   display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: 14px;
-  line-height: 1.35;
+  font-size: 13px;
+  line-height: 1.32;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
-.wpub {
-  padding: 9px 0;
+/* public week chart */
+
+.weekchart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  align-items: end;
+  height: 54px;
+  margin-top: 10px;
+  padding-top: 6px;
+}
+
+.wbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.wbar i {
+  width: 100%;
+  max-width: 22px;
+  min-height: 2px;
+  background: var(--cyan);
+}
+
+.wbar small {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 7.5px;
+  letter-spacing: 0.04em;
+}
+
+.wbar.today i {
+  background: var(--warn);
 }
 
 .empty {
-  padding: 18px 0;
+  padding: 16px 0;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -617,45 +919,119 @@ body {
 /* public teaser */
 
 .pub {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 0;
-  padding: 24px 0;
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 26px;
+  align-items: center;
+  padding: 18px 0 8px;
 }
 
-.pub-n {
+.pubring {
+  position: relative;
+  width: 158px;
+  height: 158px;
+}
+
+.pubring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.pubring .bg {
+  fill: none;
+  stroke: var(--fine);
+  stroke-width: 8;
+}
+
+.pubring .seg {
+  fill: none;
+  stroke-width: 8;
+}
+
+.pubring .seg.timed {
+  stroke: var(--cyan);
+}
+
+.pubring .seg.allday {
+  stroke: var(--violet);
+}
+
+.pub-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.pub-center b {
   color: var(--text);
   font-family: var(--mono);
-  font-size: clamp(72px, 7vw, 132px);
+  font-size: 48px;
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
   letter-spacing: -0.06em;
   line-height: 0.9;
 }
 
-.pub-l {
-  margin-top: 8px;
+.pub-center small {
+  margin-top: 5px;
   color: var(--cyan);
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
 }
 
-.pub-x {
-  margin-top: 22px;
+.publegend {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.pub-s {
-  margin-top: 10px;
+.publegend span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.publegend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+.publegend i.violet {
+  background: var(--violet);
+}
+
+.pubnext {
+  margin-top: 16px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.pubnext span {
+  color: var(--cyan);
+}
+
+.pubsign {
+  margin-top: 8px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* next column */
@@ -670,7 +1046,10 @@ body {
 }
 
 .row {
-  padding: 12px 0 11px;
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  column-gap: 8px;
+  padding: 11px 0 10px;
   border-bottom: 1px solid var(--fine);
 }
 
@@ -678,23 +1057,49 @@ body {
   border-bottom: 0;
 }
 
+.row-dot {
+  width: 6px;
+  height: 6px;
+  margin-top: 6px;
+  border: 1px solid var(--soft);
+  border-radius: 50%;
+}
+
+.row-dot.bad {
+  border-color: var(--bad);
+  background: var(--bad);
+}
+
+.row-dot.warn {
+  border-color: var(--warn);
+  background: var(--warn);
+}
+
+.row-body {
+  min-width: 0;
+}
+
 .row-t {
   display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: 15px;
-  line-height: 1.35;
+  font-size: 14.5px;
+  line-height: 1.32;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
 .row-m {
-  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 5px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .row-m.bad {
@@ -705,13 +1110,61 @@ body {
   color: var(--warn);
 }
 
+.duebar {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 3px;
+  background: var(--fine);
+}
+
+.duebar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
+}
+
+.duebar i.warn {
+  background: var(--warn);
+}
+
+.duebar i.bad {
+  background: var(--bad);
+}
+
+.cchip {
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--soft);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+}
+
 .row-count {
-  padding: 16px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0 0;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.countbar {
+  position: relative;
+  height: 3px;
+  flex: 1;
+  max-width: 120px;
+  background: var(--fine);
+}
+
+.countbar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
 }
 
 /* quick links */
@@ -724,19 +1177,31 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 7px;
-  padding-top: 13px;
+  padding-top: 12px;
 }
 
 .lgrid a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   padding: 8px 9px;
   border: 1px solid var(--line);
   border-radius: 2px;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 9px;
   letter-spacing: 0.14em;
-  text-align: center;
   text-decoration: none;
+}
+
+.lgrid svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
 }
 
 .lgrid a:hover {
@@ -758,19 +1223,26 @@ body {
 .pulse {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 22px;
   min-width: 0;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
   text-decoration: none;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.pulse:hover .ptext {
-  color: var(--cyan);
+.pstate {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pstate b {
+  color: var(--text);
+  font-weight: 400;
 }
 
 .dot {
@@ -788,20 +1260,60 @@ body {
 
 .dot.warn {
   background: var(--warn);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 12%, transparent);
 }
 
 .dot.bad {
   background: var(--bad);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 12%, transparent);
 }
 
-.ptext {
+.pstats {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pstat {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: 7px;
+  align-items: center;
+}
+
+.pstat small {
+  grid-column: 1 / -1;
+  color: var(--soft);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+}
+
+.pstat i {
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 3px;
+  background: var(--fine);
+}
+
+.pstat i b {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cyan);
+}
+
+.pstat i.iss b {
+  background: var(--warn);
+}
+
+.pstat em {
   color: var(--text);
-}
-
-.pmeta {
-  overflow: hidden;
-  color: var(--muted);
-  text-overflow: ellipsis;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-style: normal;
+  letter-spacing: 0.04em;
 }
 
 .fright {
@@ -810,7 +1322,7 @@ body {
   gap: 9px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -835,7 +1347,10 @@ body {
   }
   .ltime,
   .lagenda {
-    padding: 26px 28px;
+    padding: 24px 28px;
+  }
+  .pstats {
+    gap: 12px;
   }
 }
 
@@ -849,75 +1364,91 @@ body {
   .hdate {
     display: none;
   }
+  .src {
+    font-size: 8.5px;
+  }
   .lm {
     grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 1fr);
   }
   .ltime {
-    padding: 20px 18px 14px;
+    padding: 18px 18px 12px;
   }
   .lagenda {
-    padding: 18px;
+    padding: 16px 18px;
     border-top: 1px solid var(--line);
     border-left: 0;
   }
   .clock {
-    font-size: clamp(68px, 20vw, 96px);
+    font-size: clamp(66px, 19vw, 92px);
   }
   .ampm {
-    font-size: 16px;
+    font-size: 15px;
   }
   .dayline {
-    margin-top: 10px;
-    font-size: 10px;
+    margin-top: 8px;
+    font-size: 9.5px;
   }
   .weather {
     display: grid;
     grid-template-columns: auto 1fr;
     column-gap: 12px;
-    margin-top: 18px;
+    margin-top: 14px;
   }
-  .wmain {
+  .wtop {
     grid-row: span 2;
   }
-  .wtemp {
-    font-size: 38px;
+  .wicon {
+    width: 40px;
+    height: 40px;
   }
-  .wglyph {
-    font-size: 24px;
+  .wtemp {
+    font-size: 34px;
   }
   .wcond {
-    margin-top: 2px;
-    font-size: 9.5px;
+    margin-top: 1px;
+    font-size: 9px;
   }
-  .whl {
-    margin-top: 2px;
-    font-size: 10px;
+  .trange {
+    margin-top: 3px;
+    max-width: none;
   }
-  .wplace {
-    display: none;
-  }
+  .sunarc,
   .forecast {
     display: none;
   }
+  .dayrail {
+    height: 30px;
+    margin-top: 8px;
+  }
+  .rail-line {
+    top: 12px;
+  }
+  .rail-now {
+    top: 3px;
+    bottom: 8px;
+  }
+  .rail-events .rev {
+    top: 7px;
+  }
   .ev {
-    grid-template-columns: 64px minmax(0, 1fr);
-    gap: 12px;
-    padding: 11px 0;
+    grid-template-columns: 2px 62px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px 0;
   }
   .ev:nth-child(n + 5) {
     display: none;
   }
+  .ev-n {
+    font-size: 13.5px;
+  }
   .week {
     display: none;
-  }
-  .ev-n {
-    font-size: 14px;
   }
   .lf {
     padding: 0 18px;
   }
-  .pmeta,
+  .pstats,
   .fright span:last-child,
   .fright .fsep {
     display: none;
@@ -931,12 +1462,11 @@ body {
       <header class="lh">
         <div class="lh-l">
           <a class="brand" href="/">AYUMAD<span>/</span>LIFE</a>
-          <span class="sep">·</span>
-          <span class="src" id="source">…</span>
+          <span class="src"><i class="sdot" id="sdot"></i><span id="source">…</span></span>
         </div>
         <div class="lh-r">
           <span class="hdate" id="hdate">—</span>
-          <a class="lnk" href="/status">STATUS <span aria-hidden="true">→</span></a>
+          <a class="lnk" href="/status"><i class="lnk-dot"></i>STATUS</a>
           <a class="lnk signin" id="signin" href="/dashboard/login?next=%2Fdashboard" hidden>SIGN IN</a>
         </div>
       </header>
@@ -948,14 +1478,28 @@ body {
           </div>
           <div class="dayline" id="dayline">—</div>
 
-          <div class="weather" id="weather">
-            <div class="wmain">
-              <span class="wglyph" id="wglyph">·</span>
+          <div class="weather">
+            <div class="wtop">
+              <span class="wicon" id="wicon"></span>
               <span class="wtemp" id="wtemp">—°</span>
             </div>
             <div class="wcond" id="wcond">WEATHER UNAVAILABLE</div>
-            <div class="whl" id="whl">H — · L —</div>
-            <div class="wplace" id="wplace">SAN JOSE · CA</div>
+            <div class="trange">
+              <span class="tlo" id="tlo">—</span>
+              <span class="tbar"><i id="tfill"></i><b id="tmark"></b></span>
+              <span class="thi" id="thi">—</span>
+            </div>
+            <div class="sunarc" id="sunarc">
+              <svg viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+                <path class="arc" d="M18 80 A132 66 0 0 1 282 80" />
+                <line class="horizon" x1="6" y1="80" x2="294" y2="80" />
+                <circle class="sundot" id="sundot" cx="150" cy="14" r="3.5" />
+              </svg>
+              <div class="sunlabels">
+                <span><i class="sicon rise"></i>SUNRISE <b id="sunrise">—</b></span>
+                <span><i class="sicon set"></i>SUNSET <b id="sunset">—</b></span>
+              </div>
+            </div>
           </div>
 
           <div class="forecast" id="forecast" hidden>
@@ -969,6 +1513,12 @@ body {
             <span class="slabel">TODAY</span>
             <span class="smeta" id="calmeta">—</span>
           </div>
+          <div class="dayrail" aria-hidden="true">
+            <div class="rail-line"></div>
+            <div class="rail-now" id="railnow"></div>
+            <div class="rail-events" id="railevents"></div>
+            <div class="rail-hours"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+          </div>
           <div class="events" id="events">
             <div class="empty">loading the day…</div>
           </div>
@@ -978,6 +1528,7 @@ body {
               <span class="smeta" id="weekmeta">—</span>
             </div>
             <div class="weekrows" id="weekrows"></div>
+            <div class="weekchart" id="weekchart" hidden></div>
           </div>
         </section>
 
@@ -1001,10 +1552,22 @@ body {
               <span class="slabel">QUICK</span>
             </div>
             <div class="lgrid">
-              <a href="/vault">VAULT</a>
-              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">CANVAS</a>
-              <a href="https://mail.google.com" target="_blank" rel="noreferrer">GMAIL</a>
-              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">GITHUB</a>
+              <a href="/vault">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h10v10H3zM3 6h10M6 6v7" /></svg>
+                VAULT
+              </a>
+              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1" /><path d="M5 8h6M8 5v6" /></svg>
+                CANVAS
+              </a>
+              <a href="https://mail.google.com" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1" /><path d="m2 5 6 5 6-5" /></svg>
+                GMAIL
+              </a>
+              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 13c-3 1-3-2-4-2m8 4v-2c0-1 .3-1.4 0-2-2 0-3-1-3-3 0-1 .3-1.7 1-2 0-.8 0-1.5-.3-2 0 0-1 0-2 1a5 5 0 0 0-4 0c-1-1-2-1-2-1-.3.5-.3 1.2-.3 2 .7.3 1 1 1 2 0 2-1 3-3 3-.3.6 0 1 0 2v2" /></svg>
+                GITHUB
+              </a>
             </div>
           </div>
         </section>
@@ -1012,9 +1575,13 @@ body {
 
       <footer class="lf">
         <a class="pulse" href="/status">
-          <i class="dot" id="dot"></i>
-          <span class="ptext" id="pulse">SYSTEM —</span>
-          <span class="pmeta" id="pmeta"></span>
+          <span class="pstate"><i class="dot" id="dot"></i><b id="pulse">SYSTEM —</b></span>
+          <span class="pstats">
+            <span class="pstat"><small>JOBS</small><i><b id="bar-jobs"></b></i><em id="val-jobs">—</em></span>
+            <span class="pstat"><small>CTR</small><i><b id="bar-ctr"></b></i><em id="val-ctr">—</em></span>
+            <span class="pstat"><small>DEV</small><i><b id="bar-dev"></b></i><em id="val-dev">—</em></span>
+            <span class="pstat"><small>ISS</small><i class="iss"><b id="bar-iss"></b></i><em id="val-iss">—</em></span>
+          </span>
         </a>
         <div class="fright">
           <span id="updated">—</span>
@@ -1025,9 +1592,9 @@ body {
     </div>
 
     <script>
-/* life.js — one screen, no dependencies. Time is live; weather comes from
-   Open-Meteo; everything personal comes from the dashboard snapshot. The
-   public projection only carries counts, so signed-out visitors see a teaser. */
+/* life.js — one screen, no dependencies. Visual encoding first: a day rail,
+   rings, bars, due-date meters, and weather icons. Text carries names and
+   times only. Public data is counts; signed-in and wall data carry titles. */
 (() => {
   "use strict";
 
@@ -1057,15 +1624,34 @@ body {
     95: "THUNDERSTORM", 96: "THUNDERSTORM", 99: "THUNDERSTORM",
   };
 
-  const GLYPH = {
-    0: "☀", 1: "☀", 2: "⛅", 3: "☁",
-    45: "▒", 48: "▒",
-    51: "☂", 53: "☂", 55: "☂", 56: "☂", 57: "☂",
-    61: "☂", 63: "☂", 65: "☂", 66: "☂", 67: "☂",
-    71: "❄", 73: "❄", 75: "❄", 77: "❄", 85: "❄", 86: "❄",
-    80: "☂", 81: "☂", 82: "☂",
-    95: "ϟ", 96: "ϟ", 99: "ϟ",
+  const SVG = (body, view = "0 0 48 48") =>
+    `<svg viewBox="${view}" aria-hidden="true">${body}</svg>`;
+
+  const ICONS = {
+    sun: SVG('<circle cx="24" cy="24" r="7.5"/><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11.3 11.3l3.5 3.5M33.2 33.2l3.5 3.5M36.7 11.3l-3.5 3.5M14.8 33.2l-3.5 3.5"/>'),
+    moon: SVG('<path d="M29 8a16 16 0 1 0 11 27A17 17 0 0 1 29 8Z"/>'),
+    partly: SVG('<circle cx="18" cy="17" r="5.5"/><path d="M18 6v4M18 24v3M7 17h4M25 17h3M10.2 9.2l2.8 2.8M23 22.2l2.8 2.8"/><path d="M17 30h15a6 6 0 0 0 0-12 8 8 0 0 0-15 4 4 4 0 0 0 0 8Z"/>'),
+    cloud: SVG('<path d="M13 33h22a7 7 0 0 0 0-14 10 10 0 0 0-19-2 8 8 0 0 0-3 16Z"/>'),
+    rain: SVG('<path d="M13 29h22a7 7 0 0 0 0-14 10 10 0 0 0-19-2 8 8 0 0 0-3 16Z"/><path d="M16 35l-2 5M24 35l-2 5M32 35l-2 5"/>'),
+    drizzle: SVG('<path d="M13 29h22a7 7 0 0 0 0-14 10 10 0 0 0-19-2 8 8 0 0 0-3 16Z"/><path d="M19 35v3M27 35v3M35 35v3"/>'),
+    snow: SVG('<path d="M13 27h22a7 7 0 0 0 0-14 10 10 0 0 0-19-2 8 8 0 0 0-3 16Z"/><path d="M17 35h.1M24 38h.1M31 35h.1"/>'),
+    storm: SVG('<path d="M13 27h22a7 7 0 0 0 0-14 10 10 0 0 0-19-2 8 8 0 0 0-3 16Z"/><path d="M26 27l-4 8h5l-2 7 7-10h-5l3-5"/>'),
+    fog: SVG('<path d="M10 18h28M7 25h30M12 32h24M15 39h18"/>'),
   };
+
+  function iconFor(code, isDay = 1) {
+    const c = Number(code);
+    if (c === 0 || c === 1) return isDay ? ICONS.sun : ICONS.moon;
+    if (c === 2) return ICONS.partly;
+    if (c === 3) return ICONS.cloud;
+    if (c === 45 || c === 48) return ICONS.fog;
+    if (c >= 71 && c <= 77) return ICONS.snow;
+    if (c === 85 || c === 86) return ICONS.snow;
+    if (c >= 95) return ICONS.storm;
+    if (c === 51 || c === 53 || c === 55 || c === 56 || c === 57) return ICONS.drizzle;
+    if (c >= 61) return ICONS.rain;
+    return ICONS.cloud;
+  }
 
   const todayKey = () => dayKey(0);
 
@@ -1086,21 +1672,24 @@ body {
     return value.toUpperCase();
   }
 
+  function calClass(cal) {
+    const label = calLabel(cal);
+    if (label === "CLASS") return "class";
+    if (label === "CANVAS") return "canvas";
+    if (label === "PERSONAL") return "personal";
+    return "";
+  }
+
   function updateAge() {
     if (!generatedAt) {
       $("updated").textContent = "—";
       return;
     }
     const minutes = Math.max(0, Math.round((Date.now() - Date.parse(generatedAt)) / 60000));
-    if (!Number.isFinite(minutes)) {
-      $("updated").textContent = "—";
-    } else if (minutes < 1) {
-      $("updated").textContent = "DATA NOW";
-    } else if (minutes < 60) {
-      $("updated").textContent = `DATA ${minutes}M AGO`;
-    } else {
-      $("updated").textContent = `DATA ${Math.round(minutes / 60)}H AGO`;
-    }
+    if (!Number.isFinite(minutes)) $("updated").textContent = "—";
+    else if (minutes < 1) $("updated").textContent = "DATA NOW";
+    else if (minutes < 60) $("updated").textContent = `DATA ${minutes}M AGO`;
+    else $("updated").textContent = `DATA ${Math.round(minutes / 60)}H AGO`;
   }
 
   function clock() {
@@ -1117,7 +1706,42 @@ body {
     $("hdate").textContent = new Intl.DateTimeFormat("en-US", {
       timeZone: LA, weekday: "short", month: "short", day: "numeric",
     }).format(now).toUpperCase();
+    updateRailNow();
     updateAge();
+  }
+
+  function updateRailNow() {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: LA, hour: "numeric", minute: "numeric", hour12: false,
+    }).formatToParts(new Date());
+    const hour = Number(parts.find((p) => p.type === "hour")?.value || 0) % 24;
+    const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
+    $("railnow").style.left = `${((hour * 60 + minute) / 1440) * 100}%`;
+  }
+
+  function parseHours(time) {
+    const match = String(time || "").match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!match) return null;
+    let hour = Number(match[1]) % 12;
+    if (/PM/i.test(match[3])) hour += 12;
+    return hour + Number(match[2]) / 60;
+  }
+
+  function renderRail(events) {
+    const timed = events.filter((event) => event.time !== "all-day");
+    $("railevents").innerHTML = timed.map((event) => {
+      const hours = parseHours(event.time);
+      if (hours === null) return "";
+      return `<i class="rev" style="left:${(hours / 24) * 100}%;background:${eventColor(event.cal)}"></i>`;
+    }).join("");
+  }
+
+  function eventColor(cal) {
+    const cls = calClass(cal);
+    if (cls === "class") return "var(--cyan)";
+    if (cls === "canvas") return "var(--violet)";
+    if (cls === "personal") return "var(--warn)";
+    return "var(--soft)";
   }
 
   async function getJSON(url) {
@@ -1147,21 +1771,71 @@ body {
     }).format(date).toUpperCase();
   }
 
+  function fmtClock(iso) {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone: LA, hour: "numeric", minute: "2-digit", hour12: true,
+    }).format(date);
+  }
+
+  function daysUntil(value) {
+    const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return null;
+    const target = Date.parse(`${match[1]}-${match[2]}-${match[3]}T12:00:00Z`);
+    return Math.floor((target - Date.now()) / 86400000);
+  }
+
+  function dueInfo(value, horizon = 30) {
+    const days = daysUntil(value);
+    if (days === null) return { pct: 0, cls: "", label: "" };
+    const pct = Math.max(3, Math.min(100, 100 - (days / horizon) * 90));
+    const cls = days < 0 ? "bad" : days <= 3 ? "warn" : "";
+    return { pct, cls, days };
+  }
+
+  function dueBar(value, horizon = 30) {
+    const info = dueInfo(value, horizon);
+    if (info.days === null) return "";
+    const cls = info.cls ? ` ${info.cls}` : "";
+    return `<span class="duebar"><i class="${cls.trim()}" style="width:${info.pct}%"></i></span>`;
+  }
+
   function renderCalendar(data, isPublic) {
     const events = Array.isArray(data.calendar?.events) ? data.calendar.events : [];
     const count = Number.isFinite(data.calendar?.count) ? data.calendar.count : events.length;
     $("calmeta").textContent = count ? `${count} EVENT${count === 1 ? "" : "S"}` : "CLEAR";
+    renderRail(events);
 
     if (isPublic) {
-      const next = events.find((e) => e.time && e.time !== "all-day")?.time;
+      const total = Math.max(1, events.length);
+      const timed = events.filter((event) => event.time !== "all-day").length;
+      const allDay = Math.max(0, events.length - timed);
+      const timedPct = (timed / total) * 100;
+      const next = events.find((event) => event.time && event.time !== "all-day")?.time;
       $("events").innerHTML = `
         <div class="pub">
-          <div class="pub-n">${count}</div>
-          <div class="pub-l">EVENTS TODAY</div>
-          ${next ? `<div class="pub-x">NEXT ${esc(next)}</div>` : `<div class="pub-x">NO TIMED EVENTS</div>`}
-          <div class="pub-s">SIGN IN FOR DETAILS</div>
+          <div class="pubring">
+            <svg viewBox="0 0 120 120">
+              <circle class="bg" cx="60" cy="60" r="46" pathLength="100" />
+              <circle class="seg timed" cx="60" cy="60" r="46" pathLength="100"
+                stroke-dasharray="${timedPct} ${100 - timedPct}" stroke-dashoffset="0" />
+              <circle class="seg allday" cx="60" cy="60" r="46" pathLength="100"
+                stroke-dasharray="${allDay ? 100 - timedPct : 0} ${allDay ? timedPct : 100}"
+                stroke-dashoffset="${-timedPct}" />
+            </svg>
+            <div class="pub-center"><b>${count}</b><small>EVENTS</small></div>
+          </div>
+          <div>
+            <div class="publegend">
+              <span><i></i>${timed} TIMED</span>
+              <span><i class="violet"></i>${allDay} ALL DAY</span>
+            </div>
+            <div class="pubnext"><span>NEXT</span> ${next ? esc(next) : "—"}</div>
+            <div class="pubsign">Sign in for titles</div>
+          </div>
         </div>`;
-      renderWeek(data.calendar?.week_count ?? 0, true);
+      renderWeek(data.calendar?.week_count ?? 0, true, data.calendar?.week_days);
       return;
     }
 
@@ -1179,12 +1853,14 @@ body {
       const dueLater = allDay && sortDate > today;
       const dueLabel = sortDate === tomorrow ? "DUE TOMORROW" : "DUE SOON";
       const label = allDay ? (dueLater ? dueLabel : "ALL DAY") : event.time || "—";
+      const cls = calClass(event.cal);
       return `
         <div class="ev">
+          <i class="ev-bar ${cls}"></i>
           <div class="ev-t ${allDay ? "allday" : ""}">${esc(label)}</div>
           <div>
             <div class="ev-n">${esc(event.summary || "untitled")}</div>
-            <div class="ev-c">${esc(calLabel(event.cal))}</div>
+            <div class="ev-c ${cls}">${esc(calLabel(event.cal))}</div>
           </div>
         </div>`;
     }).join("");
@@ -1195,18 +1871,31 @@ body {
     renderWeek(data.calendar?.week, false);
   }
 
-  function renderWeek(week, isPublic) {
+  function renderWeek(week, isPublic, weekDays) {
     const block = $("week");
     const rows = $("weekrows");
+    const chart = $("weekchart");
     const meta = $("weekmeta");
 
     if (isPublic) {
       const count = Number(week) || 0;
+      const days = Array.isArray(weekDays) ? weekDays.slice(-7) : [];
       block.hidden = count === 0;
       meta.textContent = `${count} ITEMS`;
-      rows.innerHTML = count
-        ? `<div class="wpub">NEXT 7 DAYS · ${count} ITEMS · SIGN IN FOR DETAILS</div>`
-        : "";
+      rows.innerHTML = "";
+      chart.hidden = days.length === 0;
+      if (!days.length) return;
+      const max = Math.max(1, ...days.map((day) => Number(day.count) || 0));
+      chart.innerHTML = days.map((day) => {
+        const date = String(day.date || "");
+        const label = date
+          ? new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "narrow" })
+              .format(new Date(`${date}T12:00:00Z`))
+          : "·";
+        const height = Math.max(2, ((Number(day.count) || 0) / max) * 100);
+        return `<span class="wbar ${date === todayKey() ? "today" : ""}">
+          <i style="height:${height}%"></i><small>${esc(label)}</small></span>`;
+      }).join("");
       return;
     }
 
@@ -1218,19 +1907,21 @@ body {
       groups.get(date).push(event);
     }
     const days = [...groups.entries()].slice(0, 5);
+    const max = Math.max(1, ...days.map(([, events]) => events.length));
     block.hidden = days.length === 0;
     meta.textContent = items.length ? `${items.length} ITEMS` : "";
+    chart.hidden = true;
     rows.innerHTML = days.map(([date, events]) => {
       const day = date
         ? new Intl.DateTimeFormat("en-US", {
             timeZone: "UTC", weekday: "short", month: "short", day: "numeric",
           }).format(new Date(`${date}T12:00:00Z`)).toUpperCase()
         : "—";
-      const lead = events.length > 1 ? `${events.length} ITEMS · ` : "";
       return `
         <div class="wrow">
           <span class="wday">${esc(day)}</span>
-          <span class="wname">${lead}${esc(events[0].summary || "untitled")}</span>
+          <span class="wcount"><b>${events.length}</b><i><em style="width:${(events.length / max) * 100}%"></em></i></span>
+          <span class="wname">${esc(events[0].summary || "untitled")}</span>
         </div>`;
     }).join("");
   }
@@ -1242,17 +1933,28 @@ body {
     $("taskmeta").textContent = `${open} OPEN`;
 
     if (isPublic) {
-      $("tasks").innerHTML = `<div class="row-count">${open} OPEN · ${overdue} OVERDUE</div>`;
+      const ratio = open + overdue ? open / (open + overdue) : 0;
+      $("tasks").innerHTML = `
+        <div class="row-count"><span class="countbar"><i style="width:${ratio * 100}%"></i></span>${open} OPEN</div>
+        <div class="row-count"><span class="countbar"><i style="width:${overdue ? Math.min(100, overdue / Math.max(1, open) * 100) : 0}%;background:var(--bad)"></i></span>${overdue} OVERDUE</div>`;
       return;
     }
 
     const items = Array.isArray(tasks.items) ? tasks.items.slice(0, 4) : [];
     $("tasks").innerHTML = items.length
-      ? items.map((item) => `
-          <div class="row">
-            <div class="row-t">${esc(item.title || "untitled")}</div>
-            <div class="row-m ${item.overdue ? "bad" : ""}">${item.overdue ? "OVERDUE" : esc(fmtDate(item.due) || "NO DATE")}</div>
-          </div>`).join("")
+      ? items.map((item) => {
+          const dot = item.overdue ? "bad" : "";
+          return `
+            <div class="row">
+              <i class="row-dot ${dot}"></i>
+              <div class="row-body">
+                <div class="row-t">${esc(item.title || "untitled")}</div>
+                <div class="row-m ${item.overdue ? "bad" : ""}">
+                  ${dueBar(item.due, 30)}${item.overdue ? "OVERDUE" : fmtDate(item.due) || "NO DATE"}
+                </div>
+              </div>
+            </div>`;
+        }).join("")
       : `<div class="empty">clear</div>`;
   }
 
@@ -1262,7 +1964,9 @@ body {
     $("schoolmeta").textContent = `${upcoming} UPCOMING`;
 
     if (isPublic) {
-      $("school").innerHTML = `<div class="row-count">${upcoming} UPCOMING</div>`;
+      const ratio = Math.min(1, upcoming / 7);
+      $("school").innerHTML = `
+        <div class="row-count"><span class="countbar"><i style="width:${ratio * 100}%"></i></span>${upcoming} UPCOMING</div>`;
       return;
     }
 
@@ -1270,10 +1974,23 @@ body {
     $("school").innerHTML = next.length
       ? next.map((item) => `
           <div class="row">
-            <div class="row-t">${esc(item.title || item.course || "untitled")}</div>
-            <div class="row-m ${item.overdue ? "bad" : ""}">${esc(item.course || "")}${item.due ? ` · ${esc(fmtDate(item.due))}` : ""}</div>
+            <i class="row-dot ${item.overdue ? "bad" : "warn"}"></i>
+            <div class="row-body">
+              <div class="row-t">${esc(item.title || item.course || "untitled")}</div>
+              <div class="row-m">
+                <span class="cchip">${esc(item.course || "—")}</span>
+                ${dueBar(item.due, 7)}${fmtDate(item.due)}
+              </div>
+            </div>
           </div>`).join("")
       : `<div class="empty">clear</div>`;
+  }
+
+  function setBar(id, pct, color) {
+    const bar = $(id);
+    if (!bar) return;
+    bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+    if (color) bar.style.background = color;
   }
 
   function renderPulse(data) {
@@ -1294,16 +2011,28 @@ body {
       dot.className = "dot ok";
     }
 
-    $("pmeta").textContent = [
-      `${Number(now.jobs_total) || 0} JOBS`,
-      `${Number(now.containers_running) || 0} CONTAINERS`,
-      `${Number(now.devices_online) || 0}/${Number(now.devices_total) || 0} DEVICES`,
-    ].join(" · ");
+    const jobsTotal = Number(now.jobs_total) || 0;
+    const jobsActive = Math.max(0, jobsTotal - failing);
+    const ctrRunning = Number(now.containers_running) || 0;
+    const ctrTotal = Number(data.homelab?.containers?.total) || ctrRunning || 1;
+    const devOnline = Number(now.devices_online) || 0;
+    const devTotal = Number(now.devices_total) || 1;
+    const issues = bad + warn;
+
+    setBar("bar-jobs", jobsTotal ? (jobsActive / jobsTotal) * 100 : 0);
+    setBar("bar-ctr", (ctrRunning / ctrTotal) * 100);
+    setBar("bar-dev", (devOnline / devTotal) * 100);
+    setBar("bar-iss", issues ? Math.min(100, issues * 25) : 0, bad ? "var(--bad)" : "var(--warn)");
+    $("val-jobs").textContent = jobsTotal ? `${jobsActive}/${jobsTotal}` : "—";
+    $("val-ctr").textContent = ctrRunning ? `${ctrRunning}/${ctrTotal}` : "—";
+    $("val-dev").textContent = devTotal ? `${devOnline}/${devTotal}` : "—";
+    $("val-iss").textContent = issues || "0";
   }
 
   function apply(data, source) {
     const isPublic = !!data.public;
     $("source").textContent = isPublic ? "PUBLIC" : source;
+    $("sdot").className = "sdot" + (isPublic ? " public" : source === "SNAPSHOT" ? " snapshot" : "");
     $("signin").hidden = !isPublic;
     renderCalendar(data, isPublic);
     renderTasks(data, isPublic);
@@ -1336,28 +2065,42 @@ body {
       /* fall through */
     }
     $("source").textContent = "OFFLINE";
+    $("sdot").className = "sdot offline";
     $("events").innerHTML = `<div class="empty">data unavailable</div>`;
     $("tasks").innerHTML = `<div class="empty">—</div>`;
     $("school").innerHTML = `<div class="empty">—</div>`;
     $("pulse").textContent = "STATUS UNAVAILABLE";
     $("dot").className = "dot";
+    $("railevents").innerHTML = "";
   }
 
   function renderForecast(daily) {
     const times = Array.isArray(daily.time) ? daily.time : [];
+    if (times.length < 2) {
+      $("forecast").hidden = true;
+      return;
+    }
+    const highs = times.map((_, i) => Number(daily.temperature_2m_max?.[i]));
+    const lows = times.map((_, i) => Number(daily.temperature_2m_min?.[i]));
+    const top = Math.max(...highs.filter(Number.isFinite));
+    const bottom = Math.min(...lows.filter(Number.isFinite));
+    const span = Math.max(1, top - bottom);
     const rows = [];
     for (let i = 1; i < Math.min(times.length, 4); i += 1) {
       const day = new Intl.DateTimeFormat("en-US", {
         timeZone: LA, weekday: "short",
       }).format(new Date(`${times[i]}T12:00:00`)).toUpperCase();
       const code = Number(daily.weather_code?.[i]);
-      const high = Math.round(Number(daily.temperature_2m_max?.[i]));
-      const low = Math.round(Number(daily.temperature_2m_min?.[i]));
+      const high = highs[i];
+      const low = lows[i];
+      const offset = ((low - bottom) / span) * 100;
+      const width = Math.max(6, ((high - low) / span) * 100);
       rows.push(`
         <div class="frow">
           <span class="fday">${esc(day)}</span>
-          <span class="fcond">${esc(WMO[code] || "—")}</span>
-          <span class="fhl">${high}° / ${low}°</span>
+          <span class="ficon">${iconFor(code, 1)}</span>
+          <span class="fbar"><i style="left:${offset}%;width:${width}%"></i></span>
+          <span class="fhl">${Math.round(high)}° / ${Math.round(low)}°</span>
         </div>`);
     }
     $("frows").innerHTML = rows.join("");
@@ -1380,12 +2123,40 @@ body {
 
       $("wtemp").textContent = Number.isFinite(temp) ? `${temp}°` : "—°";
       $("wcond").textContent = WMO[code] || "WEATHER";
-      $("whl").textContent = `H ${Number.isFinite(high) ? high : "—"}° · L ${Number.isFinite(low) ? low : "—"}°`;
-      $("wglyph").textContent = (!current.is_day && code === 0) ? "☾" : (GLYPH[code] || "·");
+      $("wicon").innerHTML = iconFor(code, current.is_day);
+      $("tlo").textContent = Number.isFinite(low) ? `${low}°` : "—";
+      $("thi").textContent = Number.isFinite(high) ? `${high}°` : "—";
+      if (Number.isFinite(temp) && Number.isFinite(high) && Number.isFinite(low) && high > low) {
+        const pct = Math.max(0, Math.min(100, ((temp - low) / (high - low)) * 100));
+        $("tfill").style.width = `${pct}%`;
+        $("tmark").style.left = `calc(${pct}% - 1px)`;
+      }
+
+      const rise = daily.sunrise?.[0];
+      const set = daily.sunset?.[0];
+      if (rise && set) {
+        $("sunrise").textContent = fmtClock(rise);
+        $("sunset").textContent = fmtClock(set);
+        const riseMs = new Date(rise).getTime();
+        const setMs = new Date(set).getTime();
+        const progress = Math.max(0, Math.min(1, (Date.now() - riseMs) / (setMs - riseMs)));
+        const angle = Math.PI * (1 - progress);
+        const x = 150 + 132 * Math.cos(angle);
+        const y = 80 - 66 * Math.sin(angle);
+        $("sundot").setAttribute("cx", x.toFixed(1));
+        $("sundot").setAttribute("cy", y.toFixed(1));
+        $("sunarc").hidden = false;
+      } else {
+        $("sunarc").hidden = true;
+      }
       renderForecast(daily);
     } catch {
       $("wcond").textContent = "WEATHER UNAVAILABLE";
-      $("whl").textContent = "—";
+      $("wicon").innerHTML = ICONS.cloud;
+      $("tlo").textContent = "—";
+      $("thi").textContent = "—";
+      $("sunarc").hidden = true;
+      $("forecast").hidden = true;
     }
   }
 

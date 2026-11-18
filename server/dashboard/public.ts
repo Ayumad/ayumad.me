@@ -24,6 +24,12 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
   const school = v1.school ?? {};
   const calendar = v1.calendar ?? {};
   const calendarEvents = Array.isArray(calendar.events) ? calendar.events : [];
+  const weekEvents = Array.isArray(calendar.week) ? calendar.week : [];
+  const weekCounts = new Map<string, number>();
+  for (const event of weekEvents) {
+    const date = String(event?.sort ?? "").slice(0, 10);
+    if (date) weekCounts.set(date, (weekCounts.get(date) ?? 0) + 1);
+  }
 
   const guests = Array.isArray(hl.guests)
     ? hl.guests.map((g: any, i: number) => ({
@@ -131,6 +137,7 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
     calendar: {
       count: n(calendar.count) ?? calendarEvents.length,
       week_count: n(calendar.week_count) ?? (Array.isArray(calendar.week) ? calendar.week.length : 0),
+      week_days: [...weekCounts.entries()].map(([date, count]) => ({ date, count })),
       events: calendarEvents.map((e: any) => ({
         time: e.time ?? null,
         all_day: e.time === "all-day",
