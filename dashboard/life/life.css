@@ -302,9 +302,9 @@ body {
 }
 
 .smeta {
-  color: var(--muted);
+  color: var(--soft);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.12em;
   text-align: right;
   text-transform: uppercase;
@@ -350,10 +350,10 @@ body {
   display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: clamp(15px, 1.15vw, 20px);
+  font-size: clamp(16px, 1.25vw, 22px);
   font-weight: 400;
   letter-spacing: -0.005em;
-  line-height: 1.35;
+  line-height: 1.32;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -361,9 +361,9 @@ body {
 .ev-c {
   margin-top: 4px;
   overflow: hidden;
-  color: var(--muted);
+  color: var(--soft);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -398,9 +398,9 @@ body {
 
 .wrow {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: 78px minmax(0, 1fr);
   gap: 14px;
-  align-items: baseline;
+  align-items: start;
   padding: 8px 0;
   border-bottom: 1px solid var(--fine);
 }
@@ -412,18 +412,19 @@ body {
 .wday {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
   white-space: nowrap;
 }
 
 .wname {
+  display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: 12.5px;
-  line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .wpub {
@@ -512,7 +513,7 @@ body {
   display: -webkit-box;
   overflow: hidden;
   color: var(--text);
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.35;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -520,9 +521,9 @@ body {
 
 .row-m {
   margin-top: 4px;
-  color: var(--muted);
+  color: var(--soft);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }

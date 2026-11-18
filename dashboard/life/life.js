@@ -15,6 +15,8 @@
       "'": "&#39;",
     })[c]);
 
+  let generatedAt = null;
+
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
     45: "FOG", 48: "FREEZING FOG",
@@ -57,6 +59,23 @@
     return value.toUpperCase();
   }
 
+  function updateAge() {
+    if (!generatedAt) {
+      $("updated").textContent = "—";
+      return;
+    }
+    const minutes = Math.max(0, Math.round((Date.now() - Date.parse(generatedAt)) / 60000));
+    if (!Number.isFinite(minutes)) {
+      $("updated").textContent = "—";
+    } else if (minutes < 1) {
+      $("updated").textContent = "DATA NOW";
+    } else if (minutes < 60) {
+      $("updated").textContent = `DATA ${minutes}M AGO`;
+    } else {
+      $("updated").textContent = `DATA ${Math.round(minutes / 60)}H AGO`;
+    }
+  }
+
   function clock() {
     const now = new Date();
     const parts = new Intl.DateTimeFormat("en-US", {
@@ -71,6 +90,7 @@
     $("hdate").textContent = new Intl.DateTimeFormat("en-US", {
       timeZone: LA, weekday: "short", month: "short", day: "numeric",
     }).format(now).toUpperCase();
+    updateAge();
   }
 
   async function getJSON(url) {
@@ -91,16 +111,6 @@
     }
   }
 
-  function timeOf(iso) {
-    try {
-      return new Intl.DateTimeFormat("en-US", {
-        timeZone: LA, hour: "numeric", minute: "2-digit", hour12: true,
-      }).format(new Date(iso));
-    } catch {
-      return "—";
-    }
-  }
-
   function fmtDate(value) {
     const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
     if (!match) return String(value || "").toUpperCase();
@@ -108,46 +118,6 @@
     return new Intl.DateTimeFormat("en-US", {
       timeZone: "UTC", month: "short", day: "numeric",
     }).format(date).toUpperCase();
-  }
-
-  function renderWeek(week, isPublic) {
-    const block = $("week");
-    const rows = $("weekrows");
-    const meta = $("weekmeta");
-
-    if (isPublic) {
-      const count = Number(week) || 0;
-      block.hidden = count === 0;
-      meta.textContent = `${count} ITEMS`;
-      rows.innerHTML = count
-        ? `<div class="wpub">NEXT 7 DAYS · ${count} ITEMS · SIGN IN FOR DETAILS</div>`
-        : "";
-      return;
-    }
-
-    const items = Array.isArray(week) ? week : [];
-    const groups = new Map();
-    for (const event of items) {
-      const date = String(event.sort || "").slice(0, 10);
-      if (!groups.has(date)) groups.set(date, []);
-      groups.get(date).push(event);
-    }
-    const days = [...groups.entries()].slice(0, 5);
-    block.hidden = days.length === 0;
-    meta.textContent = items.length ? `${items.length} ITEMS` : "";
-    rows.innerHTML = days.map(([date, events]) => {
-      const day = date
-        ? new Intl.DateTimeFormat("en-US", {
-            timeZone: "UTC", weekday: "short", month: "short", day: "numeric",
-          }).format(new Date(`${date}T12:00:00Z`)).toUpperCase()
-        : "—";
-      const lead = events.length > 1 ? `${events.length} ITEMS · ` : "";
-      return `
-        <div class="wrow">
-          <span class="wday">${esc(day)}</span>
-          <span class="wname">${lead}${esc(events[0].summary || "untitled")}</span>
-        </div>`;
-    }).join("");
   }
 
   function renderCalendar(data, isPublic) {
@@ -196,6 +166,46 @@
       : "";
     $("events").innerHTML = rows + more;
     renderWeek(data.calendar?.week, false);
+  }
+
+  function renderWeek(week, isPublic) {
+    const block = $("week");
+    const rows = $("weekrows");
+    const meta = $("weekmeta");
+
+    if (isPublic) {
+      const count = Number(week) || 0;
+      block.hidden = count === 0;
+      meta.textContent = `${count} ITEMS`;
+      rows.innerHTML = count
+        ? `<div class="wpub">NEXT 7 DAYS · ${count} ITEMS · SIGN IN FOR DETAILS</div>`
+        : "";
+      return;
+    }
+
+    const items = Array.isArray(week) ? week : [];
+    const groups = new Map();
+    for (const event of items) {
+      const date = String(event.sort || "").slice(0, 10);
+      if (!groups.has(date)) groups.set(date, []);
+      groups.get(date).push(event);
+    }
+    const days = [...groups.entries()].slice(0, 5);
+    block.hidden = days.length === 0;
+    meta.textContent = items.length ? `${items.length} ITEMS` : "";
+    rows.innerHTML = days.map(([date, events]) => {
+      const day = date
+        ? new Intl.DateTimeFormat("en-US", {
+            timeZone: "UTC", weekday: "short", month: "short", day: "numeric",
+          }).format(new Date(`${date}T12:00:00Z`)).toUpperCase()
+        : "—";
+      const lead = events.length > 1 ? `${events.length} ITEMS · ` : "";
+      return `
+        <div class="wrow">
+          <span class="wday">${esc(day)}</span>
+          <span class="wname">${lead}${esc(events[0].summary || "untitled")}</span>
+        </div>`;
+    }).join("");
   }
 
   function renderTasks(data, isPublic) {
@@ -272,15 +282,19 @@
     renderTasks(data, isPublic);
     renderSchool(data, isPublic);
     renderPulse(data);
-    $("updated").textContent = data.generated_at ? `DATA ${timeOf(data.generated_at)}` : "—";
+    generatedAt = data.generated_at || null;
+    updateAge();
   }
 
   async function load() {
-    try {
-      apply(await getJSON("/dashboard/data"), "SNAPSHOT");
-      return;
-    } catch {
-      /* The wall serves the payload next to the page. */
+    const isWall = location.pathname.endsWith(".html") || location.protocol === "file:";
+    if (!isWall) {
+      try {
+        apply(await getJSON("/dashboard/data"), "SNAPSHOT");
+        return;
+      } catch {
+        /* fall through to a local payload */
+      }
     }
     try {
       apply(await getJSON("./dashboard.json"), "LIVE");
