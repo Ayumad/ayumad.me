@@ -1,12 +1,36 @@
 [
  {
+  "date": "2026-11-18",
+  "summary": "Session journal for 2026-11-18: gateway recovered at 8:25 AM after a 21-hour outage, full cron catch-up across 11 stores (one media-pipeline delivery failure), backfilled the missing 11-17 journal, media status notes refreshed, disk at 88%.",
+  "highlights": [
+   "The 21-hour gap was a gateway death, not a cron bug: no exit path, no restart until the GUI session came back. Two days of media/remux/homelab automation simply did not happen.",
+   "Nothing was lost that mattered — no interactive work occurred during the outage, and the vault synced cleanly on the first tick after recovery.",
+   "The quiet failure to fix: Daily Brief has been generating empty output since Nov 4, and it still reads `ok` in every health check. A green job that produces nothing is worse than a red one."
+  ]
+ },
+ {
+  "date": "2026-11-17",
+  "summary": "Session journal for 2026-11-17: quiet day, no interactive sessions; cron clean until the Mac mini's Hermes gateway died at 11:30 AM (unclean exit, ~21h dark), Estate Sale Watch + School Drive Organizer + Handshake digest fired, Daily Brief still emitting 0-byte output.",
+  "highlights": [
+   "A quiet Tuesday that turned into an unplanned 21-hour Hermes outage — no user work was lost, because there wasn't any user work.",
+   "The outage was the machine/gateway, not a job: the ledger attributes it to an unclean process death (SIGKILL/OOM/power), and the reboot at 4:27 PM did not bring the launchd gateway back without a GUI login.",
+   "The one real defect worth chasing: Daily Brief has produced empty files for 13 days. Worth fixing before it silently becomes the norm."
+  ]
+ },
+ {
   "date": "2026-11-16",
-  "summary": "Session journal for 2026-11-16: NAS storage recovery (98%→84%) and remux driver seed-leak fix, RTX 4080 resale estimate, job application pipeline work, Hermes mobile server URL/password fix, school task cleared.",
+  "summary": "Session journal for 2026-11-16: NAS storage recovery (98%→84%) and remux driver seed-leak fix, RTX 4080 resale estimate, job application pipeline work, Hermes mobile server URL/password fix, school task cleared, Logitech RS50 sim racing rig cataloged ($400 used), Canyon identified (i7-9700K + RX 6600) with sim-rig/VR sizing.",
   "highlights": [
    "The storage \"emergency\" was a bug, not a capacity wall: 19 completed remux swaps had been freeing zero bytes because the old seed torrent never matched by inode. Fixed at the driver, not by deleting more.",
    "`tank` went 98% → 84% in one afternoon (33 GiB → 2.10 TiB) and the queue is now ordered largest-first, so each swap returns 40–60 GiB.",
    "Job application pipeline work — details stay in the vault.",
-   "Mobile app rule worth remembering: `ayumacmini:8787` and the 32-char WebUI password. The raw Tailscale IP 404s and the dashboard creds belong to :9119."
+   "Mobile app rule worth remembering: `ayumacmini:8787` and the 32-char WebUI password. The raw Tailscale IP 404s and the dashboard creds belong to :9119.",
+   "Coursework — details stay in the vault.",
+   "**Closed — RS50 sim rig.** The pickup task was completed on Hardware at 22:18 → Apple. Full $400 paid; the product note already reflected the purchase and the in-hand details, so no note edit was needed beyond checking it.",
+   "**Closed — Intro to Agentic AI article (reconciliation, not delivery).** The Tech task was ticked 2026-11-14 but no draft exists in `02 Projects/Articles/` or in the `ayumad.me` repo, and the site's journal index has nothing. Rather than report the same question a third night, the Articles Hub line is checked off with the evidence noted — reopen if a draft is still owed.",
+   "Coursework — details stay in the vault.",
+   "**Filed — 1 task:** *SJSU Bursar: submit IRS W-9S (SSN/ITIN) to the Registrar by Dec 15* (School, due 2026-12-15). The bursar email says SJSU has no SSN/ITIN on file and needs a W-9S by Dec 15 for the 1098-T — paper/registrar drop-box only, or email `[redacted]` with subject \"1098-T\" if he has neither. Sync confirmed `created->Apple` at 23:06; dry-run 0 actions planned.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
