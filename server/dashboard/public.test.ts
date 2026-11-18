@@ -43,6 +43,10 @@ vi.mock("./snapshot", () => {
     },
     tasks: { open: 50, overdue: 9, items: [{ title: "secret task", list: "Tech" }] },
     school: { upcoming: 6, courses: ["CMPE-131"], next: [{ title: "secret quiz", course: "CMPE-131" }] },
+    calendar: { count: 2, events: [
+      { time: "all-day", summary: "secret birthday", cal: "secret-cal", sort: "2026-11-18" },
+      { time: "10:30 AM", summary: "secret class", cal: "secret-cal", sort: "2026-11-18T10:30:00-08:00" },
+    ] },
     fleet: [{ name: "secret-peer", os: "macOS", online: true }],
     now: {
       active_projects: 21,
@@ -82,8 +86,10 @@ describe("public dashboard projection", () => {
     expect(out.homelab.containers.names).toEqual([]);
     expect(out.tasks.items).toEqual([]);
     expect(out.school.next).toEqual([]);
+    expect(out.calendar.count).toBe(2);
+    expect(out.calendar.events[1]).toEqual({ time: "10:30 AM", all_day: false });
     expect(out.fleet).toEqual([]);
-    for (const secret of ["secret-host", "secret-vm", "secret-nas", "secret-container", "secret task", "secret quiz", "secret-peer", "10.0.0.9", "secret-model"]) {
+    for (const secret of ["secret-host", "secret-vm", "secret-nas", "secret-container", "secret task", "secret quiz", "secret-peer", "secret birthday", "secret class", "secret-cal", "10.0.0.9", "secret-model"]) {
       expect(text).not.toContain(secret);
     }
   });

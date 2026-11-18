@@ -2,7 +2,7 @@
    web layout, drawer, filters, keyboard, URL state, theme.
    Wall mode lives in wall.js; boot() is invoked at the end of wall.js. */
 
-const AUTH_DATA = "/dashboard/data"; // authenticated v1 snapshot (Vercel function)
+const AUTH_DATA = "/status/data"; // authenticated v1 snapshot (Vercel function)
 const WALL_DATA = "./dashboard.json"; // wall server payload (docker-vm)
 const SEED = window.__DASHBOARD_SEED__; // fixture inlined by the build
 const LIVE_TIMEOUT_MS = 5000;
@@ -412,11 +412,12 @@ function headerHtml() {
   const src = S.data ? S.source : "sync";
   return `<header class="hdr">
     <div class="hdr-in">
-      <a class="brand" href="/">AYUMAD<span class="sl">/</span><span class="dim">OPS</span></a>
+      <a class="brand" href="/">AYUMAD<span class="sl">/</span><span class="dim">STATUS</span></a>
       <nav class="tabs" aria-label="Sections">${tabs}</nav>
       <div class="hdr-r" aria-live="polite">
         ${pillFor(src)}
-        ${S.source === "public" ? `<a class="signin" href="/dashboard/login?next=%2Fdashboard">SIGN IN</a>` : ""}
+        <a class="signin" href="/dashboard">LIFE</a>
+        ${S.source === "public" ? `<a class="signin" href="/dashboard/login?next=%2Fstatus">SIGN IN</a>` : ""}
         <span class="updated">updated <span class="js-age">${S.data ? fmtAge(g(S.data, "generated_at")) : "—"}</span> ago</span>
         <button class="theme-btn" data-theme-toggle>${S.theme === "dark" ? "LIGHT" : "DARK"}</button>
       </div>

@@ -33,19 +33,21 @@ describe("dashboard access", () => {
   });
   afterEach(() => vi.unstubAllEnvs());
 
-  it("serves the public overview, keeps legacy views and full data behind login", async () => {
-    const overview = await GET(request("/dashboard"));
-    expect(overview.status).toBe(200);
-    expect(await overview.text()).toContain("Ayumad");
-    for (const page of ["/dashboard/hermes", "/dashboard/homelab"]) {
-      const response = await GET(request(page));
-      expect(response.status).toBe(303);
-      expect(response.headers.get("location")).toBe("/dashboard/login?next=" + encodeURIComponent(page));
+  it("serves the public life and status pages, keeping full data behind login", async () => {
+    const life = await GET(request("/dashboard"));
+    expect(life.status).toBe(200);
+    expect(await life.text()).toContain("LIFE");
+
+    const status = await GET(request("/status"));
+    expect(status.status).toBe(200);
+    expect(await status.text()).toContain("STATUS");
+
+    // No snapshot key in this test env: the projections cannot read the encrypted file.
+    for (const dataView of ["data", "status-data"]) {
+      const data = await GET(request(dataView));
+      expect(data.status).toBe(503);
+      expect(data.headers.get("cache-control")).toContain("no-store");
     }
-    // No snapshot key in this test env: the public projection cannot read the encrypted file.
-    const data = await GET(request("data"));
-    expect(data.status).toBe(503);
-    expect(data.headers.get("cache-control")).toContain("no-store");
   });
 
   it("accepts only the configured owner, rejects other origins, and limits redirect targets", async () => {
@@ -54,6 +56,8 @@ describe("dashboard access", () => {
     const response = await POST(form("login", { username: "owner", password, next: "//other.test" }));
     expect(response.status).toBe(303);
     expect(response.headers.get("location")).toBe("/dashboard");
+    const statusLogin = await POST(form("login", { username: "owner", password, next: "/status" }));
+    expect(statusLogin.headers.get("location")).toBe("/status");
     const cookie = response.headers.get("set-cookie")!;
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("Secure");

@@ -10,12 +10,12 @@
       "destination": "/api/dashboard?view=%2Fdashboard"
     },
     {
-      "source": "/dashboard/hermes",
-      "destination": "/api/dashboard?view=%2Fdashboard%2Fhermes"
+      "source": "/status",
+      "destination": "/api/dashboard?view=%2Fstatus"
     },
     {
-      "source": "/dashboard/homelab",
-      "destination": "/api/dashboard?view=%2Fdashboard%2Fhomelab"
+      "source": "/status/data",
+      "destination": "/api/dashboard?view=status-data"
     },
     {
       "source": "/dashboard/login",
@@ -60,6 +60,18 @@
     {
       "source": "/ai/:path*",
       "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/:path*"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/dashboard/hermes",
+      "destination": "/status",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard/homelab",
+      "destination": "/status",
+      "permanent": false
     }
   ],
   "headers": [

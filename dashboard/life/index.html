@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#040707" />
+    <title>Life — Ayumad.me</title>
+    <style>
+<!--INLINE:../tokens.css-->
+<!--INLINE:../src/base.css-->
+<!--INLINE:life.css-->
+    </style>
+  </head>
+  <body>
+    <div class="life">
+      <header class="lh">
+        <div class="lh-l">
+          <a class="brand" href="/">AYUMAD<span>/</span>LIFE</a>
+          <span class="sep">·</span>
+          <span class="src" id="source">…</span>
+        </div>
+        <div class="lh-r">
+          <span class="hdate" id="hdate">—</span>
+          <a class="lnk" href="/status">STATUS <span aria-hidden="true">→</span></a>
+          <a class="lnk signin" id="signin" href="/dashboard/login?next=%2Fdashboard" hidden>SIGN IN</a>
+        </div>
+      </header>
+
+      <main class="lm">
+        <section class="ltime">
+          <div class="clockwrap">
+            <span class="clock" id="clock">--:--</span><span class="ampm" id="ampm">--</span>
+          </div>
+          <div class="dayline" id="dayline">—</div>
+
+          <div class="weather" id="weather">
+            <div class="wmain">
+              <span class="wglyph" id="wglyph">·</span>
+              <span class="wtemp" id="wtemp">—°</span>
+            </div>
+            <div class="wcond" id="wcond">WEATHER UNAVAILABLE</div>
+            <div class="whl" id="whl">H — · L —</div>
+            <div class="wplace" id="wplace">SAN JOSE · CA</div>
+          </div>
+
+          <div class="forecast" id="forecast" hidden>
+            <div class="flabel">NEXT 3 DAYS</div>
+            <div class="frows" id="frows"></div>
+          </div>
+        </section>
+
+        <section class="lagenda">
+          <div class="shead">
+            <span class="slabel">TODAY</span>
+            <span class="smeta" id="calmeta">—</span>
+          </div>
+          <div class="events" id="events">
+            <div class="empty">loading the day…</div>
+          </div>
+          <div class="week" id="week" hidden>
+            <div class="shead">
+              <span class="slabel">THIS WEEK</span>
+              <span class="smeta" id="weekmeta">—</span>
+            </div>
+            <div class="weekrows" id="weekrows"></div>
+          </div>
+        </section>
+
+        <section class="lnext">
+          <div class="block">
+            <div class="shead">
+              <span class="slabel">TASKS</span>
+              <span class="smeta" id="taskmeta">—</span>
+            </div>
+            <div class="rows" id="tasks"><div class="empty">—</div></div>
+          </div>
+          <div class="block">
+            <div class="shead">
+              <span class="slabel">SCHOOL</span>
+              <span class="smeta" id="schoolmeta">—</span>
+            </div>
+            <div class="rows" id="school"><div class="empty">—</div></div>
+          </div>
+          <div class="block links">
+            <div class="shead">
+              <span class="slabel">QUICK</span>
+            </div>
+            <div class="lgrid">
+              <a href="/vault">VAULT</a>
+              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">CANVAS</a>
+              <a href="https://mail.google.com" target="_blank" rel="noreferrer">GMAIL</a>
+              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">GITHUB</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="lf">
+        <a class="pulse" href="/status">
+          <i class="dot" id="dot"></i>
+          <span class="ptext" id="pulse">SYSTEM —</span>
+          <span class="pmeta" id="pmeta"></span>
+        </a>
+        <div class="fright">
+          <span id="updated">—</span>
+          <span class="fsep">·</span>
+          <span>AYUMAD.ME</span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+<!--INLINE:life.js-->
+    </script>
+  </body>
+</html>

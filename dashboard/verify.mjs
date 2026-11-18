@@ -1,5 +1,5 @@
-// Local integration check for the authenticated dashboard page.
-// Serves server/dashboard/overview.html with a fake /dashboard/data endpoint,
+// Local integration check for the status page.
+// Serves server/dashboard/status.html with a fake /status/data endpoint,
 // then renders it in Chromium at desktop, mobile, and wall sizes.
 // Usage: node dashboard/verify.mjs
 import fs from "node:fs";
@@ -9,17 +9,17 @@ import path from "node:path";
 import { chromium } from "playwright";
 
 const ROOT = process.cwd();
-const PAGE = fs.readFileSync(path.join(ROOT, "server/dashboard/overview.html"), "utf8");
+const PAGE = fs.readFileSync(path.join(ROOT, "server/dashboard/status.html"), "utf8");
 const PAYLOAD = fs.readFileSync(path.join(os.homedir(), ".hermes/state/dashboard_live.json"), "utf8");
 const PORT = 4174;
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === "/dashboard" || url.pathname === "/dashboard/") {
+  if (url.pathname === "/status" || url.pathname === "/status/") {
     res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
     return res.end(PAGE);
   }
-  if (url.pathname === "/dashboard/data" || url.pathname === "/dashboard.json") {
+  if (url.pathname === "/status/data" || url.pathname === "/dashboard.json") {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
     return res.end(PAYLOAD);
   }
@@ -52,7 +52,7 @@ async function open(viewport) {
 // Desktop: authenticated snapshot path
 {
   const { context, page, jsErrors } = await open({ width: 1920, height: 1080 });
-  await page.goto(`http://127.0.0.1:${PORT}/dashboard`, { waitUntil: "networkidle" });
+  await page.goto(`http://127.0.0.1:${PORT}/status`, { waitUntil: "networkidle" });
   const pill = (await page.textContent("[data-pill]")).trim();
   check("desktop: pill says SNAPSHOT", /SNAPSHOT/.test(pill), pill);
   for (const id of ["sec-automations", "sec-homelab", "sec-services", "sec-media", "sec-personal", "sec-external", "sec-timeline"]) {
@@ -68,7 +68,7 @@ async function open(viewport) {
 // Mobile
 {
   const { context, page, jsErrors } = await open({ width: 390, height: 844 });
-  await page.goto(`http://127.0.0.1:${PORT}/dashboard`, { waitUntil: "networkidle" });
+  await page.goto(`http://127.0.0.1:${PORT}/status`, { waitUntil: "networkidle" });
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
   check("mobile 390×844: no horizontal scroll", overflow);
   check("mobile: zero JS console errors", jsErrors.length === 0, jsErrors.join(" | "));
@@ -79,7 +79,7 @@ async function open(viewport) {
 // Seed / fixture mode
 {
   const { context, page } = await open({ width: 1440, height: 900 });
-  await page.goto(`http://127.0.0.1:${PORT}/dashboard?fixture=1`, { waitUntil: "networkidle" });
+  await page.goto(`http://127.0.0.1:${PORT}/status?fixture=1`, { waitUntil: "networkidle" });
   const pill = (await page.textContent("[data-pill]")).trim();
   check("fixture=1: pill says SEED", /SEED/.test(pill), pill);
   await context.close();
@@ -88,7 +88,7 @@ async function open(viewport) {
 // Wall page 1
 {
   const { context, page, jsErrors } = await open({ width: 1920, height: 1080 });
-  await page.goto(`http://127.0.0.1:${PORT}/dashboard?mode=wall&page=1&fixture=1`, { waitUntil: "networkidle" });
+  await page.goto(`http://127.0.0.1:${PORT}/status?mode=wall&page=1&fixture=1`, { waitUntil: "networkidle" });
   await page.waitForSelector("#wall");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
   check("wall: no horizontal scroll", overflow);
@@ -100,6 +100,7 @@ async function open(viewport) {
 // Filesystem invariant: no public dashboard bypass
 check("no public/dashboard.html", !fs.existsSync(path.join(ROOT, "public/dashboard.html")));
 check("server/dashboard/overview.html exists", fs.existsSync(path.join(ROOT, "server/dashboard/overview.html")));
+check("server/dashboard/status.html exists", fs.existsSync(path.join(ROOT, "server/dashboard/status.html")));
 
 await browser.close();
 server.close();

@@ -22,6 +22,8 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
   const now = v1.now ?? {};
   const tasks = v1.tasks ?? {};
   const school = v1.school ?? {};
+  const calendar = v1.calendar ?? {};
+  const calendarEvents = Array.isArray(calendar.events) ? calendar.events : [];
 
   const guests = Array.isArray(hl.guests)
     ? hl.guests.map((g: any, i: number) => ({
@@ -126,6 +128,14 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
     },
     tasks: { open: n(tasks.open), overdue: n(tasks.overdue), items: [] },
     school: { upcoming: n(school.upcoming), courses: [], next: [] },
+    calendar: {
+      count: n(calendar.count) ?? calendarEvents.length,
+      week_count: n(calendar.week_count) ?? (Array.isArray(calendar.week) ? calendar.week.length : 0),
+      events: calendarEvents.map((e: any) => ({
+        time: e.time ?? null,
+        all_day: e.time === "all-day",
+      })),
+    },
     fleet: [],
     journal: [],
     now: {
