@@ -1580,7 +1580,7 @@ body {
             <span class="pstat"><small>JOBS</small><i><b id="bar-jobs"></b></i><em id="val-jobs">—</em></span>
             <span class="pstat"><small>CTR</small><i><b id="bar-ctr"></b></i><em id="val-ctr">—</em></span>
             <span class="pstat"><small>DEV</small><i><b id="bar-dev"></b></i><em id="val-dev">—</em></span>
-            <span class="pstat"><small>ISS</small><i class="iss"><b id="bar-iss"></b></i><em id="val-iss">—</em></span>
+            <span class="pstat"><small>ALRT</small><i class="iss"><b id="bar-iss"></b></i><em id="val-iss">—</em></span>
           </span>
         </a>
         <div class="fright">
@@ -1610,6 +1610,7 @@ body {
     })[c]);
 
   let generatedAt = null;
+  let sourceLabel = "SNAPSHOT";
 
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
@@ -1687,9 +1688,9 @@ body {
     }
     const minutes = Math.max(0, Math.round((Date.now() - Date.parse(generatedAt)) / 60000));
     if (!Number.isFinite(minutes)) $("updated").textContent = "—";
-    else if (minutes < 1) $("updated").textContent = "DATA NOW";
-    else if (minutes < 60) $("updated").textContent = `DATA ${minutes}M AGO`;
-    else $("updated").textContent = `DATA ${Math.round(minutes / 60)}H AGO`;
+    else if (minutes < 1) $("updated").textContent = `${sourceLabel} NOW`;
+    else if (minutes < 60) $("updated").textContent = `${sourceLabel} ${minutes}M AGO`;
+    else $("updated").textContent = `${sourceLabel} ${Math.round(minutes / 60)}H AGO`;
   }
 
   function clock() {
@@ -2034,6 +2035,7 @@ body {
 
   function apply(data, source) {
     const isPublic = !!data.public;
+    sourceLabel = source === "LIVE" ? "LIVE" : "SNAPSHOT";
     $("source").textContent = isPublic ? "PUBLIC" : source;
     $("sdot").className = "sdot" + (isPublic ? " public" : source === "SNAPSHOT" ? " snapshot" : "");
     $("signin").hidden = !isPublic;

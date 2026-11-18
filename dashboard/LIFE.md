@@ -31,6 +31,17 @@ Three columns under a 68 px header, above a 56 px footer:
 - Task title: 15 px, two-line clamp. Week title: 14 px, two-line clamp.
 - Labels: 10–11 px mono, uppercase, cyan; metadata uses `--soft` for legibility at wall distance.
 
+## Visual system
+
+Patterns taken from how real status pages work (Vercel, GitHub, Cloudflare) and Carbon's status-indicator guidance:
+
+- **One large state marker per zone.** The clock, the day rail, the event ring, and the footer pulse each answer one question. Do not turn every line into a badge.
+- **Bars encode quantities** (temperature range, week item counts, due proximity, footer ratios). **Rings encode totals** (today's timed vs all-day split). **Icons encode categories** (weather, vault/canvas/mail/github).
+- **Redundant encoding:** state is always color + shape + label. Never color alone.
+- **Rollup status is the worst child.** The footer warning is the max of job failures and homelab issues.
+- **Keep the indicator count low.** Six hero indicators on `/status`; four footer meters on `/dashboard`. More becomes noise.
+- **Text carries names and times, not status.** Avoid raw emails and implementation words in labels.
+
 ## Data contract
 
 `/dashboard/data` returns the v1 dashboard snapshot.

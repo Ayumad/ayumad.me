@@ -16,6 +16,7 @@
     })[c]);
 
   let generatedAt = null;
+  let sourceLabel = "SNAPSHOT";
 
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
@@ -93,9 +94,9 @@
     }
     const minutes = Math.max(0, Math.round((Date.now() - Date.parse(generatedAt)) / 60000));
     if (!Number.isFinite(minutes)) $("updated").textContent = "—";
-    else if (minutes < 1) $("updated").textContent = "DATA NOW";
-    else if (minutes < 60) $("updated").textContent = `DATA ${minutes}M AGO`;
-    else $("updated").textContent = `DATA ${Math.round(minutes / 60)}H AGO`;
+    else if (minutes < 1) $("updated").textContent = `${sourceLabel} NOW`;
+    else if (minutes < 60) $("updated").textContent = `${sourceLabel} ${minutes}M AGO`;
+    else $("updated").textContent = `${sourceLabel} ${Math.round(minutes / 60)}H AGO`;
   }
 
   function clock() {
@@ -440,6 +441,7 @@
 
   function apply(data, source) {
     const isPublic = !!data.public;
+    sourceLabel = source === "LIVE" ? "LIVE" : "SNAPSHOT";
     $("source").textContent = isPublic ? "PUBLIC" : source;
     $("sdot").className = "sdot" + (isPublic ? " public" : source === "SNAPSHOT" ? " snapshot" : "");
     $("signin").hidden = !isPublic;
