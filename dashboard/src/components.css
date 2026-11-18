@@ -43,6 +43,14 @@
   background: var(--muted);
 }
 
+.pill.snapshot {
+  color: var(--muted);
+}
+
+.pill.snapshot i {
+  background: var(--muted);
+}
+
 .pill.stale {
   color: var(--warn);
   border-color: var(--warn);
@@ -68,7 +76,7 @@
 
 .cell-l {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -106,9 +114,19 @@
 .cell-s {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--muted);
+  color: var(--soft);
   margin-top: auto;
   overflow-wrap: anywhere;
+}
+
+/* stacked sub-items: inline with · separators on wide screens, one per line
+   on narrow ones — no orphan separator can wrap alone */
+.slist {
+  display: inline;
+}
+
+.slist + .slist::before {
+  content: " · ";
 }
 
 .cell-s .warn {
@@ -148,7 +166,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 160px;
   gap: 2px 16px;
   align-items: center;
   width: 100%;
@@ -203,6 +221,10 @@
 .row .rright {
   grid-column: 2;
   grid-row: 1 / span 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px;
   text-align: right;
   font-family: var(--mono);
   font-size: 12.5px;
@@ -210,11 +232,12 @@
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .row .rright .st {
-  display: block;
-  margin-top: 3px;
+  display: inline;
+  margin-top: 0;
 }
 
 .row .rright .st.good {
@@ -231,13 +254,15 @@
 
 .tag {
   display: inline-block;
-  border: 1px solid var(--fine);
+  border: 1px solid var(--line);
   border-radius: 2px;
-  padding: 0 5px;
+  padding: 1px 5px;
   font-family: var(--mono);
   font-size: 10.5px;
+  line-height: 1.3;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: var(--soft);
+  white-space: nowrap;
   margin-right: 4px;
   vertical-align: 1px;
 }
@@ -253,13 +278,13 @@
   display: inline-flex;
   align-items: flex-end;
   gap: 2px;
-  height: 8px;
+  height: 14px;
   vertical-align: middle;
 }
 
 .spark i {
   width: 6px;
-  height: 2px;
+  height: 14px;
   background: var(--fine);
 }
 
@@ -271,8 +296,15 @@
   background: color-mix(in srgb, var(--warn) 70%, transparent);
 }
 
+.spark i.x {
+  background: var(--bad);
+}
+
+/* 0-run window: 2px muted stub, not a full-height bar */
+.spark i.z,
 .spark.nodata i {
-  background: var(--fine);
+  height: 2px;
+  background: var(--muted);
 }
 
 /* ---------- Bar ---------- */
@@ -502,6 +534,16 @@
   background: var(--warn);
 }
 
+/* muted variant: mode banners (seed / snapshot) — informational, never an alarm */
+.banner.mute {
+  border-top-color: var(--line);
+  color: var(--soft);
+}
+
+.banner.mute i {
+  background: var(--muted);
+}
+
 .banner.bad {
   border-top-color: var(--bad);
   color: var(--bad);
@@ -624,4 +666,30 @@
 
 .kv td.v .dash {
   color: var(--muted);
+}
+
+/* ---------- phone overrides ---------- */
+/* This sheet loads after layout.css, so component-owned overrides must live
+   here to win the cascade. Phones: sub-items stack as a list (no orphan
+   separator), secondary text ≥ 12px, pill hits 40px, rows keep one line. */
+
+@media (max-width: 559px) {
+  .hdr-r .pill {
+    min-height: 40px;
+    align-items: center;
+    padding: 5px 9px;
+  }
+  .cell-s {
+    font-size: 12px;
+  }
+  .slist {
+    display: block;
+    line-height: 1.5;
+  }
+  .slist + .slist::before {
+    content: "";
+  }
+  .row {
+    grid-template-columns: 1fr 140px;
+  }
 }

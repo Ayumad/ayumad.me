@@ -42,8 +42,20 @@ function wallShell() {
 function wpStatus() {
   if (!S.data) {
     return `<div class="wp-status">
-      <div><div class="wp-word"><span class="dash">…</span></div><div class="wp-sub">connecting to live source · 5s timeout · seed fallback</div></div>
-      <div class="wp-kpis">${WALL_KPI_IDS.map((k) => cell({ label: k[0], value: '<span class="dash">…</span>' })).join("")}</div>
+      <div class="wp-top">
+        <div class="wp-top-main">
+          <div class="wp-word"><span class="dash">…</span></div>
+          <div class="wp-sub">mac mini — · p520 —</div>
+        </div>
+        <div class="wp-clockbox">
+          <div class="wp-clock" id="wp-bigclock">—</div>
+          <div class="wp-date" id="wp-bigdate">—</div>
+        </div>
+        <div class="wp-alert lvl-none"><i class="mk" aria-hidden="true"></i><span class="wp-alert-t">connecting to live source · snapshot fallback</span></div>
+      </div>
+      <div class="wp-kpis">
+        ${WALL_KPI_IDS.map((k) => `<div class="cell"><span class="cell-l">${esc(k)}</span><span class="cell-v"><span class="dash">…</span></span><span class="cell-s">syncing</span></div>`).join("")}
+      </div>
     </div>`;
   }
   const o = g(S.data, "overall") || {};
@@ -52,8 +64,10 @@ function wpStatus() {
   const st = o.status === undefined ? null : o.status;
   const mmUp = g(S.data, "surfaces.mac_mini.host.uptime_s");
   const pUp = g(S.data, "surfaces.p520.host.uptime_s");
+  const a = wallTopAlert();
+  const lvlCls = a.level === "bad" ? "bad" : a.level === "warn" ? "warn" : "none";
   const kpis = [
-    ["alerts", valNum(o.alerts), num(o.alerts) > 0 ? "warn" : "good", ""],
+    ["alerts", valNum(o.alerts), num(o.alerts) > 0 ? "warn" : "good", "failing · bad · overdue"],
     ["jobs enabled", valNum(cron.enabled), "good", `/ ${num(cron.total) ?? "—"} total`],
     ["containers running", valNum(L.containers_running), "good", "docker-vm"],
     ["devices online", valNum(L.devices_online), "good", `/ ${num(L.devices_total) ?? "—"} tailnet`],
@@ -63,14 +77,19 @@ function wpStatus() {
     ["guests running", valNum(L.guests_running), "good", "proxmox"],
   ];
   return `<div class="wp-status">
-    <div class="wp-status-top">
-      <div>
+    <div class="wp-top">
+      <div class="wp-top-main">
         <div class="wp-word" style="color:var(--${st === "ok" ? "cyan" : st === "warn" ? "warn" : "bad"})">${esc(statusWord(st))}</div>
-        <div class="wp-sub">mac mini uptime ${mmUp === null || mmUp === undefined ? "—" : fmtUptime(mmUp)} · p520 uptime ${pUp === null || pUp === undefined ? "—" : fmtUptime(pUp)}</div>
+        <div class="wp-sub">mac mini ${mmUp === null || mmUp === undefined ? "—" : fmtUptime(mmUp)} · p520 ${pUp === null || pUp === undefined ? "—" : fmtUptime(pUp)}</div>
       </div>
-      <div>
+      <div class="wp-clockbox">
         <div class="wp-clock" id="wp-bigclock">—</div>
-        <div class="wp-sub" id="wp-bigdate">—</div>
+        <div class="wp-date" id="wp-bigdate">—</div>
+      </div>
+      <div class="wp-alert lvl-${lvlCls}">
+        <i class="mk" aria-hidden="true"></i>
+        <span class="wp-alert-t">${esc(a.text)}</span>
+        <span class="wp-alert-r">${esc(a.right)}</span>
       </div>
     </div>
     <div class="wp-kpis">
@@ -84,7 +103,7 @@ function wpStatus() {
   </div>`;
 }
 
-const WALL_KPI_IDS = [["alerts"], ["jobs"], ["containers"], ["devices"], ["services"], ["tasks"], ["school"], ["guests"]];
+const WALL_KPI_IDS = ["alerts", "jobs enabled", "containers running", "devices online", "services up", "open tasks", "school upcoming", "guests running"];
 
 function wpJobs() {
   const jobs = g(S.data, "surfaces.mac_mini.cron.jobs");
@@ -94,10 +113,10 @@ function wpJobs() {
     const note = pend
       ? `collector pending · v2 not wired — per-job rows await the v2 collector`
       : `no cron jobs in payload`;
-    return `<div class="wp-jobs" style="grid-template-columns:1fr">
+    return `<div class="wp-jobs pending">
       <div>
         <div class="wp-note">${esc(note)}</div>
-        <div class="cells" style="margin-top:14px">
+        <div class="cells wp-fill">
           ${cell({ label: "cron total", value: valNum(cron.total) })}
           ${cell({ label: "enabled", value: valNum(cron.enabled), state: "good" })}
           ${cell({ label: "failing", value: valNum(cron.failing), state: num(cron.failing) > 0 ? "bad" : "good" })}
@@ -111,13 +130,15 @@ function wpJobs() {
     (parseTs(a.next_run)?.getTime() ?? Infinity) - (parseTs(b.next_run)?.getTime() ?? Infinity));
   const fails = sorted.filter(isFail);
   const rest = sorted.filter((j) => !isFail(j));
-  const half = Math.max(0, 13 - fails.length); // failures pinned to the top of the left column
-  const left = [...fails, ...rest.slice(0, half)];
-  const right = rest.slice(half);
+  // failures pinned to the top of the left column; columns split evenly so the
+  // stretched rows stay the same height on both sides and fill the stage
+  const half = Math.max(fails.length, Math.ceil(sorted.length / 2));
+  const left = [...fails, ...rest.slice(0, half - fails.length)];
+  const right = rest.slice(half - fails.length);
   const wrow = (j) => `<div class="wrow${isFail(j) ? " fail" : ""}">
     <span class="nm">${esc(j.name ?? "—")}</span>
     <span class="nx">${fmtNextRun(j.next_run)}</span>
-    <span class="sc">${esc(j.schedule ?? "—")} ${sparkBars(j.success_7d)} ${valNum(j.ok_7d)}/${valNum(j.runs_7d)} ok · ${esc(j.model ?? "—")}</span>
+    <span class="sc">${esc(j.schedule ?? "—")} <span class="tag">${esc(j.kind ?? "—")}</span>${j.model ? `<span class="tag">${esc(j.model)}</span>` : ""} ${sparkBars(j.success_7d, j.runs_7d)} ${valNum(j.ok_7d)}/${valNum(j.runs_7d)} ok · 7d</span>
   </div>`;
   return `<div class="wp-jobs"><div>${left.map(wrow).join("")}</div><div>${right.map(wrow).join("")}</div></div>`;
 }
@@ -125,18 +146,35 @@ function wpJobs() {
 function wpHomelab() {
   const p = g(S.data, "surfaces.p520") || {};
   if (p.pending) {
-    return `<div class="wp-grid"><div class="wp-note" style="grid-column:span 12">collector pending · v2 not wired — homelab surface awaits the v2 collector</div></div>`;
+    return `<div class="wp-grid pending">
+      <div class="wp-note" style="grid-column:span 12">collector pending · v2 not wired — homelab surface awaits the v2 collector</div>
+      <div class="cells wp-fill" style="grid-column:span 12">
+        ${cell({ label: "p520 uptime", value: "—" })}
+        ${cell({ label: "load 1/5/15", value: "—" })}
+        ${cell({ label: "memory", value: "—" })}
+        ${cell({ label: "guests running", value: "—" })}
+      </div>
+    </div>`;
   }
   const host = p.host || {};
   const pools = p.pools || [];
   const guests = p.guests || [];
   const backups = p.backups || {};
   const smart = p.smart || [];
+  const net = g(S.data, "surfaces.network") || {};
+  const peers = net.tailscale || [];
   const memPct = num(host.mem_used_gb) !== null && num(host.mem_total_gb) ? Math.round((host.mem_used_gb / host.mem_total_gb) * 100) : null;
+  const smartRows = smart.length
+    ? `<div class="trows">${smart
+        .map((d) => `<div class="wrow static"><span class="nm">${esc(d.device ?? "—")} <span class="tag">${esc(d.pool ?? "—")}</span></span><span class="nx">${d.temp_c === null || d.temp_c === undefined ? "—" : esc(d.temp_c) + "°C"}</span><span class="sc">${val(d.health)} · ${d.hours === null || d.hours === undefined ? "—" : esc(d.hours.toLocaleString("en-US")) + "h"}</span></div>`)
+        .join("")}</div>`
+    : `<div class="wp-note">no SMART data in payload</div>`;
   return `<div class="wp-grid">
-    <div class="cell wp-gauge"><span class="cell-l">p520 uptime</span><span class="cell-v">${fmtUptime(host.uptime_s)}</span><span class="cell-s">${val(host.name)} · proxmox ${val(host.proxmox)}</span></div>
-    <div class="cell wp-gauge"><span class="cell-l">load 1/5/15</span><span class="cell-v">${(host.load || []).map((x) => (num(x) === null ? "—" : esc(x))).join(" ")}</span><span class="cell-s">${valNum(host.cores)} cores</span></div>
-    <div class="cell wp-gauge"><span class="cell-l">memory</span><span class="cell-v">${valNum(host.mem_used_gb, " GB")}<small> / ${valNum(host.mem_total_gb, " GB")}</small></span><span class="cell-s">failed units ${valNum(host.failed_units)}</span></div>
+    <div class="cells" style="grid-column:span 12">
+      ${cell({ label: "p520 uptime", value: fmtUptime(host.uptime_s), sub: `${val(host.name)} · proxmox ${val(host.proxmox)}` })}
+      ${cell({ label: "load 1/5/15", value: (host.load || []).map((x) => (num(x) === null ? "—" : esc(x))).join(" "), sub: `${valNum(host.cores)} cores` })}
+      ${cell({ label: "memory", value: valNum(host.mem_used_gb, " GB"), small: `/ ${valNum(host.mem_total_gb, " GB")}`, state: memPct === null ? "" : memPct > 90 ? "bad" : memPct > 80 ? "warn" : "good", sub: `failed units ${valNum(host.failed_units)}` })}
+    </div>
     <div class="wp-pools">
       ${pools
         .map((pl) => {
@@ -166,32 +204,55 @@ function wpHomelab() {
       ${cell({ label: "scrub timers", value: valNum(p.scrub_timers), state: "good" })}
       ${cell({ label: "smart", value: smart.length ? `${smart.filter((d) => d.health === "PASSED").length}/${smart.length} passed` : "—", state: "good", sub: smart.length ? "all pools" : "no data in payload" })}
     </div>
+    <div class="wp-smart">
+      <div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">SMART</div>
+      ${smartRows}
+    </div>
+    <div class="wp-fleet">
+      <div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">fleet · tailnet · ${num(net.online) ?? peers.filter((x) => x.online).length}/${peers.length} online</div>
+      ${peers.length ? `<div class="matrix">${peers
+        .map((pr) => chip({ name: esc(pr.name ?? "—"), state: pr.online ? "good" : "off", right: `${pr.self ? "self · " : ""}${esc(pr.os ?? "—")}` }))
+        .join("")}</div>` : `<div class="wp-note">no tailnet peers in payload</div>`}
+    </div>
   </div>`;
 }
 
 function wpServices() {
   const dv = g(S.data, "surfaces.docker_vm") || {};
   if (dv.pending) {
-    return `<div class="wp-matrix"><div class="wp-note">collector pending · v2 not wired — container matrix awaits the v2 collector</div></div>`;
+    return `<div class="wp-matrix pending">
+      <div class="wp-note">collector pending · v2 not wired — container matrix awaits the v2 collector</div>
+      <div class="cells wp-fill">
+        ${cell({ label: "defined", value: "—" })}
+        ${cell({ label: "running", value: "—" })}
+        ${cell({ label: "stopped", value: "—" })}
+        ${cell({ label: "unhealthy", value: "—" })}
+      </div>
+    </div>`;
   }
   const counts = dv.counts || {};
   const containers = dv.containers || [];
   const stacks = dv.stacks || [];
+  const names = stacks.length ? stacks : [...new Set(containers.map((c) => c.stack))];
+  // problem stacks first (unexpected stops), then by name; 8 groups fill the stage
+  const badIn = (st) => containers.filter((c) => c.stack === st && c.state !== "running" && c.expected_running !== false).length;
+  names.sort((x, y) => badIn(y) - badIn(x) || String(x).localeCompare(String(y)));
+  const shown = names.slice(0, 8);
   return `<div class="wp-matrix">
     <div class="cells">
       ${cell({ label: "defined", value: valNum(counts.defined) })}
       ${cell({ label: "running", value: valNum(counts.running), state: "good" })}
-      ${cell({ label: "stopped", value: valNum(counts.stopped), state: "warn" })}
+      ${cell({ label: "stopped", value: valNum(counts.stopped), state: num(counts.stopped) > 0 ? "warn" : "" })}
       ${cell({ label: "unhealthy", value: valNum(counts.unhealthy), state: num(counts.unhealthy) > 0 ? "bad" : "good" })}
     </div>
-    ${(stacks.length ? stacks : [...new Set(containers.map((c) => c.stack))].sort())
-      .slice(0, 6)
+    ${shown
       .map((st) => {
         const list = containers.filter((c) => c.stack === st);
         return `<div class="mxgroup"><div class="gx">${esc(st)} <span class="gc">${list.length}</span></div>
         <div class="matrix">${list.map(containerChip).join("")}</div></div>`;
       })
       .join("")}
+    ${names.length > shown.length ? `<div class="nodata">+ ${names.length - shown.length} stacks not shown · see web view</div>` : ""}
   </div>`;
 }
 
@@ -200,45 +261,69 @@ function wpMediaPersonal() {
   const per = g(S.data, "surfaces.personal") || {};
   const t = per.tasks || {};
   const sc = per.school || {};
+  const jn = per.journal || {};
+  const rx = m.remux || {};
+  const rpct = num(rx.queued) + num(rx.completed_today) > 0 ? Math.round(((num(rx.completed_today) || 0) / ((num(rx.completed_today) || 0) + (num(rx.queued) || 0))) * 100) : 0;
   const mediaHtml = m.pending
-    ? `<div class="wp-note">collector pending · v2 not wired — media surface awaits the v2 collector</div>`
+    ? `<div class="wp-note">collector pending · v2 not wired — media surface awaits the v2 collector</div>
+      <div class="cells wp-fill">
+        ${cell({ label: "radarr queue", value: "—" })}
+        ${cell({ label: "sonarr queue", value: "—" })}
+        ${cell({ label: "downloads", value: "—" })}
+        ${cell({ label: "jellyfin", value: "—" })}
+        ${cell({ label: "remux queued", value: "—" })}
+        ${cell({ label: "letterboxd sync", value: "—" })}
+      </div>`
     : (() => {
         const q = m.queues || {};
         const dl = m.downloads || {};
         const jf = m.jellyfin || {};
-        const rx = m.remux || {};
         const lb = m.letterboxd || {};
-        const rpct = num(rx.queued) + num(rx.completed_today) > 0 ? Math.round(((num(rx.completed_today) || 0) / ((num(rx.completed_today) || 0) + (num(rx.queued) || 0))) * 100) : 0;
         return `<div class="cells">
           ${cell({ label: "radarr queue", value: valNum(q.radarr) })}
           ${cell({ label: "sonarr queue", value: valNum(q.sonarr) })}
-          ${cell({ label: "downloads", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")}` })}
+          ${cell({ label: "downloads", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")} rate` })}
           ${cell({ label: "jellyfin", value: valNum(jf.sessions), sub: num(jf.sessions) === 0 ? "idle" : "now playing" })}
+          ${cell({ label: "remux queued", value: valNum(rx.queued), sub: `${valNum(rx.completed_today)} done today` })}
+          ${cell({ label: "letterboxd sync", value: lb.stale ? "stale" : val(lb.last_sync ? "ok" : "—"), state: lb.stale ? "warn" : "good", sub: fmtTimeShort(lb.last_sync) })}
         </div>
-        <div style="margin-top:14px">
+        <div style="margin-top:12px">
           <div class="barline"><span class="bl">remux pipeline</span><span class="bv">${valNum(rx.queued)} queued · ${valNum(rx.completed_today)} done today</span></div>
           <div class="bar"><i style="width:${rpct}%"></i></div>
-        </div>
-        <div class="nodata" style="margin-top:10px">letterboxd sync ${lb.stale ? "stale" : "ok"} · ${fmtTimeShort(lb.last_sync)}</div>`;
+        </div>`;
       })();
 
-  const nextList = (sc.next || []).slice(0, 5);
-  const personalHtml = `<div class="cells">
-      ${cell({ label: "tasks open", value: valNum(t.open), sub: `${valNum(t.overdue)} overdue` })}
-      ${cell({ label: "school upcoming", value: valNum(sc.upcoming) })}
-      ${cell({ label: "journal · 7d", value: valNum(g(per, "journal.entries_7d")), sub: `last ${val(g(per, "journal.last"))}` })}
-    </div>
-    <div class="subhead">school · due next</div>
-    <div class="trows">${nextList
-      .map(
-        (nx) =>
-          `<div class="row" style="cursor:default"><span class="rmain"><span class="rtitle">${esc(nx.title ?? "—")}</span><span class="rmeta"><span class="tag">${esc(nx.course ?? "—")}</span>due ${val(nx.due)}</span></span><span class="rright">${parseTs(nx.when) ? fmtClock(parseTs(nx.when)) : "—"}</span></div>`,
-      )
-      .join("") || `<div class="wp-note">nothing due in window</div>`}</div>`;
-
+  const wrow = (r) => `<div class="wrow${r.fail ? " fail" : ""}">
+    <span class="nm">${esc(r.title ?? "—")}</span>
+    <span class="nx">${esc(r.right)}</span>
+    <span class="sc"><span class="tag">${esc(r.tag ?? "—")}</span>${esc(r.meta)}</span>
+  </div>`;
+  const school = (sc.next || []).slice(0, 7).map((nx) => ({
+    title: nx.title,
+    tag: nx.course,
+    right: parseTs(nx.when) ? fmtClock(parseTs(nx.when)) : val(nx.due),
+    meta: `due ${val(nx.due)}`,
+  }));
+  const tasks = (t.items || []).slice(0, 7).map((it) => ({
+    title: it.title,
+    tag: it.list,
+    right: it.overdue ? "overdue" : val(it.due),
+    meta: `due ${val(it.due)}${it.overdue ? " · overdue" : ""}`,
+    fail: !!it.overdue,
+  }));
   return `<div class="wp-mp">
-    <div class="block"><div class="subhead" style="margin-top:0">media</div>${mediaHtml}</div>
-    <div class="block"><div class="subhead" style="margin-top:0">personal</div>${personalHtml}</div>
+    <div class="wp-mp-top">${mediaHtml}</div>
+    <div class="cells">
+      ${cell({ label: "tasks open", value: valNum(t.open), sub: `${valNum(t.overdue)} overdue` })}
+      ${cell({ label: "school upcoming", value: valNum(sc.upcoming), sub: "next 7 days" })}
+      ${cell({ label: "journal · 7d", value: valNum(jn.entries_7d), sub: `last ${val(jn.last)}` })}
+    </div>
+    <div class="wp-mp-cols">
+      <div><div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">school · due next</div>
+        <div class="wp-list">${school.map(wrow).join("") || `<div class="wp-note">nothing due in window</div>`}</div></div>
+      <div><div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">tasks · open</div>
+        <div class="wp-list">${tasks.map(wrow).join("") || `<div class="wp-note">no open tasks in payload</div>`}</div></div>
+    </div>
   </div>`;
 }
 
@@ -292,14 +377,19 @@ function wallRailHtml() {
 
 function wallBannerHtml() {
   if (!S.data) return { show: false, html: "" };
-  const d = parseTs(g(S.data, "generated_at"));
-  if (!d) return { show: false, html: "" };
-  const ageS = (Date.now() - d.getTime()) / 1000;
-  if (ageS > 300) {
-    return { show: true, html: banner("bad", `FEED DOWN · showing last good`, fmtClock(d)) };
+  // one failed source is not a feed outage — the banner speaks payload mode,
+  // never "FEED DOWN" (a payload is always on screen: live, snapshot or seed)
+  if (S.source === "seed") return { show: true, html: banner("mute", "DESIGN FIXTURE · not live data") };
+  if (S.source === "snapshot") {
+    return { show: true, html: banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`) };
   }
-  if (ageS > 90) {
-    return { show: true, html: banner("warn", `data stale · last update ${fmtClock(d)}`, S.source === "live" ? "retrying live source" : "") };
+  if (S.source === "live" || S.source === "stale") {
+    const d = parseTs(g(S.data, "generated_at"));
+    if (!d) return { show: false, html: "" };
+    const ageS = (Date.now() - d.getTime()) / 1000;
+    if (ageS > 90) {
+      return { show: true, html: banner(ageS > 300 ? "bad" : "warn", `data stale · last update ${fmtClock(d)}`, "retrying live source") };
+    }
   }
   return { show: false, html: "" };
 }

@@ -3,6 +3,7 @@
    Wall mode lives in wall.js; boot() is invoked at the end of wall.js. */
 
 const LIVE = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json"; // v1 payload, real data
+const SNAPSHOT = "/dashboard.json"; // same-origin v1 snapshot, deployed with the site
 const SEED = window.__DASHBOARD_SEED__; // fixture inlined by the build
 const LIVE_TIMEOUT_MS = 5000;
 const REFRESH_MS = 60000;
@@ -209,18 +210,28 @@ function timelineFromV1(v1) {
 }
 
 /* ---------- data loading ---------- */
+/* Load order: live tailnet → same-origin snapshot → embedded seed.
+   A payload is always available (the seed is inlined), so a failed source
+   is never a feed outage — per-source staleness stays in the section hints. */
 
-async function fetchLive() {
+async function fetchJson(url, timeoutMs) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), LIVE_TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(LIVE, { cache: "no-store", signal: ctrl.signal });
+    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    return adaptV1(json);
+    return await res.json();
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchLive() {
+  return adaptV1(await fetchJson(LIVE, LIVE_TIMEOUT_MS));
+}
+
+async function fetchSnapshot() {
+  return adaptV1(await fetchJson(SNAPSHOT, LIVE_TIMEOUT_MS));
 }
 
 function useSeed() {
@@ -239,10 +250,15 @@ async function loadData() {
     S.source = "live";
     S.lastLiveOk = new Date();
   } catch {
-    if (S.data) {
-      S.source = "stale"; // keep last good data, say so
-    } else {
-      useSeed();
+    try {
+      S.data = await fetchSnapshot();
+      S.source = "snapshot";
+    } catch {
+      if (S.data) {
+        S.source = "stale"; // keep last good data, say so
+      } else {
+        useSeed();
+      }
     }
   }
   render();
@@ -252,9 +268,21 @@ async function loadData() {
 
 function pillFor(source) {
   if (source === "live") return pill("live", "LIVE · partial");
+  if (source === "snapshot") return pill("snapshot", "SNAPSHOT · partial");
   if (source === "seed") return pill("seed", "SEED");
   if (source === "stale") return pill("stale", "STALE");
   return pill("seed", "SYNC");
+}
+
+/* Global mode banner (web): honest about what is on screen.
+   SEED → design fixture note · SNAPSHOT → snapshot + age · LIVE → nothing. */
+function modeBannerHtml() {
+  if (!S.data) return "";
+  if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
+  if (S.source === "snapshot") {
+    return banner("mute", `snapshot · <span class="js-age">${fmtAge(g(S.data, "generated_at"))}</span> old`);
+  }
+  return "";
 }
 
 /* ---------- web render ---------- */
@@ -295,7 +323,7 @@ function heroCells() {
       state: st === "ok" ? "good" : st === "warn" ? "warn" : st === "bad" ? "bad" : "",
       sub: score === null ? "derived from live counts" : `score ${score}`,
     }),
-    cell({ label: "alerts", value: valNum(alerts), state: alerts > 0 ? "warn" : "good", sub: "failing · bad issues · overdue" }),
+    cell({ label: "alerts", value: valNum(alerts), state: alerts > 0 ? "warn" : "good", sub: '<span class="slist">failing</span><span class="slist">bad issues</span><span class="slist">overdue</span>' }),
     cell({
       label: "jobs enabled",
       value: valNum(cron.enabled),
@@ -368,12 +396,11 @@ function sectionAutomations() {
     const mem = h.memory || {};
     cells = `<div class="cells">
       ${cell({ label: "cron total", value: valNum(cron.total) })}
-      ${cell({ label: "enabled", value: valNum(cron.enabled) })}
       ${cell({ label: "failing", value: valNum(cron.failing), state: num(cron.failing) > 0 ? "bad" : "good" })}
       ${cell({ label: "no agent", value: valNum(cron.no_agent) })}
       ${cell({ label: "skills", value: valNum(h.skills) })}
       ${cell({ label: "memory", value: valNum(mem.working), small: `+ ${num(mem.episodic) ?? "—"} episodic` })}
-      ${cell({ label: "disk used", value: valNum(disk.used_pct, "%"), state: num(disk.used_pct) > 90 ? "bad" : num(disk.used_pct) > 80 ? "warn" : "good", sub: `${valNum(disk.free_gb)} of ${valNum(disk.size_gb)} GB free` })}
+      ${cell({ label: "disk used", value: valNum(disk.used_pct, "%"), small: `${num(disk.free_gb) ?? "—"} / ${num(disk.size_gb) ?? "—"} GB free`, state: num(disk.used_pct) > 90 ? "bad" : num(disk.used_pct) > 80 ? "warn" : "good" })}
       ${cell({ label: "hermes", value: val(h.version), sub: `released ${val(h.released)} · ${valNum(h.commits_behind)} behind` })}
     </div>`;
   } else {
@@ -405,10 +432,10 @@ function sectionAutomations() {
     const rows = shown
       .map(({ j, i }) => {
         const stCls = isFail(j) ? "bad" : j.last_status === "completed" ? "good" : "";
-        const stTxt = isFail(j) ? "failing" : j.last_status === "completed" ? "ok" : j.last_status ? esc(j.last_status) : "never ran";
+        const stTxt = isFail(j) ? "failing" : j.last_status === "completed" ? "ok" : j.last_status ? esc(j.last_status) : "no runs";
         return row({
           title: esc(j.name ?? "—"),
-          meta: `${esc(j.schedule ?? "—")} <span class="tag">${esc(j.kind ?? "—")}</span>${j.model && j.model !== "script" ? `<span class="tag">${esc(j.model)}</span>` : ""} ${sparkBars(j.success_7d)} <span class="m">${valNum(j.ok_7d)}/${valNum(j.runs_7d)} · 7d</span>`,
+          meta: `${esc(j.schedule ?? "—")} <span class="tag">${esc(j.kind ?? "—")}</span>${j.model ? `<span class="tag">${esc(j.model)}</span>` : ""} ${sparkBars(j.success_7d, j.runs_7d)} <span class="m">${valNum(j.ok_7d)}/${valNum(j.runs_7d)} · 7d</span>`,
           right: `${fmtNextRun(j.next_run)}<span class="st ${stCls}">${stTxt}</span>`,
           fail: isFail(j),
           drawer: `job:${i}`,
@@ -634,7 +661,7 @@ function sectionPersonal() {
             row({
               title: esc(it.title ?? "—"),
               meta: `<span class="tag">${esc(it.list ?? "—")}</span>due <span class="${it.overdue ? "bad" : "m"}">${val(it.due)}</span>`,
-              right: `${it.overdue ? "overdue" : "open"}<span class="st ${it.overdue ? "bad" : "good"}">${it.overdue ? "!" : "ok"}</span>`,
+              right: `<span class="st ${it.overdue ? "bad" : "good"}">${it.overdue ? "overdue" : "open"}</span>`,
               fail: !!it.overdue,
               drawer: `task:${i}`,
             }),
@@ -738,12 +765,20 @@ function footerHtml() {
   const stN = srcs.filter((s) => s.stale && s.ok !== false).length;
   const erN = srcs.filter((s) => s.ok === false && !s.pending).length;
   const pdN = srcs.filter((s) => s.pending).length;
+  const origin =
+    S.source === "seed"
+      ? "DESIGN FIXTURE · not live data"
+      : S.source === "snapshot"
+        ? "adapted from v1 snapshot payload"
+        : S.source === "stale"
+          ? "adapted from v1 live payload · refresh failing"
+          : "adapted from v1 live payload";
   return `<footer class="foot">
     <span>generated ${val(g(S.data, "generated_at"))}</span>
     <span>${val(g(S.data, "generated_on"))}</span>
     <span>${val(g(S.data, "schema"))}</span>
     <span>sources ${okN} ok · ${stN} stale · ${erN} error · ${pdN} pending</span>
-    ${g(S.data, "adapted_from") ? `<span>adapted from v1 live payload</span>` : `<span>design fixture</span>`}
+    <span>${origin}</span>
   </footer>`;
 }
 
@@ -751,8 +786,9 @@ function renderWeb() {
   app.innerHTML = `
     <div class="wrap">
       ${headerHtml()}
+      ${modeBannerHtml() ? `<div class="mode-strip">${modeBannerHtml()}</div>` : ""}
       <div class="hero">${heroCells()}</div>
-      ${S.data ? "" : `<div class="state" data-state="empty" style="margin-top:20px"><span class="t">connecting</span><span>live source · ${LIVE_TIMEOUT_MS / 1000}s timeout · seed fallback</span></div>`}
+      ${S.data ? "" : `<div class="state" data-state="empty" style="margin-top:20px"><span class="t">connecting</span><span>live → snapshot → seed fallback</span></div>`}
       ${sectionAutomations()}
       ${sectionHomelab()}
       ${sectionServices()}

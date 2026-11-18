@@ -41,13 +41,18 @@ function dot(state, extra = "") {
   return `<i class="dot ${state} ${extra}" aria-hidden="true"></i>`;
 }
 
-/* ---- Spark: 7-day success strip (rate from success_7d; null → no data) ---- */
-function sparkBars(success) {
+/* ---- Spark: 7-day success strip — 6×14 vertical bars, 2px gap, cyan.
+   Aggregate rate only (no per-day breakdown in the payload, never invented);
+   a 0-run window renders 2px muted stubs. ---- */
+function sparkBars(success, runs) {
   const s = num(success);
   if (s === null) {
     return `<span class="spark nodata" title="no runs recorded in 7d">${"<i></i>".repeat(7)}</span>`;
   }
-  const cls = s >= 100 ? "f" : s >= 50 ? "p" : "";
+  if (num(runs) === 0) {
+    return `<span class="spark" title="no runs in the last 7 days">${'<i class="z"></i>'.repeat(7)}</span>`;
+  }
+  const cls = s >= 100 ? "f" : s >= 50 ? "p" : "x";
   return `<span class="spark" title="7-day success ${s}%">${`<i class="${cls}"></i>`.repeat(7)}</span>`;
 }
 
