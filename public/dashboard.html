@@ -605,8 +605,9 @@ body.wall {
   flex: none;
   min-height: 196px;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
-  gap: 56px;
+  gap: 18px 56px;
   padding: 10px 4px 24px;
   border-bottom: 1px solid var(--line);
 }
@@ -654,15 +655,18 @@ body.wall {
 }
 
 .wp-alert {
-  margin-left: auto;
+  flex: 1 0 100%;
+  margin-left: 0;
   display: flex;
   align-items: baseline;
   gap: 12px;
-  max-width: 760px;
-  padding-left: 18px;
-  border-left: 1px solid var(--line);
+  max-width: none;
+  margin-top: 4px;
+  padding: 10px 0 0 18px;
+  border-left: 3px solid var(--line);
+  border-top: 1px solid var(--fine);
   font-family: var(--mono);
-  font-size: 17px;
+  font-size: 24px;
 }
 
 .wp-alert .mk {
@@ -677,12 +681,22 @@ body.wall {
   background: var(--bad);
 }
 
+.wp-alert.lvl-bad {
+  border-left-color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 7%, transparent);
+}
+
 .wp-alert.lvl-bad .wp-alert-t {
   color: var(--bad);
 }
 
 .wp-alert.lvl-warn .mk {
   background: var(--warn);
+}
+
+.wp-alert.lvl-warn {
+  border-left-color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 6%, transparent);
 }
 
 .wp-alert.lvl-warn .wp-alert-t {
@@ -719,12 +733,13 @@ body.wall {
 }
 
 .wp-kpis .cell {
-  justify-content: space-between;
+  justify-content: center;
+  gap: 10px;
   padding: 20px 22px;
 }
 
 .wp-kpis .cell-l {
-  font-size: 17px;
+  font-size: 19px;
   letter-spacing: 0.08em;
   color: var(--soft);
 }
@@ -740,8 +755,9 @@ body.wall {
 }
 
 .wp-kpis .cell-s {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--soft);
+  margin-top: 0;
 }
 
 /* wall automations — two columns; rows stretch to fill the stage */
@@ -3961,7 +3977,7 @@ function modeBannerHtml() {
   if (!S.data) return "";
   if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
   if (S.source === "snapshot") {
-    return banner("mute", `snapshot · <span class="js-age">${fmtAge(g(S.data, "generated_at"))}</span> old`);
+    return banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`);
   }
   return "";
 }

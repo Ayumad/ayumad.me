@@ -280,7 +280,7 @@ function modeBannerHtml() {
   if (!S.data) return "";
   if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
   if (S.source === "snapshot") {
-    return banner("mute", `snapshot · <span class="js-age">${fmtAge(g(S.data, "generated_at"))}</span> old`);
+    return banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`);
   }
   return "";
 }
