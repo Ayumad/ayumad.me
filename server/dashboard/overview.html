@@ -1773,11 +1773,28 @@ body {
   }
 
   function fmtClock(iso) {
-    const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return "—";
-    return new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, hour: "numeric", minute: "2-digit", hour12: true,
-    }).format(date);
+    const minutes = wallMinutes(iso);
+    if (minutes === null) return "—";
+    let hour = Math.floor(minutes / 60);
+    const minute = minutes % 60;
+    const suffix = hour >= 12 ? "PM" : "AM";
+    hour %= 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${String(minute).padStart(2, "0")} ${suffix}`;
+  }
+
+  function wallMinutes(iso) {
+    const match = String(iso || "").match(/T(\d{2}):(\d{2})/);
+    return match ? Number(match[1]) * 60 + Number(match[2]) : null;
+  }
+
+  function nowMinutesLA() {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: LA, hour: "numeric", minute: "numeric", hour12: false,
+    }).formatToParts(new Date());
+    const hour = Number(parts.find((p) => p.type === "hour")?.value || 0) % 24;
+    const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
+    return hour * 60 + minute;
   }
 
   function daysUntil(value) {
@@ -2142,14 +2159,16 @@ body {
       if (rise && set) {
         $("sunrise").textContent = fmtClock(rise);
         $("sunset").textContent = fmtClock(set);
-        const riseMs = new Date(rise).getTime();
-        const setMs = new Date(set).getTime();
-        const progress = Math.max(0, Math.min(1, (Date.now() - riseMs) / (setMs - riseMs)));
-        const angle = Math.PI * (1 - progress);
-        const x = 150 + 132 * Math.cos(angle);
-        const y = 80 - 66 * Math.sin(angle);
-        $("sundot").setAttribute("cx", x.toFixed(1));
-        $("sundot").setAttribute("cy", y.toFixed(1));
+        const riseMin = wallMinutes(rise);
+        const setMin = wallMinutes(set);
+        if (riseMin !== null && setMin !== null && setMin > riseMin) {
+          const progress = Math.max(0, Math.min(1, (nowMinutesLA() - riseMin) / (setMin - riseMin)));
+          const angle = Math.PI * (1 - progress);
+          const x = 150 + 132 * Math.cos(angle);
+          const y = 80 - 66 * Math.sin(angle);
+          $("sundot").setAttribute("cx", x.toFixed(1));
+          $("sundot").setAttribute("cy", y.toFixed(1));
+        }
         $("sunarc").hidden = false;
       } else {
         $("sunarc").hidden = true;
