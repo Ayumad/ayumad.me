@@ -1,0 +1,110 @@
+/* base.css — reset, motif (copied verbatim from the live site's body rules),
+   focus, and shared type utilities. Colors come only from tokens.css. */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+  scroll-behavior: smooth;
+  scrollbar-color: var(--cyan) var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    linear-gradient(90deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    linear-gradient(0deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 46%, transparent) 0 0.8px, transparent 1px)
+      0 0 / 5px 5px;
+  content: "";
+  opacity: 0.22;
+  mask-image:
+    radial-gradient(ellipse 58% 42% at 86% 3%, black 0 18%, transparent 70%),
+    radial-gradient(ellipse 44% 35% at 7% 82%, black, transparent 72%);
+  pointer-events: none;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.soft {
+  color: var(--soft);
+}
+
+.cyan {
+  color: var(--cyan);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

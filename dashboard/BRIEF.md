@@ -24,7 +24,7 @@ You are building **only the frontend**: one static HTML artifact (inline CSS/JS)
 ## 2. Non-negotiables
 
 1. **No frameworks, no npm packages, no webfonts, no images.** Inline CSS + vanilla ES2022 JS. SVG only for charts and icons, inline.
-2. **One output file:** `public/dashboard-next.html`, built by `node scripts/build-dashboard.mjs` inlining `dashboard/src/**`. No runtime fetches of CSS/JS.
+2. **One output file:** `public/dashboard.html`, built by `node scripts/build-dashboard.mjs` inlining `dashboard/src/**` and the seed fixture. No runtime fetches of CSS/JS.
 3. **Do not touch** `src/`, `api/`, `vercel.json`, `package.json` dependencies, or any other page. Only `dashboard/` and the built file.
 4. **No dark-pattern chrome:** no shadows, no gradients, no rounded cards beyond 2 px, no glows, no icons in colored circles.
 5. **Color is state, not decoration.** Cyan means live/healthy/focus. Violet is a second data series only. Amber/red are only warn/bad.
@@ -187,8 +187,8 @@ Rules for the frontend:
       wall.js
       components/{cell,row,bar,spark,matrix,pill,timeline,drawer,banner}.js
     reference/                   # screenshots, if any
-  scripts/build-dashboard.mjs    # inline src -> public/dashboard-next.html
-  public/dashboard-next.html     # built artifact (committed)
+  scripts/build-dashboard.mjs    # inline src -> public/dashboard.html
+  public/dashboard.html           # built artifact (committed)
 ```
 
 Build rules: read `src/index.html`, replace `<!--INLINE:base.css-->` style markers and `<!--INLINE:app.js-->` script markers, write one file, print bytes and warning if > 150 KB gzipped.
@@ -227,7 +227,7 @@ Build rules: read `src/index.html`, replace `<!--INLINE:base.css-->` style marke
 
 ### 08 — Review sweep (Sol, high)
 
-> Review only `dashboard/` and `public/dashboard-next.html`: data-contract misuse, a11y (focus, contrast, aria-live), token drift, wall failure states, dead code, and payload assumptions. Produce a findings list with file:line and fix the P0/P1 items. Commit as `dashboard: review fixes`.
+> Review only `dashboard/` and `public/dashboard.html`: data-contract misuse, a11y (focus, contrast, aria-live), token drift, wall failure states, dead code, and payload assumptions. Produce a findings list with file:line and fix the P0/P1 items. Commit as `dashboard: review fixes`.
 
 ### 09 — Final visual QA (Astra, high)
 
@@ -269,6 +269,6 @@ codex review -c model="gpt-6.2-sol" \
 - No new dependencies; `npm run validate` passes.
 - Every new component has a stale/empty/error rendering shown in `?specimen=1`.
 - Commit message matches the prompt's requested message.
-- No file outside `dashboard/`, `scripts/build-dashboard.mjs`, and `public/dashboard-next.html` changed.
+- No file outside `dashboard/`, `scripts/build-dashboard.mjs`, and `public/dashboard.html` changed.
 
 If something in this brief conflicts with the live site's CSS, the live site wins for tokens; this brief wins for layout and behavior.
