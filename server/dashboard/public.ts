@@ -2,7 +2,7 @@
    Counts and health only: no hostnames, IPs, task titles, school items,
    peer names, container names, or timeline text. */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { readSnapshot } from "./snapshot";
+import { readSnapshot } from "./snapshot.js";
 
 const n = (v: any) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
