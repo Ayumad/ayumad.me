@@ -131,7 +131,7 @@ function adaptV1(v1) {
   }));
   const online = fleet.filter((p) => p.online).length;
 
-  const alerts = (num(now.jobs_failing) || 0) + (num(now.homelab_issues_bad) || 0) + (num(now.overdue_tasks) || 0);
+  const alerts = (num(now.jobs_failing) || 0) + (num(now.homelab_issues_bad) || 0) + (num(now.homelab_issues_warn) || 0) + (num(now.overdue_tasks) || 0);
   const overall = {
     status:
       (num(now.jobs_failing) || 0) > 0 || (num(now.homelab_issues_bad) || 0) > 0

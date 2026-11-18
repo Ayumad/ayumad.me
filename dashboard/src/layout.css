@@ -139,6 +139,11 @@
   margin-top: 24px;
 }
 
+.hero .cell-v {
+  white-space: nowrap;
+  font-size: clamp(20px, 1.6vw, 26px);
+}
+
 /* ---------- global mode banner (seed / snapshot; live shows none) ---------- */
 
 .mode-strip {
