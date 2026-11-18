@@ -1,0 +1,48 @@
+:root {
+  color-scheme: dark;
+  --bg: #040707;
+  --surface: #091011;
+  --surface-2: #0e191a;
+  --text: #e5f4f2;
+  --soft: #9bb7b3;
+  --muted: #627d79;
+  --line: #294441;
+  --fine: #142624;
+  --cyan: #48efd0;
+  --secondary: var(--cyan);
+  --violet: #777fc4;
+  --ink: #020606;
+  --warn: #e0b070;
+  --bad: #e08a8a;
+  --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  --sans: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --display: var(--sans);
+  --max: 1460px;
+  --header: 72px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e6efed;
+  --surface: #f3f8f7;
+  --surface-2: #d4e2df;
+  --text: #071311;
+  --soft: #314b47;
+  --muted: #5d7470;
+  --line: #758e89;
+  --fine: #c0d1ce;
+  --cyan: #006f68;
+  --secondary: var(--cyan);
+  --violet: #50568d;
+  --ink: #f4fffd;
+  --warn: #8a5a12;
+  --bad: #9b2f2f;
+}
+
+/*
+  Background motif (copy from the live site, do not approximate):
+  - 104px line grid using --fine at 1px
+  - 5px dot matrix using --cyan at 22% opacity
+  - two radial masks: top-right and bottom-left
+  See ~/Documents/GitHub/ayumad.me/src/styles.css -> body / body::before.
+*/

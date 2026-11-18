@@ -1,0 +1,1740 @@
+{
+  "schema": "ayumad.dashboard/2",
+  "generated_at": "2026-11-18T09:07:09-08:00",
+  "generated_on": "Mac mini (design fixture \u2014 derived from live data 2026-11-18, sanitized)",
+  "_fixture": true,
+  "overall": {
+    "status": "warn",
+    "score": 74,
+    "alerts": 3
+  },
+  "surfaces": {
+    "mac_mini": {
+      "host": {
+        "name": "ayumacmini",
+        "os": "macOS 27.2.1",
+        "arch": "arm64",
+        "uptime_s": 86500,
+        "load": [
+          1.8,
+          1.6,
+          1.5
+        ]
+      },
+      "hermes": {
+        "version": "0.23.2",
+        "released": "2026.9.24",
+        "commits_behind": 0,
+        "cron": {
+          "total": 38,
+          "enabled": 28,
+          "no_agent": 22,
+          "failing": 0
+        },
+        "skills": 218,
+        "mcp_servers": 1,
+        "memory": {
+          "working": 1844,
+          "episodic": 720
+        },
+        "disk": {
+          "used_pct": 93,
+          "free_gb": 14.1,
+          "size_gb": 228
+        },
+        "tokens": {
+          "month_calls": 8454,
+          "month_in_m": 26.0,
+          "month_out_m": 5.7,
+          "month_cache_m": 1096.4,
+          "week_calls": 1558,
+          "week_out_m": 1.02,
+          "cache_share": 98,
+          "top_models": [
+            {
+              "model": "deepseek-v4.1-flash",
+              "calls": 7527
+            },
+            {
+              "model": "deepseek/deepseek-v4.1-flash-1017",
+              "calls": 499
+            },
+            {
+              "model": "mimo-v2.6-flash",
+              "calls": 370
+            },
+            {
+              "model": "abl-4b:latest",
+              "calls": 48
+            }
+          ]
+        }
+      },
+      "launchd": [
+        {
+          "label": "com.ayumad.whisper-server",
+          "pid": 2605,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.hermes-dashboard-live",
+          "pid": 2617,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.hermes.serve",
+          "pid": 19401,
+          "last_exit": -15,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.crosswalk-hook",
+          "pid": 2619,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.linkdigest",
+          "pid": 2601,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "ai.hermes.gateway",
+          "pid": 9498,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "me.ayumad.knowledge-sync",
+          "pid": null,
+          "last_exit": 245,
+          "running": false
+        },
+        {
+          "label": "com.ayumad.retropie-save-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.ayumad.goodreads-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.hermes-webui-agent-update-watcher",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.hermes-webui",
+          "pid": 25144,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.mal-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        }
+      ],
+      "ports": [
+        {
+          "port": 8790,
+          "name": "dashboard-live",
+          "state": "listen"
+        },
+        {
+          "port": 9119,
+          "name": "fleet gateway",
+          "state": "listen"
+        },
+        {
+          "port": 8789,
+          "name": "photon sidecar",
+          "state": "listen"
+        },
+        {
+          "port": 8917,
+          "name": "whisper",
+          "state": "listen"
+        },
+        {
+          "port": 11434,
+          "name": "ollama",
+          "state": "listen"
+        },
+        {
+          "port": 9222,
+          "name": "chrome cdp",
+          "state": "listen"
+        }
+      ],
+      "cron": {
+        "jobs": [
+          {
+            "id": "60134fe73894",
+            "name": "Weekly Kanban Dispatch",
+            "schedule": "0 9 * * 1",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-16T09:00:49.898783-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-23T09:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "695b848575bc",
+            "name": "Mnemosyne Sleep",
+            "schedule": "0 3 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:47.520582-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T03:00:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "48bc5d525dbd",
+            "name": "Daily Cleanup + Loose Ends",
+            "schedule": "0 23 * * *",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-18T08:25:47.986292-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T23:00:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "7fe2464640b9",
+            "name": "Daily Brief",
+            "schedule": "30 9 * * *",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-17T09:30:50.111891-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:30:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "6fa3764819a7",
+            "name": "School Drive Organizer",
+            "schedule": "35 8 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:35:45.505367-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T08:35:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "bd99b6879473",
+            "name": "Homelab Health Monitor",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:58:33.308988-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:28:33.308988-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "1c9a6aa43570",
+            "name": "Media pipeline (Letterboxd + ready pings)",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:53.020620-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:53.020620-08:00",
+            "runs_7d": 33,
+            "ok_7d": 33,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "ff9a9059a4a5",
+            "name": "Vercel Deployment Prune",
+            "schedule": "every sunday at 7am",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T07:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "5dd077175540",
+            "name": "Remux downgrade driver",
+            "schedule": "every 10m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:58:33.379190-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:08:33.379190-08:00",
+            "runs_7d": 186,
+            "ok_7d": 186,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "e812c8e2b3c1",
+            "name": "Handshake Inbox Alerts",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:53.169905-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:53.169905-08:00",
+            "runs_7d": 34,
+            "ok_7d": 34,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "1fc6a22282a7",
+            "name": "Hermes Mobile iOS Beta Watch",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:56:33.439285-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:26:33.439285-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "a5266e86bb08",
+            "name": "Crosswalk to/hermes poll",
+            "schedule": "every 5m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:33.368479-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:07:33.368479-08:00",
+            "runs_7d": 340,
+            "ok_7d": 340,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "067021ccab13",
+            "name": "Crosswalk price history",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:57:33.393606-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:27:33.393606-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "825d18bfa9a8",
+            "name": "Crosswalk purchase ledger",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:55.025301-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:55.025301-08:00",
+            "runs_7d": 34,
+            "ok_7d": 34,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "be4fc383a3ea",
+            "name": "Board tasks -> vault queue",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:56:33.515063-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:26:33.515063-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "95215067c706",
+            "name": "Repo Issue Watch",
+            "schedule": "0 8 * * 1",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-16T08:00:49.878462-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-23T08:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "d94ebbb183c0",
+            "name": "Handshake Inbox Digest",
+            "schedule": "15 9 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-17T09:15:50.212247-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:15:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "37a8372fcd8d",
+            "name": "Estate Sale Watch",
+            "schedule": "30 8 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:30:44.976577-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T08:30:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "201cb24bf6fe",
+            "name": "Google Drive Backup",
+            "schedule": "every sunday 4:30am",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T04:30:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "bcd595b1c346",
+            "name": "AI-Engineering wiki review",
+            "schedule": "0 9 1 * *",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": null,
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "4d51d310a981",
+            "name": "Chrome CDP Prune",
+            "schedule": "every 120m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:55.236446-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T10:25:55.236446-08:00",
+            "runs_7d": 17,
+            "ok_7d": 17,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "cc913a85dc53",
+            "name": "Hermes Auto-Update",
+            "schedule": "0 4 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-19T04:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "9d3d8543715e",
+            "name": "Hermes Update Report",
+            "schedule": "0 */3 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:33.391941-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T12:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "66c29ee97f8c",
+            "name": "Hermes Update Digest",
+            "schedule": "5 9 * * 0",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T09:05:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "6204bf2dc36c",
+            "name": "Model Watch \u2014 OpenCode Go + labs",
+            "schedule": "0 10 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-18T10:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "49c933f8af24",
+            "name": "Model Radar \u2014 weekly",
+            "schedule": "15 10 * * 1",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-23T10:15:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "b9559e7ece77",
+            "name": "Model Policy Apply",
+            "schedule": "5 10 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:13.533604-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T10:05:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "64f882899854",
+            "name": "Hermes Maintenance Report",
+            "schedule": "0 */6 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-18T12:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          }
+        ]
+      }
+    },
+    "p520": {
+      "host": {
+        "name": "pve-p520",
+        "proxmox": "9.2.20",
+        "kernel": "7.0.14-17-pve",
+        "uptime_s": 74200,
+        "load": [
+          "0.52",
+          "0.44",
+          "0.40"
+        ],
+        "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
+        "cores": 12,
+        "mem_used_gb": 24.3,
+        "mem_total_gb": 62,
+        "failed_units": 0,
+        "failed_list": [],
+        "pve_ui": "https://100.127.82.2:8006",
+        "nics": [
+          {
+            "name": "nic0",
+            "speed_mbps": 2500,
+            "state": "up"
+          },
+          {
+            "name": "nic1",
+            "speed_mbps": 0,
+            "state": "down"
+          }
+        ]
+      },
+      "pools": [
+        {
+          "name": "ssd",
+          "size_gb": 3563.52,
+          "alloc_gb": 195.0,
+          "free_gb": 3368.96,
+          "health": "ONLINE",
+          "used_pct": 5,
+          "scan": "scrub repaired 0B in 00:12:59 with 0 errors on Sun Nov  8 00:37:00 2026",
+          "never_scrubbed": false,
+          "errors": "No known data errors",
+          "vdev": [
+            "ssd",
+            "ONLINE",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "name": "tank",
+          "size_gb": 18636.8,
+          "alloc_gb": 15462.4,
+          "free_gb": 3184.64,
+          "health": "ONLINE",
+          "used_pct": 83,
+          "scan": "scrub repaired 0B in 4 days 09:22:50 with 0 errors on Thu Nov 12 09:46:52 2026",
+          "never_scrubbed": false,
+          "errors": "No known data errors",
+          "vdev": [
+            "tank",
+            "ONLINE",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "guests": [
+        {
+          "id": 100,
+          "name": "nas",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 101,
+          "name": "pihole",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 102,
+          "name": "minecraft",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 200,
+          "name": "ai-vm",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 24576,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 201,
+          "name": "school-vm",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 202,
+          "name": "docker-vm",
+          "type": "qemu",
+          "status": "running",
+          "mem_mb": 16384,
+          "disk_gb": 4516.0
+        },
+        {
+          "id": 210,
+          "name": "iso-lab",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 8192,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 211,
+          "name": "nixos",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 212,
+          "name": "cachyos",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 213,
+          "name": "omarchy-test",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 214,
+          "name": "archlinux",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        }
+      ],
+      "backups": {
+        "newest": "vzdump-qemu-214-2026_11_18-03_47_58.vma.zst",
+        "newest_age_h": 5.2,
+        "count": 115,
+        "destination": "/tank/backups (on the P520 itself)",
+        "offsite": false,
+        "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
+      },
+      "snapshots": 335,
+      "scrub_timers": 2,
+      "smart": [
+        {
+          "pool": "ssd",
+          "device": "nvme0n1",
+          "health": "PASSED",
+          "temp_c": null,
+          "hours": null
+        },
+        {
+          "pool": "tank",
+          "device": "sda",
+          "health": "PASSED",
+          "temp_c": 34,
+          "hours": 41022
+        },
+        {
+          "pool": "tank",
+          "device": "sdb",
+          "health": "PASSED",
+          "temp_c": 35,
+          "hours": 41022
+        },
+        {
+          "pool": "tank",
+          "device": "sdc",
+          "health": "PASSED",
+          "temp_c": null,
+          "hours": null
+        }
+      ],
+      "gpu": {
+        "owner": "kiosk",
+        "kiosk_vm": 203,
+        "ai_vm": 200,
+        "mode_changed_at": "2026-11-18T03:07:09-08:00",
+        "switch_failures": 0
+      }
+    },
+    "docker_vm": {
+      "counts": {
+        "defined": 49,
+        "running": 34,
+        "stopped": 15,
+        "expected_running_stopped": 14,
+        "unhealthy": 0
+      },
+      "containers": [
+        {
+          "name": "cleanuparr",
+          "image": "ghcr.io/cleanuparr/cleanuparr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "dozzle",
+          "image": "amir20/dozzle:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "kamiyomu",
+          "image": "marcoscostadev/kamiyomu:1.4.0",
+          "state": "exited",
+          "status": "Exited (0) 5 days ago",
+          "stack": "media",
+          "expected_running": false,
+          "health": null
+        },
+        {
+          "name": "suwayomi",
+          "image": "ghcr.io/suwayomi/suwayomi-server:stable",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "open-webui",
+          "image": "ghcr.io/open-webui/open-webui:main",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ai",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "qbittorrent-personal",
+          "image": "lscr.io/linuxserver/qbittorrent:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "gluetun-personal",
+          "image": "qmcgaw/gluetun:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "media",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "calibre-web",
+          "image": "lscr.io/linuxserver/calibre-web:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "actual",
+          "image": "actualbudget/actual-server:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "finance",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "qbittorrent",
+          "image": "lscr.io/linuxserver/qbittorrent:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "gluetun",
+          "image": "qmcgaw/gluetun:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "media",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "jellyfin",
+          "image": "jellyfin/jellyfin:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "healthchecks",
+          "image": "healthchecks/healthchecks:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ops",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "miniflux",
+          "image": "miniflux/miniflux:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "reading",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "stirling-pdf",
+          "image": "stirlingtools/stirling-pdf:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "tools",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "healthchecks-db",
+          "image": "postgres:16-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "miniflux-db",
+          "image": "postgres:16-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "reading",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "caddy",
+          "image": "caddy:2-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "qdrant",
+          "image": "qdrant/qdrant:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ai",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "diun",
+          "image": "crazymax/diun:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "bazarr",
+          "image": "lscr.io/linuxserver/bazarr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "vaultwarden",
+          "image": "vaultwarden/server:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "security",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "ntfy",
+          "image": "binwiederhier/ntfy:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "ollama-cpu",
+          "image": "ollama/ollama:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ai",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "flaresolverr",
+          "image": "ghcr.io/flaresolverr/flaresolverr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "node-red",
+          "image": "nodered/node-red:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "home",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "mosquitto",
+          "image": "eclipse-mosquitto:2",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "home",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "homeassistant",
+          "image": "ghcr.io/home-assistant/home-assistant:stable",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "home",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "forgejo",
+          "image": "codeberg.org/forgejo/forgejo:10",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "code-server",
+          "image": "lscr.io/linuxserver/code-server:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "immich_server",
+          "image": "ghcr.io/immich-app/immich-server:release",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "photos",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "immich_postgres",
+          "image": "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "photos",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "immich_machine_learning",
+          "image": "ghcr.io/immich-app/immich-machine-learning:release",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "photos",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "immich_redis",
+          "image": "valkey/valkey:8-bookworm",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "photos",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless",
+          "image": "ghcr.io/paperless-ngx/paperless-ngx:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless-db",
+          "image": "postgres:16",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless-broker",
+          "image": "redis:7",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "syncthing",
+          "image": "lscr.io/linuxserver/syncthing:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "scrutiny-influxdb",
+          "image": "influxdb:2",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "uptime-kuma",
+          "image": "louislam/uptime-kuma:1",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ops",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "scrutiny",
+          "image": "ghcr.io/analogj/scrutiny:master-web",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "prometheus",
+          "image": "prom/prometheus:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "grafana",
+          "image": "grafana/grafana-oss:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "jellyseerr",
+          "image": "fallenbagel/jellyseerr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "navidrome",
+          "image": "deluan/navidrome:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "audiobookshelf",
+          "image": "ghcr.io/advplyr/audiobookshelf:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "radarr",
+          "image": "lscr.io/linuxserver/radarr:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "prowlarr",
+          "image": "lscr.io/linuxserver/prowlarr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "sonarr",
+          "image": "lscr.io/linuxserver/sonarr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        }
+      ],
+      "stacks": [
+        "ai",
+        "dev",
+        "docs",
+        "finance",
+        "home",
+        "media",
+        "ops",
+        "photos",
+        "reading",
+        "security",
+        "tools"
+      ]
+    },
+    "network": {
+      "tailscale": [
+        {
+          "name": "Ayumacmini",
+          "os": "macOS",
+          "online": true,
+          "self": true,
+          "ip": "100.113.252.86"
+        },
+        {
+          "name": "Retroid Pocket Nova",
+          "os": "android",
+          "online": false,
+          "self": false,
+          "ip": "100.89.99.109"
+        },
+        {
+          "name": "g14-omarchy",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.87.167.117"
+        },
+        {
+          "name": "M16",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.88.176.51"
+        },
+        {
+          "name": "Pixel 10 Pro",
+          "os": "android",
+          "online": false,
+          "self": false,
+          "ip": "100.109.21.34"
+        },
+        {
+          "name": "t480",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.79.184.45"
+        },
+        {
+          "name": "Ayumacpro",
+          "os": "macOS",
+          "online": false,
+          "self": false,
+          "ip": "100.73.7.67"
+        },
+        {
+          "name": "Canyon",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.89.8.80"
+        },
+        {
+          "name": "school-vm",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.78.211.72"
+        },
+        {
+          "name": "Ayupadpro",
+          "os": "iOS",
+          "online": true,
+          "self": false,
+          "ip": "100.106.13.72"
+        },
+        {
+          "name": "framework",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.104.19.24"
+        },
+        {
+          "name": "Creekwood",
+          "os": "windows",
+          "online": true,
+          "self": false,
+          "ip": "100.125.200.55"
+        },
+        {
+          "name": "pve-p520",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.127.82.2"
+        },
+        {
+          "name": "G14",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.67.231.52"
+        },
+        {
+          "name": "XPS",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.74.29.81"
+        },
+        {
+          "name": "tank",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.65.160.86"
+        },
+        {
+          "name": "localhost",
+          "os": "iOS",
+          "online": true,
+          "self": false,
+          "ip": "100.80.192.20"
+        },
+        {
+          "name": "xps-omarchy",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.103.243.85"
+        },
+        {
+          "name": "ayumad",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.73.4.38"
+        },
+        {
+          "name": "docker-vm",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.113.99.29"
+        },
+        {
+          "name": "ayumacair",
+          "os": "macOS",
+          "online": false,
+          "self": false,
+          "ip": "100.120.245.31"
+        }
+      ],
+      "online": 7,
+      "pihole": {
+        "status": "ok",
+        "queries_24h": null,
+        "blocked_pct": null
+      },
+      "routes": [
+        {
+          "host": "jellyfin.lan",
+          "target": "10.0.0.54:8096",
+          "state": "down"
+        },
+        {
+          "host": "jellyseerr.lan",
+          "target": "10.0.0.54:5055",
+          "state": "down"
+        },
+        {
+          "host": "sonarr.lan",
+          "target": "10.0.0.54:8989",
+          "state": "down"
+        },
+        {
+          "host": "radarr.lan",
+          "target": "10.0.0.54:7878",
+          "state": "down"
+        },
+        {
+          "host": "prowlarr.lan",
+          "target": "10.0.0.54:9696",
+          "state": "down"
+        },
+        {
+          "host": "qbittorrent.lan",
+          "target": "10.0.0.54:8090",
+          "state": "down"
+        },
+        {
+          "host": "bazarr.lan",
+          "target": "10.0.0.54:6767",
+          "state": "down"
+        },
+        {
+          "host": "cleanuparr.lan",
+          "target": "10.0.0.54:11011",
+          "state": "down"
+        }
+      ]
+    },
+    "media": {
+      "queues": {
+        "radarr": 0,
+        "sonarr": 0
+      },
+      "downloads": {
+        "active": 0,
+        "rate_mbps": 0.0
+      },
+      "jellyfin": {
+        "sessions": 0
+      },
+      "remux": {
+        "queued": 4,
+        "completed_today": 0
+      },
+      "letterboxd": {
+        "last_sync": "2026-11-17T22:00:00-08:00",
+        "stale": true
+      }
+    },
+    "personal": {
+      "tasks": {
+        "open": 49,
+        "overdue": 0,
+        "items": [
+          {
+            "title": "Vibe-code website for looking through my layout \u2014 anatomy skill + Claude plan",
+            "list": "Tech",
+            "due": "2026-11-23",
+            "overdue": false
+          },
+          {
+            "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "New Nintendo 3DS XL: finish setup (modded)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "PS Vita: finish setup (modded)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "SJSU Bursar: submit IRS W-9S (SSN/ITIN) to the Registrar by Dec 15",
+            "list": "School",
+            "due": "2026-12-15",
+            "overdue": false
+          }
+        ]
+      },
+      "school": {
+        "upcoming": 6,
+        "courses": [
+          "CMPE-131",
+          "CMPE-142",
+          "CMPE-148"
+        ],
+        "next": [
+          {
+            "title": "Chapter 1&2&3 Quiz- Requires Respondus LockDown Browser",
+            "course": "CMPE-131",
+            "due": "2026-11-19",
+            "when": "2026-11-19T17:15:00+00:00"
+          },
+          {
+            "title": "(In-class Activity) Weekly Sprint Meeting - Final Demo Prep",
+            "course": "CMPE-131",
+            "due": "2026-11-19",
+            "when": "2026-11-19T18:30:00+00:00"
+          },
+          {
+            "title": "PART FIVE: Chapters 11&12 Quiz- Requires Respondus LockDown Browser",
+            "course": "CMPE-142",
+            "due": "2026-11-19",
+            "when": "2026-11-19T18:50:00+00:00"
+          }
+        ]
+      },
+      "applications": {
+        "week": 0,
+        "total": 42,
+        "cap": 20
+      },
+      "journal": {
+        "entries_7d": 5,
+        "last": "2026-11-18"
+      },
+      "listening": {
+        "active_projects": 21,
+        "planned_projects": 7,
+        "open_tasks": 49,
+        "overdue_tasks": 0,
+        "assignments_upcoming": 6,
+        "devices_online": 7,
+        "devices_total": 21,
+        "jobs_failing": 0,
+        "jobs_total": 28,
+        "homelab_reachable": true,
+        "services_up": 21,
+        "services_total": 33,
+        "guests_running": 4,
+        "containers_running": 34,
+        "pools_online": 2,
+        "pools_total": 2,
+        "homelab_issues_bad": 0,
+        "homelab_issues_warn": 2
+      }
+    },
+    "external": {
+      "vercel": {
+        "last_deploy": "2026-11-18T08:26:00-08:00",
+        "status": "ready"
+      },
+      "github": {
+        "open_issues": 3,
+        "last_run": "success"
+      },
+      "backups": {
+        "proxmox_age_h": 5.2,
+        "google_drive": "2026-11-15T04:30:00-08:00"
+      }
+    }
+  },
+  "timeline": [
+    {
+      "ts": "2026-11-18T09:02:00-08:00",
+      "level": "info",
+      "source": "cron",
+      "text": "Daily Cleanup completed in 3.5s"
+    },
+    {
+      "ts": "2026-11-18T08:26:00-08:00",
+      "level": "info",
+      "source": "deploy",
+      "text": "ayumad.me deployed \u00b7 dashboard snapshot refreshed"
+    },
+    {
+      "ts": "2026-11-18T08:25:00-08:00",
+      "level": "info",
+      "source": "mnemosyne",
+      "text": "Sleep consolidated 1844 working memories"
+    },
+    {
+      "ts": "2026-11-18T03:47:00-08:00",
+      "level": "info",
+      "source": "backup",
+      "text": "vzdump qemu-214 completed (5.2h ago)"
+    },
+    {
+      "ts": "2026-11-17T22:00:00-08:00",
+      "level": "warn",
+      "source": "media",
+      "text": "Letterboxd sync ran with Prowlarr unreachable"
+    },
+    {
+      "ts": "2026-11-17T12:21:00-08:00",
+      "level": "bad",
+      "source": "docker",
+      "text": "14 expected containers stopped after docker-vm reboot"
+    },
+    {
+      "ts": "2026-11-17T12:20:00-08:00",
+      "level": "info",
+      "source": "proxmox",
+      "text": "docker-vm started"
+    },
+    {
+      "ts": "2026-11-16T09:00:00-08:00",
+      "level": "info",
+      "source": "cron",
+      "text": "Weekly Kanban Dispatch completed"
+    },
+    {
+      "ts": "2026-11-15T04:30:00-08:00",
+      "level": "info",
+      "source": "backup",
+      "text": "Google Drive vault backup uploaded"
+    },
+    {
+      "ts": "2026-11-14T23:30:00-08:00",
+      "level": "warn",
+      "source": "disk",
+      "text": "macOS data volume crossed 90%"
+    }
+  ],
+  "meta": {
+    "build_ms": 8420,
+    "sources": [
+      {
+        "name": "hermes",
+        "ok": true,
+        "ms": 210,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "mac",
+        "ok": true,
+        "ms": 90,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "proxmox",
+        "ok": true,
+        "ms": 1830,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "docker_stack",
+        "ok": true,
+        "ms": 2210,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "prometheus",
+        "ok": true,
+        "ms": 310,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "network",
+        "ok": true,
+        "ms": 1940,
+        "stale": true,
+        "age_s": 420,
+        "error": null
+      },
+      {
+        "name": "media",
+        "ok": true,
+        "ms": 860,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "personal",
+        "ok": true,
+        "ms": 120,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "external",
+        "ok": false,
+        "ms": 30000,
+        "stale": true,
+        "age_s": 3600,
+        "error": "timeout"
+      }
+    ],
+    "kiosk": {
+      "last_seen": "2026-11-18T09:06:44-08:00",
+      "stale_s": 25
+    }
+  }
+}
