@@ -1,5 +1,7 @@
 # Codex Design Brief — Ayumad Automation Dashboard
 
+> **Deployment update (2026-11-18):** the page is served by `api/dashboard.ts` at `/dashboard` behind the site login. Build output is `server/dashboard/overview.html`; live data comes from the authenticated `/dashboard/data`, with a sanitized fixture as the offline seed. The old public `public/dashboard.html` no longer exists.
+
 **Read this before writing any code.** It is the complete handoff: visual language, information architecture, component specs, data contract, file layout, and the exact per-session prompts with model routing.
 
 Companion document: `2026-11-18_085419-automation-dashboard.md` (architecture, collectors, phases, acceptance criteria).
@@ -13,9 +15,9 @@ Ayush runs an automation stack across a Mac mini and a Proxmox host (P520). The 
 You are building **only the frontend**: one static HTML artifact (inline CSS/JS), two modes (interactive web + non-interactive wall), fed by a JSON contract. Hermes builds the collector. Do not invent data, do not add a backend, do not add dependencies.
 
 **Live references**
-- Design language: <https://ayumad.me> (dark terminal/CAD aesthetic; read the CSS at `~/Documents/GitHub/ayumad.me/src/styles.css`)
-- Current dashboard: <https://ayumad.me/dashboard> and `~/workspace/ayumad.me/public/dashboard.html`
-- Work repo: `~/workspace/ayumad.me` (branch `dashboard-v2`). **Never** use `~/Documents/GitHub/ayumad.me` — stale.
+- Design language: <https://ayumad.me> (dark terminal/CAD aesthetic; read the CSS at `~/workspace/ayumad.me/src/styles.css`)
+- Current dashboard: <https://ayumad.me/dashboard> and `~/workspace/ayumad.me/server/dashboard/overview.html`
+- Work repo: `~/workspace/ayumad.me` (main; branch before editing). **Never** use `~/Documents/GitHub/ayumad.me` — stale.
 - Data fixture you build against: `dashboard/fixtures/state.v2.json` (produced in Phase 0).
 - Tokens: `dashboard/tokens.css` (copy of the live site's variables, below).
 
@@ -24,7 +26,7 @@ You are building **only the frontend**: one static HTML artifact (inline CSS/JS)
 ## 2. Non-negotiables
 
 1. **No frameworks, no npm packages, no webfonts, no images.** Inline CSS + vanilla ES2022 JS. SVG only for charts and icons, inline.
-2. **One output file:** `public/dashboard.html`, built by `node scripts/build-dashboard.mjs` inlining `dashboard/src/**` and the seed fixture. No runtime fetches of CSS/JS.
+2. **One output file:** `server/dashboard/overview.html`, built by `node scripts/build-dashboard.mjs` inlining `dashboard/src/**` and the seed fixture. No runtime fetches of CSS/JS.
 3. **Do not touch** `src/`, `api/`, `vercel.json`, `package.json` dependencies, or any other page. Only `dashboard/` and the built file.
 4. **No dark-pattern chrome:** no shadows, no gradients, no rounded cards beyond 2 px, no glows, no icons in colored circles.
 5. **Color is state, not decoration.** Cyan means live/healthy/focus. Violet is a second data series only. Amber/red are only warn/bad.
@@ -187,8 +189,8 @@ Rules for the frontend:
       wall.js
       components/{cell,row,bar,spark,matrix,pill,timeline,drawer,banner}.js
     reference/                   # screenshots, if any
-  scripts/build-dashboard.mjs    # inline src -> public/dashboard.html
-  public/dashboard.html           # built artifact (committed)
+  scripts/build-dashboard.mjs    # inline src -> server/dashboard/overview.html
+  server/dashboard/overview.html           # built artifact (committed)
 ```
 
 Build rules: read `src/index.html`, replace `<!--INLINE:base.css-->` style markers and `<!--INLINE:app.js-->` script markers, write one file, print bytes and warning if > 150 KB gzipped.
@@ -199,7 +201,7 @@ Build rules: read `src/index.html`, replace `<!--INLINE:base.css-->` style marke
 
 ### 01 — Design system (Astra, xhigh)
 
-> Read `AGENTS.md`, `dashboard/BRIEF.md`, and the tokens. Study <https://ayumad.me> and `public/dashboard.html` for the existing visual vocabulary. Write `dashboard/DESIGN.md` (a one-page spec: grid, type scale, spacing, states, wall rules) and `dashboard/tokens.css` + `dashboard/src/base.css` + `layout.css`. Include a specimen route `?specimen=1` that renders every component state at 100% and in wall scale. Do not write the app logic yet. Commit as `dashboard: design system`.
+> Read `AGENTS.md`, `dashboard/BRIEF.md`, and the tokens. Study <https://ayumad.me> and `server/dashboard/overview.html` for the existing visual vocabulary. Write `dashboard/DESIGN.md` (a one-page spec: grid, type scale, spacing, states, wall rules) and `dashboard/tokens.css` + `dashboard/src/base.css` + `layout.css`. Include a specimen route `?specimen=1` that renders every component state at 100% and in wall scale. Do not write the app logic yet. Commit as `dashboard: design system`.
 
 ### 02 — Shell + Overview (Sol, high)
 
@@ -227,7 +229,7 @@ Build rules: read `src/index.html`, replace `<!--INLINE:base.css-->` style marke
 
 ### 08 — Review sweep (Sol, high)
 
-> Review only `dashboard/` and `public/dashboard.html`: data-contract misuse, a11y (focus, contrast, aria-live), token drift, wall failure states, dead code, and payload assumptions. Produce a findings list with file:line and fix the P0/P1 items. Commit as `dashboard: review fixes`.
+> Review only `dashboard/` and `server/dashboard/overview.html`: data-contract misuse, a11y (focus, contrast, aria-live), token drift, wall failure states, dead code, and payload assumptions. Produce a findings list with file:line and fix the P0/P1 items. Commit as `dashboard: review fixes`.
 
 ### 09 — Final visual QA (Astra, high)
 
@@ -269,6 +271,6 @@ codex review -c model="gpt-6.2-sol" \
 - No new dependencies; `npm run validate` passes.
 - Every new component has a stale/empty/error rendering shown in `?specimen=1`.
 - Commit message matches the prompt's requested message.
-- No file outside `dashboard/`, `scripts/build-dashboard.mjs`, and `public/dashboard.html` changed.
+- No file outside `dashboard/`, `scripts/build-dashboard.mjs`, and `server/dashboard/overview.html` changed.
 
 If something in this brief conflicts with the live site's CSS, the live site wins for tokens; this brief wins for layout and behavior.
