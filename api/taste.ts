@@ -2,6 +2,8 @@ import {
   getArtistsByIds,
   getRecentlyPlayedDetailed,
   readSpotifyConfig,
+  spotifyThumbnail,
+  type SpotifyArtistFull,
 } from "../server/spotify.js";
 import { genresForArtist } from "../server/genres.js";
 
@@ -9,6 +11,9 @@ const jsonHeaders = {
   "Content-Type": "application/json; charset=utf-8",
   "X-Content-Type-Options": "nosniff",
 };
+
+const artistCache = new Map<string, { artist: SpotifyArtistFull; expires: number }>();
+const artistTtl = 60 * 60 * 1000;
 
 export async function GET() {
   const config = readSpotifyConfig();
@@ -36,8 +41,20 @@ export async function GET() {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 25)
       .map(([id]) => id);
-    const artists = await getArtistsByIds(config, topIds);
-    const byId = new Map(artists.map((artist) => [artist.id, artist]));
+    const now = Date.now();
+    for (const [id, entry] of artistCache) {
+      if (entry.expires <= now) artistCache.delete(id);
+    }
+    const missing = topIds.filter((id) => !artistCache.has(id));
+    if (missing.length) {
+      for (const artist of await getArtistsByIds(config, missing)) {
+        artistCache.set(artist.id, { artist, expires: now + artistTtl });
+      }
+    }
+    const byId = new Map(topIds.flatMap((id) => {
+      const entry = artistCache.get(id);
+      return entry ? [[id, entry.artist] as const] : [];
+    }));
 
     // Aggregate genres weighted by actual plays. Spotify's dev tier strips
     // genres from catalog responses, so merge curated genres by name.
@@ -73,20 +90,26 @@ export async function GET() {
           plays,
           genres: apiGenres.length > 0 ? apiGenres : curated,
           popularity: artist?.popularity ?? 0,
-          artwork: artist?.images?.find((image) => image.url)?.url ?? null,
+          artwork: spotifyThumbnail(artist?.images),
         };
       })
       .filter((artist) => artist.name !== artist.id)
       .sort((a, b) => b.plays - a.plays)
       .slice(0, 20);
 
-    const recentAlbums = recent.map((track) => ({
+    const albums = new Map<string, (typeof recent)[number]>();
+    for (const track of recent) {
+      if (track.album.id !== "unknown" && !albums.has(track.album.id)) {
+        albums.set(track.album.id, track);
+      }
+    }
+    const recentAlbums = [...albums.values()].slice(0, 8).map((track) => ({
       id: track.album.id,
       name: track.album.name,
       artist: track.artists.map((a) => a.name).join(", "),
       totalTracks: track.album.totalTracks,
-      playedAt: track.playedAt,
-      artwork: track.album.images?.find((image) => image.url)?.url ?? null,
+      playedAt: track.playedAt.slice(0, 10),
+      artwork: spotifyThumbnail(track.album.images),
       url: track.url,
     }));
 
@@ -106,10 +129,11 @@ export async function GET() {
       },
     );
   } catch (error) {
+    console.error("Unable to refresh Spotify Taste data", error);
     return Response.json(
       {
         configured: true,
-        error: error instanceof Error ? error.message : "Taste request failed",
+        error: "Listening history is temporarily unavailable.",
       },
       {
         status: 502,

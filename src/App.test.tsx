@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
 import { socialLinks } from "./siteContent";
@@ -7,6 +7,10 @@ import { projectArticles } from "./projectContent";
 function renderAt(path: string) {
   window.history.replaceState({}, "", path);
   return render(<App />);
+}
+
+async function renderReady(path: string) {
+  await act(async () => { renderAt(path); });
 }
 
 describe("Ayumad.me", () => {
@@ -67,14 +71,14 @@ describe("Ayumad.me", () => {
     expect(projectArticles.filter((project) => project.stage === "in-progress")).toHaveLength(5);
     expect(projectArticles.filter((project) => project.stage === "planned")).toHaveLength(2);
     const lifecycleNav = screen.getByRole("navigation", { name: "Project lifecycle sections" });
-    expect(within(lifecycleNav).getByRole("link", { name: /Jump to Deployed \/ Shipped projects/i })).toHaveAttribute("href", "#project-deployed");
-    expect(within(lifecycleNav).getByRole("link", { name: /Jump to In Progress projects/i })).toHaveAttribute("href", "#project-in-progress");
-    expect(within(lifecycleNav).getByRole("link", { name: /Jump to Planned projects/i })).toHaveAttribute("href", "#project-planned");
+    expect(within(lifecycleNav).getByRole("link", { name: /Completed/i })).toHaveAttribute("href", "#project-deployed");
+    expect(within(lifecycleNav).getByRole("link", { name: /In progress/i })).toHaveAttribute("href", "#project-in-progress");
+    expect(within(lifecycleNav).getByRole("link", { name: /Planned/i })).toHaveAttribute("href", "#project-planned");
     expect(document.getElementById("project-deployed")).toBeInTheDocument();
     expect(document.getElementById("project-in-progress")).toBeInTheDocument();
     expect(document.getElementById("project-planned")).toBeInTheDocument();
     projectArticles.forEach((project) => {
-      expect(screen.getByRole("link", { name: `Read ${project.title} project article` })).toHaveAttribute(
+      expect(screen.getByRole("heading", { name: project.title, level: 2 }).closest("a")).toHaveAttribute(
         "href",
         `/projects/${project.slug}`,
       );
@@ -84,10 +88,10 @@ describe("Ayumad.me", () => {
     expect(screen.queryByText("Audio Visualization")).not.toBeInTheDocument();
   });
 
-  it("renders a project detail page", () => {
-    renderAt("/projects/crt-lab");
+  it("renders a project detail page", async () => {
+    await renderReady("/projects/crt-lab");
 
-    expect(screen.getByRole("heading", { name: "CRT Lab" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "CRT Lab" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Problem" })).toBeInTheDocument();
     expect(screen.getByText(/CRT Lab treats every input as a source bay/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Live V1 ↗" })).toHaveAttribute(
@@ -97,19 +101,19 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: "← All projects" })).toHaveAttribute("href", "/projects");
   });
 
-  it("renders deployed, active, and planned project articles", () => {
-    renderAt("/projects/hermes");
+  it("renders deployed, active, and planned project articles", async () => {
+    await renderReady("/projects/hermes");
 
     expect(window.location.pathname).toBe("/projects/hermes-agent");
-    expect(screen.getByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Hermes Agent" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Architecture and workflow" })).toBeInTheDocument();
 
-    renderAt("/projects/album-ranking-app");
-    expect(screen.getByRole("heading", { name: "Album Ranking App" })).toBeInTheDocument();
+    await renderReady("/projects/album-ranking-app");
+    expect(await screen.findByRole("heading", { name: "Album Ranking App" })).toBeInTheDocument();
     expect(screen.getByText(/there is no standalone app/i)).toBeInTheDocument();
   });
 
-  it("renders Gear and the merged About contact section", () => {
+  it("renders Gear and the merged About contact section", async () => {
     renderAt("/gear");
     expect(screen.getByRole("heading", { name: "Gear" })).toBeInTheDocument();
     expect(screen.getByText("29 products")).toBeInTheDocument();
@@ -127,7 +131,7 @@ describe("Ayumad.me", () => {
     expect(document.querySelector(".gear-detail-page")?.textContent).toContain("machine Hermes runs from today");
     expect(screen.getByRole("link", { name: /Read the Hermes case study/ })).toHaveAttribute("href", "/projects/hermes-agent");
 
-    renderAt("/about");
+    await renderReady("/about");
     expect(screen.getByRole("heading", { name: "About" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Want to talk?" })).toBeInTheDocument();
     expect(screen.getByText(/moving from India to the US/i)).toBeInTheDocument();
@@ -135,28 +139,28 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /EmailAyumadbro123@gmail\.com/ })).toHaveAttribute("href", "mailto:Ayumadbro123@gmail.com");
     expect(screen.getByRole("link", { name: /LinkedInin\/ayumad/ })).toHaveAttribute("href", "https://www.linkedin.com/in/ayumad");
     expect(screen.getByRole("link", { name: /X@Ayumadbro/ })).toHaveAttribute("href", "https://x.com/Ayumadbro");
-    expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Genre mix" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Album Elo board" })).toBeInTheDocument();
   });
 
   it("redirects the old Taste page into the About section", async () => {
-    renderAt("/taste");
+    await renderReady("/taste");
 
     await waitFor(() => expect(window.location.pathname).toBe("/about"));
     expect(window.location.hash).toBe("#taste");
-    expect(screen.getByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Listening, ranked." })).toBeInTheDocument();
   });
 
-  it("renders the journal page with the daily log calendar and curated articles", () => {
-    renderAt("/journal");
+  it("renders the journal page with the daily log calendar and curated articles", async () => {
+    await renderReady("/journal");
     expect(screen.getByRole("heading", { name: "Journal" })).toBeInTheDocument();
-    expect(screen.getByText("Daily journal")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Read Hermes on a Mac Mini: Headless macOS and Always-On Automation" })).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
+    expect(await screen.findByText("Daily journal")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Hermes on a Mac Mini: Headless macOS and Always-On Automation", level: 2 }).closest("a")).toHaveAttribute("href", "/journal/hermes-on-mac-mini");
     expect(screen.queryByText(/Session journal for 2026/)).not.toBeInTheDocument();
 
-    renderAt("/journal/gpu-passthrough-p520");
-    expect(screen.getByRole("heading", { name: "GPU Passthrough on the P520: Passing an RTX 3060 to a Proxmox VM", level: 1 })).toBeInTheDocument();
+    await renderReady("/journal/gpu-passthrough-p520");
+    expect(await screen.findByRole("heading", { name: "GPU Passthrough on the P520: Passing an RTX 3060 to a Proxmox VM", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Host setup" })).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByText(/Lenovo ThinkStation P520/)).toBeInTheDocument();
@@ -164,39 +168,39 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
   });
 
-  it("renders the school VM article with its chart and table", () => {
-    renderAt("/journal/school-vm-p520");
-    expect(screen.getByRole("heading", { name: "A School VM on the P520: Headless Ubuntu for Two Linux Classes", level: 1 })).toBeInTheDocument();
+  it("renders the school VM article with its chart and table", async () => {
+    await renderReady("/journal/school-vm-p520");
+    expect(await screen.findByRole("heading", { name: "A School VM on the P520: Headless Ubuntu for Two Linux Classes", level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Things that bit me" })).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.getByText(/no GUI anywhere in that list/)).toBeInTheDocument();
     expect(document.querySelector(".fleet-chart")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /All journal entries/i })).toHaveAttribute("href", "/journal");
 
-    renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read A School VM on the P520: Headless Ubuntu for Two Linux Classes" })).toHaveAttribute("href", "/journal/school-vm-p520");
+    await renderReady("/journal");
+    expect(screen.getByRole("heading", { name: "A School VM on the P520: Headless Ubuntu for Two Linux Classes", level: 2 }).closest("a")).toHaveAttribute("href", "/journal/school-vm-p520");
   });
 
-  it("renders the gaming fleet benchmark article with gear links", () => {
-    renderAt("/journal/gaming-fleet-roundup");
-    expect(screen.getByRole("heading", { name: "Gaming Across My Fleet: How Thirteen Machines Compare", level: 1 })).toBeInTheDocument();
+  it("renders the gaming fleet benchmark article with gear links", async () => {
+    await renderReady("/journal/gaming-fleet-roundup");
+    expect(await screen.findByRole("heading", { name: "Gaming Across My Fleet: How Thirteen Machines Compare", level: 1 })).toBeInTheDocument();
     expect(screen.getAllByRole("table").length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByRole("link", { name: "Alienware m16" })[0]).toHaveAttribute("href", "/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
     expect(screen.getAllByRole("link", { name: "Steam Deck OLED" })[0]).toHaveAttribute("href", "/gear/gaming-valve-steam-deck-oled");
     expect(screen.getByText(/384 fps/)).toBeInTheDocument();
 
-    renderAt("/journal");
-    expect(screen.getByRole("link", { name: "Read Gaming Across My Fleet: How Thirteen Machines Compare" })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
+    await renderReady("/journal");
+    expect(screen.getByRole("heading", { name: "Gaming Across My Fleet: How Thirteen Machines Compare", level: 2 }).closest("a")).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
 
     renderAt("/gear/computers-dell-alienware-m16-ryzen-9-geforce-rtx-4080");
     expect(screen.getByRole("heading", { name: "Dell Alienware m16 (Ryzen 9, GeForce RTX 4080)" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /gaming fleet benchmark/i })).toHaveAttribute("href", "/journal/gaming-fleet-roundup");
   });
 
-  it("renders the headphone collection article with its sections and playlist links", () => {
-    renderAt("/journal/my-headphone-collection");
+  it("renders the headphone collection article with its sections and playlist links", async () => {
+    await renderReady("/journal/my-headphone-collection");
     expect(
-      screen.getByRole("heading", {
+      await screen.findByRole("heading", {
         name: "My Audio Journey: How I Got Here and What I've Learned Along the Way",
         level: 1,
       }),
@@ -227,11 +231,12 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("link", { name: /← Previous/ })).toHaveAttribute("href", "/journal/school-vm-p520");
     expect(screen.getByRole("link", { name: /Back to top/ })).toHaveAttribute("href", "#main-content");
 
-    renderAt("/journal");
+    await renderReady("/journal");
     expect(
-      screen.getByRole("link", {
-        name: "Read My Audio Journey: How I Got Here and What I've Learned Along the Way",
-      }),
+      screen.getByRole("heading", {
+        name: "My Audio Journey: How I Got Here and What I've Learned Along the Way",
+        level: 2,
+      }).closest("a"),
     ).toHaveAttribute(
       "href",
       "/journal/my-headphone-collection",

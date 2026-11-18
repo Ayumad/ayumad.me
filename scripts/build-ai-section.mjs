@@ -33,6 +33,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { marked } from "marked";
+import { curriculumAccessibilityCss, formatCurriculumPage } from "./curriculum-html.mjs";
 import { pipeline as makeExtractor, env as hfEnv } from "@huggingface/transformers";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -512,7 +513,7 @@ ${isHome ? renderTreeIndex() : ""}
 // ---------- write ----------
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, "ai.css"), CSS);
+fs.writeFileSync(path.join(outDir, "ai.css"), CSS + curriculumAccessibilityCss);
 
 /** Tiny HTML redirect so old folder-structure URLs keep working. */
 function redirectPage(title, targetUrl) {
@@ -534,14 +535,14 @@ let redirected = 0;
 for (const r of records) {
   // new canonical home: root of the section, where the "home" note lives
   if (r.rel === "AI_Home.md") {
-    fs.writeFileSync(path.join(outDir, "index.html"), pageHtml(r));
+    fs.writeFileSync(path.join(outDir, "index.html"), formatCurriculumPage(pageHtml(r), "https://ayumad.me/ai"));
     written++;
     continue;
   }
   // every other note: flat file at /ai/<slug>.html (Vercel cleanUrls serves
   // /ai/<slug> extensionless)
   const slug = slugByRel.get(r.rel);
-  fs.writeFileSync(path.join(outDir, slug + ".html"), pageHtml(r));
+  fs.writeFileSync(path.join(outDir, slug + ".html"), formatCurriculumPage(pageHtml(r), "https://ayumad.me/ai/" + slug));
   written++;
   // keep the old folder-structure URL alive with a redirect stub. cleanUrls
   // 308s `X.html` → `X` (extensionless) when X.html exists, so the stub must be

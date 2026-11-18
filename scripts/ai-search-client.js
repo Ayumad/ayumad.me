@@ -25,15 +25,16 @@
   let index = null;
   let embedQuery = null; // (text) => Float32Array, once model is ready
   let modelPromise = null; // in-flight init, shared so waiters don't double-load
-  let modelTried = false;
-  let mode = "engine-loading";
+  let indexRequest = null;
+  let generation = 0;
   const results = []; // active result entries (from last render)
   let activeIdx = -1;
   let debounce = null;
 
   /* ---------- index ---------- */
   async function loadIndex() {
-    const res = await fetch(INDEX_URL, { cache: "force-cache" });
+    const res = await fetch(INDEX_URL);
+    if (!res.ok) throw new Error("The search index is unavailable.");
     const j = await res.json();
     j.notes.forEach((n) => { n.vec = decodeVec(n.vec); });
     j.folders.forEach((f) => { f.vec = decodeVec(f.vec); });
@@ -55,17 +56,17 @@
   /* ---------- model (lazy, single shared load) ---------- */
   function initModel() {
     if (modelPromise) return modelPromise;
-    modelTried = true;
     modelPromise = (async () => {
-      // Library from jsdelivr, PINNED 4.2.0 (the official vanilla-JS pattern):
+      // Library from jsdelivr, PINNED 4.3.2 (the official vanilla-JS pattern):
       // the web bundle has bare imports (onnxruntime-web/webgpu) that only a
       // bundler or jsdelivr's ESM rewrite can resolve, and committing the raw
       // file trips GitHub's secret scanner on a false "Mistral API key" match
       // (the library's own Mistral model-registry class names). The MODEL is
       // still vendored locally at /ai/model/ — allowRemoteModels=false.
-      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.2.0");
+      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2");
       const { pipeline, env } = mod;
       env.localModelPath = "/ai/model/";
+      env.allowLocalModels = true;
       env.allowRemoteModels = false;
       if (env.backends?.onnx?.wasm) {
         env.backends.onnx.wasm.numThreads = 1; // no cross-origin isolation needed
@@ -77,10 +78,8 @@
         const out = await extractor(text.slice(0, 800), { pooling: "mean", normalize: true });
         return new Float32Array(out.data);
       };
-      mode = "semantic";
     })().catch((e) => {
       console.warn("[ai] semantic search unavailable, using lexical fallback:", e);
-      mode = "lexical";
     });
     return modelPromise;
   }
@@ -113,15 +112,12 @@
     return s;
   }
 
-  async function search(q) {
+  function search(q, qv) {
     q = q.trim();
-    if (!index) index = await loadIndex();
-    if (!embedQuery) await (modelPromise || initModel()); // wait for shared load (resolves to lexical on failure)
-
+    const mode = qv ? "semantic" : "lexical";
     const queryTokens = tokenize(q);
     let noteScores;
     if (mode === "semantic") {
-      const qv = await embedQuery(q);
       noteScores = index.notes.map((n) => {
         let s = cosine(qv, n.vec);
         // small lexical boost for exact token matches in title/folder/tags
@@ -145,7 +141,6 @@
     // topics: folders + tags scored the same way (semantic cosine or lexical)
     let folderScores, tagScores;
     if (mode === "semantic") {
-      const qv = await embedQuery(q);
       folderScores = index.folders
         .map((f) => ({ kind: "folder", ...f, s: cosine(qv, f.vec) + (f.name.toLowerCase().includes(q.toLowerCase()) ? 0.08 : 0) }))
         .sort((a, b) => b.s - a.s);
@@ -165,14 +160,14 @@
       .slice(0, 6);
     // drop zero-scoring lexical topics
     const nonZero = topics.filter((t) => t.s > 0);
-    return { notes: noteScores, topics: nonZero };
+    return { notes: noteScores, topics: nonZero, mode };
   }
 
   /* ---------- render ---------- */
   function esc(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
-  function render({ notes, topics }, q) {
+  function render({ notes, topics, mode }, q) {
     const tokens = tokenize(q);
     results.length = 0;
     activeIdx = -1;
@@ -223,22 +218,37 @@
   }
 
   async function run() {
-    const q = input.value;
+    const q = input.value.trim();
+    const request = ++generation;
     if (q.length < 2) { panel.hidden = true; return; }
     if (!index) {
-      panel.innerHTML = `<div class="ai-state">loading index…</div>`;
+      panel.innerHTML = '<div class="ai-state">Loading search index…</div>';
       panel.hidden = false;
     }
     try {
-      const out = await search(q);
-      render(out, q);
+      index ??= await (indexRequest ??= loadIndex().catch((error) => {
+        indexRequest = null;
+        throw error;
+      }));
+      if (request !== generation) return;
+
+      if (!embedQuery) {
+        render(search(q), q);
+        await initModel();
+      }
+      if (!embedQuery || request !== generation) return;
+
+      const vector = await embedQuery(q);
+      if (request === generation) render(search(q, vector), q);
     } catch (e) {
-      console.error("[ai] search failed:", e);
-      panel.innerHTML = `<div class="ai-empty">search failed — ${esc(String(e.message || e))}</div>`;
+      console.warn("[ai] search unavailable:", e);
+      if (request !== generation || index) return;
+      panel.innerHTML = '<div class="ai-empty">Search is unavailable. Try again in a moment.</div>';
       panel.hidden = false;
     }
   }
   function onInput() {
+    generation++;
     clearTimeout(debounce);
     debounce = setTimeout(run, 160);
   }
@@ -252,7 +262,7 @@
       run();
     }
     if (document.activeElement !== input) return;
-    if (e.key === "Escape") { panel.hidden = true; input.blur(); }
+    if (e.key === "Escape") { generation++; clearTimeout(debounce); panel.hidden = true; input.blur(); }
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       const hits = panel.querySelectorAll(".ai-hit");
@@ -270,17 +280,11 @@
   input.addEventListener("input", onInput);
   input.addEventListener("focus", () => { if (input.value.length >= 2) run(); });
   document.addEventListener("click", (e) => {
-    if (!panel.contains(e.target) && e.target !== input) panel.hidden = true;
+    if (!panel.contains(e.target) && e.target !== input) {
+      generation++;
+      clearTimeout(debounce);
+      panel.hidden = true;
+    }
   });
 
-  // load the model only when the user shows intent (focus or '/' key) —
-  // a visitor who never searches pays zero download for the 36MB model+wasm
-  const warmIfNeeded = () => { if (!modelTried) initModel().catch(() => {}); };
-  input.addEventListener("focus", () => { warmIfNeeded(); if (input.value.length >= 2) run(); });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "/" || ((e.metaKey || e.ctrlKey) && e.key === "k")) { if (document.activeElement !== input) warmIfNeeded(); }
-  });
-  window.addEventListener("load", () => {
-    setTimeout(() => { fetch(INDEX_URL, { cache: "force-cache" }).catch(() => {}); }, 300);
-  });
 })();

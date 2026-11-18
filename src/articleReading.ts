@@ -71,5 +71,10 @@ export function enhanceArticle(html: string): {
     return `<h${level} id="${id}">${inner}</h${level}>`;
   });
 
-  return { html: enhanced, headings, minutes: readingMinutes(html) };
+  const accessible = enhanced
+    .replace(/<pre>/g, '<pre tabindex="0" aria-label="Code block">')
+    .replace(/<table>[\s\S]*?<\/table>/g, (table) =>
+      '<div class="article-table-scroll" tabindex="0" role="region" aria-label="Scrollable table">' + table + '</div>',
+    );
+  return { html: accessible, headings, minutes: readingMinutes(html) };
 }

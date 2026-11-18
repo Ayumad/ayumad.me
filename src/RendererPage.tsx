@@ -4,10 +4,11 @@
  * Energy modulator: derived from live Spotify playback when available.
  */
 
-import { useEffect, useMemo, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useScope, type RenderMode } from "./renderer-v2/useScope";
+import { useScope } from "./renderer-v2/useScope";
 import { renderModes } from "./renderMode";
+import { useRendererPreference } from "./preferences";
 import { useSpotifyPlayback } from "./useSpotifyPlayback";
 import type { SignalSettings } from "./renderer-v2/signal";
 
@@ -79,26 +80,14 @@ function trackEnergy(
 }
 
 export default function RendererPage() {
-  const initial = useMemo(
-    () => ({
-      settings: defaultSettings,
-      mode: (localStorage.getItem("ayumad-renderer") as RenderMode) || "ascii",
-      units: 140,
-    }),
-    [],
-  );
-
-  // Spotify energy flows through a ref so the clock reads it per-frame
-  // without React re-renders being involved in the hot path.
+  const { renderMode: mode, setRenderMode } = useRendererPreference();
+  const [playing, setPlaying] = useState(true);
   const { playback } = useSpotifyPlayback();
   const energy = trackEnergy(playback);
-  const energyRef = useRef(0);
-  useEffect(() => {
-    energyRef.current = energy;
-  }, [energy]);
-
-  const { state, dispatch, hostRef, preRef, canvasRef } = useScope(initial, () => energyRef.current);
-  const { settings, mode, units } = state;
+  const { state, dispatch, hostRef, preRef, canvasRef } = useScope(
+    { settings: defaultSettings, units: 140 }, mode, playing, energy,
+  );
+  const { settings, units } = state;
 
   const applyPreset = (id: string) => {
     const p = presets.find((item) => item.id === id);
@@ -139,13 +128,16 @@ export default function RendererPage() {
           <span aria-live="off">ENERGY {(energy * 100).toFixed(0)}%</span>
         </div>
         {mode === "ascii" ? (
-          <pre className="oscilloscope-grid renderer-grid" ref={preRef} aria-label="Oscilloscope display" />
+          <pre className="oscilloscope-grid renderer-grid" ref={preRef} aria-hidden="true" />
         ) : (
-          <canvas className="renderer-canvas" ref={canvasRef} aria-label="Oscilloscope display" />
+          <canvas className="renderer-canvas" ref={canvasRef} aria-hidden="true" />
         )}
       </div>
 
       <div className="renderer-controls">
+        <button type="button" className="button" onClick={() => setPlaying(!playing)}>
+          {playing ? "Pause animation" : "Resume animation"}
+        </button>
         <label className="scope-control">
           <span>Shape</span>
           <select
@@ -211,7 +203,7 @@ export default function RendererPage() {
                 type="button"
                 className={mode === item.value ? "active" : ""}
                 aria-pressed={mode === item.value}
-                onClick={() => dispatch({ type: "mode", mode: item.value })}
+                onClick={() => setRenderMode(item.value)}
               >
                 {item.label}
               </button>

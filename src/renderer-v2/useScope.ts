@@ -1,47 +1,44 @@
 /**
  * useScope.ts — React binding. One hook, one clock, adapter swap on mode change.
- * Settings live in a reducer; URL + localStorage sync happen here.
+ * Settings live in a reducer; the site preference supplies the adapter.
  */
 
 import { useEffect, useRef, useReducer, useState } from "react";
 import { startClock, type ClockHandle } from "./clock";
 import { asciiAdapter, canvasAdapter, type Adapter } from "./adapters";
-import type { Frame, SignalSettings } from "./signal";
-
-export type RenderMode = "ascii" | "dither" | "glitch" | "particles" | "crt";
+import type { RenderMode } from "../renderMode";
+import type { SignalSettings } from "./signal";
 
 export interface ScopeState {
   settings: SignalSettings;
-  mode: RenderMode;
   units: number;
 }
 
 type Action =
   | { type: "settings"; patch: Partial<SignalSettings> }
-  | { type: "mode"; mode: RenderMode }
   | { type: "units"; units: number };
 
 function reducer(state: ScopeState, action: Action): ScopeState {
   switch (action.type) {
     case "settings":
       return { ...state, settings: { ...state.settings, ...action.patch } };
-    case "mode":
-      return { ...state, mode: action.mode };
     case "units":
       return { ...state, units: action.units };
   }
 }
 
-export function useScope(initial: ScopeState, energy?: () => number) {
+export function useScope(initial: ScopeState, mode: RenderMode, playing: boolean, energy: number) {
   const [state, dispatch] = useReducer(reducer, initial);
   const hostRef = useRef<HTMLDivElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const clockRef = useRef<ClockHandle | null>(null);
-  const stateRef = useRef(state);
+  const current = useRef({ state, playing, energy });
   useEffect(() => {
-    stateRef.current = state;
-  });
+    current.current = { state, playing, energy };
+    clockRef.current?.setPlaying(playing);
+    clockRef.current?.renderOnce();
+  }, [state, playing, energy]);
 
   // Grid metrics for the ASCII adapter — measured from the real host element
   // after layout settles, and re-measured on resize. (A mount-time useMemo
@@ -79,7 +76,6 @@ export function useScope(initial: ScopeState, energy?: () => number) {
     const ro = new ResizeObserver(measure);
     ro.observe(host);
     return () => ro.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -87,7 +83,7 @@ export function useScope(initial: ScopeState, energy?: () => number) {
     if (!host) return;
 
     let adapter: Adapter;
-    if (state.mode === "ascii") {
+    if (mode === "ascii") {
       const pre = preRef.current;
       if (!pre) return;
       adapter = asciiAdapter(pre, grid.cols, grid.rows);
@@ -95,34 +91,34 @@ export function useScope(initial: ScopeState, energy?: () => number) {
       const canvas = canvasRef.current;
       if (!canvas) return;
       adapter = canvasAdapter(canvas, {
-        mode: state.mode,
-        trails: state.mode === "particles",
+        mode,
+        trails: mode === "particles",
       });
     }
 
-    const ro = new ResizeObserver(() => adapter.resize?.());
+    const ro = new ResizeObserver(() => {
+      adapter.resize?.();
+      clockRef.current?.renderOnce();
+    });
     ro.observe(host);
 
     clockRef.current = startClock({
       canvas: host,
-      settings: () => stateRef.current.settings,
-      units: () => stateRef.current.units,
-      energy,
-      draw: (frame: Frame) => adapter.draw(frame),
+      settings: () => current.current.state.settings,
+      units: () => current.current.state.units,
+      energy: () => current.current.energy,
+      draw: (frame) => adapter.draw(frame),
     });
+
+    clockRef.current.setPlaying(current.current.playing);
 
     return () => {
       clockRef.current?.stop();
+      clockRef.current = null;
       ro.disconnect();
       adapter.destroy?.();
     };
-  }, [state.mode, grid.cols, grid.rows]);
-
-  // Persist mode
-  useEffect(() => {
-    localStorage.setItem("ayumad-renderer", state.mode);
-    document.documentElement.dataset.renderer = state.mode;
-  }, [state.mode]);
+  }, [mode, grid.cols, grid.rows]);
 
   return { state, dispatch, hostRef, preRef, canvasRef };
 }

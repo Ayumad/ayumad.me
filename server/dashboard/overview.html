@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
@@ -202,9 +203,11 @@
         .cols { grid-template-columns: 1fr; gap: 30px; }
         .cell .v { font-size: 21px; }
       }
+    .dashboard-logout { padding: .75rem 1rem; text-align: right; } .dashboard-logout button { color: inherit; background: transparent; border: 1px solid currentColor; padding: .4rem .7rem; cursor: pointer; }
     </style>
   </head>
   <body>
+    <form action="/dashboard/logout" method="post" class="dashboard-logout"><button type="submit">Sign out</button></form>
     <div class="wrap">
       <div class="top">
         <a class="back" href="/">← ayumad.me</a>
@@ -322,8 +325,8 @@
       //   live     = Tailscale Serve on the Mac mini. Rolling: rebuilt every few
       //              minutes, zero git pushes, zero deploys. Only resolves for
       //              devices on Ayush's tailnet.
-      //   snapshot = the committed public/dashboard.json, deployed a few times a
-      //              day. Works anywhere, including for anyone not on the tailnet.
+      //   snapshot = the authenticated dashboard snapshot, deployed a few times a
+      //              day. Available to signed-in users off the tailnet.
       const LIVE_URL = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json";
 
       const fromLive = () => new Promise((resolve, reject) => {
@@ -335,7 +338,7 @@
           .catch((e) => { clearTimeout(timer); reject(e); });
       });
 
-      const fromSnapshot = () => fetch("/dashboard.json", { cache: "no-store" })
+      const fromSnapshot = () => fetch("/dashboard/data", { cache: "no-store" })
         .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
         .then((d) => ({ d, source: "snapshot" }));
 
@@ -517,7 +520,7 @@
             const meta = el("div");
             meta.appendChild(el("div", "lt", pb.title));
             meta.appendChild(el("div", "la", (pb.artists || []).join(", ") + (pb.album ? " — " + pb.album : "")));
-            const state = pb.isPlaying ? "playing now" : (pb.playedAt ? "last played " + when(pb.playedAt) : "recently");
+            const state = pb.isPlaying ? "playing now" : (pb.playedAt ? "last played " + pb.playedAt : "recently");
             meta.appendChild(el("div", "cu", state));
             if (pb.url) {
               const a = el("a", "inline", "open in Spotify →");

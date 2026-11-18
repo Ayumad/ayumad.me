@@ -14,13 +14,12 @@ export interface ProjectArticle {
   liveLabel?: string;
   sourceUrl?: string;
   sourceLabel?: string;
-  body: string;
 }
 
 const sources = import.meta.glob("./content/projects/*.md", {
   eager: true,
   import: "default",
-  query: "?raw",
+  query: "?metadata",
 }) as Record<string, string>;
 
 function cleanValue(value: string) {
@@ -67,7 +66,6 @@ function parseFrontmatter(source: string, fileName: string): ProjectArticle {
     liveLabel: fields.live_label,
     sourceUrl: fields.source_url,
     sourceLabel: fields.source_label,
-    body: match[2].trim(),
   };
 }
 

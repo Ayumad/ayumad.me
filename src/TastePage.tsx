@@ -57,7 +57,10 @@ export function TasteSection() {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/taste")
-      .then((response) => (response.ok ? response.json() : null))
+      .then((response) => {
+        if (!response.ok) throw new Error("Request failed");
+        return response.json();
+      })
       .then((data) => {
         if (!cancelled) setTaste(data);
       })
@@ -65,7 +68,10 @@ export function TasteSection() {
         if (!cancelled) setTasteError(true);
       });
     fetch("/api/elo")
-      .then((response) => (response.ok ? response.json() : null))
+      .then((response) => {
+        if (!response.ok) throw new Error("Request failed");
+        return response.json();
+      })
       .then((data) => {
         if (!cancelled) setElo(data);
       })
@@ -128,7 +134,7 @@ export function TasteSection() {
             </div>
             <p className="taste-note taste-meta">
               {taste.generatedAt
-                ? `Sampled ${formatWhen(taste.generatedAt)} · weighted by top-artist position`
+                ? `Sampled ${formatWhen(taste.generatedAt)} · weighted by recent plays`
                 : ""}
             </p>
           </>

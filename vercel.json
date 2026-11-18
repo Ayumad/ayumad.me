@@ -6,6 +6,30 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/dashboard",
+      "destination": "/api/dashboard?view=%2Fdashboard"
+    },
+    {
+      "source": "/dashboard/hermes",
+      "destination": "/api/dashboard?view=%2Fdashboard%2Fhermes"
+    },
+    {
+      "source": "/dashboard/homelab",
+      "destination": "/api/dashboard?view=%2Fdashboard%2Fhomelab"
+    },
+    {
+      "source": "/dashboard/login",
+      "destination": "/api/dashboard?view=login"
+    },
+    {
+      "source": "/dashboard/logout",
+      "destination": "/api/dashboard?view=logout"
+    },
+    {
+      "source": "/dashboard/data",
+      "destination": "/api/dashboard?view=data"
+    },
+    {
       "source": "/vault",
       "destination": "https://ayumad.github.io/ayumad.vault/"
     },
@@ -36,10 +60,6 @@
     {
       "source": "/ai/:path*",
       "destination": "https://ayumad.github.io/AI-Engineering-Curriculum/:path*"
-    },
-    {
-      "source": "/((?!api).*)",
-      "destination": "/"
     }
   ],
   "headers": [
@@ -62,8 +82,109 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "base-uri 'self'; frame-ancestors 'self'; object-src 'none'"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://cdn.jsdelivr.net https://i.scdn.co https://*.ts.net; worker-src 'self' blob:"
         }
       ]
+    }
+  ],
+  "functions": {
+    "api/dashboard.ts": {
+      "includeFiles": "server/dashboard/**"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/ai/",
+      "destination": "/ai",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.ayumad.me"
+        }
+      ],
+      "destination": "https://ayumad.me/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/writeups/:slug",
+      "destination": "/journal/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/writeups",
+      "destination": "/journal",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/journal",
+      "permanent": true
+    },
+    {
+      "source": "/hermes",
+      "destination": "/projects/hermes-agent",
+      "permanent": true
+    },
+    {
+      "source": "/showcase",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/systems",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/now",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/taste",
+      "destination": "/about#taste",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/about#contact",
+      "permanent": true
+    },
+    {
+      "source": "/projects/hermes",
+      "destination": "/projects/hermes-agent",
+      "permanent": true
+    },
+    {
+      "source": "/projects/daily-brief",
+      "destination": "/projects/hermes-agent",
+      "permanent": true
+    },
+    {
+      "source": "/projects/owlbot",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/projects/delulubot",
+      "destination": "/projects",
+      "permanent": true
+    },
+    {
+      "source": "/projects/audio-visualization",
+      "destination": "/projects",
+      "permanent": true
     }
   ]
 }

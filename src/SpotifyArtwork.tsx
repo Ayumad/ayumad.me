@@ -249,7 +249,7 @@ export function SpotifyArtwork({
     if (!context) return;
 
     let cancelled = false;
-    let visible = true;
+    let visible = false;
     let animationFrame = 0;
     let lastFrame = -FRAME_INTERVAL;
     let resumeAnimation: (() => void) | null = null;
@@ -259,6 +259,7 @@ export function SpotifyArtwork({
         cancelAnimationFrame(animationFrame);
         animationFrame = 0;
       } else {
+        if (!image.getAttribute("src")) image.src = artwork;
         resumeAnimation?.();
       }
     }, { rootMargin: "80px" });
@@ -276,7 +277,6 @@ export function SpotifyArtwork({
     const image = new Image();
     image.crossOrigin = "anonymous";
     image.decoding = "async";
-    image.src = artwork;
     setReady(false);
 
     image.onload = () => {

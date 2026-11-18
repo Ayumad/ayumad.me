@@ -4,8 +4,11 @@ import {
   type ErrorInfo,
   type PropsWithChildren,
   useEffect,
-  useMemo,
+  useRef,
+  lazy,
+  Suspense,
   useState,
+  useSyncExternalStore,
 } from "react";
 import {
   BrowserRouter,
@@ -14,17 +17,14 @@ import {
   Route,
   Routes,
   useLocation,
+  useNavigationType,
   useParams,
 } from "react-router-dom";
-import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
-import { marked } from "marked";
-import { enhanceArticle } from "./articleReading";
+import { MotionConfig, motion } from "motion/react";
+import { useArticleBody } from "./articleContent";
 import AsciiOscilloscope from "./AsciiOscilloscope";
-import RendererPage from "./RendererPage";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
-import TasteSection from "./TastePage";
-import JournalCalendar from "./JournalCalendar";
 import {
   isRenderMode,
   RenderModeContext,
@@ -43,10 +43,17 @@ import {
   gearSlug,
   homeContent,
   navItems,
-  pageMeta,
   socialLinks,
 } from "./siteContent";
 import { findProjectArticle, projectsByStage, type ProjectArticle, type ProjectStage } from "./projectContent";
+
+import { migrateLegacyHash } from "./legacyNavigation";
+import { routeMeta, siteOrigin } from "./routeMeta";
+import { useRendererPreference, useThemePreference } from "./preferences";
+
+const RendererPage = lazy(() => import("./RendererPage"));
+const TasteSection = lazy(() => import("./TastePage"));
+const JournalCalendar = lazy(() => import("./JournalCalendar"));
 
 const contactField = String.raw`
   ┌─────────────────────────────────────────────┐
@@ -56,8 +63,6 @@ const contactField = String.raw`
   │    GITHUB ────────────────┘                │
   │                                             │
   └─────────────────────────────────────────────┘`;
-
-type Theme = "light" | "dark";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -102,87 +107,75 @@ export class SiteErrorBoundary extends Component<PropsWithChildren, ErrorBoundar
   }
 }
 
-function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === "light" ? "light" : "dark",
-  );
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("ayumad-theme", theme);
-  }, [theme]);
-
-  return {
-    theme,
-    toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
-  };
-}
-
-function useRenderer() {
-  const [renderMode, setRenderMode] = useState<RenderMode>(() => {
-    const current = document.documentElement.dataset.renderer;
-    return isRenderMode(current) ? current : "ascii";
-  });
-
-  useEffect(() => {
-    document.documentElement.dataset.renderer = renderMode;
-    localStorage.setItem("ayumad-renderer", renderMode);
-  }, [renderMode]);
-
-  return { renderMode, setRenderMode };
-}
-
-function migrateLegacyHash() {
-  const hash = window.location.hash;
-  if (!hash.startsWith("#/")) return;
-
-  const oldPath = hash.slice(1).split("#")[0];
-  let nextPath = oldPath;
-  if (["/showcase", "/systems", "/now"].includes(oldPath)) nextPath = "/projects";
-  if (oldPath === "/hermes") nextPath = "/projects/hermes-agent";
-  if (oldPath === "/contact") nextPath = "/about#contact";
-  if (oldPath === "/writeups" || oldPath === "/blog") nextPath = "/journal";
-  if (oldPath.startsWith("/writeups/")) nextPath = oldPath.replace("/writeups/", "/journal/");
-
-  window.history.replaceState({}, "", nextPath);
-}
-
 function RouteEffects() {
-  const location = useLocation();
-  const post = location.pathname.startsWith("/journal/")
-    ? findJournalPost(location.pathname.slice("/journal/".length))
-    : undefined;
-  const gear = location.pathname.startsWith("/gear/")
-    ? findGearItem(location.pathname.slice("/gear/".length))
-    : undefined;
-  const project = location.pathname.startsWith("/projects/")
-    ? findProjectArticle(location.pathname.slice("/projects/".length))
-    : undefined;
-  const hasProject = Boolean(project);
-  const meta = project
-    ? { title: `${project.title} — Ayumad.me`, description: project.summary }
-    : post
-    ? { title: `${post.title} — Ayumad.me`, description: post.summary }
-    : gear
-      ? { title: `${gear.item.name} — Gear — Ayumad.me`, description: `${gear.item.name}: ${gear.item.role ?? gear.item.note}` }
-    : pageMeta[location.pathname] ?? {
-        title: "Not found — Ayumad.me",
-        description: "The requested page could not be found.",
-      };
-  const reducedMotion = useReducedMotion();
+  const { pathname, hash, key } = useLocation();
+  const navigation = useNavigationType();
+  const initialKey = useRef(key);
+  const hasNavigated = useRef(false);
+  const positions = useRef(new Map<string, number>());
 
   useEffect(() => {
+    const meta = routeMeta(pathname);
+    const canonical = siteOrigin + meta.path;
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description);
     document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title);
     document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description);
-    const image = hasProject ? "" : "https://ayumad.me/og.png?v=2";
-    document.querySelector('meta[property="og:image"]')?.setAttribute("content", image);
-    document.querySelector('meta[name="twitter:image"]')?.setAttribute("content", image);
-    document.querySelector('meta[property="og:url"]')?.setAttribute("content", `https://ayumad.me${location.pathname}`);
-    document.querySelector('link[rel="canonical"]')?.setAttribute("href", `https://ayumad.me${location.pathname}`);
-    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-  }, [hasProject, location.pathname, meta.description, meta.title, reducedMotion]);
+    document.querySelector('meta[property="og:url"]')?.setAttribute("content", canonical);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", meta.title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", meta.description);
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", canonical);
+  }, [pathname]);
+
+  useEffect(() => {
+    const main = document.getElementById("main-content");
+    if (!main) return;
+    let fragment: string | undefined;
+    try { fragment = hash ? decodeURIComponent(hash.slice(1)) : undefined; } catch { /* invalid fragment */ }
+    const firstPage = key === initialKey.current && !hasNavigated.current;
+    if (!firstPage) hasNavigated.current = true;
+    const savedPositions = positions.current;
+    const restore = navigation === "POP" ? savedPositions.get(key) : undefined;
+    const scrollOptions = { behavior: "instant" as const };
+
+    function align() {
+      const target = fragment ? document.getElementById(fragment) : null;
+      if (fragment && !target) return false;
+      if (target) {
+        target.scrollIntoView?.(scrollOptions);
+        if (!firstPage) {
+          if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+          target.focus({ preventScroll: true });
+        }
+      } else if (!firstPage) {
+        const heading = main!.querySelector<HTMLElement>("h1");
+        if (!heading) return false;
+        window.scrollTo({ top: restore ?? 0, ...scrollOptions });
+        heading.setAttribute("tabindex", "-1");
+        heading.focus({ preventScroll: true });
+      }
+      return true;
+    }
+
+    const saveScroll = () => savedPositions.set(key, window.scrollY);
+    window.addEventListener("scroll", saveScroll, { passive: true });
+    if (firstPage && !fragment) {
+      return () => window.removeEventListener("scroll", saveScroll);
+    }
+    const frame = window.requestAnimationFrame(() => {
+      if (align()) observer.disconnect();
+    });
+    const observer = new MutationObserver(() => {
+      if (align()) observer.disconnect();
+    });
+    observer.observe(main, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener("scroll", saveScroll);
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [hash, key, navigation, pathname]);
 
   return null;
 }
@@ -196,7 +189,7 @@ function Header({
   renderMode: RenderMode;
   setRenderMode: (mode: RenderMode) => void;
 }) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useThemePreference();
   const [menuOpen, setMenuOpen] = useState(false);
   const visibleNav = navItems.filter((item) => item.path !== "/journal" || journalPosts.length > 0);
 
@@ -272,24 +265,6 @@ function Header({
   );
 }
 
-function PageTransition({ children, path }: PropsWithChildren<{ path: string }>) {
-  const reducedMotion = useReducedMotion();
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        className="route-frame"
-        key={path}
-        initial={{ opacity: 0, y: reducedMotion ? 0 : 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: reducedMotion ? 0.01 : 0.24, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
 function SectionHeading({
   index,
   label,
@@ -339,7 +314,6 @@ function HomePage() {
   return (
     <>
       <section className="hero section-shell">
-        <AsciiOscilloscope />
         <div className="hero-copy">
           <p className="label">Computer Engineering</p>
           <h1 aria-label="Ayush Madhukar"><span>Ayush</span><span>Madhukar</span></h1>
@@ -350,6 +324,7 @@ function HomePage() {
           <div className="hero-actions"><Link className="button primary" to="/projects">Projects</Link><Link className="button" to="/about">About</Link></div>
           <SpotifyHomeSignal />
         </div>
+        <AsciiOscilloscope />
         <aside className="hero-index" aria-label="Primary interests">
           <p className="label">Topics</p>
           <ol>{homeContent.topics.map((topic, index) => <li key={topic}><span>0{index + 1}</span>{topic}</li>)}</ol>
@@ -385,8 +360,8 @@ function statusLabel(stage: ProjectStage) {
 
 function ProjectCard({ project, index }: { project: ProjectArticle; index: number }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
-      <Link className={`project-row project-row-${project.stage} ${project.featured ? "project-row-featured" : ""}`} to={`/projects/${project.slug}`} aria-label={`Read ${project.title} project article`}>
+    <motion.div initial={false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}>
+      <Link className={`project-row project-row-${project.stage} ${project.featured ? "project-row-featured" : ""}`} to={`/projects/${project.slug}`}>
         <div className="project-index" aria-hidden="true"><span>0{index + 1}</span><i>░▒▓█</i></div>
         <div className="project-main">
           <div className="project-meta"><span className={`status status-${project.stage}`}>{statusLabel(project.stage)}</span><span>{project.year}</span></div>
@@ -402,7 +377,7 @@ function ProjectCard({ project, index }: { project: ProjectArticle; index: numbe
 }
 
 function ProjectPage({ project }: { project: ProjectArticle }) {
-  const html = marked.parse(project.body, { gfm: true, breaks: false });
+  const { html } = useArticleBody("projects", project.slug);
   const links = [
     project.liveUrl ? { label: project.liveLabel ?? "Open live project", href: project.liveUrl, external: project.liveUrl.startsWith("http") || project.liveUrl.startsWith("/ai") } : null,
     project.sourceUrl ? { label: project.sourceLabel ?? "View source", href: project.sourceUrl, external: true } : null,
@@ -433,7 +408,7 @@ function ProjectPage({ project }: { project: ProjectArticle }) {
 function ProjectDetailRoute() {
   const { slug } = useParams();
   const project = slug ? findProjectArticle(slug) : undefined;
-  return project ? <ProjectPage project={project} /> : <NotFoundPage />;
+  return project ? <Suspense fallback={<p className="label">Loading project…</p>}><ProjectPage project={project} /></Suspense> : <NotFoundPage />;
 }
 
 function ProjectsPage() {
@@ -445,7 +420,7 @@ function ProjectsPage() {
   return (
     <section className="section-shell page-section">
       <SectionHeading index="01" label="Projects" title="Projects" description="A status-driven index of the systems, tools, and experiments worth following." scene="projects" />
-      <nav className="project-status-jumps" aria-label="Project lifecycle sections">{groups.map((group) => <a key={group.stage} href={`#project-${group.stage}`} aria-label={`Jump to ${group.label} projects`}><span>{group.jumpLabel}</span><small>{projectsByStage(group.stage).length} entries</small><i aria-hidden="true">↓</i></a>)}</nav>
+      <nav className="project-status-jumps" aria-label="Project lifecycle sections">{groups.map((group) => <a key={group.stage} href={`#project-${group.stage}`}><span>{group.jumpLabel}</span><small>{projectsByStage(group.stage).length} entries</small><i aria-hidden="true">↓</i></a>)}</nav>
       <div className="project-status-groups">{groups.map((group) => {
         const entries = projectsByStage(group.stage);
         return <section className={`project-status-group project-status-group-${group.stage}`} id={`project-${group.stage}`} key={group.stage} aria-labelledby={`project-${group.stage}-title`}><header className="project-status-header"><div><p className="label">Lifecycle</p><h2 id={`project-${group.stage}-title`}>{group.label}</h2><p>{group.description}</p></div></header><div className="project-list">{entries.map((project, index) => <ProjectCard key={project.slug} project={project} index={index} />)}</div></section>;
@@ -456,7 +431,7 @@ function ProjectsPage() {
 
 function GearPage() {
   const productCount = gearCategories.reduce((count, category) => count + category.items.length, 0);
-  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description={`A working index of the ${productCount} core devices and tools in my loadout. I leave smaller accessories and network hardware out; open a field note for the role, configuration, or reason each system stays.`} scene="gear" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><div className="gear-category-heading"><h2>{category.category}</h2><span>{category.items.length} products</span></div><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={`${category.category}-${item.name}`}><Link className="gear-name" to={`/gear/${gearSlug(category.category, item.name)}`} aria-label={`Open ${item.name} gear page`}>{item.name}</Link><span className="gear-role">{item.role ?? "Open field note"}</span><span className={`gear-status gear-status-${item.status}`}>{item.status.replace("-", " ")}</span></div>)}</div></motion.section>)}</div></section>;
+  return <section className="section-shell page-section"><SectionHeading index="02" label="Gear" title="Gear" description={`A working index of the ${productCount} core devices and tools in my loadout. I leave smaller accessories and network hardware out; open a field note for the role, configuration, or reason each system stays.`} scene="gear" /><div className="gear-categories">{gearCategories.map((category, categoryIndex) => <motion.section className="gear-category" key={category.category} initial={false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: categoryIndex * 0.04 }}><div className="gear-category-heading"><h2>{category.category}</h2><span>{category.items.length} products</span></div><div className="gear-table">{category.items.map((item) => <div className="gear-row" key={`${category.category}-${item.name}`}><Link className="gear-name" to={`/gear/${gearSlug(category.category, item.name)}`} aria-label={`Open ${item.name} gear page`}>{item.name}</Link><span className="gear-role">{item.role ?? "Open field note"}</span><span className={`gear-status gear-status-${item.status}`}>{item.status.replace("-", " ")}</span></div>)}</div></motion.section>)}</div></section>;
 }
 
 const relatedGearPages: Record<string, { label: string; to: string }[]> = {
@@ -485,15 +460,24 @@ function GearDetailPage() {
   return <section className="section-shell page-section gear-detail-page"><Link className="article-back" to="/gear">← All gear</Link><SectionHeading index="02 / GEAR" label={gear.category} title={gear.item.name} description={gear.item.role ?? gear.item.note} scene="gear" /><div className="gear-detail-grid"><div><p className="label">Status</p><p className={`gear-detail-status gear-status-${gear.item.status}`}>{gear.item.status.replace("-", " ")}</p></div><div><p className="label">Category</p><p>{gear.category}</p></div><div><p className="label">Related pages</p>{related.length ? <ul className="gear-related-links">{related.map((link) => <li key={link.to}><Link className="text-link" to={link.to}>{link.label} ↗</Link></li>)}</ul> : <p className="gear-detail-muted">No dedicated notes yet.</p>}</div></div><article className="gear-detail-note"><p className="label">Field note</p><p>{gear.item.note}</p></article><Link className="button" to="/gear">Back to Gear</Link></section>;
 }
 
+function subscribeToCalendar() {
+  return () => {};
+}
+
+function DailyCalendar() {
+  const interactive = useSyncExternalStore(subscribeToCalendar, () => true, () => false);
+  const placeholder = <p className="label">Daily journal</p>;
+  return interactive
+    ? <Suspense fallback={placeholder}><JournalCalendar /></Suspense>
+    : placeholder;
+}
+
 function JournalPage() {
-  return <section className="section-shell page-section"><SectionHeading index="03" label="Journal" title="Journal" description="Daily logs and curated field notes on building, configuring, and understanding things." scene="systems" /><div className="journal-intro"><p>Every logged day is on the calendar below — weekly, monthly, or yearly. Hover or open a marked day, or open a whole week for its review. Longer articles and field notes follow.</p></div><JournalCalendar /><div className="journal-list">{journalPosts.map((post, index) => <motion.article className="writeup-row" key={post.slug} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}><Link className="writeup-link" to={`/journal/${post.slug}`} aria-label={`Read ${post.title}`}><div className="writeup-meta"><time dateTime={post.date}>{post.date}</time><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div><div className="writeup-main"><h2>{post.title}</h2><p>{post.summary}</p></div><span className="writeup-arrow" aria-hidden="true">↗</span></Link></motion.article>)}</div></section>;
+  return <section className="section-shell page-section"><SectionHeading index="03" label="Journal" title="Journal" description="Daily logs and curated field notes on building, configuring, and understanding things." scene="systems" /><div className="journal-intro"><p>Every logged day is on the calendar below — weekly, monthly, or yearly. Hover or open a marked day, or open a whole week for its review. Longer articles and field notes follow.</p></div><DailyCalendar /><div className="journal-list">{journalPosts.map((post, index) => <motion.article className="writeup-row" key={post.slug} initial={false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ delay: index * 0.04 }}><Link className="writeup-link" to={`/journal/${post.slug}`}><div className="writeup-meta"><time dateTime={post.date}>{post.date}</time><ul className="tag-list">{post.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div><div className="writeup-main"><h2>{post.title}</h2><p>{post.summary}</p></div><span className="writeup-arrow" aria-hidden="true">↗</span></Link></motion.article>)}</div></section>;
 }
 
 function JournalArticlePage({ post }: { post: JournalPost }) {
-  const { html, headings, minutes } = useMemo(
-    () => enhanceArticle(marked.parse(post.body, { gfm: true, breaks: false, async: false }) as string),
-    [post.body],
-  );
+  const { html, headings, minutes } = useArticleBody("journal", post.slug);
   const position = journalPosts.findIndex((entry) => entry.slug === post.slug);
   const newer = position > 0 ? journalPosts[position - 1] : undefined;
   const older = position >= 0 && position + 1 < journalPosts.length ? journalPosts[position + 1] : undefined;
@@ -564,7 +548,7 @@ function AboutPage() {
           <div className="contact-links">{socialLinks.map((link) => <a key={link.label} href={link.href} target={link.external ? "_blank" : undefined} rel={link.external ? "noreferrer" : undefined}><span>{link.label}</span><strong>{link.handle}</strong><i aria-hidden="true">↗</i></a>)}</div>
         </div>
       </section>
-      <TasteSection />
+      <Suspense fallback={<p className="label">Loading listening history…</p>}><TasteSection /></Suspense>
     </section>
   );
 }
@@ -576,7 +560,7 @@ function SpotifyHomeSignal() {
   const status = requestFailed ? "offline" : playback?.state === "playing" ? "live" : playback?.state === "recent" ? "recent" : "standby";
   const fallback = requestFailed ? "Listening activity is temporarily unavailable." : playback === null ? "Checking Spotify…" : !playback.configured ? "Spotify is not connected." : playback.state === "idle" ? "Nothing has played recently." : "Listening activity is temporarily unavailable.";
   const content = <><span className="spotify-home-fallback" aria-hidden="true">{playback?.artwork ? <SpotifyArtwork artwork={playback.artwork} album={playback.album} compact /> : "♪"}</span><span className="spotify-home-copy"><span className="spotify-home-meta"><span>{playback?.isPlaying ? "Now listening" : playback?.state === "recent" ? "Last listened" : "Audio signal"}</span><i>{status}</i></span>{hasTrack ? <><strong>{playback?.title}</strong><small>{playback?.artists?.join(", ") || playback?.album || "Spotify"}</small></> : <><strong>Spotify</strong><small>{fallback}</small></>}</span>{progress !== null ? <span className="spotify-home-progress" role="progressbar" aria-label="Track progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></span> : null}<span className="spotify-home-arrow" aria-hidden="true">↗</span></>;
-  return playback?.url ? <a className="spotify-home-signal is-linked" href={playback.url} target="_blank" rel="noreferrer" aria-label={`Open ${playback.title ?? "track"} on Spotify`} aria-live="polite">{content}</a> : <div className="spotify-home-signal" aria-live="polite">{content}</div>;
+  return playback?.url ? <a className="spotify-home-signal is-linked" href={playback.url} target="_blank" rel="noreferrer" aria-live="polite">{content}</a> : <div className="spotify-home-signal" aria-live="polite">{content}</div>;
 }
 
 function NotFoundPage() {
@@ -584,7 +568,7 @@ function NotFoundPage() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="footer-texture" aria-hidden="true">░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░</div><div className="section-shell footer-inner"><p>AYUMAD.ME</p><p>2026</p><a href="mailto:Ayumadbro123@gmail.com">Email ↗</a></div></footer>;
+  return <footer className="site-footer"><div className="footer-texture" aria-hidden="true">░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░ · ░▒▓█▓▒░</div><div className="section-shell footer-inner"><p>AYUMAD.ME</p><p>2026</p><nav aria-label="Footer links"><a href="/dashboard">Dashboard</a><a href="mailto:Ayumadbro123@gmail.com">Email ↗</a></nav></div></footer>;
 }
 
 function LegacyWriteupRedirect() {
@@ -592,20 +576,66 @@ function LegacyWriteupRedirect() {
   return <Navigate to={slug ? `/journal/${slug}` : "/journal"} replace />;
 }
 
-function RoutedSite() {
+export function RoutedSite() {
   const location = useLocation();
-  const { renderMode, setRenderMode } = useRenderer();
+  const { renderMode, setRenderMode } = useRendererPreference();
   const path = location.pathname;
-  return <SpotifyPlaybackProvider><RenderModeContext.Provider value={renderMode}><MotionConfig reducedMotion="user"><RouteEffects /><ParticleField /><div className="dither-wash" aria-hidden="true" /><div className="render-overlay" aria-hidden="true" /><a className="skip-link" href="#main-content">Skip to content</a><Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} /><main id="main-content"><PageTransition path={path}><Routes><Route path="/" element={<HomePage />} /><Route path="/projects" element={<ProjectsPage />} /><Route path="/projects/hermes" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/projects/daily-brief" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/projects/owlbot" element={<Navigate to="/projects" replace />} /><Route path="/projects/delulubot" element={<Navigate to="/projects" replace />} /><Route path="/projects/audio-visualization" element={<Navigate to="/projects" replace />} /><Route path="/projects/:slug" element={<ProjectDetailRoute />} /><Route path="/gear" element={<GearPage />} /><Route path="/gear/:slug" element={<GearDetailPage />} /><Route path="/journal" element={<JournalPage />} /><Route path="/journal/:slug" element={<JournalArticleRoute />} /><Route path="/taste" element={<Navigate to="/about#taste" replace />} /><Route path="/about" element={<AboutPage />} /><Route path="/renderer" element={<RendererPage />} /><Route path="/showcase" element={<Navigate to="/projects" replace />} /><Route path="/systems" element={<Navigate to="/projects" replace />} /><Route path="/now" element={<Navigate to="/projects" replace />} /><Route path="/hermes" element={<Navigate to="/projects/hermes-agent" replace />} /><Route path="/contact" element={<Navigate to="/about#contact" replace />} /><Route path="/writeups" element={<Navigate to="/journal" replace />} /><Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} /><Route path="/blog" element={<Navigate to="/journal" replace />} /><Route path="*" element={<NotFoundPage />} /></Routes></PageTransition></main><Footer /></MotionConfig></RenderModeContext.Provider></SpotifyPlaybackProvider>;
+  return (
+    <RenderModeContext.Provider value={renderMode}>
+      <MotionConfig reducedMotion="user">
+        <RouteEffects />
+        <ParticleField />
+        <div className="dither-wash" aria-hidden="true" />
+        <div className="render-overlay" aria-hidden="true" />
+        <a className="skip-link" href="#main-content">Skip to content</a>
+        <Header path={path} renderMode={renderMode} setRenderMode={setRenderMode} />
+        <main id="main-content" tabIndex={-1}>
+          <div className="route-frame" key={path}>
+            <Routes>
+              <Route path="/" element={<SpotifyPlaybackProvider><HomePage /></SpotifyPlaybackProvider>} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/hermes" element={<Navigate to="/projects/hermes-agent" replace />} />
+              <Route path="/projects/daily-brief" element={<Navigate to="/projects/hermes-agent" replace />} />
+              <Route path="/projects/owlbot" element={<Navigate to="/projects" replace />} />
+              <Route path="/projects/delulubot" element={<Navigate to="/projects" replace />} />
+              <Route path="/projects/audio-visualization" element={<Navigate to="/projects" replace />} />
+              <Route path="/projects/:slug" element={<ProjectDetailRoute />} />
+              <Route path="/gear" element={<GearPage />} />
+              <Route path="/gear/:slug" element={<GearDetailPage />} />
+              <Route path="/journal" element={<JournalPage />} />
+              <Route path="/journal/:slug" element={<JournalArticleRoute />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/renderer" element={
+                <Suspense fallback={<p className="label">Loading renderer…</p>}>
+                  <SpotifyPlaybackProvider><RendererPage /></SpotifyPlaybackProvider>
+                </Suspense>
+              } />
+              <Route path="/taste" element={<Navigate to="/about#taste" replace />} />
+              <Route path="/showcase" element={<Navigate to="/projects" replace />} />
+              <Route path="/systems" element={<Navigate to="/projects" replace />} />
+              <Route path="/now" element={<Navigate to="/projects" replace />} />
+              <Route path="/hermes" element={<Navigate to="/projects/hermes-agent" replace />} />
+              <Route path="/contact" element={<Navigate to="/about#contact" replace />} />
+              <Route path="/writeups" element={<Navigate to="/journal" replace />} />
+              <Route path="/writeups/:slug" element={<LegacyWriteupRedirect />} />
+              <Route path="/blog" element={<Navigate to="/journal" replace />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </div>
+        </main>
+        <Footer />
+      </MotionConfig>
+    </RenderModeContext.Provider>
+  );
 }
 
 function JournalArticleRoute() {
   const { slug } = useParams();
   const post = slug ? findJournalPost(slug) : undefined;
-  return post ? <JournalArticlePage post={post} /> : <NotFoundPage />;
+  return post ? <Suspense fallback={<p className="label">Loading article…</p>}><JournalArticlePage post={post} /></Suspense> : <NotFoundPage />;
 }
 
 export default function App() {
-  migrateLegacyHash();
+  if (typeof window !== "undefined") migrateLegacyHash();
   return <BrowserRouter><RoutedSite /></BrowserRouter>;
 }

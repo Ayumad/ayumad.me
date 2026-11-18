@@ -8,13 +8,12 @@ export interface JournalPost {
   tags: string[];
   kind: JournalKind;
   status: "published";
-  body: string;
 }
 
 const sources = import.meta.glob("./content/journal/*.md", {
   eager: true,
   import: "default",
-  query: "?raw",
+  query: "?metadata",
 }) as Record<string, string>;
 
 function parseFrontmatter(source: string, fileName: string): JournalPost {
@@ -52,7 +51,6 @@ function parseFrontmatter(source: string, fileName: string): JournalPost {
     tags: fields.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
     kind: fields.kind,
     status: "published",
-    body: match[2].trim(),
   };
 }
 

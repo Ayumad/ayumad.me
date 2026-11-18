@@ -21,6 +21,7 @@ export interface SpotifyPlayback {
 
 interface SpotifyImage {
   url?: string;
+  width?: number | null;
 }
 
 interface SpotifyArtist {
@@ -92,13 +93,18 @@ function unavailablePlayback(): SpotifyPlayback {
   };
 }
 
+export function spotifyThumbnail(images?: SpotifyImage[]) {
+  const available = images?.filter((image) => image.url) ?? [];
+  const sized = available.filter((image) => typeof image.width === "number")
+    .sort((a, b) => (a.width ?? 0) - (b.width ?? 0));
+  return sized.find((image) => (image.width ?? 0) >= 96)?.url
+    ?? sized[sized.length - 1]?.url ?? available[0]?.url ?? null;
+}
+
 function firstImage(item: SpotifyItem) {
-  return (
-    item.album?.images?.find((image) => image.url)?.url ??
-    item.show?.images?.find((image) => image.url)?.url ??
-    item.images?.find((image) => image.url)?.url ??
-    null
-  );
+  return spotifyThumbnail(item.album?.images)
+    ?? spotifyThumbnail(item.show?.images)
+    ?? spotifyThumbnail(item.images);
 }
 
 function itemArtists(item: SpotifyItem) {

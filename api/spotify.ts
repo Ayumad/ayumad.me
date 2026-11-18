@@ -27,7 +27,7 @@ export function GET() {
   }
 
   return getSpotifyPlayback(config).then((playback) =>
-    Response.json(playback, {
+    Response.json({ ...playback, playedAt: playback.playedAt?.slice(0, 10) ?? null }, {
       headers: {
         ...jsonHeaders,
         "Cache-Control": "public, s-maxage=30, stale-while-revalidate=300",

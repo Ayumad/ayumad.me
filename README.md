@@ -57,9 +57,9 @@ duplicate slugs and invalid stages fail the build. Planned articles must keep
 future behavior in the future tense. Keep private vault details and
 collaborator-only work out of public Markdown.
 
-The site uses clean browser routes. Vercel rewrites unknown frontend paths to
-the Vite entry point while preserving the existing `/api/*` endpoints and
-legacy hash links are migrated on load.
+The production build prerenders public routes with route-specific metadata and
+generates the sitemap. Vercel serves the static 404 page for missing paths and
+redirects legacy clean URLs. The browser migrates legacy hash links.
 
 ## Standalone renderer blueprint
 
@@ -74,7 +74,29 @@ independent website.
 Production is hosted on Vercel. The `main` branch is the production branch, and
 Vercel builds the static `dist` output with `npm run build`.
 
-No environment variables are required for Phase 1.
+Spotify requires the server credentials listed in `.env.example`. Spotify and
+the dashboard remain optional in a local frontend preview.
+
+### Owner dashboard
+
+`/dashboard` is an owner-only area with no signup endpoint. Vercel checks the
+configured username and scrypt password hash at sign-in. It serves private
+HTML and data through `api/dashboard.ts`, using an eight-hour signed cookie.
+Keep the password hash, session secret, and snapshot key in Vercel environment
+variables scoped to Production. Password and session-secret rotation revoke
+existing sessions. Apply a project Firewall rate limit to the sign-in POST and
+the direct dashboard API POST before exposing the login publicly.
+
+Historical plaintext snapshots may still exist in repository history. The
+publisher only writes an encrypted snapshot and a public summary with fixed
+numeric fields. Do not put detailed dashboard data under `public/`.
+
+The scheduled publisher can run `scripts/publish-dashboard.sh` with the private
+local snapshot, a private file containing a 32-byte hex key, and a dedicated
+bare checkout with a writable Git remote. It pushes only the encrypted snapshot
+and the allowlisted public summary. The snapshot key must match the Vercel
+environment variable. The dashboard prefers the rolling Tailnet feed when
+reachable and falls back to the authenticated encrypted snapshot off Tailnet.
 
 ## Project status
 

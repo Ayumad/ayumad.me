@@ -43,3 +43,6 @@ next-env.d.ts
 /dist/
 /.hf-cache
 drafts/
+
+# Detailed dashboard exports never belong in the public site.
+/public/dashboard.json

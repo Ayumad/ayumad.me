@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+  src: url("@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2") format("woff2");
+}
+
 :root {
   color-scheme: dark;
   --bg: #040707;
@@ -5,7 +13,7 @@
   --surface-2: #0e191a;
   --text: #e5f4f2;
   --soft: #9bb7b3;
-  --muted: #627d79;
+  --muted: #829c98;
   --line: #294441;
   --fine: #142624;
   --cyan: #48efd0;
@@ -27,7 +35,7 @@
   --surface-2: #d4e2df;
   --text: #071311;
   --soft: #314b47;
-  --muted: #5d7470;
+  --muted: #495e5b;
   --line: #758e89;
   --fine: #c0d1ce;
   --cyan: #006f68;
@@ -2801,7 +2809,9 @@ main {
   color: var(--muted);
 }
 
-.footer-inner a {
+.footer-inner nav {
+  display: flex;
+  gap: 1rem;
   justify-self: end;
 }
 
@@ -3451,7 +3461,7 @@ main {
     grid-template-columns: 1fr auto;
   }
 
-  .footer-inner a {
+  .footer-inner nav {
     grid-column: 1 / -1;
     justify-self: start;
   }
@@ -5175,12 +5185,15 @@ main :is(.hero, .hero-copy, .page-heading, .heading-copy, .project-row,
 /* ── Renderer page (/renderer) — renderer-v2 ─────────────────────── */
 .renderer-page .scope-stage {
   position: relative;
+  inset: auto;
   border: 1px solid var(--line);
   background: var(--surface);
   height: clamp(320px, 52vh, 560px);
   overflow: hidden;
 }
 .renderer-page .renderer-grid {
+  position: static;
+  transform: none;
   margin: 0;
   height: 100%;
   width: 100%;
@@ -6054,4 +6067,38 @@ button.jcal-cell.is-week {
   .article-toc ol { grid-template-columns: 1fr; }
   .article-pager { grid-template-columns: 1fr; }
   .article-pager-link.is-next { align-items: flex-start; text-align: left; }
+}
+
+
+/* Keep readable controls above decorative layers. */
+.jcal-toggle > button:not([aria-pressed="true"]),
+.renderer-page .scope-readout,
+.taste-artist-rank,
+.taste-artist-genres {
+  color: var(--text);
+}
+
+.article-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#main-content :is([id], [tabindex="-1"]) {
+  scroll-margin-top: calc(var(--header) + 1rem);
+}
+
+@media (min-width: 651px) and (max-width: 820px) {
+  .hero { grid-template-rows: auto 600px auto; }
+  .hero-copy { grid-row: 1; border-top: 1px solid var(--line); }
+  .hero-art { grid-row: 2; }
+}
+
+@media (max-width: 650px) {
+  .hero-copy {
+    padding-block: 23px;
+    border-top: 1px solid var(--line);
+  }
+  .hero h1 { margin-top: 14px; }
+  .hero-deck { margin-top: 22px; }
+  .hero-art { min-height: 620px; }
 }

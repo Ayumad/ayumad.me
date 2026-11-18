@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index, follow" />
@@ -215,9 +216,11 @@
         body { padding: 30px 16px 70px; }
         h1 { font-size: 21px; }
       }
+    .dashboard-logout { padding: .75rem 1rem; text-align: right; } .dashboard-logout button { color: inherit; background: transparent; border: 1px solid currentColor; padding: .4rem .7rem; cursor: pointer; }
     </style>
   </head>
   <body>
+    <form action="/dashboard/logout" method="post" class="dashboard-logout"><button type="submit">Sign out</button></form>
     <div class="wrap">
       <a class="back" href="/dashboard">← /dashboard</a>
       <h1>
@@ -286,8 +289,8 @@
       // snapshot must never masquerade as live.
       //   live     = Tailscale Serve on the Mac mini (rolling, no deploys).
       //              Only resolves for devices on the tailnet.
-      //   snapshot = the committed public/dashboard.json, deployed by the
-      //              Dashboard Refresh cron. Works anywhere.
+      //   snapshot = the authenticated dashboard snapshot, deployed by the
+      //              dashboard refresh job.
       const LIVE_URL = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json";
 
       const fromLive = () =>
@@ -301,11 +304,20 @@
         });
 
       const fromSnapshot = () =>
-        fetch("/dashboard.json", { cache: "no-store" })
+        fetch("/dashboard/data", { cache: "no-store" })
           .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
           .then((d) => ({ d, source: "snapshot" }));
 
       // ── helpers ─────────────────────────────────────────────────────────────
+      function safeServiceUrl(value) {
+        try {
+          const url = new URL(value);
+          return ["https:", "http:"].includes(url.protocol) ? url.href : "#";
+        } catch {
+          return "#";
+        }
+      }
+
       const esc = (v) => String(v == null ? "" : v)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
@@ -409,7 +421,7 @@
                 <tr><td>Failed units</td><td class="num">${(h.failed_units ?? 0) === 0
                   ? '<span class="pill good">0</span>'
                   : `<span class="pill warn">${h.failed_units}</span>`}</td></tr>
-                <tr><td><a href="${esc(h.pve_ui)}" style="color:var(--accent)">Proxmox UI →</a></td>
+                <tr><td><a href="${esc(safeServiceUrl(h.pve_ui))}" style="color:var(--accent)">Proxmox UI →</a></td>
                     <td class="num">tailnet only</td></tr>
               </table></div>
               <div><table>
@@ -512,7 +524,7 @@
           .filter((g) => byGroup[g])
           .map((g) => `<div class="grouphd">${esc(GROUPS[g])} · ${byGroup[g].filter((s) => s.up).length}/${byGroup[g].length}</div>
             <div class="grid">${byGroup[g].map((s) => `
-              <a class="svc" href="${esc(s.url)}" target="_blank" rel="noopener">
+              <a class="svc" href="${esc(safeServiceUrl(s.url))}" target="_blank" rel="noopener">
                 <span class="row"><span class="dot ${s.up ? "up" : "down"}"></span>
                   <span class="nm">${esc(s.name)}</span><span class="pt">:${s.port}</span></span>
                 <span class="st">${s.up ? (s.ms != null ? s.ms + " ms" : "up") : "no answer"}${s.code ? " · HTTP " + s.code : ""}</span>
@@ -579,7 +591,7 @@
         document.getElementById("meta").textContent = "could not load the dashboard payload";
         document.getElementById("tiles").innerHTML =
           `<p class="note">No payload could be read (${esc(why.message || why)}). The committed
-           snapshot lives at <code>/dashboard.json</code>; if this persists, the
+           snapshot lives at <code>/dashboard/data</code>; if this persists, the
            <code>Dashboard Refresh</code> job needs a look.</p>`;
       }
 
