@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { marked } from "marked";
 import { enhanceArticle } from "./src/articleReading.ts";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
@@ -33,5 +33,6 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: true,
     testTimeout: 15_000,
+    exclude: [...configDefaults.exclude, "e2e/**"],
   },
 });

@@ -11,7 +11,7 @@
   "surfaces": {
     "mac_mini": {
       "host": {
-        "name": "ayumacmini",
+        "name": "mac-mini",
         "os": "macOS 27.2.1",
         "arch": "arm64",
         "uptime_s": 86500,
@@ -603,7 +603,7 @@
     },
     "p520": {
       "host": {
-        "name": "pve-p520",
+        "name": "pve-host",
         "proxmox": "9.2.20",
         "kernel": "7.0.14-17-pve",
         "uptime_s": 74200,
@@ -618,7 +618,7 @@
         "mem_total_gb": 62,
         "failed_units": 0,
         "failed_list": [],
-        "pve_ui": "https://100.127.82.2:8006",
+        "pve_ui": "https://100.64.0.1:8006",
         "nics": [
           {
             "name": "nic0",
@@ -671,7 +671,7 @@
       "guests": [
         {
           "id": 100,
-          "name": "nas",
+          "name": "lxc-nas",
           "type": "lxc",
           "status": "running",
           "mem_mb": null,
@@ -679,7 +679,7 @@
         },
         {
           "id": 101,
-          "name": "pihole",
+          "name": "lxc-dns",
           "type": "lxc",
           "status": "running",
           "mem_mb": null,
@@ -687,7 +687,7 @@
         },
         {
           "id": 102,
-          "name": "minecraft",
+          "name": "lxc-game",
           "type": "lxc",
           "status": "running",
           "mem_mb": null,
@@ -695,7 +695,7 @@
         },
         {
           "id": 200,
-          "name": "ai-vm",
+          "name": "vm-compute",
           "type": "qemu",
           "status": "stopped",
           "mem_mb": 24576,
@@ -703,7 +703,7 @@
         },
         {
           "id": 201,
-          "name": "school-vm",
+          "name": "vm-school",
           "type": "qemu",
           "status": "stopped",
           "mem_mb": 6144,
@@ -711,7 +711,7 @@
         },
         {
           "id": 202,
-          "name": "docker-vm",
+          "name": "vm-docker",
           "type": "qemu",
           "status": "running",
           "mem_mb": 16384,
@@ -762,7 +762,7 @@
         "newest": "vzdump-qemu-214-2026_11_18-03_47_58.vma.zst",
         "newest_age_h": 5.2,
         "count": 115,
-        "destination": "/tank/backups (on the P520 itself)",
+        "destination": "/pool/backups (on the P520 itself)",
         "offsite": false,
         "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
       },
@@ -1274,155 +1274,155 @@
     "network": {
       "tailscale": [
         {
-          "name": "Ayumacmini",
+          "name": "mac-mini",
           "os": "macOS",
           "online": true,
           "self": true,
-          "ip": "100.113.252.86"
+          "ip": "100.64.0.2"
         },
         {
-          "name": "Retroid Pocket Nova",
+          "name": "peer-handheld",
           "os": "android",
           "online": false,
           "self": false,
-          "ip": "100.89.99.109"
+          "ip": "100.64.0.3"
         },
         {
-          "name": "g14-omarchy",
+          "name": "peer-g14",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.87.167.117"
+          "ip": "100.64.0.4"
         },
         {
-          "name": "M16",
+          "name": "peer-laptop2",
           "os": "windows",
           "online": false,
           "self": false,
-          "ip": "100.88.176.51"
+          "ip": "100.64.0.5"
         },
         {
-          "name": "Pixel 10 Pro",
+          "name": "peer-phone",
           "os": "android",
           "online": false,
           "self": false,
-          "ip": "100.109.21.34"
+          "ip": "100.64.0.6"
         },
         {
-          "name": "t480",
+          "name": "peer-thinkpad",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.79.184.45"
+          "ip": "100.64.0.7"
         },
         {
-          "name": "Ayumacpro",
+          "name": "peer-mac",
           "os": "macOS",
           "online": false,
           "self": false,
-          "ip": "100.73.7.67"
+          "ip": "100.64.0.8"
         },
         {
-          "name": "Canyon",
+          "name": "peer-laptop",
           "os": "windows",
           "online": false,
           "self": false,
-          "ip": "100.89.8.80"
+          "ip": "100.64.0.9"
         },
         {
-          "name": "school-vm",
+          "name": "vm-school",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.78.211.72"
+          "ip": "100.64.0.10"
         },
         {
-          "name": "Ayupadpro",
+          "name": "peer-tablet",
           "os": "iOS",
           "online": true,
           "self": false,
-          "ip": "100.106.13.72"
+          "ip": "100.64.0.11"
         },
         {
-          "name": "framework",
+          "name": "peer-framework",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.104.19.24"
+          "ip": "100.64.0.12"
         },
         {
-          "name": "Creekwood",
+          "name": "peer-desktop",
           "os": "windows",
           "online": true,
           "self": false,
-          "ip": "100.125.200.55"
+          "ip": "100.64.0.13"
         },
         {
-          "name": "pve-p520",
+          "name": "pve-host",
           "os": "linux",
           "online": true,
           "self": false,
-          "ip": "100.127.82.2"
+          "ip": "100.64.0.1"
         },
         {
-          "name": "G14",
+          "name": "peer-g14b",
           "os": "windows",
           "online": false,
           "self": false,
-          "ip": "100.67.231.52"
+          "ip": "100.64.0.14"
         },
         {
-          "name": "XPS",
+          "name": "peer-xps",
           "os": "windows",
           "online": false,
           "self": false,
-          "ip": "100.74.29.81"
+          "ip": "100.64.0.15"
         },
         {
           "name": "tank",
           "os": "linux",
           "online": true,
           "self": false,
-          "ip": "100.65.160.86"
+          "ip": "100.64.0.16"
         },
         {
           "name": "localhost",
           "os": "iOS",
           "online": true,
           "self": false,
-          "ip": "100.80.192.20"
+          "ip": "100.64.0.17"
         },
         {
-          "name": "xps-omarchy",
+          "name": "peer-xps2",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.103.243.85"
+          "ip": "100.64.0.18"
         },
         {
           "name": "ayumad",
           "os": "linux",
           "online": false,
           "self": false,
-          "ip": "100.73.4.38"
+          "ip": "100.64.0.19"
         },
         {
-          "name": "docker-vm",
+          "name": "vm-docker",
           "os": "linux",
           "online": true,
           "self": false,
-          "ip": "100.113.99.29"
+          "ip": "100.64.0.20"
         },
         {
-          "name": "ayumacair",
+          "name": "peer-air",
           "os": "macOS",
           "online": false,
           "self": false,
-          "ip": "100.120.245.31"
+          "ip": "100.64.0.21"
         }
       ],
       "online": 7,
-      "pihole": {
+      "lxc-dns": {
         "status": "ok",
         "queries_24h": null,
         "blocked_pct": null
@@ -1430,42 +1430,42 @@
       "routes": [
         {
           "host": "jellyfin.lan",
-          "target": "10.0.0.54:8096",
+          "target": "192.0.2.1:8096",
           "state": "down"
         },
         {
           "host": "jellyseerr.lan",
-          "target": "10.0.0.54:5055",
+          "target": "192.0.2.1:5055",
           "state": "down"
         },
         {
           "host": "sonarr.lan",
-          "target": "10.0.0.54:8989",
+          "target": "192.0.2.1:8989",
           "state": "down"
         },
         {
           "host": "radarr.lan",
-          "target": "10.0.0.54:7878",
+          "target": "192.0.2.1:7878",
           "state": "down"
         },
         {
           "host": "prowlarr.lan",
-          "target": "10.0.0.54:9696",
+          "target": "192.0.2.1:9696",
           "state": "down"
         },
         {
           "host": "qbittorrent.lan",
-          "target": "10.0.0.54:8090",
+          "target": "192.0.2.1:8090",
           "state": "down"
         },
         {
           "host": "bazarr.lan",
-          "target": "10.0.0.54:6767",
+          "target": "192.0.2.1:6767",
           "state": "down"
         },
         {
           "host": "cleanuparr.lan",
-          "target": "10.0.0.54:11011",
+          "target": "192.0.2.1:11011",
           "state": "down"
         }
       ]
@@ -1636,13 +1636,13 @@
       "ts": "2026-11-17T12:21:00-08:00",
       "level": "bad",
       "source": "docker",
-      "text": "14 expected containers stopped after docker-vm reboot"
+      "text": "14 expected containers stopped after vm-docker reboot"
     },
     {
       "ts": "2026-11-17T12:20:00-08:00",
       "level": "info",
       "source": "proxmox",
-      "text": "docker-vm started"
+      "text": "vm-docker started"
     },
     {
       "ts": "2026-11-16T09:00:00-08:00",

@@ -1,550 +1,5256 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
-    <meta name="robots" content="noindex, nofollow">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
-    <title>Dashboard — Ayumad.me</title>
-    <meta
-      name="description"
-      content="Live operating dashboard for Ayush Madhukar: coursework deadlines, open tasks, active projects, the Hermes agent fleet, homelab devices, and listening."
-    />
-    <meta name="author" content="Ayush Madhukar" />
+    <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#040707" />
-    <link rel="canonical" href="https://ayumad.me/dashboard" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <title>Ops — Ayumad.me</title>
     <style>
-      :root {
-        --bg: #040707;
-        --fg: #d7dede;
-        --muted: #7d8a8a;
-        --line: #172020;
-        --edge: #4d6363;
-        --accent: #6fd6a8;
-        --warn: #e0b070;
-        --bad: #e08a8a;
-        --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-        --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        padding: 40px 20px 90px;
-        background: var(--bg);
-        color: var(--fg);
-        font-family: var(--sans);
-        font-size: 15px;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-      }
-      .wrap { max-width: 1080px; margin: 0 auto; }
-      .top {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 6px;
-      }
-      .back {
-        font-family: var(--mono);
-        font-size: 12.5px;
-        color: var(--muted);
-        text-decoration: none;
-      }
-      .back:hover { color: var(--accent); }
-      .stamp { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-      .live { color: var(--accent); }
-      h1 {
-        font-family: var(--mono);
-        font-size: 26px;
-        font-weight: 600;
-        letter-spacing: -0.4px;
-        margin: 10px 0 4px;
-      }
-      .sub { color: var(--muted); margin: 0 0 8px; max-width: 76ch; }
-      h2 {
-        font-family: var(--mono);
-        font-size: 11.5px;
-        font-weight: 600;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-        color: var(--accent);
-        margin: 44px 0 14px;
-        padding-bottom: 9px;
-        border-bottom: 1px solid var(--line);
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 12px;
-      }
-      h2 .hint { color: var(--muted); font-weight: 400; letter-spacing: 0.04em; text-transform: none; font-size: 12px; }
-      .hero {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 8px;
-        margin-top: 24px;
-      }
-      .cell { border: 1px solid var(--line); border-radius: 2px; padding: 15px 16px; }
-      .cell .v {
-        font-family: var(--mono);
-        font-size: 25px;
-        font-weight: 600;
-        line-height: 1.1;
-        font-variant-numeric: tabular-nums;
-      }
-      .cell .k {
-        font-family: var(--mono);
-        font-size: 10.5px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-top: 4px;
-      }
-      .cell.alert .v { color: var(--bad); }
-      .cell.warn .v { color: var(--warn); }
-      .cell.good .v { color: var(--accent); }
-      .list { display: flex; flex-direction: column; }
-      .row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 6px 20px;
-        align-items: baseline;
-        padding: 11px 0;
-        border-bottom: 1px solid var(--line);
-      }
-      .row:last-child { border-bottom: none; }
-      .row .t { font-weight: 500; }
-      .row .m { color: var(--muted); font-size: 13px; margin-top: 2px; }
-      .row .r {
-        font-family: var(--mono);
-        font-size: 12.5px;
-        color: var(--muted);
-        text-align: right;
-        white-space: nowrap;
-      }
-      .course, .tag {
-        font-family: var(--mono);
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        padding: 1px 6px;
-        border: 1px solid var(--edge);
-        border-radius: 3px;
-        color: var(--accent);
-        white-space: nowrap;
-      }
-      .tag { color: var(--muted); border-color: var(--line); }
-      .tag.due { color: var(--warn); border-color: var(--warn); }
-      .tag.late { color: var(--bad); border-color: var(--bad); }
-      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-        gap: 8px;
-      }
-      .card { border: 1px solid var(--line); border-radius: 2px; padding: 15px 16px; }
-      .card .ct { font-weight: 600; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 10px; }
-      .card .cd { color: var(--muted); font-size: 13px; line-height: 1.55; }
-      .card .cu { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 8px; }
-      .stat { border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; }
-      .stat .v { font-family: var(--mono); font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
-      .stat .k { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
-      .devices { display: flex; flex-wrap: wrap; gap: 8px; }
-      .dev {
-        font-family: var(--mono);
-        font-size: 12px;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 5px 9px;
-        color: var(--muted);
-      }
-      .dev.on { border-color: var(--edge); color: var(--fg); }
-      .dev.on::before { content: "● "; color: var(--accent); }
-      .dev.off::before { content: "○ "; }
-      .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 7px; }
-      .bar > i { display: block; height: 100%; background: var(--accent); }
-      .bar > i.warn { background: var(--warn); }
-      a.inline { color: var(--accent); text-decoration: none; }
-      a.inline:hover { text-decoration: underline; }
-      .listen { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-      .listen img { width: 96px; height: 96px; border-radius: 4px; border: 1px solid var(--line); object-fit: cover; }
-      .listen .lt { font-size: 17px; font-weight: 600; }
-      .listen .la { color: var(--muted); }
-      .empty { color: var(--muted); font-size: 13.5px; padding: 10px 0; }
-      .err { color: var(--warn); font-size: 12.5px; font-family: var(--mono); }
-      .src { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-left: 8px; }
-      .src.live { color: var(--accent); }
-      footer {
-        margin-top: 56px;
-        padding-top: 18px;
-        border-top: 1px solid var(--line);
-        font-family: var(--mono);
-        font-size: 12px;
-        color: var(--muted);
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      footer a { color: var(--muted); }
-      footer a:hover { color: var(--accent); }
-      @media (max-width: 760px) {
-        body { padding: 26px 15px 60px; }
-        h1 { font-size: 21px; }
-        .cols { grid-template-columns: 1fr; gap: 30px; }
-        .cell .v { font-size: 21px; }
-      }
-    .dashboard-logout { padding: .75rem 1rem; text-align: right; } .dashboard-logout button { color: inherit; background: transparent; border: 1px solid currentColor; padding: .4rem .7rem; cursor: pointer; }
+:root {
+  color-scheme: dark;
+  --bg: #040707;
+  --surface: #091011;
+  --surface-2: #0e191a;
+  --text: #e5f4f2;
+  --soft: #9bb7b3;
+  --muted: #627d79;
+  --line: #294441;
+  --fine: #142624;
+  --cyan: #48efd0;
+  --secondary: var(--cyan);
+  --violet: #777fc4;
+  --ink: #020606;
+  --warn: #e0b070;
+  --bad: #e08a8a;
+  --mono: "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  --sans: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --display: var(--sans);
+  --max: 1460px;
+  --header: 72px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e6efed;
+  --surface: #f3f8f7;
+  --surface-2: #d4e2df;
+  --text: #071311;
+  --soft: #314b47;
+  --muted: #5d7470;
+  --line: #758e89;
+  --fine: #c0d1ce;
+  --cyan: #006f68;
+  --secondary: var(--cyan);
+  --violet: #50568d;
+  --ink: #f4fffd;
+  --warn: #8a5a12;
+  --bad: #9b2f2f;
+}
+
+/*
+  Background motif (copy from the live site, do not approximate):
+  - 104px line grid using --fine at 1px
+  - 5px dot matrix using --cyan at 22% opacity
+  - two radial masks: top-right and bottom-left
+  See ~/Documents/GitHub/ayumad.me/src/styles.css -> body / body::before.
+*/
+
+/* base.css — reset, motif (copied verbatim from the live site's body rules),
+   focus, and shared type utilities. Colors come only from tokens.css. */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+  scroll-behavior: smooth;
+  scrollbar-color: var(--cyan) var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background:
+    linear-gradient(90deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    linear-gradient(0deg, transparent 49.8%, var(--fine) 50%, transparent 50.2%) 0 0 / 104px 104px,
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--cyan) 46%, transparent) 0 0.8px, transparent 1px)
+      0 0 / 5px 5px;
+  content: "";
+  opacity: 0.22;
+  mask-image:
+    radial-gradient(ellipse 58% 42% at 86% 3%, black 0 18%, transparent 70%),
+    radial-gradient(ellipse 44% 35% at 7% 82%, black, transparent 72%);
+  pointer-events: none;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.soft {
+  color: var(--soft);
+}
+
+.cyan {
+  color: var(--cyan);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* layout.css — web shell: header, hero, sections, wall shell, responsive. */
+
+.app {
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
+}
+
+/* ---------- header ---------- */
+
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--header);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.hdr-in {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 40px);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.brand {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand .sl {
+  color: var(--cyan);
+  margin: 0 2px;
+}
+
+.brand .dim {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tab {
+  border: 0;
+  background: none;
+  padding: 8px 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.tab[aria-current="true"] {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+.hdr-r {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.updated {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.theme-btn {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  color: var(--soft);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+
+.theme-btn:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 24px;
+}
+
+/* ---------- global mode banner (seed / snapshot; live shows none) ---------- */
+
+.mode-strip {
+  margin-top: 14px;
+}
+
+.mode-strip .banner {
+  border-top: none;
+  border-bottom: 1px solid var(--line);
+  padding: 7px 2px;
+}
+
+/* generic KPI cell cluster */
+.cells {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+/* ---------- sections ---------- */
+
+.sec {
+  margin-top: 44px;
+}
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.sec-head h2 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.sec-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--soft);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding-bottom: 1px;
+}
+
+.sec-body {
+  padding-top: 14px;
+}
+
+.subgrid {
+  display: grid;
+  gap: 8px;
+}
+
+.subgrid.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.subgrid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.subhead {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 18px 0 8px;
+}
+
+/* ---------- footer ---------- */
+
+.foot {
+  margin-top: 48px;
+  margin-bottom: 32px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ---------- drawer ---------- */
+
+.drawer-back {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+  border: 0;
+  padding: 0;
+  cursor: default;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 41;
+  width: min(420px, 100vw);
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  padding: 18px 20px 24px;
+  overflow-y: auto;
+  transform: translateX(0);
+  transition: transform 120ms ease-out;
+}
+
+.drawer[data-open="false"] {
+  transform: translateX(102%);
+}
+
+.drawer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.drawer-title {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.drawer-close {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  color: var(--soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.drawer-close:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+/* ---------- wall shell ---------- */
+
+body.wall {
+  overflow: hidden;
+}
+
+.wall {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.wall-hdr {
+  height: 64px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.wall-brand {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.wall-clock {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--soft);
+  letter-spacing: 0.04em;
+}
+
+.wall-r {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 24px;
+}
+
+.wall-progress {
+  height: 2px;
+  flex: none;
+  background: var(--fine);
+  position: relative;
+  overflow: hidden;
+}
+
+.wall-progress i {
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.wall-progress i.run {
+  animation: wallprog linear forwards;
+}
+
+@keyframes wallprog {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.wall-stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  margin: 32px;
+}
+
+.wall-shift {
+  position: absolute;
+  inset: 0;
+  transition: transform 120ms linear;
+}
+
+.wall-page {
+  position: absolute;
+  inset: 0;
+  display: none;
+  padding: 0;
+}
+
+.wall-page[data-active="true"] {
+  display: block;
+}
+
+.wall-banner {
+  flex: none;
+  display: none;
+  margin: 0 32px;
+}
+
+.wall-banner[data-show="true"] {
+  display: block;
+}
+
+.wall-rail {
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 32px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.wall-rail .who {
+  margin-left: auto;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.wall-dim .wall-stage,
+.wall-dim .wall-hdr,
+.wall-dim .wall-rail {
+  opacity: 0.7;
+}
+
+/* wall page 1 — three bands: status top, KPI grid fills, alert rail fixed below */
+
+.wp-status {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wp-top {
+  flex: none;
+  min-height: 196px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 18px 56px;
+  padding: 10px 4px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.wp-top-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.wp-word {
+  font-family: var(--mono); /* explicit: never fall back to a serif */
+  font-size: clamp(48px, 3.6vw, 72px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.wp-sub {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--soft);
+}
+
+.wp-clockbox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
+}
+
+.wp-clock {
+  font-family: var(--mono); /* explicit: never fall back to a serif */
+  font-size: clamp(34px, 2.4vw, 48px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+}
+
+.wp-date {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--soft);
+}
+
+.wp-alert {
+  flex: 1 0 100%;
+  margin-left: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  max-width: none;
+  margin-top: 4px;
+  padding: 10px 0 0 18px;
+  border-left: 3px solid var(--line);
+  border-top: 1px solid var(--fine);
+  font-family: var(--mono);
+  font-size: 24px;
+}
+
+.wp-alert .mk {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  align-self: center;
+  background: var(--cyan);
+}
+
+.wp-alert.lvl-bad .mk {
+  background: var(--bad);
+}
+
+.wp-alert.lvl-bad {
+  border-left-color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 7%, transparent);
+}
+
+.wp-alert.lvl-bad .wp-alert-t {
+  color: var(--bad);
+}
+
+.wp-alert.lvl-warn .mk {
+  background: var(--warn);
+}
+
+.wp-alert.lvl-warn {
+  border-left-color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 6%, transparent);
+}
+
+.wp-alert.lvl-warn .wp-alert-t {
+  color: var(--warn);
+}
+
+.wp-alert.lvl-none .mk {
+  background: var(--muted);
+}
+
+.wp-alert.lvl-none .wp-alert-t {
+  color: var(--soft);
+}
+
+.wp-alert-t {
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.wp-alert-r {
+  flex: none;
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.wp-kpis {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.wp-kpis .cell {
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 22px;
+}
+
+.wp-kpis .cell-l {
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  color: var(--soft);
+}
+
+.wp-kpis .cell-v {
+  font-size: clamp(54px, 6.4vh, 72px);
+  line-height: 1;
+}
+
+.wp-kpis .cell-v small {
+  font-size: 24px;
+  color: var(--soft);
+}
+
+.wp-kpis .cell-s {
+  font-size: 15px;
+  color: var(--soft);
+  margin-top: 0;
+}
+
+/* wall automations — two columns; rows stretch to fill the stage */
+
+.wp-jobs {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+  min-height: 0;
+}
+
+.wp-jobs > div {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.wall .wrow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 16px;
+  align-items: center;
+  align-content: center;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--fine);
+  flex: 1 1 auto;
+  min-height: 46px;
+}
+
+.wall .wrow.static {
+  flex: none;
+}
+
+.wall .wrow.fail {
+  border-left: 2px solid var(--bad);
+}
+
+.wall .wrow .nm {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  grid-column: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wall .wrow .nx {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--muted);
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.wall .wrow .sc {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--soft);
+}
+
+/* pending/empty wall states still fill the stage */
+
+.wp-jobs.pending {
+  grid-template-columns: 1fr;
+}
+
+.wp-jobs.pending > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.wp-jobs.pending .wp-note {
+  flex: none;
+}
+
+.wp-fill {
+  flex: 1;
+  grid-auto-rows: 1fr;
+  align-content: stretch;
+}
+
+/* wall homelab — bands distributed across the stage */
+
+.wp-grid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: min-content;
+  grid-template-rows: none;
+  gap: 8px;
+  align-content: space-between;
+}
+
+.wp-pools {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.wp-guests,
+.wp-smart,
+.wp-fleet {
+  grid-column: span 12;
+}
+
+.wp-strip {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.wp-grid.pending {
+  grid-template-rows: auto 1fr;
+}
+
+/* wall services — groups distributed, no dead band */
+
+.wp-matrix {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.wp-matrix.pending {
+  justify-content: flex-start;
+}
+
+.wp-matrix.pending .wp-fill {
+  flex: 1;
+  margin-top: 12px;
+}
+
+/* wall media + personal — top cells band, two stretched lists below */
+
+.wp-mp {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.wp-mp-cols {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+}
+
+.wp-mp-cols > div {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.wp-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--fine);
+}
+
+.wp-list .wrow {
+  flex: 1 1 auto;
+  min-height: 44px;
+}
+
+.wp-note {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: 2px;
+  padding: 14px 16px;
+}
+
+.wall .cell-v {
+  font-size: clamp(30px, 3.2vw, 44px);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 980px) {
+  .subgrid.cols-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .wp-kpis {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --header: 116px;
+  }
+  .hdr {
+    height: auto;
+    min-height: var(--header);
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+  .hdr-in {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .tabs {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 4px 0 0;
+    padding-bottom: 2px;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .hdr-r {
+    margin-left: auto;
+    gap: 8px;
+  }
+  .updated {
+    display: none;
+  }
+  .subgrid.cols-2,
+  .subgrid.cols-3 {
+    grid-template-columns: 1fr;
+  }
+  .wp-jobs,
+  .wp-pools,
+  .wp-strip,
+  .wp-mp-cols {
+    grid-template-columns: 1fr;
+  }
+  .wp-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wall-stage {
+    margin: 16px;
+  }
+  .wall-hdr,
+  .wall-rail {
+    padding: 0 16px;
+  }
+}
+
+/* phones: cards stack to one column, header actions hit 40px tap height */
+
+@media (max-width: 559px) {
+  .hero,
+  .cells {
+    grid-template-columns: 1fr;
+  }
+  .hdr-r {
+    min-height: 40px;
+    align-items: center;
+  }
+  .theme-btn {
+    min-height: 40px;
+    padding: 8px 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* components.css — Cell, Row, Bar, Spark, Matrix, Pill, Timeline, Banner,
+   pending / empty / error states. All colors via tokens only. */
+
+/* ---------- Pill ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--soft);
+  background: none;
+}
+
+.pill i {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--muted);
+}
+
+.pill.live {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.pill.live i {
+  background: var(--cyan);
+}
+
+.pill.seed {
+  color: var(--soft);
+}
+
+.pill.seed i {
+  background: var(--muted);
+}
+
+.pill.snapshot {
+  color: var(--muted);
+}
+
+.pill.snapshot i {
+  background: var(--muted);
+}
+
+.pill.stale {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.pill.stale i {
+  background: var(--warn);
+}
+
+/* ---------- Cell (KPI) ---------- */
+
+.cell {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  padding: 15px 16px 16px;
+  min-height: 86px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cell-l {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cell-v {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.cell-v small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.cell-v.good {
+  color: var(--cyan);
+}
+
+.cell-v.warn {
+  color: var(--warn);
+}
+
+.cell-v.bad {
+  color: var(--bad);
+}
+
+.cell-s {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--soft);
+  margin-top: auto;
+  overflow-wrap: anywhere;
+}
+
+/* stacked sub-items: inline with · separators on wide screens, one per line
+   on narrow ones — no orphan separator can wrap alone */
+.slist {
+  display: inline;
+}
+
+.slist + .slist::before {
+  content: " · ";
+}
+
+.cell-s .warn {
+  color: var(--warn);
+}
+
+/* ---------- dot ---------- */
+
+.dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  display: inline-block;
+}
+
+.dot.good {
+  background: var(--cyan);
+}
+
+.dot.warn {
+  background: var(--warn);
+}
+
+.dot.bad {
+  background: var(--bad);
+}
+
+.dot.off {
+  background: var(--muted);
+}
+
+/* ---------- Row (table row / button row) ---------- */
+
+.trows {
+  border-top: 1px solid var(--fine);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 2px 16px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 11px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--fine);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.row[disabled] {
+  cursor: default;
+}
+
+.row:hover:not([disabled]) {
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+}
+
+.row.fail {
+  border-left: 2px solid var(--bad);
+}
+
+.row .rmain {
+  min-width: 0;
+}
+
+.row .rtitle {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.row .rmeta {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--soft);
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}
+
+.row .rmeta .m {
+  color: var(--muted);
+}
+
+.row .rmeta .bad {
+  color: var(--bad);
+}
+
+.row .rright {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.row .rright .st {
+  display: inline;
+  margin-top: 0;
+}
+
+.row .rright .st.good {
+  color: var(--cyan);
+}
+
+.row .rright .st.warn {
+  color: var(--warn);
+}
+
+.row .rright .st.bad {
+  color: var(--bad);
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 1px 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: var(--soft);
+  white-space: nowrap;
+  margin-right: 4px;
+  vertical-align: 1px;
+}
+
+.tag.warn {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+}
+
+/* ---------- Spark (7-day success strip) ---------- */
+
+.spark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.spark i {
+  width: 6px;
+  height: 14px;
+  background: var(--fine);
+}
+
+.spark i.f {
+  background: var(--cyan);
+}
+
+.spark i.p {
+  background: color-mix(in srgb, var(--warn) 70%, transparent);
+}
+
+.spark i.x {
+  background: var(--bad);
+}
+
+/* 0-run window: 2px muted stub, not a full-height bar */
+.spark i.z,
+.spark.nodata i {
+  height: 2px;
+  background: var(--muted);
+}
+
+/* ---------- Bar ---------- */
+
+.bar {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  height: 6px;
+  background: var(--surface-2);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+}
+
+.bar i.warn {
+  background: var(--warn);
+}
+
+.bar i.bad {
+  background: var(--bad);
+}
+
+.barline {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.barline .bl {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.barline .bv {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.barline .bv.warn {
+  color: var(--warn);
+}
+
+.barline .bv.bad {
+  color: var(--bad);
+}
+
+/* ---------- Matrix (chips) ---------- */
+
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+  gap: 6px;
+}
+
+.chip {
+  border: 1px solid var(--fine);
+  border-radius: 2px;
+  padding: 6px 9px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+}
+
+.chip .cn {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip .cs {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.chip .cs.off {
+  color: var(--muted);
+}
+
+.chip .cs.bad {
+  color: var(--bad);
+}
+
+.chip.stopped-expected {
+  border-color: color-mix(in srgb, var(--warn) 55%, transparent);
+}
+
+.chip.stopped-expected .cs {
+  color: var(--warn);
+}
+
+.mxgroup {
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.mxgroup .gx {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.mxgroup .gx .gc {
+  font-weight: 400;
+  color: var(--soft);
+}
+
+/* ---------- Timeline ---------- */
+
+.tl {
+  position: relative;
+  padding-left: 18px;
+  border-left: 2px solid var(--fine);
+}
+
+.tl-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  padding: 9px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--fine);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tl-row:hover {
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+}
+
+.tl-row .node {
+  position: absolute;
+  left: -23px;
+  top: 13px;
+  width: 8px;
+  height: 8px;
+  background: var(--muted);
+}
+
+.tl-row .node.info {
+  background: var(--cyan);
+}
+
+.tl-row .node.warn {
+  background: var(--warn);
+}
+
+.tl-row .node.bad {
+  background: var(--bad);
+}
+
+.tl-row .t {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tl-row .x {
+  font-size: 14px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Banner ---------- */
+
+.banner {
+  border-top: 1px solid var(--line);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  background: var(--surface);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.banner i {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  background: var(--cyan);
+}
+
+.banner.warn {
+  border-top-color: var(--warn);
+  color: var(--warn);
+}
+
+.banner.warn i {
+  background: var(--warn);
+}
+
+/* muted variant: mode banners (seed / snapshot) — informational, never an alarm */
+.banner.mute {
+  border-top-color: var(--line);
+  color: var(--soft);
+}
+
+.banner.mute i {
+  background: var(--muted);
+}
+
+.banner.bad {
+  border-top-color: var(--bad);
+  color: var(--bad);
+}
+
+.banner.bad i {
+  background: var(--bad);
+}
+
+/* ---------- states: pending / empty / error / stale ---------- */
+
+.state {
+  border: 1px dashed var(--line);
+  border-radius: 2px;
+  padding: 18px 16px;
+  margin: 6px 0;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.state .t {
+  color: var(--soft);
+}
+
+.state.pending .t::after {
+  content: " · collector pending · v2 not wired";
+  color: var(--muted);
+}
+
+.state.error {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--bad) 45%, transparent);
+}
+
+.state.error .t {
+  color: var(--bad);
+}
+
+.state.stale {
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+}
+
+.state.stale .t::after {
+  content: " · stale";
+  color: var(--warn);
+}
+
+.nodata {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.dash {
+  color: var(--muted);
+}
+
+/* ---------- filter chips ---------- */
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 12px;
+}
+
+.fchip {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: none;
+  padding: 4px 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--soft);
+  cursor: pointer;
+}
+
+.fchip[aria-pressed="true"] {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+/* ---------- kv table (drawer) ---------- */
+
+.kv {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kv td {
+  border-bottom: 1px solid var(--fine);
+  padding: 7px 4px;
+  vertical-align: top;
+  font-size: 12.5px;
+}
+
+.kv td.k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  width: 38%;
+  padding-right: 10px;
+}
+
+.kv td.v {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.kv td.v .dash {
+  color: var(--muted);
+}
+
+/* ---------- phone overrides ---------- */
+/* This sheet loads after layout.css, so component-owned overrides must live
+   here to win the cascade. Phones: sub-items stack as a list (no orphan
+   separator), secondary text ≥ 12px, pill hits 40px, rows keep one line. */
+
+@media (max-width: 559px) {
+  .hdr-r .pill {
+    min-height: 40px;
+    align-items: center;
+    padding: 5px 9px;
+  }
+  .cell-s {
+    font-size: 12px;
+  }
+  .slist {
+    display: block;
+    line-height: 1.5;
+  }
+  .slist + .slist::before {
+    content: "";
+  }
+  .row {
+    grid-template-columns: 1fr 140px;
+  }
+}
+
     </style>
   </head>
   <body>
-    <form action="/dashboard/logout" method="post" class="dashboard-logout"><button type="submit">Sign out</button></form>
-    <div class="wrap">
-      <div class="top">
-        <a class="back" href="/">← ayumad.me</a>
-        <a class="back" href="/dashboard/homelab">homelab →</a>
-        <span class="stamp" id="stamp">loading…</span>
-      </div>
-
-      <h1>Dashboard</h1>
-      <p class="sub">
-        What is actually going on: coursework, tasks, projects, the agent fleet behind this site, and
-        what is playing. Assembled on the Mac mini by a script — no model in the loop.
-      </p>
-
-      <div class="hero" id="hero"></div>
-
-      <h2>School <span class="hint" id="school-hint"></span></h2>
-      <div class="list" id="school"></div>
-
-      <h2>Open tasks <span class="hint" id="tasks-hint"></span></h2>
-      <div class="list" id="tasks"></div>
-
-      <h2>Projects <span class="hint">from the vault</span></h2>
-      <div class="cards" id="projects"></div>
-
-      <h2>Hermes agent <span class="hint"><a class="inline" href="/dashboard/hermes">full audit →</a></span></h2>
-      <div class="stats" id="agent-stats"></div>
-      <div class="cols" style="margin-top: 26px">
-        <div>
-          <div class="stamp" style="margin-bottom: 10px">Cron fleet — jobs needing attention</div>
-          <div class="list" id="cron"></div>
-        </div>
-        <div>
-          <div class="stamp" style="margin-bottom: 10px">Token spend this month</div>
-          <div class="list" id="tokens"></div>
-        </div>
-      </div>
-
-      <h2>Fleet <span class="hint" id="fleet-hint"></span></h2>
-      <div class="devices" id="fleet"></div>
-
-      <h2>Listening</h2>
-      <div class="listen" id="listen"><span class="empty">loading…</span></div>
-
-      <h2>Journal <span class="hint"><a class="inline" href="/journal">all entries →</a></span></h2>
-      <div class="list" id="journal"></div>
-
-      <footer>
-        <span id="foot-stamp"></span>
-        <span>
-          <a href="/dashboard/hermes">hermes audit</a> ·
-          <a href="/projects">projects</a> ·
-          <a href="/gear">gear</a> ·
-          <a href="/journal">journal</a>
-        </span>
-      </footer>
-    </div>
-
+    <div id="app" class="app"></div>
+    <noscript>This dashboard renders from JSON and needs JavaScript.</noscript>
     <script>
-      // ── helpers ────────────────────────────────────────────────────────────
-      // Everything from the data file goes in through textContent, never
-      // innerHTML: assignment titles are parsed out of notification email.
-      const $ = (id) => document.getElementById(id);
-      const el = (tag, cls, txt) => {
-        const n = document.createElement(tag);
-        if (cls) n.className = cls;
-        if (txt != null) n.textContent = String(txt);
-        return n;
-      };
-      const clear = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
-      const when = (iso) => {
-        if (!iso) return "";
-        const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
-        if (isNaN(d)) return iso;
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-        const days = Math.round((d.setHours(0, 0, 0, 0) - today.getTime()) / 86400000);
-        const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-        if (days === 0) return label + " · today";
-        if (days === 1) return label + " · tomorrow";
-        if (days < 0) return label + " · " + Math.abs(days) + "d late";
-        if (days <= 7) return label + " · in " + days + "d";
-        return label;
-      };
-      const row = (title, meta, right, tagCls, tagTxt) => {
-        const r = el("div", "row");
-        const l = el("div");
-        const t = el("div", "t");
-        t.appendChild(el("span", null, title));
-        if (tagTxt) {
-          t.appendChild(document.createTextNode(" "));
-          t.appendChild(el("span", "tag " + (tagCls || ""), tagTxt));
+window.__DASHBOARD_SEED__={
+  "schema": "ayumad.dashboard/2",
+  "generated_at": "2026-11-18T09:07:09-08:00",
+  "generated_on": "Mac mini (design fixture \u2014 derived from live data 2026-11-18, sanitized)",
+  "_fixture": true,
+  "overall": {
+    "status": "warn",
+    "score": 74,
+    "alerts": 3
+  },
+  "surfaces": {
+    "mac_mini": {
+      "host": {
+        "name": "mac-mini",
+        "os": "macOS 27.2.1",
+        "arch": "arm64",
+        "uptime_s": 86500,
+        "load": [
+          1.8,
+          1.6,
+          1.5
+        ]
+      },
+      "hermes": {
+        "version": "0.23.2",
+        "released": "2026.9.24",
+        "commits_behind": 0,
+        "cron": {
+          "total": 38,
+          "enabled": 28,
+          "no_agent": 22,
+          "failing": 0
+        },
+        "skills": 218,
+        "mcp_servers": 1,
+        "memory": {
+          "working": 1844,
+          "episodic": 720
+        },
+        "disk": {
+          "used_pct": 93,
+          "free_gb": 14.1,
+          "size_gb": 228
+        },
+        "tokens": {
+          "month_calls": 8454,
+          "month_in_m": 26.0,
+          "month_out_m": 5.7,
+          "month_cache_m": 1096.4,
+          "week_calls": 1558,
+          "week_out_m": 1.02,
+          "cache_share": 98,
+          "top_models": [
+            {
+              "model": "deepseek-v4.1-flash",
+              "calls": 7527
+            },
+            {
+              "model": "deepseek/deepseek-v4.1-flash-1017",
+              "calls": 499
+            },
+            {
+              "model": "mimo-v2.6-flash",
+              "calls": 370
+            },
+            {
+              "model": "abl-4b:latest",
+              "calls": 48
+            }
+          ]
         }
-        l.appendChild(t);
-        if (meta) l.appendChild(el("div", "m", meta));
-        r.appendChild(l);
-        r.appendChild(el("div", "r", right || ""));
-        return r;
-      };
-      const stat = (value, label, cls) => {
-        const c = el("div", "stat" + (cls ? " " + cls : ""));
-        c.appendChild(el("div", "v", value));
-        c.appendChild(el("div", "k", label));
-        return c;
-      };
-      const heroCell = (value, label, cls) => {
-        const c = el("div", "cell" + (cls ? " " + cls : ""));
-        c.appendChild(el("div", "v", value));
-        c.appendChild(el("div", "k", label));
-        return c;
-      };
-      const empty = (node, msg) => { clear(node); node.appendChild(el("div", "empty", msg)); };
-
-      // ── dashboard data ─────────────────────────────────────────────────────
-      // Two sources, and the header always says which one answered — a stale
-      // snapshot must never masquerade as live.
-      //   live     = Tailscale Serve on the Mac mini. Rolling: rebuilt every few
-      //              minutes, zero git pushes, zero deploys. Only resolves for
-      //              devices on Ayush's tailnet.
-      //   snapshot = the authenticated dashboard snapshot, deployed a few times a
-      //              day. Available to signed-in users off the tailnet.
-      const LIVE_URL = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json";
-
-      const fromLive = () => new Promise((resolve, reject) => {
-        const ac = new AbortController();
-        const timer = setTimeout(() => { ac.abort(); reject(new Error("live timeout")); }, 1500);
-        fetch(LIVE_URL, { cache: "no-store", signal: ac.signal })
-          .then((r) => { clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-          .then((d) => resolve({ d, source: "live" }))
-          .catch((e) => { clearTimeout(timer); reject(e); });
-      });
-
-      const fromSnapshot = () => fetch("/dashboard/data", { cache: "no-store" })
-        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-        .then((d) => ({ d, source: "snapshot" }));
-
-      fromLive()
-        .catch(() => fromSnapshot())
-        .then(({ d, source }) => render(d, source))
-        .catch((e) => {
-          $("stamp").textContent = "data unavailable";
-          for (const id of ["hero", "school", "tasks", "projects", "agent-stats", "cron", "tokens", "fleet", "journal"]) {
-            empty($(id), "Live data has not been generated yet — run the dashboard builder.");
+      },
+      "launchd": [
+        {
+          "label": "com.ayumad.whisper-server",
+          "pid": 2605,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.hermes-dashboard-live",
+          "pid": 2617,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.hermes.serve",
+          "pid": 19401,
+          "last_exit": -15,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.crosswalk-hook",
+          "pid": 2619,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.linkdigest",
+          "pid": 2601,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "ai.hermes.gateway",
+          "pid": 9498,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "me.ayumad.knowledge-sync",
+          "pid": null,
+          "last_exit": 245,
+          "running": false
+        },
+        {
+          "label": "com.ayumad.retropie-save-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.ayumad.goodreads-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.hermes-webui-agent-update-watcher",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        },
+        {
+          "label": "com.hermes-webui",
+          "pid": 25144,
+          "last_exit": 0,
+          "running": true
+        },
+        {
+          "label": "com.ayumad.mal-sync",
+          "pid": null,
+          "last_exit": 0,
+          "running": false
+        }
+      ],
+      "ports": [
+        {
+          "port": 8790,
+          "name": "dashboard-live",
+          "state": "listen"
+        },
+        {
+          "port": 9119,
+          "name": "fleet gateway",
+          "state": "listen"
+        },
+        {
+          "port": 8789,
+          "name": "photon sidecar",
+          "state": "listen"
+        },
+        {
+          "port": 8917,
+          "name": "whisper",
+          "state": "listen"
+        },
+        {
+          "port": 11434,
+          "name": "ollama",
+          "state": "listen"
+        },
+        {
+          "port": 9222,
+          "name": "chrome cdp",
+          "state": "listen"
+        }
+      ],
+      "cron": {
+        "jobs": [
+          {
+            "id": "60134fe73894",
+            "name": "Weekly Kanban Dispatch",
+            "schedule": "0 9 * * 1",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-16T09:00:49.898783-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-23T09:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "695b848575bc",
+            "name": "Mnemosyne Sleep",
+            "schedule": "0 3 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:47.520582-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T03:00:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "48bc5d525dbd",
+            "name": "Daily Cleanup + Loose Ends",
+            "schedule": "0 23 * * *",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-18T08:25:47.986292-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T23:00:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "7fe2464640b9",
+            "name": "Daily Brief",
+            "schedule": "30 9 * * *",
+            "kind": "cron",
+            "model": "deepseek-v4.1-flash",
+            "no_agent": false,
+            "last_run": "2026-11-17T09:30:50.111891-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:30:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "6fa3764819a7",
+            "name": "School Drive Organizer",
+            "schedule": "35 8 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:35:45.505367-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T08:35:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "bd99b6879473",
+            "name": "Homelab Health Monitor",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:58:33.308988-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:28:33.308988-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "1c9a6aa43570",
+            "name": "Media pipeline (Letterboxd + ready pings)",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:53.020620-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:53.020620-08:00",
+            "runs_7d": 33,
+            "ok_7d": 33,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "ff9a9059a4a5",
+            "name": "Vercel Deployment Prune",
+            "schedule": "every sunday at 7am",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T07:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "5dd077175540",
+            "name": "Remux downgrade driver",
+            "schedule": "every 10m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:58:33.379190-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:08:33.379190-08:00",
+            "runs_7d": 186,
+            "ok_7d": 186,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "e812c8e2b3c1",
+            "name": "Handshake Inbox Alerts",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:53.169905-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:53.169905-08:00",
+            "runs_7d": 34,
+            "ok_7d": 34,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "1fc6a22282a7",
+            "name": "Hermes Mobile iOS Beta Watch",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:56:33.439285-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:26:33.439285-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "a5266e86bb08",
+            "name": "Crosswalk to/hermes poll",
+            "schedule": "every 5m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:33.368479-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:07:33.368479-08:00",
+            "runs_7d": 340,
+            "ok_7d": 340,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "067021ccab13",
+            "name": "Crosswalk price history",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:57:33.393606-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:27:33.393606-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "825d18bfa9a8",
+            "name": "Crosswalk purchase ledger",
+            "schedule": "every 60m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:55.025301-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:25:55.025301-08:00",
+            "runs_7d": 34,
+            "ok_7d": 34,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "be4fc383a3ea",
+            "name": "Board tasks -> vault queue",
+            "schedule": "every 30m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:56:33.515063-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:26:33.515063-08:00",
+            "runs_7d": 66,
+            "ok_7d": 66,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "95215067c706",
+            "name": "Repo Issue Watch",
+            "schedule": "0 8 * * 1",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-16T08:00:49.878462-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-23T08:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "d94ebbb183c0",
+            "name": "Handshake Inbox Digest",
+            "schedule": "15 9 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-17T09:15:50.212247-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T09:15:22.647004-08:00",
+            "runs_7d": 2,
+            "ok_7d": 2,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "37a8372fcd8d",
+            "name": "Estate Sale Watch",
+            "schedule": "30 8 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:30:44.976577-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-19T08:30:22.647004-08:00",
+            "runs_7d": 3,
+            "ok_7d": 3,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "201cb24bf6fe",
+            "name": "Google Drive Backup",
+            "schedule": "every sunday 4:30am",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T04:30:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "bcd595b1c346",
+            "name": "AI-Engineering wiki review",
+            "schedule": "0 9 1 * *",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": null,
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "4d51d310a981",
+            "name": "Chrome CDP Prune",
+            "schedule": "every 120m",
+            "kind": "interval",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T08:25:55.236446-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T10:25:55.236446-08:00",
+            "runs_7d": 17,
+            "ok_7d": 17,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "cc913a85dc53",
+            "name": "Hermes Auto-Update",
+            "schedule": "0 4 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-19T04:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "9d3d8543715e",
+            "name": "Hermes Update Report",
+            "schedule": "0 */3 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:33.391941-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T12:00:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "66c29ee97f8c",
+            "name": "Hermes Update Digest",
+            "schedule": "5 9 * * 0",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-22T09:05:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "6204bf2dc36c",
+            "name": "Model Watch \u2014 OpenCode Go + labs",
+            "schedule": "0 10 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-18T10:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "49c933f8af24",
+            "name": "Model Radar \u2014 weekly",
+            "schedule": "15 10 * * 1",
+            "kind": "cron",
+            "model": "default",
+            "no_agent": false,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-23T10:15:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
+          },
+          {
+            "id": "b9559e7ece77",
+            "name": "Model Policy Apply",
+            "schedule": "5 10 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": "2026-11-18T09:02:13.533604-08:00",
+            "last_status": "completed",
+            "next_run": "2026-11-18T10:05:22.647004-08:00",
+            "runs_7d": 1,
+            "ok_7d": 1,
+            "success_7d": 100,
+            "enabled": true
+          },
+          {
+            "id": "64f882899854",
+            "name": "Hermes Maintenance Report",
+            "schedule": "0 */6 * * *",
+            "kind": "cron",
+            "model": "script",
+            "no_agent": true,
+            "last_run": null,
+            "last_status": null,
+            "next_run": "2026-11-18T12:00:22.647004-08:00",
+            "runs_7d": 0,
+            "ok_7d": 0,
+            "success_7d": null,
+            "enabled": true
           }
-          $("stamp").appendChild(el("span", "err", " (" + e.message + ")"));
-        });
-
-      function render(d, source) {
-        const now = d.now || {};
-        const h = d.hermes || {};
-
-        // header
-        const g = d.generated_at ? new Date(d.generated_at) : null;
-        $("stamp").textContent = g
-          ? "generated " + g.toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " · " + (d.generated_on || "")
-          : "unknown";
-        if (source) {
-          const s = el("span", "src" + (source === "live" ? " live" : ""),
-            source === "live" ? "● live" : "● snapshot");
-          s.title = source === "live"
-            ? "Served live from the Mac mini over Tailscale — rebuilt every few minutes, no git pushes"
-            : "Committed snapshot — the live endpoint wasn't reachable (not on the tailnet, or the Mac mini is offline)";
-          $("stamp").appendChild(s);
-        }
-        $("foot-stamp").textContent = g ? "updated " + g.toLocaleString() : "";
-
-        // hero
-        const hero = $("hero");
-        clear(hero);
-        hero.appendChild(heroCell(now.active_projects ?? "—", "active projects"));
-        hero.appendChild(heroCell(now.open_tasks ?? "—", "open tasks"));
-        hero.appendChild(heroCell(now.assignments_upcoming ?? "—", "assignments due this week", ""));
-        hero.appendChild(heroCell((now.devices_online ?? 0) + "/" + (now.devices_total ?? 0), "devices online"));
-        hero.appendChild(heroCell(now.jobs_failing ?? "—", "jobs needing attention", now.jobs_failing ? "warn" : "good"));
-        if (h.disk) hero.appendChild(heroCell(h.disk.used_pct + "%", "disk used · " + h.disk.free_gb + " GB free", h.disk.used_pct >= 90 ? "alert" : "warn"));
-
-        // school — forward-looking only. Past items are never shown and never
-        // labelled overdue: submission state lives in Canvas, which we can't read.
-        const sc = d.school || {};
-        const win = sc.window_days || 7;
-        $("school-hint").textContent = (sc.upcoming || 0) + " due in the next " + win + " days"
-          + (sc.later ? " · " + sc.later + " further out" : "");
-        const school = $("school");
-        clear(school);
-        const next = (sc.next || []);
-        if (!next.length) empty(school, "Nothing due in the next " + win + " days.");
-        for (const a of next) {
-          school.appendChild(row(a.title, null, when(a.due), "course", a.course || "—"));
-        }
-
-        // tasks
-        const tk = d.tasks || {};
-        $("tasks-hint").textContent = (tk.open || 0) + " across " + (tk.lists || 0) + " lists" + (tk.overdue ? " · " + tk.overdue + " overdue" : "");
-        const tasks = $("tasks");
-        clear(tasks);
-        if (!(tk.items || []).length) empty(tasks, "No open tasks.");
-        for (const t of (tk.items || [])) {
-          tasks.appendChild(row(t.title, null, when(t.due), t.overdue ? "late" : "tag", t.list || ""));
-        }
-
-        // projects
-        const projects = $("projects");
-        clear(projects);
-        const show = (d.projects || []).filter((p) => p.status !== "reference");
-        const active = show.filter((p) => p.status === "active" || p.status === "in-progress");
-        const planned = show.filter((p) => p.status !== "active" && p.status !== "in-progress");
-        for (const p of active.concat(planned)) {
-          const c = el("div", "card");
-          const ct = el("div", "ct");
-          ct.appendChild(el("span", null, p.name));
-          ct.appendChild(el("span", "tag", p.status));
-          c.appendChild(ct);
-          if (p.summary) c.appendChild(el("div", "cd", p.summary));
-          if (p.updated) c.appendChild(el("div", "cu", "updated " + p.updated + (p.folder ? " · " + p.folder : "")));
-          projects.appendChild(c);
-        }
-
-        // agent stats
-        const stats = $("agent-stats");
-        clear(stats);
-        stats.appendChild(stat("v" + (h.version || "?"), "version"));
-        stats.appendChild(stat(h.commits_behind != null ? h.commits_behind.toLocaleString() : "—", "commits behind"));
-        stats.appendChild(stat((h.cron_active ?? "—") + "/" + (h.cron_total ?? "—"), "cron live"));
-        stats.appendChild(stat(h.cron_no_agent ?? "—", "zero-token jobs"));
-        stats.appendChild(stat(h.skills ?? "—", "skills"));
-        stats.appendChild(stat(h.memory ? h.memory.working + h.memory.episodic : "—", "memory records"));
-
-        // cron
-        const cron = $("cron");
-        clear(cron);
-        const failing = h.cron_failing || [];
-        if (!failing.length) empty(cron, "Every job is healthy.");
-        for (const j of failing) {
-          const pct = Math.round((j.ok / j.runs) * 100);
-          const r = el("div", "row");
-          const left = el("div");
-          left.appendChild(el("div", "t", j.name));
-          const bar = el("div", "bar");
-          const fill = el("i", pct < 50 ? "warn" : "");
-          fill.style.width = pct + "%";
-          bar.appendChild(fill);
-          left.appendChild(bar);
-          r.appendChild(left);
-          r.appendChild(el("div", "r", j.ok + "/" + j.runs + " ok"));
-          cron.appendChild(r);
-        }
-
-        // tokens
-        const tokens = $("tokens");
-        clear(tokens);
-        const t = h.tokens;
-        if (!t) empty(tokens, "No usage data.");
-        else {
-          tokens.appendChild(row("Calls this month", null, t.month_calls.toLocaleString()));
-          tokens.appendChild(row("Input tokens", null, t.month_in_m + " M"));
-          tokens.appendChild(row("Output tokens", null, t.month_out_m + " M"));
-          tokens.appendChild(row("Cache reads", null, t.month_cache_m + " M"));
-          tokens.appendChild(row("Cache share of all tokens", "what makes the flat rate work", t.cache_share + "%"));
-          tokens.appendChild(row("Last 7 days", null, t.week_calls.toLocaleString() + " calls"));
-          for (const m of (t.top_models || [])) tokens.appendChild(row(m.model, null, m.calls.toLocaleString()));
-        }
-
-        // fleet
-        const fleet = d.fleet || [];
-        $("fleet-hint").textContent = (now.devices_online || 0) + " of " + fleet.length + " online";
-        const fnode = $("fleet");
-        clear(fnode);
-        for (const dev of fleet) {
-          const chip = el("span", "dev " + (dev.online ? "on" : "off"));
-          chip.appendChild(el("span", null, dev.name || "?"));
-          if (dev.os) chip.appendChild(el("span", null, "  " + dev.os));
-          fnode.appendChild(chip);
-        }
-
-        // journal
-        const journal = $("journal");
-        clear(journal);
-        for (const j of (d.journal || [])) {
-          const r = el("div", "row");
-          const left = el("div");
-          left.appendChild(el("div", "t", j.summary || ""));
-          r.appendChild(left);
-          r.appendChild(el("div", "r", j.date || ""));
-          journal.appendChild(r);
-        }
-        if (!(d.journal || []).length) empty(journal, "No entries yet.");
-
-        // any degraded sources
-        const errs = Object.entries(d.errors || {});
-        if (errs.length) {
-          const c = el("div", "err");
-          c.textContent = "degraded sources: " + errs.map(([k, v]) => k + " (" + v + ")").join("; ");
-          $("foot-stamp").appendChild(c);
-        }
+        ]
       }
-
-      // ── listening (existing endpoints) ─────────────────────────────────────
-      (async () => {
-        const box = $("listen");
-        try {
-          const [pb, taste] = await Promise.all([
-            fetch("/api/spotify").then((r) => r.json()).catch(() => null),
-            fetch("/api/taste").then((r) => r.json()).catch(() => null),
-          ]);
-          clear(box);
-          if (pb && pb.title) {
-            if (pb.artwork) {
-              const img = el("img");
-              img.src = pb.artwork; img.alt = ""; img.loading = "lazy";
-              box.appendChild(img);
-            }
-            const meta = el("div");
-            meta.appendChild(el("div", "lt", pb.title));
-            meta.appendChild(el("div", "la", (pb.artists || []).join(", ") + (pb.album ? " — " + pb.album : "")));
-            const state = pb.isPlaying ? "playing now" : (pb.playedAt ? "last played " + pb.playedAt : "recently");
-            meta.appendChild(el("div", "cu", state));
-            if (pb.url) {
-              const a = el("a", "inline", "open in Spotify →");
-              a.href = pb.url; a.target = "_blank"; a.rel = "noopener noreferrer";
-              meta.appendChild(a);
-            }
-            box.appendChild(meta);
-          } else {
-            box.appendChild(el("span", "empty", "Spotify is not reporting anything right now."));
+    },
+    "p520": {
+      "host": {
+        "name": "pve-host",
+        "proxmox": "9.2.20",
+        "kernel": "7.0.14-17-pve",
+        "uptime_s": 74200,
+        "load": [
+          "0.52",
+          "0.44",
+          "0.40"
+        ],
+        "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
+        "cores": 12,
+        "mem_used_gb": 24.3,
+        "mem_total_gb": 62,
+        "failed_units": 0,
+        "failed_list": [],
+        "pve_ui": "https://100.64.0.1:8006",
+        "nics": [
+          {
+            "name": "nic0",
+            "speed_mbps": 2500,
+            "state": "up"
+          },
+          {
+            "name": "nic1",
+            "speed_mbps": 0,
+            "state": "down"
           }
-          if (taste && (taste.topArtists || []).length) {
-            const wrap = el("div");
-            wrap.appendChild(el("div", "cu", "top artists this window"));
-            const parts = taste.topArtists.slice(0, 6).map((a) => a.name + " (" + a.plays + ")");
-            wrap.appendChild(el("div", "la", parts.join(" · ")));
-            if ((taste.genres || []).length) {
-              wrap.appendChild(el("div", "cu", "genres: " + taste.genres.slice(0, 5).map((x) => x.genre).join(", ")));
-            }
-            box.appendChild(wrap);
-          }
-        } catch (e) {
-          empty(box, "Listening data unavailable.");
+        ]
+      },
+      "pools": [
+        {
+          "name": "ssd",
+          "size_gb": 3563.52,
+          "alloc_gb": 195.0,
+          "free_gb": 3368.96,
+          "health": "ONLINE",
+          "used_pct": 5,
+          "scan": "scrub repaired 0B in 00:12:59 with 0 errors on Sun Nov  8 00:37:00 2026",
+          "never_scrubbed": false,
+          "errors": "No known data errors",
+          "vdev": [
+            "ssd",
+            "ONLINE",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "name": "tank",
+          "size_gb": 18636.8,
+          "alloc_gb": 15462.4,
+          "free_gb": 3184.64,
+          "health": "ONLINE",
+          "used_pct": 83,
+          "scan": "scrub repaired 0B in 4 days 09:22:50 with 0 errors on Thu Nov 12 09:46:52 2026",
+          "never_scrubbed": false,
+          "errors": "No known data errors",
+          "vdev": [
+            "tank",
+            "ONLINE",
+            "0",
+            "0"
+          ]
         }
+      ],
+      "guests": [
+        {
+          "id": 100,
+          "name": "lxc-nas",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 101,
+          "name": "lxc-dns",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 102,
+          "name": "lxc-game",
+          "type": "lxc",
+          "status": "running",
+          "mem_mb": null,
+          "disk_gb": null
+        },
+        {
+          "id": 200,
+          "name": "vm-compute",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 24576,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 201,
+          "name": "vm-school",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 202,
+          "name": "vm-docker",
+          "type": "qemu",
+          "status": "running",
+          "mem_mb": 16384,
+          "disk_gb": 4516.0
+        },
+        {
+          "id": 210,
+          "name": "iso-lab",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 8192,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 211,
+          "name": "nixos",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 212,
+          "name": "cachyos",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 213,
+          "name": "omarchy-test",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        },
+        {
+          "id": 214,
+          "name": "archlinux",
+          "type": "qemu",
+          "status": "stopped",
+          "mem_mb": 6144,
+          "disk_gb": 0.0
+        }
+      ],
+      "backups": {
+        "newest": "vzdump-qemu-214-2026_11_18-03_47_58.vma.zst",
+        "newest_age_h": 5.2,
+        "count": 115,
+        "destination": "/pool/backups (on the P520 itself)",
+        "offsite": false,
+        "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
+      },
+      "snapshots": 335,
+      "scrub_timers": 2,
+      "smart": [
+        {
+          "pool": "ssd",
+          "device": "nvme0n1",
+          "health": "PASSED",
+          "temp_c": null,
+          "hours": null
+        },
+        {
+          "pool": "tank",
+          "device": "sda",
+          "health": "PASSED",
+          "temp_c": 34,
+          "hours": 41022
+        },
+        {
+          "pool": "tank",
+          "device": "sdb",
+          "health": "PASSED",
+          "temp_c": 35,
+          "hours": 41022
+        },
+        {
+          "pool": "tank",
+          "device": "sdc",
+          "health": "PASSED",
+          "temp_c": null,
+          "hours": null
+        }
+      ],
+      "gpu": {
+        "owner": "kiosk",
+        "kiosk_vm": 203,
+        "ai_vm": 200,
+        "mode_changed_at": "2026-11-18T03:07:09-08:00",
+        "switch_failures": 0
+      }
+    },
+    "docker_vm": {
+      "counts": {
+        "defined": 49,
+        "running": 34,
+        "stopped": 15,
+        "expected_running_stopped": 14,
+        "unhealthy": 0
+      },
+      "containers": [
+        {
+          "name": "cleanuparr",
+          "image": "ghcr.io/cleanuparr/cleanuparr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "dozzle",
+          "image": "amir20/dozzle:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "kamiyomu",
+          "image": "marcoscostadev/kamiyomu:1.4.0",
+          "state": "exited",
+          "status": "Exited (0) 5 days ago",
+          "stack": "media",
+          "expected_running": false,
+          "health": null
+        },
+        {
+          "name": "suwayomi",
+          "image": "ghcr.io/suwayomi/suwayomi-server:stable",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "open-webui",
+          "image": "ghcr.io/open-webui/open-webui:main",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ai",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "qbittorrent-personal",
+          "image": "lscr.io/linuxserver/qbittorrent:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "gluetun-personal",
+          "image": "qmcgaw/gluetun:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "media",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "calibre-web",
+          "image": "lscr.io/linuxserver/calibre-web:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "actual",
+          "image": "actualbudget/actual-server:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "finance",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "qbittorrent",
+          "image": "lscr.io/linuxserver/qbittorrent:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "gluetun",
+          "image": "qmcgaw/gluetun:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "media",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "jellyfin",
+          "image": "jellyfin/jellyfin:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "healthchecks",
+          "image": "healthchecks/healthchecks:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ops",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "miniflux",
+          "image": "miniflux/miniflux:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "reading",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "stirling-pdf",
+          "image": "stirlingtools/stirling-pdf:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "tools",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "healthchecks-db",
+          "image": "postgres:16-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "miniflux-db",
+          "image": "postgres:16-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "reading",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "caddy",
+          "image": "caddy:2-alpine",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "qdrant",
+          "image": "qdrant/qdrant:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ai",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "diun",
+          "image": "crazymax/diun:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "bazarr",
+          "image": "lscr.io/linuxserver/bazarr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "vaultwarden",
+          "image": "vaultwarden/server:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "security",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "ntfy",
+          "image": "binwiederhier/ntfy:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "ollama-cpu",
+          "image": "ollama/ollama:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ai",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "flaresolverr",
+          "image": "ghcr.io/flaresolverr/flaresolverr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "node-red",
+          "image": "nodered/node-red:latest",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "home",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "mosquitto",
+          "image": "eclipse-mosquitto:2",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "home",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "homeassistant",
+          "image": "ghcr.io/home-assistant/home-assistant:stable",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "home",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "forgejo",
+          "image": "codeberg.org/forgejo/forgejo:10",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "code-server",
+          "image": "lscr.io/linuxserver/code-server:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "dev",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "immich_server",
+          "image": "ghcr.io/immich-app/immich-server:release",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "photos",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "immich_postgres",
+          "image": "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "photos",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "immich_machine_learning",
+          "image": "ghcr.io/immich-app/immich-machine-learning:release",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "photos",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "immich_redis",
+          "image": "valkey/valkey:8-bookworm",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "photos",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless",
+          "image": "ghcr.io/paperless-ngx/paperless-ngx:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless-db",
+          "image": "postgres:16",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "paperless-broker",
+          "image": "redis:7",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "docs",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "syncthing",
+          "image": "lscr.io/linuxserver/syncthing:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "scrutiny-influxdb",
+          "image": "influxdb:2",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "uptime-kuma",
+          "image": "louislam/uptime-kuma:1",
+          "state": "running",
+          "status": "Up 21 hours (healthy)",
+          "stack": "ops",
+          "expected_running": true,
+          "health": "healthy"
+        },
+        {
+          "name": "scrutiny",
+          "image": "ghcr.io/analogj/scrutiny:master-web",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "prometheus",
+          "image": "prom/prometheus:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "grafana",
+          "image": "grafana/grafana-oss:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "ops",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "jellyseerr",
+          "image": "fallenbagel/jellyseerr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "navidrome",
+          "image": "deluan/navidrome:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "audiobookshelf",
+          "image": "ghcr.io/advplyr/audiobookshelf:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "radarr",
+          "image": "lscr.io/linuxserver/radarr:latest",
+          "state": "exited",
+          "status": "Exited (255) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "prowlarr",
+          "image": "lscr.io/linuxserver/prowlarr:latest",
+          "state": "running",
+          "status": "Up 21 hours",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        },
+        {
+          "name": "sonarr",
+          "image": "lscr.io/linuxserver/sonarr:latest",
+          "state": "exited",
+          "status": "Exited (128) 21 hours ago",
+          "stack": "media",
+          "expected_running": true,
+          "health": null
+        }
+      ],
+      "stacks": [
+        "ai",
+        "dev",
+        "docs",
+        "finance",
+        "home",
+        "media",
+        "ops",
+        "photos",
+        "reading",
+        "security",
+        "tools"
+      ]
+    },
+    "network": {
+      "tailscale": [
+        {
+          "name": "mac-mini",
+          "os": "macOS",
+          "online": true,
+          "self": true,
+          "ip": "100.64.0.2"
+        },
+        {
+          "name": "peer-handheld",
+          "os": "android",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.3"
+        },
+        {
+          "name": "peer-g14",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.4"
+        },
+        {
+          "name": "peer-laptop2",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.5"
+        },
+        {
+          "name": "peer-phone",
+          "os": "android",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.6"
+        },
+        {
+          "name": "peer-thinkpad",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.7"
+        },
+        {
+          "name": "peer-mac",
+          "os": "macOS",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.8"
+        },
+        {
+          "name": "peer-laptop",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.9"
+        },
+        {
+          "name": "vm-school",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.10"
+        },
+        {
+          "name": "peer-tablet",
+          "os": "iOS",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.11"
+        },
+        {
+          "name": "peer-framework",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.12"
+        },
+        {
+          "name": "peer-desktop",
+          "os": "windows",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.13"
+        },
+        {
+          "name": "pve-host",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.1"
+        },
+        {
+          "name": "peer-g14b",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.14"
+        },
+        {
+          "name": "peer-xps",
+          "os": "windows",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.15"
+        },
+        {
+          "name": "tank",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.16"
+        },
+        {
+          "name": "localhost",
+          "os": "iOS",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.17"
+        },
+        {
+          "name": "peer-xps2",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.18"
+        },
+        {
+          "name": "ayumad",
+          "os": "linux",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.19"
+        },
+        {
+          "name": "vm-docker",
+          "os": "linux",
+          "online": true,
+          "self": false,
+          "ip": "100.64.0.20"
+        },
+        {
+          "name": "peer-air",
+          "os": "macOS",
+          "online": false,
+          "self": false,
+          "ip": "100.64.0.21"
+        }
+      ],
+      "online": 7,
+      "lxc-dns": {
+        "status": "ok",
+        "queries_24h": null,
+        "blocked_pct": null
+      },
+      "routes": [
+        {
+          "host": "jellyfin.lan",
+          "target": "192.0.2.1:8096",
+          "state": "down"
+        },
+        {
+          "host": "jellyseerr.lan",
+          "target": "192.0.2.1:5055",
+          "state": "down"
+        },
+        {
+          "host": "sonarr.lan",
+          "target": "192.0.2.1:8989",
+          "state": "down"
+        },
+        {
+          "host": "radarr.lan",
+          "target": "192.0.2.1:7878",
+          "state": "down"
+        },
+        {
+          "host": "prowlarr.lan",
+          "target": "192.0.2.1:9696",
+          "state": "down"
+        },
+        {
+          "host": "qbittorrent.lan",
+          "target": "192.0.2.1:8090",
+          "state": "down"
+        },
+        {
+          "host": "bazarr.lan",
+          "target": "192.0.2.1:6767",
+          "state": "down"
+        },
+        {
+          "host": "cleanuparr.lan",
+          "target": "192.0.2.1:11011",
+          "state": "down"
+        }
+      ]
+    },
+    "media": {
+      "queues": {
+        "radarr": 0,
+        "sonarr": 0
+      },
+      "downloads": {
+        "active": 0,
+        "rate_mbps": 0.0
+      },
+      "jellyfin": {
+        "sessions": 0
+      },
+      "remux": {
+        "queued": 4,
+        "completed_today": 0
+      },
+      "letterboxd": {
+        "last_sync": "2026-11-17T22:00:00-08:00",
+        "stale": true
+      }
+    },
+    "personal": {
+      "tasks": {
+        "open": 49,
+        "overdue": 0,
+        "items": [
+          {
+            "title": "Vibe-code website for looking through my layout \u2014 anatomy skill + Claude plan",
+            "list": "Tech",
+            "due": "2026-11-23",
+            "overdue": false
+          },
+          {
+            "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "New Nintendo 3DS XL: finish setup (modded)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "PS Vita: finish setup (modded)",
+            "list": "Hardware",
+            "due": "2026-11-30",
+            "overdue": false
+          },
+          {
+            "title": "SJSU Bursar: submit IRS W-9S (SSN/ITIN) to the Registrar by Dec 15",
+            "list": "School",
+            "due": "2026-12-15",
+            "overdue": false
+          }
+        ]
+      },
+      "school": {
+        "upcoming": 6,
+        "courses": [
+          "CMPE-131",
+          "CMPE-142",
+          "CMPE-148"
+        ],
+        "next": [
+          {
+            "title": "Chapter 1&2&3 Quiz- Requires Respondus LockDown Browser",
+            "course": "CMPE-131",
+            "due": "2026-11-19",
+            "when": "2026-11-19T17:15:00+00:00"
+          },
+          {
+            "title": "(In-class Activity) Weekly Sprint Meeting - Final Demo Prep",
+            "course": "CMPE-131",
+            "due": "2026-11-19",
+            "when": "2026-11-19T18:30:00+00:00"
+          },
+          {
+            "title": "PART FIVE: Chapters 11&12 Quiz- Requires Respondus LockDown Browser",
+            "course": "CMPE-142",
+            "due": "2026-11-19",
+            "when": "2026-11-19T18:50:00+00:00"
+          }
+        ]
+      },
+      "applications": {
+        "week": 0,
+        "total": 42,
+        "cap": 20
+      },
+      "journal": {
+        "entries_7d": 5,
+        "last": "2026-11-18"
+      },
+      "listening": {
+        "active_projects": 21,
+        "planned_projects": 7,
+        "open_tasks": 49,
+        "overdue_tasks": 0,
+        "assignments_upcoming": 6,
+        "devices_online": 7,
+        "devices_total": 21,
+        "jobs_failing": 0,
+        "jobs_total": 28,
+        "homelab_reachable": true,
+        "services_up": 21,
+        "services_total": 33,
+        "guests_running": 4,
+        "containers_running": 34,
+        "pools_online": 2,
+        "pools_total": 2,
+        "homelab_issues_bad": 0,
+        "homelab_issues_warn": 2
+      }
+    },
+    "external": {
+      "vercel": {
+        "last_deploy": "2026-11-18T08:26:00-08:00",
+        "status": "ready"
+      },
+      "github": {
+        "open_issues": 3,
+        "last_run": "success"
+      },
+      "backups": {
+        "proxmox_age_h": 5.2,
+        "google_drive": "2026-11-15T04:30:00-08:00"
+      }
+    }
+  },
+  "timeline": [
+    {
+      "ts": "2026-11-18T09:02:00-08:00",
+      "level": "info",
+      "source": "cron",
+      "text": "Daily Cleanup completed in 3.5s"
+    },
+    {
+      "ts": "2026-11-18T08:26:00-08:00",
+      "level": "info",
+      "source": "deploy",
+      "text": "ayumad.me deployed \u00b7 dashboard snapshot refreshed"
+    },
+    {
+      "ts": "2026-11-18T08:25:00-08:00",
+      "level": "info",
+      "source": "mnemosyne",
+      "text": "Sleep consolidated 1844 working memories"
+    },
+    {
+      "ts": "2026-11-18T03:47:00-08:00",
+      "level": "info",
+      "source": "backup",
+      "text": "vzdump qemu-214 completed (5.2h ago)"
+    },
+    {
+      "ts": "2026-11-17T22:00:00-08:00",
+      "level": "warn",
+      "source": "media",
+      "text": "Letterboxd sync ran with Prowlarr unreachable"
+    },
+    {
+      "ts": "2026-11-17T12:21:00-08:00",
+      "level": "bad",
+      "source": "docker",
+      "text": "14 expected containers stopped after vm-docker reboot"
+    },
+    {
+      "ts": "2026-11-17T12:20:00-08:00",
+      "level": "info",
+      "source": "proxmox",
+      "text": "vm-docker started"
+    },
+    {
+      "ts": "2026-11-16T09:00:00-08:00",
+      "level": "info",
+      "source": "cron",
+      "text": "Weekly Kanban Dispatch completed"
+    },
+    {
+      "ts": "2026-11-15T04:30:00-08:00",
+      "level": "info",
+      "source": "backup",
+      "text": "Google Drive vault backup uploaded"
+    },
+    {
+      "ts": "2026-11-14T23:30:00-08:00",
+      "level": "warn",
+      "source": "disk",
+      "text": "macOS data volume crossed 90%"
+    }
+  ],
+  "meta": {
+    "build_ms": 8420,
+    "sources": [
+      {
+        "name": "hermes",
+        "ok": true,
+        "ms": 210,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "mac",
+        "ok": true,
+        "ms": 90,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "proxmox",
+        "ok": true,
+        "ms": 1830,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "docker_stack",
+        "ok": true,
+        "ms": 2210,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "prometheus",
+        "ok": true,
+        "ms": 310,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "network",
+        "ok": true,
+        "ms": 1940,
+        "stale": true,
+        "age_s": 420,
+        "error": null
+      },
+      {
+        "name": "media",
+        "ok": true,
+        "ms": 860,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "personal",
+        "ok": true,
+        "ms": 120,
+        "stale": false,
+        "age_s": 0
+      },
+      {
+        "name": "external",
+        "ok": false,
+        "ms": 30000,
+        "stale": true,
+        "age_s": 3600,
+        "error": "timeout"
+      }
+    ],
+    "kiosk": {
+      "last_seen": "2026-11-18T09:06:44-08:00",
+      "stale_s": 25
+    }
+  }
+};
+/* components.js — pure string renderers for the BRIEF §6 component set.
+   Everything renders only from the payload; missing values become —. */
+
+const esc = (v) =>
+  String(v ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+
+/* Safe getters: g(obj, "a.b.c") → value or undefined. */
+const g = (obj, path) =>
+  path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), obj);
+
+/* A number, or null (never NaN). */
+const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+
+/* Payload value → display string; missing → em dash, never invented. */
+const val = (v) => (v === undefined || v === null || v === "" ? "—" : esc(v));
+
+const valNum = (v, suffix = "") => {
+  const n = num(v);
+  return n === null ? '<span class="dash">—</span>' : esc(n.toLocaleString("en-US") + suffix);
+};
+
+/* ---- Pill ---- */
+function pill(kind, text) {
+  return `<span class="pill ${kind}" data-pill>${text}<i></i></span>`;
+}
+
+/* ---- Cell ---- */
+function cell({ label, value = "—", sub = "", state = "", small = "" }) {
+  const v = value === "—" ? '<span class="dash">—</span>' : value;
+  return `<div class="cell">
+    <span class="cell-l">${esc(label)}</span>
+    <span class="cell-v ${state}">${v}${small ? `<small> ${esc(small)}</small>` : ""}</span>
+    ${sub ? `<span class="cell-s">${sub}</span>` : ""}
+  </div>`;
+}
+
+/* ---- dot ---- */
+function dot(state, extra = "") {
+  return `<i class="dot ${state} ${extra}" aria-hidden="true"></i>`;
+}
+
+/* ---- Spark: 7-day success strip — 6×14 vertical bars, 2px gap, cyan.
+   Aggregate rate only (no per-day breakdown in the payload, never invented);
+   a 0-run window renders 2px muted stubs. ---- */
+function sparkBars(success, runs) {
+  const s = num(success);
+  if (s === null) {
+    return `<span class="spark nodata" title="no runs recorded in 7d">${"<i></i>".repeat(7)}</span>`;
+  }
+  if (num(runs) === 0) {
+    return `<span class="spark" title="no runs in the last 7 days">${'<i class="z"></i>'.repeat(7)}</span>`;
+  }
+  const cls = s >= 100 ? "f" : s >= 50 ? "p" : "x";
+  return `<span class="spark" title="7-day success ${s}%">${`<i class="${cls}"></i>`.repeat(7)}</span>`;
+}
+
+/* ---- Bar: 6px, cyan / amber > 80 / red > 90 ---- */
+function bar({ label, pct, value = "", right = "" }) {
+  const p = num(pct);
+  const cls = p === null ? "" : p > 90 ? "bad" : p > 80 ? "warn" : "";
+  const vcls = p === null ? "" : p > 90 ? "bad" : p > 80 ? "warn" : "";
+  return `<div class="barwrap">
+    <div class="barline"><span class="bl">${esc(label)}</span><span class="bv ${vcls}">${valNum(p, "%")} ${value}</span></div>
+    <div class="bar" role="img" aria-label="${esc(label)} ${p === null ? "no data" : p + " percent"}">
+      <i class="${cls}" style="width:${p === null ? 0 : Math.max(0, Math.min(100, p))}%"></i>
+    </div>
+    ${right ? `<div class="nodata" style="margin-top:4px">${right}</div>` : ""}
+  </div>`;
+}
+
+/* ---- Row ---- */
+function row({ title, meta = "", right = "", fail = false, disabled = false, drawer = "" }) {
+  return `<${disabled ? "div" : "button"} class="row${fail ? " fail" : ""}" ${disabled ? 'aria-disabled="true"' : `data-drawer="${esc(drawer)}"`}>
+    <span class="rmain">
+      <span class="rtitle">${title}</span>
+      ${meta ? `<span class="rmeta">${meta}</span>` : ""}
+    </span>
+    ${right ? `<span class="rright">${right}</span>` : ""}
+  </${disabled ? "div" : "button"}>`;
+}
+
+/* ---- Matrix chip ---- */
+function chip({ name, state = "off", right = "", cls = "" }) {
+  return `<span class="chip ${cls}" title="${esc(name)}">
+    ${dot(state)}
+    <span class="cn">${esc(name)}</span>
+    ${right ? `<span class="cs">${right}</span>` : ""}
+  </span>`;
+}
+
+/* ---- Timeline row ---- */
+function tlRow(ev, idx) {
+  const lvl = ["info", "warn", "bad"].includes(ev.level) ? ev.level : "info";
+  return `<button class="tl-row" data-drawer="tl:${idx}">
+    <i class="node ${lvl}" aria-hidden="true"></i>
+    <span class="t">${esc(fmtTimeShort(ev.ts))}</span>
+    <span class="tag">${val(ev.source)}</span>
+    <span class="x">${val(ev.text)}</span>
+  </button>`;
+}
+
+/* ---- Banner ---- */
+function banner(level, text, right = "") {
+  return `<div class="banner ${level}" role="status">
+    <i aria-hidden="true"></i><span>${esc(text)}</span>${right ? `<span style="margin-left:auto">${esc(right)}</span>` : ""}
+  </div>`;
+}
+
+/* ---- state panels: pending / empty / error ---- */
+function pendingPanel(what, note = "") {
+  return `<div class="state pending" data-state="pending"><span class="t">${esc(what)}</span>${note ? `<span>${esc(note)}</span>` : ""}</div>`;
+}
+
+function emptyPanel(what) {
+  return `<div class="state" data-state="empty"><span class="t">${esc(what)}</span><span>nothing in the current window</span></div>`;
+}
+
+function errorPanel(what, err) {
+  return `<div class="state error" data-state="error"><span class="t">${esc(what)}</span><span>${esc(err || "source error")}</span></div>`;
+}
+
+/* ---- freshness badge for a section hint ---- */
+function sourceBadge(name, sources) {
+  const s = (sources || []).find((x) => x && x.name === name);
+  if (!s) return `<span class="nodata">${esc(name)} · no source info</span>`;
+  if (s.pending) return `<span class="nodata">${esc(name)} · collector pending</span>`;
+  if (s.ok === false) return `<span class="nodata" style="color:var(--bad)">${esc(name)} · error ${esc(s.error || "failed")}</span>`;
+  const age = num(s.age_s);
+  if (s.stale) return `<span class="nodata" style="color:var(--warn)">${esc(name)} · stale ${age === null ? "" : fmtDur(age)}</span>`;
+  const ms = num(s.ms);
+  return `<span class="nodata">${esc(name)} · ${ms === null ? "ok" : ms + "ms"}</span>`;
+}
+
+/* ---- time formatting (all display, no invention) ---- */
+const DAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const MON_NAMES = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+function parseTs(ts) {
+  if (!ts) return null;
+  const d = new Date(ts);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function fmtClock(d) {
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function fmtTimeShort(ts) {
+  const d = parseTs(ts);
+  if (!d) return "—";
+  const now = new Date();
+  const t = fmtClock(d);
+  if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()) {
+    return t;
+  }
+  return `${t} · ${MON_NAMES[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function fmtWallDate(d) {
+  return `${DAY_NAMES[d.getDay()]} ${String(d.getDate()).padStart(2, "0")} ${MON_NAMES[d.getMonth()]}`;
+}
+
+function fmtDur(seconds) {
+  const s = num(seconds);
+  if (s === null) return "—";
+  if (s < 60) return `${Math.max(0, Math.round(s))}s`;
+  if (s < 3600) return `${Math.round(s / 60)}m`;
+  if (s < 86400) return `${Math.round(s / 3600)}h`;
+  return `${Math.round(s / 86400)}d`;
+}
+
+function fmtUptime(seconds) {
+  const s = num(seconds);
+  if (s === null) return "—";
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+function fmtNextRun(ts) {
+  const d = parseTs(ts);
+  if (!d) return "—";
+  return `${fmtClock(d)} ${MON_NAMES[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/* "updated 12s ago" style, from the payload's generated_at */
+function fmtAge(ts, now = Date.now()) {
+  const d = parseTs(ts);
+  if (!d) return "—";
+  const age = Math.max(0, (now - d.getTime()) / 1000);
+  return fmtDur(age);
+}
+
+/* kb table for the drawer: raw key/value dump of an object */
+function kvTable(obj) {
+  const rows = Object.entries(obj || {})
+    .map(([k, v]) => {
+      const raw = v === null ? "null" : v === undefined ? "undefined" : typeof v === "object" ? JSON.stringify(v) : String(v);
+      return `<tr><td class="k">${esc(k)}</td><td class="v">${esc(raw)}</td></tr>`;
+    })
+    .join("");
+  return rows ? `<table class="kv">${rows}</table>` : `<div class="nodata">no raw fields</div>`;
+}
+
+/* app.js — boot, data loading (live v1 → adapted v2, seed fallback),
+   web layout, drawer, filters, keyboard, URL state, theme.
+   Wall mode lives in wall.js; boot() is invoked at the end of wall.js. */
+
+const AUTH_DATA = "/dashboard/data"; // authenticated v1 snapshot (Vercel function)
+const WALL_DATA = "./dashboard.json"; // wall server payload (docker-vm)
+const SEED = window.__DASHBOARD_SEED__; // fixture inlined by the build
+const LIVE_TIMEOUT_MS = 5000;
+const REFRESH_MS = 60000;
+
+const SECTIONS = [
+  ["automations", "Automations"],
+  ["homelab", "Homelab"],
+  ["services", "Services"],
+  ["media", "Media"],
+  ["personal", "Personal"],
+  ["timeline", "Timeline"],
+];
+
+const S = {
+  source: "sync", // "sync" | "snapshot" | "live" | "seed" | "stale" | "error"
+  data: null, // v2-shaped payload (seed fixture or adapted live v1)
+  params: {},
+  theme: "dark",
+  filters: { automations: "all", tlLevel: "all", tlSource: "all" },
+  mem: {}, // per-render arrays for the drawer
+  lastLiveOk: null,
+  wall: false,
+};
+
+/* ---------- URL params ---------- */
+
+function parseParams() {
+  const q = new URLSearchParams(location.search);
+  S.params = {
+    mode: q.get("mode") || "",
+    section: q.get("section") || "",
+    filter: q.get("filter") || "all",
+    level: q.get("level") || "all",
+    src: q.get("src") || "all",
+    theme: q.get("theme") || "",
+    page: q.get("page"),
+    fixture: q.has("fixture") || q.has("specimen"),
+    dwell: q.get("dwell"),
+  };
+  if (["all", "failing", "script", "agent"].includes(S.params.filter)) S.filters.automations = S.params.filter;
+  if (["all", "info", "warn", "bad"].includes(S.params.level)) S.filters.tlLevel = S.params.level;
+  if (S.params.src !== "all") S.filters.tlSource = S.params.src;
+  if (S.params.theme === "light" || S.params.theme === "dark") S.theme = S.params.theme;
+}
+
+function setParam(key, value) {
+  const q = new URLSearchParams(location.search);
+  if (value === null || value === "" || value === "all") q.delete(key);
+  else q.set(key, value);
+  const s = q.toString();
+  history.replaceState(null, "", `${location.pathname}${s ? "?" + s : ""}${location.hash}`);
+}
+
+/* ---------- v1 → v2 adapter (live payload, honest mapping only) ---------- */
+
+function adaptV1(v1) {
+  if (!v1 || typeof v1 !== "object") throw new Error("bad payload");
+  const h = v1.hermes || {};
+  const hl = v1.homelab || {};
+  const now = v1.now || {};
+
+  const hermes = {
+    version: h.version ?? null,
+    released: h.released ?? null,
+    commits_behind: h.commits_behind ?? null,
+    cron: {
+      total: h.cron_total ?? null,
+      enabled: h.cron_active ?? null,
+      no_agent: h.cron_no_agent ?? null,
+      failing: h.cron_failing_count ?? 0,
+    },
+    skills: h.skills ?? null,
+    mcp_servers: h.mcp_servers ?? null,
+    memory: h.memory ?? null,
+    disk: h.disk ?? null,
+    tokens: h.tokens ?? null,
+  };
+
+  const p520 = {
+    host: hl.host ?? null,
+    guests: (hl.guests || []).map((x) => ({
+      id: x.id ?? null,
+      name: x.name ?? null,
+      type: x.type ?? null,
+      status: x.status ?? null,
+      mem_mb: x.mem_mb ?? null,
+      disk_gb: x.disk_gb ?? null,
+    })),
+    pools: hl.pools ?? null,
+    backups: hl.backups ?? null,
+    snapshots: hl.snapshots ?? null,
+    scrub_timers: hl.scrub_timers ?? null,
+    gpu: hl.gpu
+      ? { owner: hl.gpu.owner_name ?? null, owner_vm: hl.gpu.owner_vm ?? null, mode: hl.gpu.mode ?? null }
+      : null,
+    reachable: hl.reachable ?? null,
+  };
+
+  const journalIn7 = (v1.journal || []).filter((e) => {
+    if (!e || !e.date || !v1.generated_at) return false;
+    const d = new Date(e.date);
+    const gen = new Date(v1.generated_at);
+    return !Number.isNaN(d) && !Number.isNaN(gen) && (gen - d) / 86400000 <= 7;
+  });
+
+  const personal = {
+    tasks: v1.tasks
+      ? { open: v1.tasks.open ?? null, overdue: v1.tasks.overdue ?? null, items: v1.tasks.items || [] }
+      : null,
+    school: v1.school
+      ? { upcoming: v1.school.upcoming ?? null, courses: v1.school.courses || [], next: v1.school.next || [] }
+      : null,
+    journal: {
+      entries_7d: journalIn7.length,
+      last: v1.journal && v1.journal[0] ? v1.journal[0].date : null,
+    },
+    listening: now,
+  };
+
+  const fleet = (v1.fleet || []).map((p) => ({
+    name: p.name ?? null,
+    os: p.os ?? null,
+    online: p.online ?? null,
+    self: p.self ?? false,
+  }));
+  const online = fleet.filter((p) => p.online).length;
+
+  const alerts = (num(now.jobs_failing) || 0) + (num(now.homelab_issues_bad) || 0) + (num(now.overdue_tasks) || 0);
+  const overall = {
+    status:
+      (num(now.jobs_failing) || 0) > 0 || (num(now.homelab_issues_bad) || 0) > 0
+        ? "bad"
+        : alerts > 0 || (num(now.homelab_issues_warn) || 0) > 0
+          ? "warn"
+          : "ok",
+    alerts,
+    derived: true,
+  };
+
+  const STACKS = (n) => {
+    if (/^(sonarr|radarr|prowlarr|bazarr|cleanuparr|jellyseerr|jellyfin|qbittorrent|flaresolverr|gluetun|navidrome|audiobookshelf|suwayomi|calibre-web|kamiyomu|syncthing)/.test(n)) return "media";
+    if (/^immich/.test(n)) return "photos";
+    if (/^paperless/.test(n)) return "docs";
+    if (["forgejo", "code-server", "caddy", "dozzle", "diun"].includes(n)) return "dev";
+    if (["homeassistant", "node-red", "mosquitto"].includes(n)) return "home";
+    if (["uptime-kuma", "grafana", "prometheus", "scrutiny", "scrutiny-influxdb", "healthchecks", "healthchecks-db", "ntfy", "dashboard-wall"].includes(n)) return "ops";
+    if (/^miniflux/.test(n)) return "reading";
+    if (n === "actual") return "finance";
+    if (n === "vaultwarden") return "security";
+    if (["open-webui", "qdrant", "ollama-cpu"].includes(n)) return "ai";
+    if (n === "stirling-pdf") return "tools";
+    return "other";
+  };
+
+  const containerNames = hl.containers?.names || [];
+  const dockerVm = hl.containers
+    ? {
+        counts: {
+          defined: hl.containers.total ?? null,
+          running: hl.containers.running ?? null,
+          stopped:
+            hl.containers.total !== null && hl.containers.total !== undefined &&
+            hl.containers.running !== null && hl.containers.running !== undefined
+              ? hl.containers.total - hl.containers.running
+              : null,
+          expected_running_stopped: null,
+          unhealthy: (hl.containers.unhealthy || []).length,
+        },
+        containers: containerNames.map((n) => ({ name: n, state: "running", stack: STACKS(n), health: null })),
+        stacks: [...new Set(containerNames.map(STACKS))].sort(),
+      }
+    : { pending: true };
+
+  const media = hl.media
+    ? {
+        queues: { radarr: hl.media.radarr_queue ?? null, sonarr: hl.media.sonarr_queue ?? null },
+        downloads: {
+          active: hl.media.torrents_active ?? null,
+          rate_mbps: hl.media.down_mbps ?? null,
+          torrents: hl.media.torrents ?? null,
+        },
+        jellyfin: {
+          movies: hl.media.jellyfin_movies ?? null,
+          series: hl.media.jellyfin_series ?? null,
+          episodes: hl.media.jellyfin_episodes ?? null,
+        },
+        mount: hl.media.mount_free ?? null,
+      }
+    : { pending: true };
+
+  const sources = [
+    { name: "hermes", ok: true, ms: null, stale: false, age_s: 0 },
+    { name: "proxmox", ok: hl.reachable !== false, ms: null, stale: hl.reachable === false, age_s: 0, error: hl.reachable === false ? "unreachable" : null },
+    { name: "network", ok: true, ms: null, stale: false, age_s: 0 },
+    { name: "personal", ok: true, ms: null, stale: false, age_s: 0 },
+    { name: "docker_stack", ok: !!hl.containers, ms: null, stale: false, age_s: 0, pending: !hl.containers },
+    { name: "media", ok: !!hl.media, ms: null, stale: false, age_s: 0, pending: !hl.media },
+    { name: "external", ok: false, ms: null, stale: false, age_s: 0, pending: true, error: "v1 payload has no external surface" },
+  ];
+
+  return {
+    schema: "ayumad.dashboard/2",
+    adapted_from: "v1",
+    generated_at: v1.generated_at ?? null,
+    generated_on: v1.generated_on ?? null,
+    overall,
+    surfaces: {
+      mac_mini: {
+        hermes,
+        cron: { pending: true }, // per-job cron rows are not present in v1
+      },
+      p520,
+      docker_vm: dockerVm,
+      network: { tailscale: fleet, online, pihole: null, routes: null },
+      media,
+      personal,
+      external: { pending: true },
+    },
+    timeline: timelineFromV1(v1),
+    meta: { sources, kiosk: null, build_ms: null },
+  };
+}
+
+function timelineFromV1(v1) {
+  const ev = [];
+  for (const f of (g(v1, "hermes.cron_failing") || [])) {
+    if (!f) continue;
+    ev.push({
+      ts: f.last ?? null,
+      level: num(f.ok) === 0 ? "bad" : "warn",
+      source: "cron",
+      text: `${val(f.name)} — ${num(f.ok) ?? "?"}/${num(f.runs) ?? "?"} ok in window`,
+    });
+  }
+  if (g(v1, "homelab.reachable") === false) {
+    ev.push({ ts: g(v1, "homelab.checked_at") ?? null, level: "bad", source: "proxmox", text: "P520 unreachable at last check" });
+  } else if (g(v1, "homelab.checked_at")) {
+    ev.push({ ts: g(v1, "homelab.checked_at"), level: "info", source: "proxmox", text: "homelab check ok" });
+  }
+  const nb = g(v1, "homelab.backups");
+  if (nb && nb.newest) {
+    ev.push({ ts: g(v1, "homelab.checked_at") ?? null, level: "info", source: "backup", text: `newest vzdump ${val(nb.newest_age_h)}h old` });
+  }
+  for (const j of (v1.journal || []).slice(0, 5)) {
+    if (!j || !j.date) continue;
+    ev.push({ ts: j.date, level: "info", source: "journal", text: String(j.summary || "").slice(0, 120) || "journal entry" });
+  }
+  for (const [k, v] of Object.entries(v1.errors || {})) {
+    ev.push({ ts: v1.generated_at ?? null, level: "bad", source: k, text: String(v).slice(0, 120) });
+  }
+  return ev
+    .filter((e) => e.ts)
+    .sort((a, b) => new Date(b.ts) - new Date(a.ts))
+    .slice(0, 50);
+}
+
+/* ---------- data loading ---------- */
+/* Load order: authenticated snapshot (/dashboard/data) → wall live payload
+   (./dashboard.json) → embedded seed (wall / file:// / ?fixture=1).
+   Behind auth, a failed snapshot is an error state, never fake seed data. */
+
+async function fetchJson(url, timeoutMs) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { cache: "no-store", credentials: "same-origin", signal: ctrl.signal });
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function useSeed() {
+  S.data = SEED;
+  S.source = "seed";
+}
+
+async function loadData() {
+  if (S.params.fixture) {
+    useSeed();
+    render();
+    return;
+  }
+  try {
+    S.data = adaptV1(await fetchJson(AUTH_DATA, LIVE_TIMEOUT_MS));
+    S.source = "snapshot";
+    S.lastLiveOk = new Date();
+  } catch (err) {
+    if (err.status === 401 && location.protocol !== "file:") {
+      location.href = "/dashboard/login?next=" + encodeURIComponent(location.pathname);
+      return;
+    }
+    try {
+      S.data = adaptV1(await fetchJson(WALL_DATA, LIVE_TIMEOUT_MS));
+      S.source = "live";
+      S.lastLiveOk = new Date();
+    } catch {
+      if (S.data) {
+        S.source = "stale"; // keep last good data, say so
+      } else if (location.protocol === "file:" || S.wall) {
+        useSeed();
+      } else {
+        S.data = null;
+        S.source = "error";
+      }
+    }
+  }
+  render();
+}
+
+/* ---------- shared header bits ---------- */
+
+function pillFor(source) {
+  if (source === "live") return pill("live", "LIVE · partial");
+  if (source === "snapshot") return pill("snapshot", "SNAPSHOT · partial");
+  if (source === "seed") return pill("seed", "SEED");
+  if (source === "stale") return pill("stale", "STALE");
+  if (source === "error") return pill("stale", "NO DATA");
+  return pill("seed", "SYNC");
+}
+
+/* Global mode banner (web): honest about what is on screen.
+   SEED → design fixture note · SNAPSHOT → snapshot + age · LIVE → nothing. */
+function modeBannerHtml() {
+  if (!S.data) return S.source === "error" ? banner("warn", "DATA UNAVAILABLE · snapshot could not be read") : "";
+  if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
+  if (S.source === "snapshot") {
+    return banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`);
+  }
+  return "";
+}
+
+/* ---------- web render ---------- */
+
+const app = document.getElementById("app");
+
+function render() {
+  document.documentElement.dataset.theme = S.theme;
+  if (S.wall) {
+    if (typeof wallRender === "function") wallRender();
+    return;
+  }
+  renderWeb();
+}
+
+function statusWord(st) {
+  return st === "ok" ? "OK" : st === "warn" ? "ATTENTION" : st === "bad" ? "FAULT" : "—";
+}
+
+function heroCells() {
+  if (!S.data) {
+    return ["status", "alerts", "jobs", "containers", "devices", "tasks"]
+      .map((l) => cell({ label: l, value: '<span class="dash">…</span>', sub: "syncing" }))
+      .join("");
+  }
+  const o = g(S.data, "overall") || {};
+  const L = g(S.data, "surfaces.personal.listening") || {};
+  const cron = g(S.data, "surfaces.mac_mini.hermes.cron") || {};
+  const failing = num(cron.failing);
+  const cts = g(S.data, "surfaces.docker_vm.counts") || null;
+  const alerts = num(o.alerts);
+  const st = o.status === undefined ? null : o.status;
+  const score = num(o.score);
+  return [
+    cell({
+      label: "status",
+      value: statusWord(st),
+      state: st === "ok" ? "good" : st === "warn" ? "warn" : st === "bad" ? "bad" : "",
+      sub: score === null ? "derived from live counts" : `score ${score}`,
+    }),
+    cell({ label: "alerts", value: valNum(alerts), state: alerts > 0 ? "warn" : "good", sub: '<span class="slist">failing</span><span class="slist">bad issues</span><span class="slist">overdue</span>' }),
+    cell({
+      label: "jobs enabled",
+      value: valNum(cron.enabled),
+      small: `/ ${num(cron.total) ?? "—"}`,
+      state: failing > 0 ? "bad" : "good",
+      sub: failing === null ? "" : failing > 0 ? `${failing} failing` : "none failing",
+    }),
+    cell({
+      label: "containers running",
+      value: valNum(L.containers_running),
+      small: cts ? `/ ${num(cts.defined) ?? "—"}` : "",
+      sub: cts ? "docker-vm" : "total pending v2 collector",
+    }),
+    cell({ label: "devices online", value: valNum(L.devices_online), small: `/ ${num(L.devices_total) ?? "—"}`, state: "good", sub: "tailnet" }),
+    cell({ label: "open tasks", value: valNum(L.open_tasks), sub: num(L.overdue_tasks) > 0 ? `${L.overdue_tasks} overdue` : "none overdue" }),
+  ].join("");
+}
+
+function headerHtml() {
+  const tabs = SECTIONS.map(
+    ([id, label]) =>
+      `<button class="tab" data-tab="${id}" aria-current="${S.params.section === id ? "true" : "false"}">${label}</button>`,
+  ).join("");
+  const src = S.data ? S.source : "sync";
+  return `<header class="hdr">
+    <div class="hdr-in">
+      <a class="brand" href="/">AYUMAD<span class="sl">/</span><span class="dim">OPS</span></a>
+      <nav class="tabs" aria-label="Sections">${tabs}</nav>
+      <div class="hdr-r" aria-live="polite">
+        ${pillFor(src)}
+        <span class="updated">updated <span class="js-age">${S.data ? fmtAge(g(S.data, "generated_at")) : "—"}</span> ago</span>
+        <button class="theme-btn" data-theme-toggle>${S.theme === "dark" ? "LIGHT" : "DARK"}</button>
+      </div>
+    </div>
+  </header>`;
+}
+
+const SECTION_LABELS = {
+  automations: "Automations",
+  homelab: "Homelab",
+  services: "Services",
+  media: "Media",
+  personal: "Personal",
+  external: "External",
+  timeline: "Timeline",
+};
+
+function secHead(id, hint) {
+  return `<section class="sec" id="sec-${id}">
+    <div class="sec-head">
+      <h2>${SECTION_LABELS[id] ?? id}</h2>
+      <div class="sec-hint">${hint}</div>
+    </div>
+    <div class="sec-body">`;
+}
+
+function sectionAutomations() {
+  const src = (g(S.data, "meta.sources") || []);
+  const h = g(S.data, "surfaces.mac_mini.hermes") || {};
+  const cron = h.cron || {};
+  const jobs = g(S.data, "surfaces.mac_mini.cron.jobs");
+  const pend = g(S.data, "surfaces.mac_mini.cron.pending");
+  const launchd = g(S.data, "surfaces.mac_mini.launchd");
+  const ports = g(S.data, "surfaces.mac_mini.ports");
+  const hint = `${sourceBadge("hermes", src)}${pend ? `<span class="nodata">· rows pending v2</span>` : jobs ? `<span class="nodata">· ${jobs.length} jobs</span>` : ""}`;
+
+  let cells = "";
+  if (S.data) {
+    const disk = h.disk || {};
+    const mem = h.memory || {};
+    cells = `<div class="cells">
+      ${cell({ label: "cron total", value: valNum(cron.total) })}
+      ${cell({ label: "failing", value: valNum(cron.failing), state: num(cron.failing) > 0 ? "bad" : "good" })}
+      ${cell({ label: "no agent", value: valNum(cron.no_agent) })}
+      ${cell({ label: "skills", value: valNum(h.skills) })}
+      ${cell({ label: "memory", value: valNum(mem.working), small: `+ ${num(mem.episodic) ?? "—"} episodic` })}
+      ${cell({ label: "disk used", value: valNum(disk.used_pct, "%"), small: `${num(disk.free_gb) ?? "—"} / ${num(disk.size_gb) ?? "—"} GB free`, state: num(disk.used_pct) > 90 ? "bad" : num(disk.used_pct) > 80 ? "warn" : "good" })}
+      ${cell({ label: "hermes", value: val(h.version), sub: `released ${val(h.released)} · ${valNum(h.commits_behind)} behind` })}
+    </div>`;
+  } else {
+    cells = pendingPanel("automations summary", "connecting to live source");
+  }
+
+  let jobsHtml;
+  if (pend) {
+    jobsHtml = pendingPanel("per-job cron rows");
+  } else if (!jobs || !jobs.length) {
+    jobsHtml = emptyPanel("cron jobs");
+  } else {
+    const list = S.mem.jobs = jobs.slice();
+    const flt = S.filters.automations;
+    const isFail = (j) =>
+      (num(j.success_7d) !== null && j.success_7d < 100) || (j.last_status && j.last_status !== "completed");
+    list.sort((a, b) => (isFail(b) ? 1 : 0) - (isFail(a) ? 1 : 0) ||
+      (parseTs(a.next_run)?.getTime() ?? Infinity) - (parseTs(b.next_run)?.getTime() ?? Infinity));
+    const shown = list
+      .map((j, i) => ({ j, i }))
+      .filter(({ j }) =>
+        flt === "failing" ? isFail(j) : flt === "agent" ? j.no_agent === false : flt === "script" ? j.no_agent === true : true,
+      );
+    const chips = [
+      ["all", "all"], ["failing", `failing ${list.filter(isFail).length}`], ["script", "script"], ["agent", "agent"],
+    ]
+      .map(([k, l]) => `<button class="fchip" data-filter="${k}" aria-pressed="${flt === k ? "true" : "false"}">${l}</button>`)
+      .join("");
+    const rows = shown
+      .map(({ j, i }) => {
+        const stCls = isFail(j) ? "bad" : j.last_status === "completed" ? "good" : "";
+        const stTxt = isFail(j) ? "failing" : j.last_status === "completed" ? "ok" : j.last_status ? esc(j.last_status) : "no runs";
+        return row({
+          title: esc(j.name ?? "—"),
+          meta: `${esc(j.schedule ?? "—")} <span class="tag">${esc(j.kind ?? "—")}</span>${j.model ? `<span class="tag">${esc(j.model)}</span>` : ""} ${sparkBars(j.success_7d, j.runs_7d)} <span class="m">${valNum(j.ok_7d)}/${valNum(j.runs_7d)} · 7d</span>`,
+          right: `${fmtNextRun(j.next_run)}<span class="st ${stCls}">${stTxt}</span>`,
+          fail: isFail(j),
+          drawer: `job:${i}`,
+        });
+      })
+      .join("");
+    jobsHtml = `<div class="chips" role="group" aria-label="Job filters">${chips}</div>
+      <div class="trows">${rows || emptyPanel("jobs matching filter")}</div>`;
+  }
+
+  let launchdHtml = "";
+  if (launchd && launchd.length) {
+    const rows = launchd
+      .map((l) =>
+        row({
+          title: esc(l.label),
+          meta: `pid <span class="m">${l.pid === null || l.pid === undefined ? "—" : esc(l.pid)}</span> · last exit <span class="${num(l.last_exit) !== 0 && l.last_exit !== null ? "bad" : "m"}">${valNum(l.last_exit)}</span>`,
+          right: `<span class="st ${l.running ? "good" : "off"}">${l.running ? "running" : "stopped"}</span>`,
+          disabled: true,
+        }),
+      )
+      .join("");
+    launchdHtml = `<div class="subhead">launchd · mac mini</div><div class="trows">${rows}</div>`;
+  } else if (S.data) {
+    launchdHtml = `<div class="subhead">launchd · mac mini</div><div class="state" data-state="empty"><span class="t">launchd services</span><span>not in v1 payload · pending v2</span></div>`;
+  }
+
+  let portsHtml = "";
+  if (ports && ports.length) {
+    portsHtml = `<div class="subhead">ports · mac mini</div><div class="matrix">${ports
+      .map((p) => chip({ name: `${esc(p.name)} · ${valNum(p.port)}`, state: p.state === "listen" ? "good" : "off", right: esc(p.state ?? "—") }))
+      .join("")}</div>`;
+  } else if (S.data) {
+    portsHtml = `<div class="subhead">ports · mac mini</div><div class="state" data-state="empty"><span class="t">listening ports</span><span>not in v1 payload · pending v2</span></div>`;
+  }
+
+  return `${secHead("automations", hint)}${cells}
+    <div class="subhead">cron jobs · hermes</div>${jobsHtml}
+    <div class="subgrid cols-2">
+      <div>${launchdHtml}</div>
+      <div>${portsHtml}</div>
+    </div>
+  </section>`;
+}
+
+function sectionHomelab() {
+  const src = (g(S.data, "meta.sources") || []);
+  const p = g(S.data, "surfaces.p520") || {};
+  if (p.pending) {
+    return `${secHead("homelab", sourceBadge("proxmox", src))}${pendingPanel("P520 host · pools · guests")}</section>`;
+  }
+  const hint = sourceBadge("proxmox", src);
+  const host = p.host || {};
+  const guests = p.guests || [];
+  const pools = p.pools || [];
+  const memPct = num(host.mem_used_gb) !== null && num(host.mem_total_gb) ? Math.round((host.mem_used_gb / host.mem_total_gb) * 100) : null;
+  const net = g(S.data, "surfaces.network") || {};
+
+  const gauges = `<div class="cells">
+    ${cell({ label: "p520 uptime", value: fmtUptime(host.uptime_s), sub: `${val(host.name)} · proxmox ${val(host.proxmox)}` })}
+    ${cell({ label: "load 1 / 5 / 15", value: (host.load || []).map((x) => (num(x) === null ? "—" : esc(x))).join(" "), sub: `${valNum(host.cores)} cores · ${esc(String(host.cpu ?? "—")).slice(0, 28)}` })}
+    ${cell({ label: "memory", value: valNum(host.mem_used_gb, " GB"), small: `/ ${valNum(host.mem_total_gb, " GB")}`, state: memPct === null ? "" : memPct > 90 ? "bad" : memPct > 80 ? "warn" : "good", sub: `failed units ${valNum(host.failed_units)}` })}
+    ${cell({ label: "guests running", value: valNum(guests.filter((x) => x.status === "running").length), small: `/ ${guests.length || "—"}`, sub: `gpu ${val(g(p, "gpu.owner") ?? "—")}` })}
+  </div>`;
+
+  const poolBars = pools
+    .map((pl) => {
+      const pctv = num(pl.used_pct);
+      const vcls = pctv === null ? "" : pctv > 90 ? "bad" : pctv > 80 ? "warn" : "";
+      return `<div>${bar({ label: `pool · ${esc(pl.name ?? "—")}`, pct: pl.used_pct, value: `· ${valNum(pl.alloc_gb, " / " + (num(pl.size_gb) === null ? "—" : pl.size_gb.toLocaleString("en-US")) + " GB")}` })}
+      <div class="nodata" style="margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
+        <span>${dot(pl.health === "ONLINE" ? "good" : "bad")} ${val(pl.health)}</span>
+        <span>${val(pl.errors)}</span>
+      </div>
+      <div class="nodata" style="margin-top:3px">${esc(String(pl.scan ?? "—")).slice(0, 110)}</div></div>`;
+    })
+    .join("");
+
+  const guestChips = guests.length
+    ? `<div class="matrix">${guests
+        .map((gu) =>
+          chip({
+            name: `${valNum(gu.id)} ${esc(gu.name ?? "—")}`,
+            state: gu.status === "running" ? "good" : "off",
+            right: `${esc(gu.type ?? "—")} · ${gu.mem_mb === null || gu.mem_mb === undefined ? "—" : Math.round(gu.mem_mb / 1024) + "g"}`,
+          }),
+        )
+        .join("")}</div>`
+    : emptyPanel("guests");
+
+  const smart = p.smart || [];
+  const smartHtml = smart.length
+    ? `<div class="trows">${smart
+        .map((d) =>
+          row({
+            title: `${esc(d.device ?? "—")} <span class="tag">${esc(d.pool ?? "—")}</span>`,
+            meta: `${val(d.health)} · ${d.hours === null || d.hours === undefined ? "—" : esc(d.hours.toLocaleString("en-US")) + "h"}`,
+            right: `${d.temp_c === null || d.temp_c === undefined ? "—" : esc(d.temp_c) + "°C"}<span class="st good">smart</span>`,
+            disabled: true,
+          }),
+        )
+        .join("")}</div>`
+    : `<div class="state" data-state="empty"><span class="t">SMART</span><span>no data in payload</span></div>`;
+
+  const backups = p.backups || {};
+  const strip = `<div class="cells">
+    ${cell({ label: "backups", value: valNum(backups.count), sub: `newest ${valNum(backups.newest_age_h, "h")} ago · ${esc(String(backups.destination ?? "—")).slice(0, 40)}` })}
+    ${cell({ label: "snapshots", value: valNum(p.snapshots) })}
+    ${cell({ label: "scrub timers", value: valNum(p.scrub_timers), state: "good" })}
+    ${cell({ label: "offsite", value: backups.offsite === false ? "no" : backups.offsite === true ? "yes" : "—", state: backups.offsite === false ? "warn" : "", sub: esc(String(backups.schedule ?? "—")).slice(0, 44) })}
+  </div>
+  <div class="subhead">SMART</div>${smartHtml}`;
+
+  const peers = net.tailscale || [];
+  const online = num(net.online) ?? peers.filter((x) => x.online).length;
+  const netHtml = `<div class="subhead">fleet · tailnet ${sourceBadge("network", src)}</div>
+    <div class="cells">
+      ${cell({ label: "devices online", value: valNum(online), small: `/ ${peers.length || "—"}`, state: "good", sub: "pihole " + val(g(net, "pihole.status") ?? "—") })}
+      ${cell({ label: "pihole queries 24h", value: valNum(g(net, "pihole.queries_24h")), sub: `blocked ${valNum(g(net, "pihole.blocked_pct"), "%")}` })}
+    </div>
+    ${peers.length ? `<div class="matrix">${peers
+      .map((pr) =>
+        chip({
+          name: esc(pr.name ?? "—"),
+          state: pr.online ? "good" : "off",
+          right: `${pr.self ? "self · " : ""}${esc(pr.os ?? "—")}`,
+        }),
+      )
+      .join("")}</div>` : emptyPanel("tailnet peers")}
+    ${(net.routes || []).length ? `<div class="subhead">lan routes</div><div class="matrix">${net.routes
+      .map((r) => chip({ name: esc(r.host ?? "—"), state: r.state === "up" ? "good" : "warn", right: esc(r.state ?? "—") }))
+      .join("")}</div>` : ""}`;
+
+  return `${secHead("homelab", hint + `<span class="nodata">· ${guests.length} guests</span>`)}
+    ${gauges}
+    <div class="subhead">zfs pools</div><div class="subgrid cols-2">${poolBars || emptyPanel("pools")}</div>
+    <div class="subhead">guests</div>${guestChips}
+    <div class="subhead">protection</div>${strip}
+    ${netHtml}
+  </section>`;
+}
+
+function containerChip(c) {
+  const stopped = c.state !== "running";
+  if (stopped && c.expected_running === false) {
+    return chip({ name: esc(c.name ?? "—"), state: "warn", right: "stopped", cls: "stopped-expected" });
+  }
+  if (c.health === "unhealthy") return chip({ name: esc(c.name ?? "—"), state: "bad", right: "unhealthy" });
+  if (stopped) return chip({ name: esc(c.name ?? "—"), state: "bad", right: "down" });
+  return chip({ name: esc(c.name ?? "—"), state: c.health === "healthy" ? "good" : "good", right: c.health === "healthy" ? "healthy" : "up" });
+}
+
+function sectionServices() {
+  const src = (g(S.data, "meta.sources") || []);
+  const dv = g(S.data, "surfaces.docker_vm") || {};
+  if (dv.pending) {
+    return `${secHead("services", sourceBadge("docker_stack", src))}${pendingPanel("container matrix · docker-vm")}</section>`;
+  }
+  const counts = dv.counts || {};
+  const containers = dv.containers || [];
+  const stacks = dv.stacks || [];
+  const cellsHtml = `<div class="cells">
+    ${cell({ label: "defined", value: valNum(counts.defined) })}
+    ${cell({ label: "running", value: valNum(counts.running), state: "good" })}
+    ${cell({ label: "stopped", value: valNum(counts.stopped), state: num(counts.stopped) > 0 ? "warn" : "" })}
+    ${cell({ label: "expected-stopped", value: valNum(counts.expected_running_stopped), state: "warn" })}
+    ${cell({ label: "unhealthy", value: valNum(counts.unhealthy), state: num(counts.unhealthy) > 0 ? "bad" : "good" })}
+  </div>`;
+  const groups = (stacks.length ? stacks : [...new Set(containers.map((c) => c.stack))].sort())
+    .map((st) => {
+      const list = containers.filter((c) => c.stack === st);
+      return `<div class="mxgroup">
+        <div class="gx">${esc(st)} <span class="gc">${list.length}</span></div>
+        <div class="matrix">${list.map(containerChip).join("")}</div>
+      </div>`;
+    })
+    .join("");
+  return `${secHead("services", sourceBadge("docker_stack", src) + `<span class="nodata">· ${containers.length} containers</span>`)}
+    ${cellsHtml}
+    ${groups || emptyPanel("containers")}
+  </section>`;
+}
+
+function sectionMedia() {
+  const src = (g(S.data, "meta.sources") || []);
+  const m = g(S.data, "surfaces.media") || {};
+  if (m.pending) {
+    return `${secHead("media", sourceBadge("media", src))}${pendingPanel("media queues · remux · jellyfin")}</section>`;
+  }
+  const q = m.queues || {};
+  const dl = m.downloads || {};
+  const jf = m.jellyfin || {};
+  const rx = m.remux || {};
+  const lb = m.letterboxd || {};
+  const cellsHtml = `<div class="cells">
+    ${cell({ label: "radarr queue", value: valNum(q.radarr) })}
+    ${cell({ label: "sonarr queue", value: valNum(q.sonarr) })}
+    ${cell({ label: "downloads active", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")} · ${valNum(dl.torrents)} torrents` })}
+    ${jf.movies !== undefined && jf.movies !== null
+      ? cell({ label: "jellyfin library", value: valNum(jf.movies), sub: `${valNum(jf.series)} series · ${valNum(jf.episodes)} eps` })
+      : cell({ label: "jellyfin sessions", value: valNum(jf.sessions), sub: num(jf.sessions) === 0 ? "idle" : "now playing" })}
+    ${cell({ label: "remux queued", value: valNum(rx.queued), sub: `${valNum(rx.completed_today)} completed today` })}
+    ${cell({ label: "letterboxd sync", value: lb.stale ? "stale" : val(lb.last_sync ? "ok" : "—"), state: lb.stale ? "warn" : "good", sub: fmtTimeShort(lb.last_sync) })}
+  </div>`;
+  const emptyNote = num(q.radarr) === 0 && num(q.sonarr) === 0 && num(dl.active) === 0
+    ? `<div class="state" data-state="empty"><span class="t">media activity</span><span>queues empty · nothing downloading</span></div>`
+    : "";
+  return `${secHead("media", sourceBadge("media", src))}${cellsHtml}${emptyNote}</section>`;
+}
+
+function sectionPersonal() {
+  const src = (g(S.data, "meta.sources") || []);
+  const p = g(S.data, "surfaces.personal") || {};
+  const t = p.tasks || {};
+  const sc = p.school || {};
+  const ap = p.applications;
+  const jn = p.journal || {};
+  const L = p.listening || {};
+  const hint = sourceBadge("personal", src);
+
+  const tasksRows = (t.items || []).length
+    ? `<div class="trows">${(S.mem.tasks = t.items.slice(0, 10))
+        .map(
+          (it, i) =>
+            row({
+              title: esc(it.title ?? "—"),
+              meta: `<span class="tag">${esc(it.list ?? "—")}</span>due <span class="${it.overdue ? "bad" : "m"}">${val(it.due)}</span>`,
+              right: `<span class="st ${it.overdue ? "bad" : "good"}">${it.overdue ? "overdue" : "open"}</span>`,
+              fail: !!it.overdue,
+              drawer: `task:${i}`,
+            }),
+        )
+        .join("")}</div>`
+    : emptyPanel("task items");
+
+  const schoolRows = (sc.next || []).length
+    ? `<div class="trows">${(S.mem.school = sc.next.slice(0, 6))
+        .map(
+          (nx, i) =>
+            row({
+              title: esc(nx.title ?? "—"),
+              meta: `<span class="tag">${esc(nx.course ?? "—")}</span>due ${val(nx.due)}`,
+              right: `${parseTs(nx.when) ? fmtClock(parseTs(nx.when)) : "—"}`,
+              drawer: `school:${i}`,
+            }),
+        )
+        .join("")}</div>`
+    : emptyPanel("upcoming school items");
+
+  const apCells = ap
+    ? `<div class="cells">
+        ${cell({ label: "applications · week", value: valNum(ap.week) })}
+        ${cell({ label: "total sent", value: valNum(ap.total) })}
+        ${cell({ label: "weekly cap", value: valNum(ap.cap), sub: num(ap.week) > 0 ? "in progress" : "idle week" })}
+      </div>`
+    : `<div class="state" data-state="empty"><span class="t">applications</span><span>not in v1 payload · pending v2</span></div>`;
+
+  const lcells = `<div class="cells">
+    ${cell({ label: "active projects", value: valNum(L.active_projects) })}
+    ${cell({ label: "planned projects", value: valNum(L.planned_projects) })}
+    ${cell({ label: "assignments upcoming", value: valNum(L.assignments_upcoming) })}
+    ${cell({ label: "jobs failing", value: valNum(L.jobs_failing), state: num(L.jobs_failing) > 0 ? "bad" : "good", small: `/ ${num(L.jobs_total) ?? "—"}` })}
+    ${cell({ label: "services up", value: valNum(L.services_up), small: `/ ${num(L.services_total) ?? "—"}` })}
+    ${cell({ label: "pools online", value: valNum(L.pools_online), small: `/ ${num(L.pools_total) ?? "—"}` })}
+    ${cell({ label: "homelab issues", value: valNum(L.homelab_issues_warn), state: num(L.homelab_issues_bad) > 0 ? "bad" : num(L.homelab_issues_warn) > 0 ? "warn" : "good", sub: `${valNum(L.homelab_issues_bad)} bad` })}
+    ${cell({ label: "journal entries · 7d", value: valNum(jn.entries_7d), sub: `last ${val(jn.last)}` })}
+  </div>`;
+
+  return `${secHead("personal", hint)}
+    <div class="cells">
+      ${cell({ label: "tasks open", value: valNum(t.open), sub: `${valNum(t.overdue)} overdue` })}
+      ${cell({ label: "overdue", value: valNum(t.overdue), state: num(t.overdue) > 0 ? "bad" : "good" })}
+      ${cell({ label: "school upcoming", value: valNum(sc.upcoming), sub: (sc.courses || []).map((c) => esc(c)).join(" · ") || "—" })}
+    </div>
+    <div class="subgrid cols-2">
+      <div><div class="subhead">task items</div>${tasksRows}</div>
+      <div><div class="subhead">school · next</div>${schoolRows}</div>
+    </div>
+    <div class="subhead">applications</div>${apCells}
+    <div class="subhead">listening · aggregate</div>${lcells}
+  </section>`;
+}
+
+function sectionExternal() {
+  const src = (g(S.data, "meta.sources") || []);
+  const x = g(S.data, "surfaces.external") || {};
+  if (x.pending) {
+    return `${secHead("external", sourceBadge("external", src))}${pendingPanel("vercel · github · offsite backups")}</section>`;
+  }
+  const v = x.vercel || {};
+  const gh = x.github || {};
+  const bk = x.backups || {};
+  const cellsHtml = `<div class="cells">
+    ${cell({ label: "vercel", value: val(v.status), state: v.status === "ready" ? "good" : "warn", sub: `deployed ${fmtTimeShort(v.last_deploy)}` })}
+    ${cell({ label: "github issues", value: valNum(gh.open_issues), sub: `last run ${val(gh.last_run)}` })}
+    ${cell({ label: "proxmox backup age", value: valNum(bk.proxmox_age_h, "h"), state: num(bk.proxmox_age_h) > 48 ? "warn" : "good", sub: "vzdump newest" })}
+    ${cell({ label: "google drive", value: fmtTimeShort(bk.google_drive), sub: "vault backup" })}
+  </div>`;
+  return `${secHead("external", sourceBadge("external", src))}${cellsHtml}</section>`;
+}
+
+function sectionTimeline() {
+  const tl = S.data ? (g(S.data, "timeline") || []) : [];
+  S.mem.timeline = tl.slice(0, 50);
+  const levels = ["info", "warn", "bad"];
+  const sources = [...new Set(S.mem.timeline.map((e) => e.source))];
+  const lvlChips = ["all", ...levels]
+    .map((k) => `<button class="fchip" data-tllevel="${k}" aria-pressed="${S.filters.tlLevel === k ? "true" : "false"}">${k}</button>`)
+    .join("");
+  const srcChips = ["all", ...sources]
+    .map((k) => `<button class="fchip" data-tlsource="${esc(k)}" aria-pressed="${S.filters.tlSource === k ? "true" : "false"}">${esc(k)}</button>`)
+    .join("");
+  const shown = S.mem.timeline
+    .map((e, i) => ({ e, i }))
+    .filter(({ e }) => (S.filters.tlLevel === "all" || e.level === S.filters.tlLevel) && (S.filters.tlSource === "all" || e.source === S.filters.tlSource));
+  const rows = shown.map(({ e, i }) => tlRow(e, i)).join("");
+  return `${secHead("timeline", `<span class="nodata">${S.mem.timeline.length} events · 50 max</span>`)}
+    <div class="chips" role="group" aria-label="Timeline filters">
+      <span class="nodata">level</span>${lvlChips}<span class="nodata">source</span>${srcChips}
+    </div>
+    ${rows ? `<div class="tl">${rows}</div>` : emptyPanel("timeline events")}
+  </section>`;
+}
+
+function footerHtml() {
+  if (!S.data) return "";
+  const srcs = g(S.data, "meta.sources") || [];
+  const okN = srcs.filter((s) => s.ok).length;
+  const stN = srcs.filter((s) => s.stale && s.ok !== false).length;
+  const erN = srcs.filter((s) => s.ok === false && !s.pending).length;
+  const pdN = srcs.filter((s) => s.pending).length;
+  const origin =
+    S.source === "seed"
+      ? "DESIGN FIXTURE · not live data"
+      : S.source === "snapshot"
+        ? "adapted from v1 snapshot payload"
+        : S.source === "stale"
+          ? "adapted from v1 live payload · refresh failing"
+          : "adapted from v1 live payload";
+  return `<footer class="foot">
+    <span>generated ${val(g(S.data, "generated_at"))}</span>
+    <span>${val(g(S.data, "generated_on"))}</span>
+    <span>${val(g(S.data, "schema"))}</span>
+    <span>sources ${okN} ok · ${stN} stale · ${erN} error · ${pdN} pending</span>
+    <span>${origin}</span>
+  </footer>`;
+}
+
+function renderWeb() {
+  app.innerHTML = `
+    <div class="wrap">
+      ${headerHtml()}
+      ${modeBannerHtml() ? `<div class="mode-strip">${modeBannerHtml()}</div>` : ""}
+      <div class="hero">${heroCells()}</div>
+      ${S.data ? "" : `<div class="state" data-state="empty" style="margin-top:20px"><span class="t">${S.source === "error" ? "data unavailable" : "connecting"}</span><span>${S.source === "error" ? "the authenticated snapshot could not be read" : "authenticated snapshot → seed fallback"}</span></div>`}
+      ${sectionAutomations()}
+      ${sectionHomelab()}
+      ${sectionServices()}
+      ${sectionMedia()}
+      ${sectionPersonal()}
+      ${sectionExternal()}
+      ${sectionTimeline()}
+      ${footerHtml()}
+      <div class="drawer-back" id="drawer-back" hidden></div>
+      <aside class="drawer" id="drawer" data-open="false" role="dialog" aria-modal="true" aria-label="Detail">
+        <div class="drawer-head">
+          <h3 class="drawer-title" id="drawer-title">—</h3>
+          <button class="drawer-close" id="drawer-close">ESC</button>
+        </div>
+        <div id="drawer-body"></div>
+      </aside>
+    </div>`;
+  wireWeb();
+  if (S.params.section) scrollToSection(S.params.section, false);
+}
+
+/* ---------- drawer ---------- */
+
+function drawerData(kind, idx) {
+  const [table, i] = [kind.split(":")[0], Number(kind.split(":")[1])];
+  if (table === "job") return [g(S.mem.jobs, i + ".name") ?? "cron job", S.mem.jobs[i] || {}];
+  if (table === "tl") return ["timeline event", S.mem.timeline[i] || {}];
+  if (table === "task") return [g(S.mem.tasks, i + ".title") ?? "task", S.mem.tasks[i] || {}];
+  if (table === "school") return [g(S.mem.school, i + ".title") ?? "school item", S.mem.school[i] || {}];
+  return ["detail", {}];
+}
+
+function openDrawer(kind) {
+  const drawer = document.getElementById("drawer");
+  if (!drawer) return;
+  const [title, obj] = drawerData(kind);
+  document.getElementById("drawer-title").textContent = String(title);
+  document.getElementById("drawer-body").innerHTML = `<div class="nodata" style="margin-bottom:10px">raw fields · source payload</div>${kvTable(obj)}`;
+  drawer.dataset.open = "true";
+  const back = document.getElementById("drawer-back");
+  back.hidden = false;
+  document.getElementById("drawer-close").focus();
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById("drawer");
+  if (!drawer || drawer.dataset.open !== "true") return false;
+  drawer.dataset.open = "false";
+  document.getElementById("drawer-back").hidden = true;
+  return true;
+}
+
+/* ---------- web wiring ---------- */
+
+function wireWeb() {
+  const root = app;
+
+  root.querySelectorAll("[data-tab]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const id = b.dataset.tab;
+      setParam("section", id);
+      S.params.section = id;
+      root.querySelectorAll("[data-tab]").forEach((x) => (x.ariaCurrent = x === b ? "true" : "false"));
+      scrollToSection(id, true);
+    }),
+  );
+
+  root.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+    S.theme = S.theme === "dark" ? "light" : "dark";
+    setParam("theme", S.theme);
+    render();
+  });
+
+  root.querySelectorAll("[data-filter]").forEach((b) =>
+    b.addEventListener("click", () => {
+      S.filters.automations = b.dataset.filter;
+      setParam("filter", b.dataset.filter === "all" ? null : b.dataset.filter);
+      renderWeb();
+    }),
+  );
+
+  root.querySelectorAll("[data-tllevel]").forEach((b) =>
+    b.addEventListener("click", () => {
+      S.filters.tlLevel = b.dataset.tllevel;
+      setParam("level", b.dataset.tllevel === "all" ? null : b.dataset.tllevel);
+      renderWeb();
+    }),
+  );
+
+  root.querySelectorAll("[data-tlsource]").forEach((b) =>
+    b.addEventListener("click", () => {
+      S.filters.tlSource = b.dataset.tlsource;
+      setParam("src", b.dataset.tlsource === "all" ? null : b.dataset.tlsource);
+      renderWeb();
+    }),
+  );
+
+  root.querySelectorAll("[data-drawer]").forEach((b) =>
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openDrawer(b.dataset.drawer);
+    }),
+  );
+
+  document.getElementById("drawer-close")?.addEventListener("click", closeDrawer);
+  document.getElementById("drawer-back")?.addEventListener("click", closeDrawer);
+
+  // keyboard: j/k row navigation, Enter opens (native buttons), Esc closes drawer
+  document.onkeydown = (e) => {
+    if (e.key === "Escape" && closeDrawer()) return;
+    if (e.key === "Tab") trapDrawerFocus(e);
+    if (e.key !== "j" && e.key !== "k") return;
+    const rows = [...root.querySelectorAll(".row:not([disabled]), .tl-row")];
+    if (!rows.length) return;
+    const cur = rows.indexOf(document.activeElement);
+    const next = e.key === "j" ? Math.min(rows.length - 1, cur + 1) : Math.max(0, cur - 1);
+    rows[next === -1 && e.key === "j" ? 0 : next === -1 ? rows.length - 1 : next].focus();
+    e.preventDefault();
+  };
+
+  // scrollspy
+  let spy = 0;
+  window.onscroll = () => {
+    clearTimeout(spy);
+    spy = setTimeout(() => {
+      const y = window.scrollY + 140;
+      let cur = "";
+      for (const [id] of SECTIONS) {
+        const el = document.getElementById("sec-" + id);
+        if (el && el.offsetTop <= y) cur = id;
+      }
+      if (cur && cur !== S.params.section) {
+        S.params.section = cur;
+        setParam("section", cur);
+        root.querySelectorAll("[data-tab]").forEach((x) => (x.ariaCurrent = x.dataset.tab === cur ? "true" : "false"));
+      }
+    }, 180);
+  };
+}
+
+function trapDrawerFocus(e) {
+  const drawer = document.getElementById("drawer");
+  if (!drawer || drawer.dataset.open !== "true") return;
+  const f = [...drawer.querySelectorAll("button, [href]")];
+  if (!f.length) return;
+  const first = f[0];
+  const last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    last.focus();
+    e.preventDefault();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    first.focus();
+    e.preventDefault();
+  }
+}
+
+function scrollToSection(id, smooth) {
+  const el = document.getElementById("sec-" + id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+}
+
+/* ---------- ticking age ---------- */
+
+setInterval(() => {
+  if (S.wall || !S.data) return;
+  document.querySelectorAll(".js-age").forEach((el) => {
+    el.textContent = fmtAge(g(S.data, "generated_at"));
+  });
+}, 1000);
+
+/* ---------- boot (called at the end of wall.js) ---------- */
+
+function boot() {
+  parseParams();
+  S.wall = S.params.mode === "wall";
+  document.documentElement.dataset.theme = S.theme;
+  if (S.wall) document.body.classList.add("wall");
+  render(); // paints the shell immediately (syncing / seed), never blank
+  loadData(true).then(() => {
+    setInterval(() => loadData(false), REFRESH_MS);
+  });
+}
+
+/* wall.js — ?mode=wall: five rotating pages at 1920×1080, 20 s each,
+   fixed alert rail, 2px progress line, burn-in shift, night dim,
+   stale banners, pause on reduced-motion / ?page=N / keypress. */
+
+const WALL = {
+  built: false,
+  idx: 0,
+  dwell: 20000,
+  lastSwitch: Date.now(),
+  paused: false,
+  pauseReason: "", // "page" | "key" | "motion"
+  lastKey: 0,
+  shiftPos: 0,
+  tick: null,
+};
+
+const WALL_PAGES = ["status", "automations", "homelab", "services", "media+personal"];
+
+function wallShell() {
+  return `<div class="wall" id="wall">
+    <header class="wall-hdr">
+      <span class="wall-brand">AYUMAD<span class="sl" style="color:var(--cyan)">/</span><span style="color:var(--muted)">OPS</span></span>
+      <span class="wall-clock" id="wall-clock">—</span>
+      <span class="wall-r">
+        <span aria-live="polite" id="wall-pill">${pillFor(S.source)}</span>
+        <span class="wall-clock" style="font-size:12px;color:var(--muted)" id="wall-page-i">1/5</span>
+      </span>
+    </header>
+    <div class="wall-progress"><i id="wall-prog"></i></div>
+    <div class="wall-stage">
+      <div class="wall-shift" id="wall-shift">
+        ${WALL_PAGES.map((id, i) => `<div class="wall-page" id="wp-${i}" data-active="${i === 0 ? "true" : "false"}"></div>`).join("")}
+      </div>
+    </div>
+    <div class="wall-banner" id="wall-banner" data-show="false"></div>
+    <footer class="wall-rail" id="wall-rail"></footer>
+  </div>`;
+}
+
+/* ---------- page renderers ---------- */
+
+function wpStatus() {
+  if (!S.data) {
+    return `<div class="wp-status">
+      <div class="wp-top">
+        <div class="wp-top-main">
+          <div class="wp-word"><span class="dash">…</span></div>
+          <div class="wp-sub">mac mini — · p520 —</div>
+        </div>
+        <div class="wp-clockbox">
+          <div class="wp-clock" id="wp-bigclock">—</div>
+          <div class="wp-date" id="wp-bigdate">—</div>
+        </div>
+        <div class="wp-alert lvl-none"><i class="mk" aria-hidden="true"></i><span class="wp-alert-t">connecting to live source · snapshot fallback</span></div>
+      </div>
+      <div class="wp-kpis">
+        ${WALL_KPI_IDS.map((k) => `<div class="cell"><span class="cell-l">${esc(k)}</span><span class="cell-v"><span class="dash">…</span></span><span class="cell-s">syncing</span></div>`).join("")}
+      </div>
+    </div>`;
+  }
+  const o = g(S.data, "overall") || {};
+  const L = g(S.data, "surfaces.personal.listening") || {};
+  const cron = g(S.data, "surfaces.mac_mini.hermes.cron") || {};
+  const st = o.status === undefined ? null : o.status;
+  const mmUp = g(S.data, "surfaces.mac_mini.host.uptime_s");
+  const pUp = g(S.data, "surfaces.p520.host.uptime_s");
+  const a = wallTopAlert();
+  const lvlCls = a.level === "bad" ? "bad" : a.level === "warn" ? "warn" : "none";
+  const kpis = [
+    ["alerts", valNum(o.alerts), num(o.alerts) > 0 ? "warn" : "good", "failing · bad · overdue"],
+    ["jobs enabled", valNum(cron.enabled), "good", `/ ${num(cron.total) ?? "—"} total`],
+    ["containers running", valNum(L.containers_running), "good", "docker-vm"],
+    ["devices online", valNum(L.devices_online), "good", `/ ${num(L.devices_total) ?? "—"} tailnet`],
+    ["services up", valNum(L.services_up), "good", `/ ${num(L.services_total) ?? "—"}`],
+    ["open tasks", valNum(L.open_tasks), "", `${num(L.overdue_tasks) ?? "—"} overdue`],
+    ["school upcoming", valNum(L.assignments_upcoming), "", "next 7 days"],
+    ["guests running", valNum(L.guests_running), "good", "proxmox"],
+  ];
+  return `<div class="wp-status">
+    <div class="wp-top">
+      <div class="wp-top-main">
+        <div class="wp-word" style="color:var(--${st === "ok" ? "cyan" : st === "warn" ? "warn" : "bad"})">${esc(statusWord(st))}</div>
+        <div class="wp-sub">mac mini ${mmUp === null || mmUp === undefined ? "—" : fmtUptime(mmUp)} · p520 ${pUp === null || pUp === undefined ? "—" : fmtUptime(pUp)}</div>
+      </div>
+      <div class="wp-clockbox">
+        <div class="wp-clock" id="wp-bigclock">—</div>
+        <div class="wp-date" id="wp-bigdate">—</div>
+      </div>
+      <div class="wp-alert lvl-${lvlCls}">
+        <i class="mk" aria-hidden="true"></i>
+        <span class="wp-alert-t">${esc(a.text)}</span>
+        <span class="wp-alert-r">${esc(a.right)}</span>
+      </div>
+    </div>
+    <div class="wp-kpis">
+      ${kpis
+        .map(
+          ([label, value, state, sub]) =>
+            `<div class="cell"><span class="cell-l">${esc(label)}</span><span class="cell-v ${state}">${value}</span><span class="cell-s">${esc(sub)}</span></div>`,
+        )
+        .join("")}
+    </div>
+  </div>`;
+}
+
+const WALL_KPI_IDS = ["alerts", "jobs enabled", "containers running", "devices online", "services up", "open tasks", "school upcoming", "guests running"];
+
+function wpJobs() {
+  const jobs = g(S.data, "surfaces.mac_mini.cron.jobs");
+  const pend = g(S.data, "surfaces.mac_mini.cron.pending");
+  if (pend || !jobs || !jobs.length) {
+    const cron = g(S.data, "surfaces.mac_mini.hermes.cron") || {};
+    const note = pend
+      ? `collector pending · v2 not wired — per-job rows await the v2 collector`
+      : `no cron jobs in payload`;
+    return `<div class="wp-jobs pending">
+      <div>
+        <div class="wp-note">${esc(note)}</div>
+        <div class="cells wp-fill">
+          ${cell({ label: "cron total", value: valNum(cron.total) })}
+          ${cell({ label: "enabled", value: valNum(cron.enabled), state: "good" })}
+          ${cell({ label: "failing", value: valNum(cron.failing), state: num(cron.failing) > 0 ? "bad" : "good" })}
+          ${cell({ label: "no agent", value: valNum(cron.no_agent) })}
+        </div>
+      </div>
+    </div>`;
+  }
+  const isFail = (j) => (num(j.success_7d) !== null && j.success_7d < 100) || (j.last_status && j.last_status !== "completed");
+  const sorted = jobs.slice().sort((a, b) => (isFail(b) ? 1 : 0) - (isFail(a) ? 1 : 0) ||
+    (parseTs(a.next_run)?.getTime() ?? Infinity) - (parseTs(b.next_run)?.getTime() ?? Infinity));
+  const fails = sorted.filter(isFail);
+  const rest = sorted.filter((j) => !isFail(j));
+  // failures pinned to the top of the left column; columns split evenly so the
+  // stretched rows stay the same height on both sides and fill the stage
+  const half = Math.max(fails.length, Math.ceil(sorted.length / 2));
+  const left = [...fails, ...rest.slice(0, half - fails.length)];
+  const right = rest.slice(half - fails.length);
+  const wrow = (j) => `<div class="wrow${isFail(j) ? " fail" : ""}">
+    <span class="nm">${esc(j.name ?? "—")}</span>
+    <span class="nx">${fmtNextRun(j.next_run)}</span>
+    <span class="sc">${esc(j.schedule ?? "—")} <span class="tag">${esc(j.kind ?? "—")}</span>${j.model ? `<span class="tag">${esc(j.model)}</span>` : ""} ${sparkBars(j.success_7d, j.runs_7d)} ${valNum(j.ok_7d)}/${valNum(j.runs_7d)} ok · 7d</span>
+  </div>`;
+  return `<div class="wp-jobs"><div>${left.map(wrow).join("")}</div><div>${right.map(wrow).join("")}</div></div>`;
+}
+
+function wpHomelab() {
+  const p = g(S.data, "surfaces.p520") || {};
+  if (p.pending) {
+    return `<div class="wp-grid pending">
+      <div class="wp-note" style="grid-column:span 12">collector pending · v2 not wired — homelab surface awaits the v2 collector</div>
+      <div class="cells wp-fill" style="grid-column:span 12">
+        ${cell({ label: "p520 uptime", value: "—" })}
+        ${cell({ label: "load 1/5/15", value: "—" })}
+        ${cell({ label: "memory", value: "—" })}
+        ${cell({ label: "guests running", value: "—" })}
+      </div>
+    </div>`;
+  }
+  const host = p.host || {};
+  const pools = p.pools || [];
+  const guests = p.guests || [];
+  const backups = p.backups || {};
+  const smart = p.smart || [];
+  const net = g(S.data, "surfaces.network") || {};
+  const peers = net.tailscale || [];
+  const memPct = num(host.mem_used_gb) !== null && num(host.mem_total_gb) ? Math.round((host.mem_used_gb / host.mem_total_gb) * 100) : null;
+  const smartRows = smart.length
+    ? `<div class="trows">${smart
+        .map((d) => `<div class="wrow static"><span class="nm">${esc(d.device ?? "—")} <span class="tag">${esc(d.pool ?? "—")}</span></span><span class="nx">${d.temp_c === null || d.temp_c === undefined ? "—" : esc(d.temp_c) + "°C"}</span><span class="sc">${val(d.health)} · ${d.hours === null || d.hours === undefined ? "—" : esc(d.hours.toLocaleString("en-US")) + "h"}</span></div>`)
+        .join("")}</div>`
+    : `<div class="wp-note">no SMART data in payload</div>`;
+  return `<div class="wp-grid">
+    <div class="cells" style="grid-column:span 12">
+      ${cell({ label: "p520 uptime", value: fmtUptime(host.uptime_s), sub: `${val(host.name)} · proxmox ${val(host.proxmox)}` })}
+      ${cell({ label: "load 1/5/15", value: (host.load || []).map((x) => (num(x) === null ? "—" : esc(x))).join(" "), sub: `${valNum(host.cores)} cores` })}
+      ${cell({ label: "memory", value: valNum(host.mem_used_gb, " GB"), small: `/ ${valNum(host.mem_total_gb, " GB")}`, state: memPct === null ? "" : memPct > 90 ? "bad" : memPct > 80 ? "warn" : "good", sub: `failed units ${valNum(host.failed_units)}` })}
+    </div>
+    <div class="wp-pools">
+      ${pools
+        .map((pl) => {
+          const pctv = num(pl.used_pct);
+          const cls = pctv === null ? "" : pctv > 90 ? "bad" : pctv > 80 ? "warn" : "";
+          return `<div><div class="barline"><span class="bl">pool · ${esc(pl.name ?? "—")}</span><span class="bv ${cls}">${valNum(pl.used_pct, "%")} · ${valNum(pl.alloc_gb, " / " + (num(pl.size_gb) === null ? "—" : pl.size_gb.toLocaleString("en-US")) + " GB")}</span></div>
+          <div class="bar"><i class="${cls}" style="width:${pctv === null ? 0 : pctv}%"></i></div>
+          <div class="nodata" style="margin-top:4px">${dot(pl.health === "ONLINE" ? "good" : "bad")} ${val(pl.health)} · ${val(pl.errors)}</div></div>`;
+        })
+        .join("") || `<div class="wp-note">no pool data</div>`}
+    </div>
+    <div class="wp-guests">
+      <div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">guests · ${guests.filter((x) => x.status === "running").length}/${guests.length} running</div>
+      <div class="matrix">${guests
+        .map((gu) =>
+          chip({
+            name: `${valNum(gu.id)} ${esc(gu.name ?? "—")}`,
+            state: gu.status === "running" ? "good" : "off",
+            right: `${esc(gu.type ?? "—")} · ${gu.mem_mb === null || gu.mem_mb === undefined ? "—" : Math.round(gu.mem_mb / 1024) + "g"}`,
+          }),
+        )
+        .join("")}</div>
+    </div>
+    <div class="wp-strip">
+      ${cell({ label: "backups", value: valNum(backups.count), sub: `newest ${valNum(backups.newest_age_h, "h")} ago · offsite ${backups.offsite === false ? "no" : backups.offsite === true ? "yes" : "—"}` })}
+      ${cell({ label: "snapshots", value: valNum(p.snapshots) })}
+      ${cell({ label: "scrub timers", value: valNum(p.scrub_timers), state: "good" })}
+      ${cell({ label: "smart", value: smart.length ? `${smart.filter((d) => d.health === "PASSED").length}/${smart.length} passed` : "—", state: "good", sub: smart.length ? "all pools" : "no data in payload" })}
+    </div>
+    <div class="wp-smart">
+      <div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">SMART</div>
+      ${smartRows}
+    </div>
+    <div class="wp-fleet">
+      <div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">fleet · tailnet · ${num(net.online) ?? peers.filter((x) => x.online).length}/${peers.length} online</div>
+      ${peers.length ? `<div class="matrix">${peers
+        .map((pr) => chip({ name: esc(pr.name ?? "—"), state: pr.online ? "good" : "off", right: `${pr.self ? "self · " : ""}${esc(pr.os ?? "—")}` }))
+        .join("")}</div>` : `<div class="wp-note">no tailnet peers in payload</div>`}
+    </div>
+  </div>`;
+}
+
+function wpServices() {
+  const dv = g(S.data, "surfaces.docker_vm") || {};
+  if (dv.pending) {
+    return `<div class="wp-matrix pending">
+      <div class="wp-note">collector pending · v2 not wired — container matrix awaits the v2 collector</div>
+      <div class="cells wp-fill">
+        ${cell({ label: "defined", value: "—" })}
+        ${cell({ label: "running", value: "—" })}
+        ${cell({ label: "stopped", value: "—" })}
+        ${cell({ label: "unhealthy", value: "—" })}
+      </div>
+    </div>`;
+  }
+  const counts = dv.counts || {};
+  const containers = dv.containers || [];
+  const stacks = dv.stacks || [];
+  const names = stacks.length ? stacks : [...new Set(containers.map((c) => c.stack))];
+  // problem stacks first (unexpected stops), then by name; 8 groups fill the stage
+  const badIn = (st) => containers.filter((c) => c.stack === st && c.state !== "running" && c.expected_running !== false).length;
+  names.sort((x, y) => badIn(y) - badIn(x) || String(x).localeCompare(String(y)));
+  const shown = names.slice(0, 8);
+  return `<div class="wp-matrix">
+    <div class="cells">
+      ${cell({ label: "defined", value: valNum(counts.defined) })}
+      ${cell({ label: "running", value: valNum(counts.running), state: "good" })}
+      ${cell({ label: "stopped", value: valNum(counts.stopped), state: num(counts.stopped) > 0 ? "warn" : "" })}
+      ${cell({ label: "unhealthy", value: valNum(counts.unhealthy), state: num(counts.unhealthy) > 0 ? "bad" : "good" })}
+    </div>
+    ${shown
+      .map((st) => {
+        const list = containers.filter((c) => c.stack === st);
+        return `<div class="mxgroup"><div class="gx">${esc(st)} <span class="gc">${list.length}</span></div>
+        <div class="matrix">${list.map(containerChip).join("")}</div></div>`;
+      })
+      .join("")}
+    ${names.length > shown.length ? `<div class="nodata">+ ${names.length - shown.length} stacks not shown · see web view</div>` : ""}
+  </div>`;
+}
+
+function wpMediaPersonal() {
+  const m = g(S.data, "surfaces.media") || {};
+  const per = g(S.data, "surfaces.personal") || {};
+  const t = per.tasks || {};
+  const sc = per.school || {};
+  const jn = per.journal || {};
+  const rx = m.remux || {};
+  const rpct = num(rx.queued) + num(rx.completed_today) > 0 ? Math.round(((num(rx.completed_today) || 0) / ((num(rx.completed_today) || 0) + (num(rx.queued) || 0))) * 100) : 0;
+  const mediaHtml = m.pending
+    ? `<div class="wp-note">collector pending · v2 not wired — media surface awaits the v2 collector</div>
+      <div class="cells wp-fill">
+        ${cell({ label: "radarr queue", value: "—" })}
+        ${cell({ label: "sonarr queue", value: "—" })}
+        ${cell({ label: "downloads", value: "—" })}
+        ${cell({ label: "jellyfin", value: "—" })}
+        ${cell({ label: "remux queued", value: "—" })}
+        ${cell({ label: "letterboxd sync", value: "—" })}
+      </div>`
+    : (() => {
+        const q = m.queues || {};
+        const dl = m.downloads || {};
+        const jf = m.jellyfin || {};
+        const lb = m.letterboxd || {};
+        return `<div class="cells">
+          ${cell({ label: "radarr queue", value: valNum(q.radarr) })}
+          ${cell({ label: "sonarr queue", value: valNum(q.sonarr) })}
+          ${cell({ label: "downloads", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")} rate` })}
+          ${cell({ label: "jellyfin", value: valNum(jf.sessions), sub: num(jf.sessions) === 0 ? "idle" : "now playing" })}
+          ${cell({ label: "remux queued", value: valNum(rx.queued), sub: `${valNum(rx.completed_today)} done today` })}
+          ${cell({ label: "letterboxd sync", value: lb.stale ? "stale" : val(lb.last_sync ? "ok" : "—"), state: lb.stale ? "warn" : "good", sub: fmtTimeShort(lb.last_sync) })}
+        </div>
+        <div style="margin-top:12px">
+          <div class="barline"><span class="bl">remux pipeline</span><span class="bv">${valNum(rx.queued)} queued · ${valNum(rx.completed_today)} done today</span></div>
+          <div class="bar"><i style="width:${rpct}%"></i></div>
+        </div>`;
       })();
+
+  const wrow = (r) => `<div class="wrow${r.fail ? " fail" : ""}">
+    <span class="nm">${esc(r.title ?? "—")}</span>
+    <span class="nx">${esc(r.right)}</span>
+    <span class="sc"><span class="tag">${esc(r.tag ?? "—")}</span>${esc(r.meta)}</span>
+  </div>`;
+  const school = (sc.next || []).slice(0, 7).map((nx) => ({
+    title: nx.title,
+    tag: nx.course,
+    right: parseTs(nx.when) ? fmtClock(parseTs(nx.when)) : val(nx.due),
+    meta: `due ${val(nx.due)}`,
+  }));
+  const tasks = (t.items || []).slice(0, 7).map((it) => ({
+    title: it.title,
+    tag: it.list,
+    right: it.overdue ? "overdue" : val(it.due),
+    meta: `due ${val(it.due)}${it.overdue ? " · overdue" : ""}`,
+    fail: !!it.overdue,
+  }));
+  return `<div class="wp-mp">
+    <div class="wp-mp-top">${mediaHtml}</div>
+    <div class="cells">
+      ${cell({ label: "tasks open", value: valNum(t.open), sub: `${valNum(t.overdue)} overdue` })}
+      ${cell({ label: "school upcoming", value: valNum(sc.upcoming), sub: "next 7 days" })}
+      ${cell({ label: "journal · 7d", value: valNum(jn.entries_7d), sub: `last ${val(jn.last)}` })}
+    </div>
+    <div class="wp-mp-cols">
+      <div><div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">school · due next</div>
+        <div class="wp-list">${school.map(wrow).join("") || `<div class="wp-note">nothing due in window</div>`}</div></div>
+      <div><div class="gx" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">tasks · open</div>
+        <div class="wp-list">${tasks.map(wrow).join("") || `<div class="wp-note">no open tasks in payload</div>`}</div></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- alert rail + banner ---------- */
+
+function wallTopAlert() {
+  if (!S.data) return { level: "info", text: "connecting to live source", right: "" };
+  const now = Date.now();
+  const L = g(S.data, "surfaces.personal.listening") || {};
+  const cron = g(S.data, "surfaces.mac_mini.hermes.cron") || {};
+  const cands = [];
+  const jf = num(cron.failing) ?? num(L.jobs_failing) ?? 0;
+  if (jf > 0) cands.push({ level: "bad", text: `${jf} cron job${jf > 1 ? "s" : ""} failing`, at: now });
+  if (num(L.homelab_issues_bad) > 0) cands.push({ level: "bad", text: `${L.homelab_issues_bad} homelab fault${L.homelab_issues_bad > 1 ? "s" : ""}`, at: now });
+  if (num(g(S.data, "surfaces.docker_vm.counts.unhealthy")) > 0) {
+    cands.push({ level: "bad", text: `${g(S.data, "surfaces.docker_vm.counts.unhealthy")} unhealthy containers`, at: now });
+  }
+  const age = (t) => (t ? fmtDur((now - t) / 1000) : "");
+  for (const e of g(S.data, "timeline") || []) {
+    const d = parseTs(e.ts);
+    if (!d) continue;
+    const ago = now - d.getTime();
+    if (ago > 48 * 3600 * 1000) continue;
+    cands.push({ level: e.level === "bad" ? "bad" : e.level === "warn" ? "warn" : "info", text: e.text, at: d.getTime() });
+  }
+  const rank = { bad: 3, warn: 2, info: 1 };
+  cands.sort((a, b) => rank[b.level] - rank[a.level] || b.at - a.at);
+  if (!cands.length || cands[0].level === "info") {
+    const last = (g(S.data, "timeline") || [])[0];
+    return {
+      level: "none",
+      text: `all clear${last ? " · last: " + String(last.text).slice(0, 60) : ""}`,
+      right: last ? "last " + age(parseTs(last.ts)?.getTime()) : "",
+    };
+  }
+  const c = cands[0];
+  return { level: c.level, text: c.text, right: "last " + age(c.at) };
+}
+
+function wallRailHtml() {
+  const a = wallTopAlert();
+  const cls = a.level === "bad" ? "bad" : a.level === "warn" ? "warn" : "";
+  const mark = a.level === "none" ? "✓" : "!";
+  const who = S.data
+    ? `updated ${fmtAge(g(S.data, "generated_at"))} ago · ${g(S.data, "generated_on") ?? ""}`
+    : "syncing";
+  return `<span style="color:var(--${a.level === "bad" ? "bad" : a.level === "warn" ? "warn" : "cyan"});font-weight:600">${mark}</span>
+    <span class="${cls}" style="${cls ? "" : "color:var(--muted)"}">${esc(a.text)}</span>
+    <span class="who">${esc(a.right ? a.right + " · " : "")}${esc(who)}</span>`;
+}
+
+function wallBannerHtml() {
+  if (!S.data) return { show: false, html: "" };
+  // one failed source is not a feed outage — the banner speaks payload mode,
+  // never "FEED DOWN" (a payload is always on screen: live, snapshot or seed)
+  if (S.source === "seed") return { show: true, html: banner("mute", "DESIGN FIXTURE · not live data") };
+  if (S.source === "snapshot") {
+    return { show: true, html: banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`) };
+  }
+  if (S.source === "live" || S.source === "stale") {
+    const d = parseTs(g(S.data, "generated_at"));
+    if (!d) return { show: false, html: "" };
+    const ageS = (Date.now() - d.getTime()) / 1000;
+    if (ageS > 90) {
+      return { show: true, html: banner(ageS > 300 ? "bad" : "warn", `data stale · last update ${fmtClock(d)}`, "retrying live source") };
+    }
+  }
+  return { show: false, html: "" };
+}
+
+/* ---------- rotation engine ---------- */
+
+function wallShow(i, restartProgress = true) {
+  WALL.idx = ((i % 5) + 5) % 5;
+  WALL.lastSwitch = Date.now();
+  document.querySelectorAll(".wall-page").forEach((el, k) => (el.dataset.active = k === WALL.idx ? "true" : "false"));
+  const pi = document.getElementById("wall-page-i");
+  if (pi) pi.textContent = `${WALL.idx + 1}/5`;
+  const prog = document.getElementById("wall-prog");
+  if (prog && restartProgress && !WALL.paused) {
+    prog.classList.remove("run");
+    void prog.offsetWidth; // restart the animation
+    prog.style.animationDuration = `${WALL.dwell}ms`;
+    prog.classList.add("run");
+  } else if (prog) {
+    prog.classList.remove("run");
+  }
+}
+
+function wallPause(reason) {
+  if (WALL.pauseReason === "page") return; // pinned stays pinned
+  WALL.paused = true;
+  WALL.pauseReason = reason;
+  WALL.lastKey = Date.now();
+  const prog = document.getElementById("wall-prog");
+  if (prog) prog.classList.remove("run");
+  const pi = document.getElementById("wall-page-i");
+  if (pi) pi.textContent = `${WALL.idx + 1}/5 · paused`;
+}
+
+function wallResume() {
+  WALL.paused = false;
+  WALL.pauseReason = "";
+  wallShow(WALL.idx);
+}
+
+/* ---------- render ---------- */
+
+function wallRender() {
+  if (!WALL.built) {
+    app.innerHTML = wallShell();
+    WALL.built = true;
+    const dwell = num(Number(S.params.dwell));
+    if (dwell !== null && dwell >= 1000) WALL.dwell = dwell;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) wallPause("motion");
+    if (S.params.page) {
+      const n = Number(S.params.page);
+      if (Number.isInteger(n) && n >= 1 && n <= 5) {
+        WALL.idx = n - 1;
+        WALL.pauseReason = "page";
+        WALL.paused = true;
+      }
+    }
+    document.addEventListener("keydown", () => {
+      if (WALL.pauseReason === "page") return;
+      wallPause("key");
+    });
+    // burn-in shift: 1px, 4 positions, 60s cycle
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInterval(() => {
+        WALL.shiftPos = (WALL.shiftPos + 1) % 4;
+        const el = document.getElementById("wall-shift");
+        if (el) {
+          const offs = [[0, 0], [1, 0], [1, 1], [0, 1]][WALL.shiftPos];
+          el.style.transform = `translate(${offs[0]}px, ${offs[1]}px)`;
+        }
+      }, 60000);
+    }
+    wallShow(WALL.idx);
+    WALL.tick = setInterval(wallTick, 1000);
+  }
+
+  // fill pages from current data (works for syncing, seed and live)
+  const pages = [wpStatus, wpJobs, wpHomelab, wpServices, wpMediaPersonal];
+  pages.forEach((fn, i) => {
+    const el = document.getElementById("wp-" + i);
+    if (el) el.innerHTML = fn();
+  });
+
+  const pillEl = document.getElementById("wall-pill");
+  if (pillEl) pillEl.innerHTML = pillFor(S.source);
+  const rail = document.getElementById("wall-rail");
+  if (rail) rail.innerHTML = wallRailHtml();
+  const b = wallBannerHtml();
+  const bannerEl = document.getElementById("wall-banner");
+  if (bannerEl) {
+    bannerEl.innerHTML = b.html;
+    bannerEl.dataset.show = b.show ? "true" : "false";
+  }
+  wallClockUpdate();
+}
+
+function wallClockUpdate() {
+  const now = new Date();
+  const c = document.getElementById("wall-clock");
+  if (c) c.textContent = `${fmtWallDate(now)} ${fmtClock(now)}`;
+  const bc = document.getElementById("wp-bigclock");
+  if (bc) bc.textContent = fmtClock(now);
+  const bd = document.getElementById("wp-bigdate");
+  if (bd) bd.textContent = fmtWallDate(now);
+  // night dim 22:00–07:00
+  const wall = document.getElementById("wall");
+  if (wall) wall.classList.toggle("wall-dim", now.getHours() >= 22 || now.getHours() < 7);
+}
+
+function wallTick() {
+  wallClockUpdate();
+  if (WALL.paused) {
+    if (WALL.pauseReason === "key" && Date.now() - WALL.lastKey >= 60000) wallResume();
+    return;
+  }
+  if (Date.now() - WALL.lastSwitch >= WALL.dwell) wallShow(WALL.idx + 1);
+  // banners + rail react to data age
+  const b = wallBannerHtml();
+  const bannerEl = document.getElementById("wall-banner");
+  if (bannerEl) {
+    bannerEl.innerHTML = b.html;
+    bannerEl.dataset.show = b.show ? "true" : "false";
+  }
+  const rail = document.getElementById("wall-rail");
+  if (rail) rail.innerHTML = wallRailHtml();
+}
+
+/* cold boot: no localStorage, no dialogs, no first-run state anywhere above */
+
+boot();
+
     </script>
   </body>
 </html>

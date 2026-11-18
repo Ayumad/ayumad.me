@@ -6,7 +6,7 @@
 //   (e.g. ../tokens.css, base.css, components.js).
 // - Marker <!--INLINE:SEED--> embeds dashboard/fixtures/state.v2.json
 //   as window.__DASHBOARD_SEED__ so the page works from file:// with no network.
-// - Output: public/dashboard.html (single self-contained artifact).
+// - Output: server/dashboard/overview.html (served by api/dashboard.ts behind auth).
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
@@ -16,7 +16,7 @@ const root = path.resolve(here, "..");
 const srcDir = path.join(root, "dashboard", "src");
 const entry = path.join(srcDir, "index.html");
 const fixture = path.join(root, "dashboard", "fixtures", "state.v2.json");
-const out = path.join(root, "public", "dashboard.html");
+const out = path.join(root, "server", "dashboard", "overview.html");
 
 if (!fs.existsSync(entry)) {
   console.error(`missing entry: ${entry}`);

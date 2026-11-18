@@ -2,8 +2,8 @@
    web layout, drawer, filters, keyboard, URL state, theme.
    Wall mode lives in wall.js; boot() is invoked at the end of wall.js. */
 
-const LIVE = "https://ayumacmini.taila4a4a9.ts.net/dashboard.json"; // v1 payload, real data
-const SNAPSHOT = "/dashboard.json"; // same-origin v1 snapshot, deployed with the site
+const AUTH_DATA = "/dashboard/data"; // authenticated v1 snapshot (Vercel function)
+const WALL_DATA = "./dashboard.json"; // wall server payload (docker-vm)
 const SEED = window.__DASHBOARD_SEED__; // fixture inlined by the build
 const LIVE_TIMEOUT_MS = 5000;
 const REFRESH_MS = 60000;
@@ -18,7 +18,7 @@ const SECTIONS = [
 ];
 
 const S = {
-  source: "sync", // "sync" | "live" | "seed" | "stale"
+  source: "sync", // "sync" | "snapshot" | "live" | "seed" | "stale" | "error"
   data: null, // v2-shaped payload (seed fixture or adapted live v1)
   params: {},
   theme: "dark",
@@ -143,14 +143,65 @@ function adaptV1(v1) {
     derived: true,
   };
 
+  const STACKS = (n) => {
+    if (/^(sonarr|radarr|prowlarr|bazarr|cleanuparr|jellyseerr|jellyfin|qbittorrent|flaresolverr|gluetun|navidrome|audiobookshelf|suwayomi|calibre-web|kamiyomu|syncthing)/.test(n)) return "media";
+    if (/^immich/.test(n)) return "photos";
+    if (/^paperless/.test(n)) return "docs";
+    if (["forgejo", "code-server", "caddy", "dozzle", "diun"].includes(n)) return "dev";
+    if (["homeassistant", "node-red", "mosquitto"].includes(n)) return "home";
+    if (["uptime-kuma", "grafana", "prometheus", "scrutiny", "scrutiny-influxdb", "healthchecks", "healthchecks-db", "ntfy", "dashboard-wall"].includes(n)) return "ops";
+    if (/^miniflux/.test(n)) return "reading";
+    if (n === "actual") return "finance";
+    if (n === "vaultwarden") return "security";
+    if (["open-webui", "qdrant", "ollama-cpu"].includes(n)) return "ai";
+    if (n === "stirling-pdf") return "tools";
+    return "other";
+  };
+
+  const containerNames = hl.containers?.names || [];
+  const dockerVm = hl.containers
+    ? {
+        counts: {
+          defined: hl.containers.total ?? null,
+          running: hl.containers.running ?? null,
+          stopped:
+            hl.containers.total !== null && hl.containers.total !== undefined &&
+            hl.containers.running !== null && hl.containers.running !== undefined
+              ? hl.containers.total - hl.containers.running
+              : null,
+          expected_running_stopped: null,
+          unhealthy: (hl.containers.unhealthy || []).length,
+        },
+        containers: containerNames.map((n) => ({ name: n, state: "running", stack: STACKS(n), health: null })),
+        stacks: [...new Set(containerNames.map(STACKS))].sort(),
+      }
+    : { pending: true };
+
+  const media = hl.media
+    ? {
+        queues: { radarr: hl.media.radarr_queue ?? null, sonarr: hl.media.sonarr_queue ?? null },
+        downloads: {
+          active: hl.media.torrents_active ?? null,
+          rate_mbps: hl.media.down_mbps ?? null,
+          torrents: hl.media.torrents ?? null,
+        },
+        jellyfin: {
+          movies: hl.media.jellyfin_movies ?? null,
+          series: hl.media.jellyfin_series ?? null,
+          episodes: hl.media.jellyfin_episodes ?? null,
+        },
+        mount: hl.media.mount_free ?? null,
+      }
+    : { pending: true };
+
   const sources = [
     { name: "hermes", ok: true, ms: null, stale: false, age_s: 0 },
     { name: "proxmox", ok: hl.reachable !== false, ms: null, stale: hl.reachable === false, age_s: 0, error: hl.reachable === false ? "unreachable" : null },
     { name: "network", ok: true, ms: null, stale: false, age_s: 0 },
     { name: "personal", ok: true, ms: null, stale: false, age_s: 0 },
-    { name: "docker_stack", ok: false, pending: true, error: "v1 payload has no per-container surface" },
-    { name: "media", ok: false, pending: true, error: "v1 payload has no media surface" },
-    { name: "external", ok: false, pending: true, error: "v1 payload has no external surface" },
+    { name: "docker_stack", ok: !!hl.containers, ms: null, stale: false, age_s: 0, pending: !hl.containers },
+    { name: "media", ok: !!hl.media, ms: null, stale: false, age_s: 0, pending: !hl.media },
+    { name: "external", ok: false, ms: null, stale: false, age_s: 0, pending: true, error: "v1 payload has no external surface" },
   ];
 
   return {
@@ -165,9 +216,9 @@ function adaptV1(v1) {
         cron: { pending: true }, // per-job cron rows are not present in v1
       },
       p520,
-      docker_vm: { pending: true },
+      docker_vm: dockerVm,
       network: { tailscale: fleet, online, pihole: null, routes: null },
-      media: { pending: true },
+      media,
       personal,
       external: { pending: true },
     },
@@ -210,28 +261,24 @@ function timelineFromV1(v1) {
 }
 
 /* ---------- data loading ---------- */
-/* Load order: live tailnet → same-origin snapshot → embedded seed.
-   A payload is always available (the seed is inlined), so a failed source
-   is never a feed outage — per-source staleness stays in the section hints. */
+/* Load order: authenticated snapshot (/dashboard/data) → wall live payload
+   (./dashboard.json) → embedded seed (wall / file:// / ?fixture=1).
+   Behind auth, a failed snapshot is an error state, never fake seed data. */
 
 async function fetchJson(url, timeoutMs) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(url, { cache: "no-store", credentials: "same-origin", signal: ctrl.signal });
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
     return await res.json();
   } finally {
     clearTimeout(timer);
   }
-}
-
-async function fetchLive() {
-  return adaptV1(await fetchJson(LIVE, LIVE_TIMEOUT_MS));
-}
-
-async function fetchSnapshot() {
-  return adaptV1(await fetchJson(SNAPSHOT, LIVE_TIMEOUT_MS));
 }
 
 function useSeed() {
@@ -246,18 +293,26 @@ async function loadData() {
     return;
   }
   try {
-    S.data = await fetchLive();
-    S.source = "live";
+    S.data = adaptV1(await fetchJson(AUTH_DATA, LIVE_TIMEOUT_MS));
+    S.source = "snapshot";
     S.lastLiveOk = new Date();
-  } catch {
+  } catch (err) {
+    if (err.status === 401 && location.protocol !== "file:") {
+      location.href = "/dashboard/login?next=" + encodeURIComponent(location.pathname);
+      return;
+    }
     try {
-      S.data = await fetchSnapshot();
-      S.source = "snapshot";
+      S.data = adaptV1(await fetchJson(WALL_DATA, LIVE_TIMEOUT_MS));
+      S.source = "live";
+      S.lastLiveOk = new Date();
     } catch {
       if (S.data) {
         S.source = "stale"; // keep last good data, say so
-      } else {
+      } else if (location.protocol === "file:" || S.wall) {
         useSeed();
+      } else {
+        S.data = null;
+        S.source = "error";
       }
     }
   }
@@ -271,13 +326,14 @@ function pillFor(source) {
   if (source === "snapshot") return pill("snapshot", "SNAPSHOT · partial");
   if (source === "seed") return pill("seed", "SEED");
   if (source === "stale") return pill("stale", "STALE");
+  if (source === "error") return pill("stale", "NO DATA");
   return pill("seed", "SYNC");
 }
 
 /* Global mode banner (web): honest about what is on screen.
    SEED → design fixture note · SNAPSHOT → snapshot + age · LIVE → nothing. */
 function modeBannerHtml() {
-  if (!S.data) return "";
+  if (!S.data) return S.source === "error" ? banner("warn", "DATA UNAVAILABLE · snapshot could not be read") : "";
   if (S.source === "seed") return banner("mute", "DESIGN FIXTURE · not live data");
   if (S.source === "snapshot") {
     return banner("mute", `snapshot · ${fmtAge(g(S.data, "generated_at"))} old`);
@@ -633,8 +689,10 @@ function sectionMedia() {
   const cellsHtml = `<div class="cells">
     ${cell({ label: "radarr queue", value: valNum(q.radarr) })}
     ${cell({ label: "sonarr queue", value: valNum(q.sonarr) })}
-    ${cell({ label: "downloads active", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")} rate` })}
-    ${cell({ label: "jellyfin sessions", value: valNum(jf.sessions), sub: num(jf.sessions) === 0 ? "idle" : "now playing" })}
+    ${cell({ label: "downloads active", value: valNum(dl.active), sub: `${valNum(dl.rate_mbps, " mbps")} · ${valNum(dl.torrents)} torrents` })}
+    ${jf.movies !== undefined && jf.movies !== null
+      ? cell({ label: "jellyfin library", value: valNum(jf.movies), sub: `${valNum(jf.series)} series · ${valNum(jf.episodes)} eps` })
+      : cell({ label: "jellyfin sessions", value: valNum(jf.sessions), sub: num(jf.sessions) === 0 ? "idle" : "now playing" })}
     ${cell({ label: "remux queued", value: valNum(rx.queued), sub: `${valNum(rx.completed_today)} completed today` })}
     ${cell({ label: "letterboxd sync", value: lb.stale ? "stale" : val(lb.last_sync ? "ok" : "—"), state: lb.stale ? "warn" : "good", sub: fmtTimeShort(lb.last_sync) })}
   </div>`;
@@ -788,7 +846,7 @@ function renderWeb() {
       ${headerHtml()}
       ${modeBannerHtml() ? `<div class="mode-strip">${modeBannerHtml()}</div>` : ""}
       <div class="hero">${heroCells()}</div>
-      ${S.data ? "" : `<div class="state" data-state="empty" style="margin-top:20px"><span class="t">connecting</span><span>live → snapshot → seed fallback</span></div>`}
+      ${S.data ? "" : `<div class="state" data-state="empty" style="margin-top:20px"><span class="t">${S.source === "error" ? "data unavailable" : "connecting"}</span><span>${S.source === "error" ? "the authenticated snapshot could not be read" : "authenticated snapshot → seed fallback"}</span></div>`}
       ${sectionAutomations()}
       ${sectionHomelab()}
       ${sectionServices()}
