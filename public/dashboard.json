@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-17T08:19:50-08:00",
+ "generated_at": "2026-11-18T08:26:00-08:00",
  "generated_on": "Mac mini",
  "hermes": {
   "version": "0.23.1",
@@ -8,18 +8,33 @@
   "cron_total": 31,
   "cron_active": 22,
   "cron_no_agent": 23,
-  "cron_failing": [],
-  "cron_failing_count": 0,
+  "cron_failing": [
+   {
+    "name": "Daily Cleanup + Loose Ends",
+    "runs": 2,
+    "ok": 1,
+    "failed": 1,
+    "last": "2026-11-18T08:25:47"
+   },
+   {
+    "name": "Mnemosyne Sleep",
+    "runs": 3,
+    "ok": 2,
+    "failed": 1,
+    "last": "2026-11-18T08:25:47"
+   }
+  ],
+  "cron_failing_count": 2,
   "skills": 218,
   "mcp_servers": 1,
   "mcp_enabled": 1,
   "memory": {
    "working": 1843,
-   "episodic": 711
+   "episodic": 720
   },
   "disk": {
-   "used_pct": 92,
-   "free_gb": 16.2,
+   "used_pct": 88,
+   "free_gb": 23.5,
    "size_gb": 228
   },
   "tokens": {
@@ -27,8 +42,8 @@
    "month_in_m": 24.7,
    "month_out_m": 5.47,
    "month_cache_m": 1077.6,
-   "week_calls": 1942,
-   "week_out_m": 1.24,
+   "week_calls": 1336,
+   "week_out_m": 0.79,
    "cache_share": 98,
    "top_models": [
     {
@@ -52,20 +67,20 @@
  },
  "homelab": {
   "reachable": true,
-  "checked_at": "2026-11-17T08:19:50-08:00",
+  "checked_at": "2026-11-18T08:26:05-08:00",
   "host": {
    "name": "pve-p520",
    "proxmox": "9.2.20",
    "kernel": "7.0.14-17-pve",
-   "uptime_s": 2871522,
+   "uptime_s": 72011,
    "load": [
-    "24.55",
-    "31.72",
-    "22.92"
+    "1.03",
+    "0.44",
+    "0.46"
    ],
    "cpu": "Intel(R) Xeon(R) W-2135 CPU @ 3.70GHz",
    "cores": 12,
-   "mem_used_gb": 48.3,
+   "mem_used_gb": 24.5,
    "mem_total_gb": 62,
    "failed_units": 0,
    "failed_list": [],
@@ -87,7 +102,7 @@
    {
     "id": 200,
     "name": "ai-vm",
-    "status": "running",
+    "status": "stopped",
     "mem_mb": 24576,
     "disk_gb": 200,
     "type": "qemu",
@@ -97,7 +112,7 @@
    {
     "id": 201,
     "name": "school-vm",
-    "status": "running",
+    "status": "stopped",
     "mem_mb": 6144,
     "disk_gb": 40,
     "type": "qemu",
@@ -195,16 +210,16 @@
     "gpu": false
    }
   ],
-  "guests_running": 6,
+  "guests_running": 4,
   "gpu_owner_vm": 200,
   "pools": [
    {
     "name": "ssd",
     "size_gb": 3563.52,
-    "alloc_gb": 200.0,
+    "alloc_gb": 195.0,
     "free_gb": 3368.96,
     "health": "ONLINE",
-    "used_pct": 6,
+    "used_pct": 5,
     "scan": "scrub repaired 0B in 00:12:59 with 0 errors on Sun Nov  8 00:37:00 2026",
     "never_scrubbed": false,
     "errors": "No known data errors",
@@ -218,10 +233,10 @@
    {
     "name": "tank",
     "size_gb": 18636.8,
-    "alloc_gb": 15667.2,
-    "free_gb": 3000.32,
+    "alloc_gb": 15462.4,
+    "free_gb": 3184.64,
     "health": "ONLINE",
-    "used_pct": 84,
+    "used_pct": 83,
     "scan": "scrub repaired 0B in 4 days 09:22:50 with 0 errors on Thu Nov 12 09:46:52 2026",
     "never_scrubbed": false,
     "errors": "No known data errors",
@@ -236,23 +251,23 @@
   "datasets": [
    {
     "name": "ssd",
-    "used": "806G",
+    "used": "804G",
     "avail": "2.59T"
    },
    {
     "name": "ssd/games",
-    "used": "112K",
+    "used": "120K",
     "avail": "2.59T"
    },
    {
     "name": "ssd/subvol-100-disk-0",
-    "used": "1.37G",
-    "avail": "6.80G"
+    "used": "1.42G",
+    "avail": "6.78G"
    },
    {
     "name": "ssd/subvol-101-disk-0",
     "used": "528M",
-    "avail": "3.51G"
+    "avail": "3.50G"
    },
    {
     "name": "ssd/subvol-102-disk-0",
@@ -261,7 +276,7 @@
    },
    {
     "name": "ssd/vm-200-cloudinit",
-    "used": "6.07M",
+    "used": "6.08M",
     "avail": "2.59T"
    },
    {
@@ -271,7 +286,7 @@
    },
    {
     "name": "ssd/vm-201-cloudinit",
-    "used": "6.07M",
+    "used": "6.08M",
     "avail": "2.59T"
    },
    {
@@ -281,13 +296,13 @@
    },
    {
     "name": "ssd/vm-202-cloudinit",
-    "used": "6.07M",
+    "used": "6.15M",
     "avail": "2.59T"
    },
    {
     "name": "ssd/vm-202-disk-0",
-    "used": "285G",
-    "avail": "2.78T"
+    "used": "284G",
+    "avail": "2.79T"
    },
    {
     "name": "ssd/vm-211-disk-0",
@@ -311,78 +326,72 @@
    },
    {
     "name": "tank",
-    "used": "12.2T",
-    "avail": "2.22T"
+    "used": "12.1T",
+    "avail": "2.36T"
    },
    {
     "name": "tank/MM",
-    "used": "2.61M",
-    "avail": "2.22T"
+    "used": "2.55M",
+    "avail": "2.36T"
    },
    {
     "name": "tank/PC",
     "used": "1.57T",
-    "avail": "2.22T"
+    "avail": "2.36T"
    },
    {
     "name": "tank/backups",
-    "used": "1.65T",
-    "avail": "2.22T"
+    "used": "1.66T",
+    "avail": "2.36T"
    },
    {
     "name": "tank/media",
-    "used": "8.41T",
-    "avail": "2.22T"
+    "used": "8.11T",
+    "avail": "2.36T"
    },
    {
     "name": "tank/photos",
     "used": "1.07G",
-    "avail": "2.22T"
+    "avail": "2.36T"
    },
    {
     "name": "tank/retro",
     "used": "22.3G",
-    "avail": "2.22T"
+    "avail": "2.36T"
    },
    {
     "name": "tank/shared",
     "used": "79.4G",
-    "avail": "2.22T"
+    "avail": "2.36T"
    },
    {
     "name": "tank/timemachine",
-    "used": "476G",
-    "avail": "1.53T"
+    "used": "632G",
+    "avail": "1.38T"
    }
   ],
   "snapshots": 332,
-  "snapshot_newest": "tank/shared@autosnap_2026-11-17_16:00:15_hourly",
+  "snapshot_newest": "tank/shared@autosnap_2026-11-18_16:00:19_hourly",
   "scrub_timers": 2,
   "backups": {
-   "newest": "vzdump-qemu-214-2026_11_17-04_08_10.vma.zst",
-   "newest_age_h": 4.2,
+   "newest": "vzdump-qemu-214-2026_11_18-03_47_58.vma.zst",
+   "newest_age_h": 4.6,
    "count": 115,
    "destination": "/tank/backups (on the P520 itself)",
    "offsite": false,
    "schedule": "daily 03:30 (vzdump, all guests, keep 7d/4w/3m)"
   },
   "containers": {
-   "running": 48,
+   "running": 34,
    "total": 49,
    "unhealthy": [],
    "restarting": [],
    "names": [
-    "cleanuparr",
     "dozzle",
-    "suwayomi",
     "open-webui",
-    "qbittorrent-personal",
     "gluetun-personal",
-    "calibre-web",
     "actual",
-    "qbittorrent",
     "gluetun",
-    "jellyfin",
     "healthchecks",
     "miniflux",
     "stirling-pdf",
@@ -391,7 +400,6 @@
     "caddy",
     "qdrant",
     "diun",
-    "bazarr",
     "vaultwarden",
     "ntfy",
     "ollama-cpu",
@@ -401,25 +409,18 @@
     "homeassistant",
     "forgejo",
     "code-server",
-    "immich_server",
     "immich_postgres",
     "immich_machine_learning",
     "immich_redis",
-    "paperless",
     "paperless-db",
     "paperless-broker",
-    "syncthing",
     "scrutiny-influxdb",
     "uptime-kuma",
     "scrutiny",
     "prometheus",
     "grafana",
     "jellyseerr",
-    "navidrome",
-    "audiobookshelf",
-    "radarr",
-    "prowlarr",
-    "sonarr"
+    "prowlarr"
    ]
   },
   "gpu": {
@@ -429,20 +430,20 @@
    "present": false
   },
   "media": {
-   "torrents": 110,
-   "torrents_active": 1,
-   "down_mbps": 2.9,
-   "jellyfin_movies": 219,
-   "jellyfin_series": 13,
-   "jellyfin_episodes": 401,
-   "sonarr_queue": 26,
-   "radarr_queue": 2,
-   "mount_free": "2.3T free of 11T (79% used)"
+   "torrents": 0,
+   "torrents_active": 0,
+   "down_mbps": 0.0,
+   "jellyfin_movies": 0,
+   "jellyfin_series": 0,
+   "jellyfin_episodes": 0,
+   "sonarr_queue": 0,
+   "radarr_queue": 0,
+   "mount_free": ""
   },
   "nas": {
    "lan": "10.0.0.220",
    "tailnet": "100.65.160.86",
-   "smb_lan": true,
+   "smb_lan": false,
    "smb_tailnet": true,
    "shares": [
     "shared",
@@ -459,9 +460,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8096/",
-    "up": true,
-    "ms": 39,
-    "code": 200
+    "up": false,
+    "ms": 230,
+    "code": null
    },
    {
     "name": "Jellyseerr",
@@ -470,7 +471,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:5055/",
     "up": true,
-    "ms": 90,
+    "ms": 428,
     "code": 200
    },
    {
@@ -480,7 +481,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9696/",
     "up": true,
-    "ms": 42,
+    "ms": 274,
     "code": 200
    },
    {
@@ -489,9 +490,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8989/",
-    "up": true,
-    "ms": 25,
-    "code": 200
+    "up": false,
+    "ms": 236,
+    "code": null
    },
    {
     "name": "Radarr",
@@ -499,9 +500,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:7878/",
-    "up": true,
-    "ms": 25,
-    "code": 200
+    "up": false,
+    "ms": 229,
+    "code": null
    },
    {
     "name": "qBittorrent",
@@ -509,9 +510,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8090/",
-    "up": true,
-    "ms": 25,
-    "code": 200
+    "up": false,
+    "ms": 230,
+    "code": null
    },
    {
     "name": "Bazarr",
@@ -519,9 +520,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:6767/",
-    "up": true,
-    "ms": 194,
-    "code": 200
+    "up": false,
+    "ms": 230,
+    "code": null
    },
    {
     "name": "Audiobookshelf",
@@ -529,9 +530,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:13378/",
-    "up": true,
-    "ms": 67,
-    "code": 200
+    "up": false,
+    "ms": 229,
+    "code": null
    },
    {
     "name": "Navidrome",
@@ -539,9 +540,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:4533/",
-    "up": true,
-    "ms": 35,
-    "code": 200
+    "up": false,
+    "ms": 230,
+    "code": null
    },
    {
     "name": "Calibre-Web",
@@ -549,9 +550,9 @@
     "group": "media",
     "kind": "http",
     "url": "http://100.113.99.29:8083/",
-    "up": true,
-    "ms": 76,
-    "code": 200
+    "up": false,
+    "ms": 235,
+    "code": null
    },
    {
     "name": "FlareSolverr",
@@ -560,7 +561,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8191/",
     "up": true,
-    "ms": 94,
+    "ms": 235,
     "code": 200
    },
    {
@@ -570,7 +571,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3002/",
     "up": true,
-    "ms": 35,
+    "ms": 252,
     "code": 200
    },
    {
@@ -580,7 +581,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:9090/",
     "up": true,
-    "ms": 40,
+    "ms": 33,
     "code": 200
    },
    {
@@ -590,7 +591,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3001/",
     "up": true,
-    "ms": 32,
+    "ms": 41,
     "code": 200
    },
    {
@@ -600,7 +601,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8082/",
     "up": true,
-    "ms": 52,
+    "ms": 47,
     "code": 200
    },
    {
@@ -610,7 +611,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8080/",
     "up": true,
-    "ms": 35,
+    "ms": 340,
     "code": 200
    },
    {
@@ -620,7 +621,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8085/",
     "up": true,
-    "ms": 50,
+    "ms": 16,
     "code": 200
    },
    {
@@ -630,7 +631,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8010/",
     "up": true,
-    "ms": 257,
+    "ms": 148,
     "code": 200
    },
    {
@@ -639,9 +640,9 @@
     "group": "photos",
     "kind": "http",
     "url": "http://100.113.99.29:2283/",
-    "up": true,
-    "ms": 16,
-    "code": 200
+    "up": false,
+    "ms": 6,
+    "code": null
    },
    {
     "name": "Paperless-ngx",
@@ -649,9 +650,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8000/",
-    "up": true,
-    "ms": 80,
-    "code": 200
+    "up": false,
+    "ms": 6,
+    "code": null
    },
    {
     "name": "Syncthing",
@@ -659,9 +660,9 @@
     "group": "documents",
     "kind": "http",
     "url": "http://100.113.99.29:8384/",
-    "up": true,
-    "ms": 19,
-    "code": 200
+    "up": false,
+    "ms": 6,
+    "code": null
    },
    {
     "name": "Stirling-PDF",
@@ -670,7 +671,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8088/",
     "up": true,
-    "ms": 28,
+    "ms": 192,
     "code": 401
    },
    {
@@ -680,7 +681,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8089/",
     "up": true,
-    "ms": 112,
+    "ms": 83,
     "code": 200
    },
    {
@@ -690,7 +691,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3005/",
     "up": true,
-    "ms": 17,
+    "ms": 42,
     "code": 200
    },
    {
@@ -700,7 +701,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8443/",
     "up": true,
-    "ms": 61,
+    "ms": 42,
     "code": 200
    },
    {
@@ -710,7 +711,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:3009/",
     "up": true,
-    "ms": 16,
+    "ms": 58,
     "code": 200
    },
    {
@@ -720,7 +721,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:6333/",
     "up": true,
-    "ms": 63,
+    "ms": 35,
     "code": 200
    },
    {
@@ -730,7 +731,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8123/",
     "up": true,
-    "ms": 33,
+    "ms": 32,
     "code": 200
    },
    {
@@ -740,7 +741,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:1880/",
     "up": true,
-    "ms": 18,
+    "ms": 15,
     "code": 200
    },
    {
@@ -760,7 +761,7 @@
     "kind": "http",
     "url": "http://100.113.99.29:8087/",
     "up": true,
-    "ms": 27,
+    "ms": 17,
     "code": 200
    },
    {
@@ -769,9 +770,9 @@
     "group": "core",
     "kind": "http",
     "url": "http://100.113.99.29:11011/",
-    "up": true,
-    "ms": 72,
-    "code": 200
+    "up": false,
+    "ms": 3,
+    "code": null
    },
    {
     "name": "Caddy",
@@ -780,21 +781,25 @@
     "kind": "http",
     "url": "http://100.113.99.29:80/",
     "up": true,
-    "ms": 42,
+    "ms": 22,
     "code": 200
    }
   ],
-  "services_up": 33,
+  "services_up": 21,
   "services_total": 33,
   "open_issues": [
    {
     "severity": "warn",
     "text": "backups live only on the P520 (/tank/backups) — no off-machine copy"
+   },
+   {
+    "severity": "warn",
+    "text": "12 service(s) not answering: Jellyfin, Sonarr, Radarr, qBittorrent, Bazarr, Audiobookshelf"
    }
   ],
   "issue_counts": {
    "bad": 0,
-   "warn": 1
+   "warn": 2
   }
  },
  "projects": [
@@ -1018,13 +1023,13 @@
  ],
  "tasks": {
   "open": 48,
-  "overdue": 1,
+  "overdue": 0,
   "items": [
    {
     "title": "Vibe-code website for looking through my layout — anatomy skill + Claude plan",
     "list": "Tech",
-    "due": "2026-11-16",
-    "overdue": true
+    "due": "2026-11-23",
+    "overdue": false
    },
    {
     "title": "Alienware m16: diagnose power failure (adapter, DC jack, battery-disconnect test) + Dell warranty check (ST 210CKS3)",
@@ -1096,28 +1101,15 @@
   "lists": 9
  },
  "school": {
-  "upcoming": 8,
+  "upcoming": 6,
   "window_days": 7,
-  "later": 4,
+  "later": 5,
   "courses": [
    "CMPE-131",
    "CMPE-142",
-   "CMPE-148",
-   "Class"
+   "CMPE-148"
   ],
   "next": [
-   {
-    "title": "(In-class Activity) Weekly Sprint Meeting - Beta Release TR",
-    "course": "CMPE-131",
-    "due": "2026-11-17",
-    "when": "2026-11-17T18:15:00+00:00"
-   },
-   {
-    "title": "SJSU Title IX Student Training Video",
-    "course": "Class",
-    "due": "2026-11-17",
-    "when": "2026-11-17T23:59:00+00:00"
-   },
    {
     "title": "Chapter 1&2&3 Quiz- Requires Respondus LockDown Browser",
     "course": "CMPE-131",
@@ -1128,7 +1120,7 @@
     "title": "(In-class Activity) Weekly Sprint Meeting - Final Demo Prep",
     "course": "CMPE-131",
     "due": "2026-11-19",
-    "when": "2026-11-19T18:15:00+00:00"
+    "when": "2026-11-19T18:30:00+00:00"
    },
    {
     "title": "PART FIVE: Chapters 11&12 Quiz- Requires Respondus LockDown Browser",
@@ -1170,14 +1162,20 @@
    "self": false
   },
   {
-   "name": "ayumad",
-   "os": "linux",
+   "name": "Ayumacpro",
+   "os": "macOS",
    "online": true,
    "self": false
   },
   {
    "name": "Ayupadpro",
    "os": "iOS",
+   "online": true,
+   "self": false
+  },
+  {
+   "name": "Creekwood",
+   "os": "windows",
    "online": true,
    "self": false
   },
@@ -1200,31 +1198,19 @@
    "self": false
   },
   {
-   "name": "school-vm",
-   "os": "linux",
-   "online": true,
-   "self": false
-  },
-  {
    "name": "tank",
    "os": "linux",
    "online": true,
    "self": false
   },
   {
-   "name": "Ayumacpro",
-   "os": "macOS",
+   "name": "ayumad",
+   "os": "linux",
    "online": false,
    "self": false
   },
   {
    "name": "Canyon",
-   "os": "windows",
-   "online": false,
-   "self": false
-  },
-  {
-   "name": "Creekwood",
    "os": "windows",
    "online": false,
    "self": false
@@ -1262,6 +1248,12 @@
   {
    "name": "Retroid Pocket Nova",
    "os": "android",
+   "online": false,
+   "self": false
+  },
+  {
+   "name": "school-vm",
+   "os": "linux",
    "online": false,
    "self": false
   },
@@ -1307,20 +1299,20 @@
   "active_projects": 21,
   "planned_projects": 7,
   "open_tasks": 48,
-  "overdue_tasks": 1,
-  "assignments_upcoming": 8,
+  "overdue_tasks": 0,
+  "assignments_upcoming": 6,
   "devices_online": 9,
   "devices_total": 21,
-  "jobs_failing": 0,
+  "jobs_failing": 2,
   "jobs_total": 22,
   "homelab_reachable": true,
-  "services_up": 33,
+  "services_up": 21,
   "services_total": 33,
-  "guests_running": 6,
-  "containers_running": 48,
+  "guests_running": 4,
+  "containers_running": 34,
   "pools_online": 2,
   "pools_total": 2,
   "homelab_issues_bad": 0,
-  "homelab_issues_warn": 1
+  "homelab_issues_warn": 2
  }
 }
