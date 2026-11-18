@@ -485,7 +485,7 @@ body {
   gap: 12px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -899,7 +899,7 @@ body {
 .wbar small {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 7.5px;
+  font-size: 8.5px;
   letter-spacing: 0.04em;
 }
 
@@ -1029,7 +1029,7 @@ body {
   margin-top: 8px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1286,7 +1286,7 @@ body {
   grid-column: 1 / -1;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.14em;
 }
 
@@ -1311,7 +1311,7 @@ body {
 .pstat em {
   color: var(--text);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-style: normal;
   letter-spacing: 0.04em;
 }
@@ -1812,6 +1812,9 @@ body {
       const timed = events.filter((event) => event.time !== "all-day").length;
       const allDay = Math.max(0, events.length - timed);
       const timedPct = (timed / total) * 100;
+      const gap = allDay ? 2 : 0;
+      const timedArc = Math.max(0, timedPct - gap);
+      const allDayArc = allDay ? Math.max(0, 100 - timedPct - gap) : 0;
       const next = events.find((event) => event.time && event.time !== "all-day")?.time;
       $("events").innerHTML = `
         <div class="pub">
@@ -1819,9 +1822,9 @@ body {
             <svg viewBox="0 0 120 120">
               <circle class="bg" cx="60" cy="60" r="46" pathLength="100" />
               <circle class="seg timed" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${timedPct} ${100 - timedPct}" stroke-dashoffset="0" />
+                stroke-dasharray="${timedArc} ${100 - timedArc}" stroke-dashoffset="0" />
               <circle class="seg allday" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${allDay ? 100 - timedPct : 0} ${allDay ? timedPct : 100}"
+                stroke-dasharray="${allDayArc} ${100 - allDayArc}"
                 stroke-dashoffset="${-timedPct}" />
             </svg>
             <div class="pub-center"><b>${count}</b><small>EVENTS</small></div>

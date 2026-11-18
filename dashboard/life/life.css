@@ -316,7 +316,7 @@ body {
   gap: 12px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -730,7 +730,7 @@ body {
 .wbar small {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 7.5px;
+  font-size: 8.5px;
   letter-spacing: 0.04em;
 }
 
@@ -860,7 +860,7 @@ body {
   margin-top: 8px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -1117,7 +1117,7 @@ body {
   grid-column: 1 / -1;
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.14em;
 }
 
@@ -1142,7 +1142,7 @@ body {
 .pstat em {
   color: var(--text);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-style: normal;
   letter-spacing: 0.04em;
 }

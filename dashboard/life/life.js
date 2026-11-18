@@ -218,6 +218,9 @@
       const timed = events.filter((event) => event.time !== "all-day").length;
       const allDay = Math.max(0, events.length - timed);
       const timedPct = (timed / total) * 100;
+      const gap = allDay ? 2 : 0;
+      const timedArc = Math.max(0, timedPct - gap);
+      const allDayArc = allDay ? Math.max(0, 100 - timedPct - gap) : 0;
       const next = events.find((event) => event.time && event.time !== "all-day")?.time;
       $("events").innerHTML = `
         <div class="pub">
@@ -225,9 +228,9 @@
             <svg viewBox="0 0 120 120">
               <circle class="bg" cx="60" cy="60" r="46" pathLength="100" />
               <circle class="seg timed" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${timedPct} ${100 - timedPct}" stroke-dashoffset="0" />
+                stroke-dasharray="${timedArc} ${100 - timedArc}" stroke-dashoffset="0" />
               <circle class="seg allday" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${allDay ? 100 - timedPct : 0} ${allDay ? timedPct : 100}"
+                stroke-dasharray="${allDayArc} ${100 - allDayArc}"
                 stroke-dashoffset="${-timedPct}" />
             </svg>
             <div class="pub-center"><b>${count}</b><small>EVENTS</small></div>
