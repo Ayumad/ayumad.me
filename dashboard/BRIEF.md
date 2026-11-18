@@ -1,6 +1,8 @@
 # Codex Design Brief — Ayumad Automation Dashboard
 
 > **Deployment update (2026-11-18):** the page is served by `api/dashboard.ts` at `/dashboard` behind the site login. Build output is `server/dashboard/overview.html`; live data comes from the authenticated `/dashboard/data`, with a sanitized fixture as the offline seed. The old public `public/dashboard.html` no longer exists.
+>
+> **Routing update (2026-11-18 12:10):** this document now describes the **ops** surface at `/status`, built to `server/dashboard/status.html`. The one-screen life view at `/dashboard` is specified in `LIFE.md`; build `dashboard/life/` → `server/dashboard/overview.html`.
 
 **Read this before writing any code.** It is the complete handoff: visual language, information architecture, component specs, data contract, file layout, and the exact per-session prompts with model routing.
 
