@@ -4508,7 +4508,8 @@ function sectionExternal() {
   const src = (g(S.data, "meta.sources") || []);
   const x = g(S.data, "surfaces.external") || {};
   if (x.pending) {
-    return `${secHead("external", sourceBadge("external", src))}${pendingPanel("vercel · github · offsite backups")}</section>`;
+    const hint = S.source === "public" ? `<span class="nodata">sign in for detail</span>` : sourceBadge("external", src);
+    return `${secHead("external", hint)}${pendingPanel("vercel · github · offsite backups")}</section>`;
   }
   const v = x.vercel || {};
   const gh = x.github || {};
