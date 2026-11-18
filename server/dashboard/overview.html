@@ -1646,6 +1646,10 @@ body.wall {
   color: var(--muted);
 }
 
+body[data-source="public"] .state.pending .t::after {
+  content: " · sign in for detail";
+}
+
 .state.error {
   border-style: solid;
   border-color: color-mix(in srgb, var(--bad) 45%, transparent);
@@ -4068,6 +4072,7 @@ const app = document.getElementById("app");
 
 function render() {
   document.documentElement.dataset.theme = S.theme;
+  document.body.dataset.source = S.source;
   if (S.wall) {
     if (typeof wallRender === "function") wallRender();
     return;

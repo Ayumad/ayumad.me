@@ -350,6 +350,7 @@ const app = document.getElementById("app");
 
 function render() {
   document.documentElement.dataset.theme = S.theme;
+  document.body.dataset.source = S.source;
   if (S.wall) {
     if (typeof wallRender === "function") wallRender();
     return;

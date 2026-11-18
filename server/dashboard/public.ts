@@ -51,6 +51,8 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
     generated_at: v1.generated_at ?? null,
     generated_on: "Mac mini",
     hermes: {
+      version: h.version ?? null,
+      released: h.released ?? null,
       cron_total: n(h.cron_total),
       cron_active: n(h.cron_active),
       cron_no_agent: n(h.cron_no_agent),
@@ -72,7 +74,9 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
         ? {
             name: "pve-host",
             uptime_s: n(hl.host.uptime_s),
-            load: Array.isArray(hl.host.load) ? hl.host.load : null,
+            load: Array.isArray(hl.host.load)
+              ? hl.host.load.map((x: unknown) => Number(x)).filter((x: number) => Number.isFinite(x))
+              : null,
             cores: n(hl.host.cores),
             mem_used_gb: n(hl.host.mem_used_gb),
             mem_total_gb: n(hl.host.mem_total_gb),

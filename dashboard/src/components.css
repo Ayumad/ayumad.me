@@ -578,6 +578,10 @@
   color: var(--muted);
 }
 
+body[data-source="public"] .state.pending .t::after {
+  content: " · sign in for detail";
+}
+
 .state.error {
   border-style: solid;
   border-color: color-mix(in srgb, var(--bad) 45%, transparent);
