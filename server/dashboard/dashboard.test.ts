@@ -19,10 +19,10 @@ function request(view: string, cookie?: string) {
   });
 }
 
-function form(view: string, values: Record<string, string>, requestOrigin = origin) {
+function form(view: string, values: Record<string, string>, requestOrigin = origin, fetchSite?: string) {
   return new Request(origin + "/api/dashboard?view=" + view, {
     method: "POST",
-    headers: { Origin: requestOrigin },
+    headers: { Origin: requestOrigin, ...(fetchSite ? { "Sec-Fetch-Site": fetchSite } : {}) },
     body: new URLSearchParams(values),
   });
 }
@@ -54,6 +54,16 @@ describe("dashboard access", () => {
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("Secure");
     expect((await GET(request("/dashboard", cookie.split(";")[0]))).status).toBe(200);
+  });
+
+  it("accepts opaque form origins only when the browser confirms same-origin navigation", async () => {
+    const credentials = { username: "owner", password };
+    expect((await POST(form("login", credentials, "null"))).status).toBe(403);
+    expect((await POST(form("login", credentials, "null", "same-site"))).status).toBe(403);
+    expect((await POST(form("login", credentials, "null", "cross-site"))).status).toBe(403);
+    expect((await POST(form("login", credentials, "https://other.test", "same-origin"))).status).toBe(403);
+    expect((await POST(form("login", credentials, "null", "same-origin"))).status).toBe(303);
+    expect((await GET(request("login"))).headers.get("referrer-policy")).toBe("same-origin");
   });
 
   it("rejects expired and modified sessions and clears the cookie on sign-out", async () => {

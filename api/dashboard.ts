@@ -10,7 +10,7 @@ const headers = {
   "X-Frame-Options": "DENY",
   "Content-Security-Policy": "base-uri 'none'; frame-ancestors 'none'; object-src 'none'",
   "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "no-referrer",
+  "Referrer-Policy": "same-origin",
 };
 
 const routes = {
@@ -62,8 +62,12 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const url = new URL(request.url);
   const origin = request.headers.get("origin");
-  if (origin !== url.origin || request.headers.get("sec-fetch-site") === "cross-site") {
-    return new Response(null, { status: 403, headers });
+  const fetchSite = request.headers.get("sec-fetch-site");
+  // Browsers can send an opaque Origin for forms opened under no-referrer.
+  // Accept it only with browser metadata confirming an exact same-origin request.
+  const opaqueSameOrigin = origin === "null" && fetchSite === "same-origin";
+  if ((fetchSite && fetchSite !== "same-origin") || (origin !== url.origin && !opaqueSameOrigin)) {
+    return html(loginPage("Open the dashboard sign-in page and submit the form again."), 403);
   }
 
   const action = url.searchParams.get("view");
