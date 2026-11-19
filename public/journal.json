@@ -1,11 +1,21 @@
 [
  {
   "date": "2026-11-18",
-  "summary": "Session journal for 2026-11-18: gateway recovered at 8:25 AM after a 21-hour outage, full cron catch-up across 11 stores (one media-pipeline delivery failure), backfilled the missing 11-17 journal, media status notes refreshed, disk at 88%.",
+  "summary": "Journal 2026-11-18: gateway back at 8:25 after a 21h outage; Hermes update + maintenance alerting, model auto-router, P520 kiosk dashboard live, coursework, 90 incentive mails labelled; disk 92%.",
   "highlights": [
-   "The 21-hour gap was a gateway death, not a cron bug: no exit path, no restart until the GUI session came back. Two days of media/remux/homelab automation simply did not happen.",
-   "Nothing was lost that mattered — no interactive work occurred during the outage, and the vault synced cleanly on the first tick after recovery.",
-   "The quiet failure to fix: Daily Brief has been generating empty output since Nov 4, and it still reads `ok` in every health check. A green job that produces nothing is worse than a red one."
+   "The P520 wallboard stopped being a plan: a kiosk VM now owns the 3060, boots straight into the dashboard, and yields the GPU the moment `ai-vm` starts. Verified live after a reboot rather than assumed.",
+   "Routing now maintains itself — a per-turn auto-router plus a daily policy applier means promos get used while they last and dropped when they revert, with no alias to remember.",
+   "Two purchases got cheaper by research instead of money: CachyOS over Windows on the Flow Z13 (keeping the Windows partition), and a clear-eyed 38WN95C-W vs Quest 3 split for sim racing.",
+   "Coursework — details stay in the vault.",
+   "Disk is the standing risk — 92% again by tonight despite the morning cleanup, so the free-space alerting is the thing to watch, not the percentage.",
+   "Job application pipeline work — details stay in the vault.",
+   "**Media pipeline delivery failure explained, not lost** — the 08:26:07 `delivery_failed` was a cold-start race: the job fired 22 s after the gateway came back and Photon's sidecar had not spawned yet. Execution `2d4a19e84777493ba5c4890c249bc5e3` is `completed` with empty stdout, and `media-pipeline.sh` only speaks when something imported — **nothing was dropped**. Gateway PID 2860 + photon sidecar are both up; next tick is 09:26.",
+   "**Disk re-measured** — data volume was **88% / 26 GB free**, up from 92% / 19.3 GiB on Nov 16. The cleanup entry's stale figure was corrected in place. (By 22:00 it had fallen back to 92% / 17 GiB.)",
+   "Coursework — details stay in the vault.",
+   "Job application pipeline work — details stay in the vault.",
+   "**Daily Brief is not a quiet failure — it is silent by design.** `crosswalk_digest.py` returns nothing (exit 0) when the agent board has no posts from the last 24 h; that is the documented behaviour at line 54, and it printed nothing again at 08:41 on a quiet board. It remains a thin 9:30 job that only quotes the crosswalk board, so if a real morning brief (calendar, vault, mail) is wanted at 09:30 that is a *new* job, not a repair. Left as a decision for Ayush rather than built unasked.",
+   "Nothing agent-side is open from this pass. The 13 \"late fire\" warnings all trace to the single 21-hour outage window (11:33 Nov 17 → 08:25 Nov 18), not to 13 independent faults.",
+   "Job application pipeline work — details stay in the vault."
   ]
  },
  {
