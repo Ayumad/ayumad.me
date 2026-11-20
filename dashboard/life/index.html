@@ -79,11 +79,16 @@
                 <ul id="event-overflow" aria-label="More events"></ul>
               </details>
             </section>
-            <section id="week" aria-labelledby="weeklabel">
+            <section id="project-pulse" aria-labelledby="projectlabel" hidden>
               <div class="section-head">
-                <h2 id="weeklabel" class="label">This week</h2><span id="weekmeta" class="meta">—</span>
+                <h2 id="projectlabel" class="label">Project pulse</h2><span id="projectmeta" class="meta">—</span>
               </div>
-              <ul id="weekrows" class="rail"><li class="placeholder">—</li></ul>
+              <div class="project-card">
+                <div class="project-top"><span id="projectstatus" class="meta">—</span><span id="projectage" class="meta">—</span></div>
+                <b id="projectname" class="project-name">—</b>
+                <span id="projectnext" class="project-next">—</span>
+                <div class="project-foot"><span id="projectactions" class="meta">—</span><i class="project-trace" aria-hidden="true"></i></div>
+              </div>
             </section>
           </div>
 
@@ -100,11 +105,20 @@
               </div>
               <ul id="school" class="rail"><li class="placeholder">—</li></ul>
             </section>
-            <section id="activity" aria-labelledby="activity-label">
+            <section id="spotify" aria-labelledby="spotifylabel">
               <div class="section-head">
-                <h2 id="activity-label" class="label">Recent activity</h2><span id="activity-meta" class="meta"></span>
+                <h2 id="spotifylabel" class="label">Now listening</h2><span id="spotifymeta" class="meta">—</span>
               </div>
-              <div class="rail-row"><span id="activity-title" class="row-text">—</span><span id="activity-age" class="row-time"></span></div>
+              <a id="spotifycard" class="spotify-card" href="https://open.spotify.com" target="_blank" rel="noreferrer">
+                <span class="spotify-art"><img id="spotifyart" alt="" hidden /><span id="spotifynote" aria-hidden="true">♪</span></span>
+                <span class="spotify-copy">
+                  <span id="spotifystate" class="spotify-state">—</span>
+                  <b id="spotifytitle">—</b>
+                  <span id="spotifyartist">—</span>
+                </span>
+                <span class="spotify-arrow" aria-hidden="true">↗</span>
+              </a>
+              <div class="spotify-track" aria-hidden="true"><i id="spotifyfill"></i></div>
             </section>
           </div>
         </div>
@@ -112,14 +126,9 @@
 
       <footer id="health" class="health">
         <a class="pulse" href="/status">
-          <span id="pulse" data-tone="soft">—</span>
-          <span class="pulse-domain"><small>Hermes</small><b id="hermes-state">—</b></span>
-          <span class="pulse-domain"><small>Homelab</small><b id="homelab-state">—</b></span>
-          <span class="pulse-domain services">
-            <small>Services</small><b id="services">—</b>
-            <svg id="service-trend" viewBox="0 0 88 20" aria-hidden="true"><line x1="3" x2="85" y1="17" y2="17" /><polyline /><circle r="2" /></svg>
-          </span>
-          <span class="pulse-domain devices"><small>Devices</small><b id="devices">—</b></span>
+          <span class="hoststat"><small>Mac mini</small><b id="mac-cpu">—</b><span>CPU</span><b id="mac-mem">—</b><span>MEM</span></span>
+          <span class="hoststat"><small>P520</small><b id="p520-load">—</b><span>LOAD</span><b id="p520-mem">—</b><span>MEM</span><b id="p520-gpu">—</b><span>GPU</span></span>
+          <span class="hoststat"><small>Hermes</small><b id="hermes-runs">—</b><span>RUNNING</span></span>
         </a>
         <span id="updated" class="meta">—</span>
       </footer>

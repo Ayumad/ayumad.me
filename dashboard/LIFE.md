@@ -18,13 +18,13 @@ The page is one ambient composition, not a grid of monitoring tables:
 |---|---|
 | Hero left | date, oversized clock, seconds, seconds bar |
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
-| Hero right | San Jose weather, current conditions, compact 3-day forecast |
-| Workspace left | `TODAY` timeline + up to 3 events; after the last timed event, `TODAY` is replaced by `NEXT UP` (next 3 dated events, no timeline) |
+| Hero right | San Jose weather, current conditions, tomorrow only |
+| Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
 | Workspace center | `FOCUS CONSTELLATION`: center `NOW` + 7 always-labeled domain hubs |
-| Workspace right | up to 3 tasks, then school deadlines on weekdays or `PROJECTS` on Fri–Sun, one recent-activity line |
-| Footer | Hermes / homelab / services / devices, freshness |
+| Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
+| Footer | Mac mini/Hermes and P520 resource status + freshness |
 
-The hero is a 3-column band; the workspace is `schedule / constellation / actions`; the footer is one row. On phone the hero stacks time + weather, focus goes full-width, the constellation sits full-width, schedule becomes two columns, and actions stack below. No scrolling at 1920×1080 or 390×844.
+The hero is a 3-column band; the workspace is `schedule / constellation / actions`; the footer is one row. On phone the hero stacks time + weather, focus goes full-width, the constellation sits full-width, schedule and actions each use two columns, and the footer compresses to host stats. No scrolling at 1920×1080 or 390×844.
 
 The old global vault graph is retired from this surface. The useful model is a **local constellation** (Obsidian local-graph logic): 8 labeled nodes total, not 90 notes. The full vault graph belongs in a detail/status view, never on the wall.
 
@@ -32,7 +32,7 @@ The old global vault graph is retired from this surface. The useful model is a *
 
 - The clock is the largest element; `CURRENT FOCUS` is the largest *meaningful* element after it.
 - The constellation is the central visual anchor, but labels must be readable before it is decorative.
-- Rails are capped: 3 agenda rows, 3 task rows, 2 school rows, 3 week days, 3 forecast days. `+N more` carries the rest.
+- Rails are capped: 3 agenda rows, 3 near-term task rows, 2 school rows, 1 forecast day. `+N more` carries the rest; tasks due more than 7 days out are not rendered.
 - Long titles are reduced to course/project + action; no two-line paragraphs in the action rails.
 - Use one accent per state: cyan live/info, violet secondary, amber warning/due-soon, red overdue/bad. Color is never the only encoding.
 
@@ -56,11 +56,14 @@ The old global vault graph is retired from this surface. The useful model is a *
 ## Active layer
 
 - **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
-- **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; `THIS WEEK` also starts at the next day. All-day items alone do not keep `TODAY` alive.
-- **Weekend mode:** Fri–Sun replaces `SCHOOL DEADLINES` with `PROJECTS` (recent project notes first), changes the school hub to `OFF`, and removes school calendar/deadline items from `NEXT UP` and `THIS WEEK`. Classes and deadlines resume Monday.
+- **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
+- **Weekend mode:** Fri–Sun replaces `SCHOOL DEADLINES` with `PROJECTS` (recent project notes first), changes the school hub to `OFF`, and removes school calendar/deadline items from `NEXT UP`. Classes and deadlines resume Monday.
+- **Project pulse:** one active project, chosen oldest-first with an open checkbox action and excluding the current focus project; shows last-touched age, next open action, and open-action count. If no project qualifies, the panel is removed.
+- **Now listening:** public `/api/spotify` data reused in the payload; album art, track/artist, playing/recent state, and progress. Degrades to an offline signal without breaking the layout.
+- **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 - **Constellation:** slow deterministic drift (max ~3.5 px on wall, ~1.4 px phone over ~53s); marker pulses on a changed count/status; active hub spoke/ring.
-- **Live health:** footer keeps short service history and updates on the 5-minute payload poll.
+- **Live health:** footer shows Mac mini and P520 resource readings plus active Hermes runs from the 5-minute payload; it links to `/status` for the full breakdown.
 - **Motion budget:** canvas paints capped at ~21 fps; focus/header at 15s; reduced motion draws a single static frame and stops the loop; hidden tabs pause.
 - **Staleness:** wall data stale after 15m, web snapshots after 8h; failed refresh keeps the last good values and flags stale.
 

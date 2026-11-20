@@ -253,6 +253,21 @@
     const services = up !== undefined && total !== undefined ? `${up}/${total}` : DASH;
     const devices = devicesUp !== undefined && devicesTotal !== undefined ? `${devicesUp}/${devicesTotal}` : DASH;
     const serviceLoss = up !== undefined && total !== undefined && up < total;
+    const mac = hermes?.host ?? {};
+    const macCpu = count(mac.cpu_pct);
+    const macMem = count(mac.mem_pct)
+      ?? (Number.isFinite(mac.mem_used_gb) && Number.isFinite(mac.mem_total_gb) && mac.mem_total_gb > 0
+        ? Math.round(mac.mem_used_gb / mac.mem_total_gb * 100) : undefined);
+    const p520 = homelab?.host ?? {};
+    const p520LoadRaw = Number.parseFloat(list(p520.load)[0]);
+    const p520Load = Number.isFinite(p520LoadRaw) ? p520LoadRaw : undefined;
+    const p520Mem = Number.isFinite(p520.mem_used_gb) && Number.isFinite(p520.mem_total_gb) && p520.mem_total_gb > 0
+      ? Math.round(p520.mem_used_gb / p520.mem_total_gb * 100) : undefined;
+    const gpuOwner = clean(homelab?.gpu?.owner_name);
+    const gpuMode = clean(homelab?.gpu?.mode).toLowerCase();
+    const gpu = gpuOwner ? gpuOwner.replace(/-vm$/i, "").toUpperCase()
+      : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
+    const activeRuns = count(hermes?.active_runs);
     const lab = reachable === false ? ["Offline", "bad"]
       : bad > 0 ? [metric(bad, bad === 1 ? "issue" : "issues"), "bad"]
         : warn > 0 ? [metric(warn, warn === 1 ? "warning" : "warnings"), "warn"]
@@ -264,7 +279,8 @@
         : failing === 0 && jobs > 0 ? ["Clear", "cyan"] : jobs === 0 ? ["No jobs", "soft"] : [DASH, "soft"];
     const tone = lab[1] === "bad" || agent[1] === "bad" ? "bad" : lab[1] === "warn" ? "warn"
       : lab[1] === "cyan" && agent[1] === "cyan" ? "cyan" : "soft";
-    return { events, open, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total };
+    return { events, open, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total,
+      macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
   }
 
   function panelState(key, value) {
@@ -433,38 +449,6 @@
         finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
       }
     }
-
-    const week = $("weekrows");
-    week.replaceChildren();
-    const grouped = new Map();
-    if (isPublic) {
-      for (const item of list(data.calendar?.week_days)) {
-        if (dateKey(item.date)) grouped.set(item.date, { total: count(item.count) });
-      }
-    } else {
-      for (const item of list(data.calendar?.week)) {
-        const key = dateKey(item.sort);
-        if (!key) continue;
-        if (weekend && isSchoolEvent(item)) continue;
-        if (!grouped.has(key)) grouped.set(key, { total: 0, item });
-        grouped.get(key).total += 1;
-      }
-    }
-    const days = [...grouped.entries()].filter(([key]) => nextMode ? key > today : key >= today).sort(([a], [b]) => a.localeCompare(b));
-    const weekTotal = weekend && !isPublic
-      ? [...grouped.values()].reduce((total, entry) => total + (count(entry.total) || 0), 0)
-      : count(data.calendar?.week_count, Array.isArray(data.calendar?.week) ? data.calendar.week.length : undefined);
-    const weekStatus = setPanel("week", "calendar", weekTotal, "weekmeta", metric(weekTotal, "items"));
-    const shown = weekStatus === "error" ? [] : days.slice(0, 3);
-    for (const [key, { total, item }] of shown) {
-      const title = withoutAside(item?.summary);
-      const caption = /^Term Project:/i.test(title) ? schoolCopy({ title }) : title || DASH;
-      appendRow(week, isPublic ? null : caption, {
-        lead: `${formatWeekday(key)} ${formatDate(key)}`, tail: metric(total, total === 1 ? "item" : "items"),
-        title: item?.summary, textClass: "week-day",
-      });
-    }
-    finishRail(week, shown.length, days.length, weekTotal === 0 ? "Clear week" : DASH, weekStatus);
   }
 
   function renderActions(data, values, focus, today, taskState) {
@@ -473,7 +457,8 @@
     const weekend = isWeekend(today);
     tasks.replaceChildren();
     school.replaceChildren();
-    const taskStatus = setPanel("task-panel", "tasks", values.open, "taskmeta", metric(values.open, "open"));
+    const nearTasks = taskState.tasks.filter(({ day }) => !day || relativeDays(day, today) <= 7);
+    const taskStatus = setPanel("task-panel", "tasks", nearTasks.length, "taskmeta", metric(nearTasks.length, "near"));
     const schoolStatus = setPanel("school-panel", "school", weekend ? values.projects : values.upcoming,
       "schoolmeta", weekend ? metric(values.projects, "active") : metric(values.upcoming, "due"));
 
@@ -482,7 +467,7 @@
       finishRail(tasks, 0, 0, label, taskStatus);
     } else {
       const represented = focus.hub === "tasks" && !withoutAside(focus.item.title).includes(": ") ? 1 : 0;
-      const ranked = taskState.tasks.filter(({ item }) => !represented || item !== focus.item)
+      const ranked = nearTasks.filter(({ item }) => !represented || item !== focus.item)
         .sort((a, b) => Number(b.item === focus.item) - Number(a.item === focus.item)
           || Number(b.overdue) - Number(a.overdue) || (a.day || "9999").localeCompare(b.day || "9999")
           || (a.time ?? 1440) - (b.time ?? 1440));
@@ -494,8 +479,8 @@
           title: item.title, active, tone: overdue ? "bad" : imminent ? "warn" : "soft",
         });
       }
-      finishRail(tasks, rows.length, values.open === undefined ? ranked.length : values.open - represented,
-        represented && !ranked.length ? "See current focus" : values.open === 0 ? "Clear" : DASH, taskStatus);
+      finishRail(tasks, rows.length, nearTasks.length - represented,
+        represented && !ranked.length ? "See current focus" : nearTasks.length === 0 ? "Nothing near" : DASH, taskStatus);
     }
 
     if (weekend) {
@@ -544,6 +529,87 @@
       const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
       finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
     }
+  }
+
+  function projectPulse(data, focus, today) {
+    if (data.public) return null;
+    const focusText = clean(focus.item?.name ?? focus.item?.title ?? "").toLowerCase();
+    const candidates = list(data.projects).filter((project) => {
+      if (!project?.name || !["active", "in-progress"].includes(project.status)) return false;
+      if (/^\d\d\s|^workshop\s|^intro to\s/i.test(project.name)) return false;
+      return !focusText || !focusText.includes(clean(project.name).toLowerCase());
+    });
+    const withAction = candidates.filter((project) => clean(project.next_action));
+    const pool = withAction.length ? withAction : candidates;
+    return pool.sort((a, b) => (a.updated || "9999").localeCompare(b.updated || "9999")
+      || a.name.localeCompare(b.name))[0] ?? null;
+  }
+
+  function renderProjectPulse(data, values, focus, today) {
+    const panel = $("project-pulse");
+    const project = projectPulse(data, focus, today);
+    panel.hidden = !project;
+    if (!project) return;
+    const age = relativeDays(project.updated, today);
+    const ageDays = Number.isFinite(age) ? Math.max(0, -age) : null;
+    setText($("projectmeta"), metric(values.projects, "active"));
+    setText($("projectstatus"), String(project.status ?? "active").toUpperCase());
+    setText($("projectage"), ageDays === null ? DASH : ageDays === 0 ? "TOUCHED TODAY" : `TOUCHED ${ageDays}D AGO`);
+    setText($("projectname"), shorten(project.name, 42));
+    const next = clean(project.next_action) || clean(project.summary) || "No open action";
+    setText($("projectnext"), shorten(next, 92));
+    $("projectnext").title = next;
+    setText($("projectactions"), project.open_actions ? metric(project.open_actions, "open") : "NEXT ACTION");
+    panel.dataset.state = values.projects === 0 ? "empty" : "ready";
+  }
+
+  function renderSpotify(data) {
+    const panel = $("spotify");
+    const spotify = data.spotify;
+    const card = $("spotifycard");
+    const art = $("spotifyart");
+    const note = $("spotifynote");
+    art.onerror = () => { art.hidden = true; note.hidden = false; };
+    if (!spotify) {
+      setText($("spotifystate"), "SPOTIFY");
+      setText($("spotifytitle"), "Not connected");
+      setText($("spotifyartist"), "Audio signal unavailable");
+      setText($("spotifymeta"), DASH);
+      return;
+    }
+    const configured = spotify.configured !== false;
+    const title = clean(spotify.title) || "Spotify";
+    const artist = list(spotify.artists).join(", ") || clean(spotify.album) || (configured ? "No recent playback" : "Not connected");
+    const playing = spotify.isPlaying === true;
+    const state = !configured ? "SPOTIFY OFFLINE" : playing ? "NOW LISTENING" : spotify.state === "recent" ? "LAST LISTENED" : "AUDIO SIGNAL";
+    setText($("spotifystate"), state);
+    setText($("spotifytitle"), title);
+    setText($("spotifyartist"), artist);
+    setText($("spotifymeta"), !configured ? "OFFLINE" : playing ? "LIVE" : spotify.state === "recent" ? "RECENT" : DASH);
+    card.dataset.state = playing ? "playing" : configured ? "recent" : "offline";
+    if (spotify.url) {
+      card.href = spotify.url;
+      card.target = "_blank";
+      card.rel = "noreferrer";
+    } else {
+      card.removeAttribute("href");
+    }
+    if (spotify.artwork) {
+      if (art.getAttribute("src") !== spotify.artwork) art.src = spotify.artwork;
+      art.hidden = false;
+      note.hidden = true;
+    } else {
+      art.hidden = true;
+      art.removeAttribute("src");
+      note.hidden = false;
+    }
+    let progress = 0;
+    if (Number.isFinite(spotify.progressMs) && Number.isFinite(spotify.durationMs) && spotify.durationMs > 0) {
+      const elapsed = playing && spotify.updatedAt ? Math.max(0, Date.now() - Date.parse(spotify.updatedAt)) : 0;
+      progress = clamp((spotify.progressMs + elapsed) / spotify.durationMs);
+    }
+    $("spotifyfill").style.width = `${progress * 100}%`;
+    panel.dataset.state = configured ? "ready" : "empty";
   }
 
   function renderActivity(data) {
@@ -866,28 +932,16 @@
   }
 
   function renderHealth(values) {
-    const { lab, agent, devices, services, tone } = values;
-    $("health").dataset.state = panelState("health", tone === "soft" ? undefined : 1);
-    const report = state.failed && !state.data ? "Status unavailable" : state.stale ? "Status stale"
-      : tone === "bad" ? "Needs attention" : tone === "warn" ? "Warning" : tone === "cyan" ? "All clear" : "System —";
-    $("pulse").dataset.tone = state.failed && !state.data ? "bad" : state.stale ? "warn" : tone;
-    setText($("pulse"), report);
-    for (const [id, [label, color]] of [["hermes-state", agent], ["homelab-state", lab]]) {
-      $(id).dataset.tone = color;
-      setText($(id), label);
-    }
-    setText($("devices"), devices);
-    setText($("services"), services);
-    const trend = $("service-trend");
-    trend.hidden = !samples.length || state.stale || services === DASH;
-    if (!trend.hidden) {
-      const points = samples.map(({ value }, index) => [3 + (12 - samples.length + index) * 7.4, 17 - value * 14]);
-      trend.querySelector("polyline").setAttribute("points", points.map((point) => point.join(",")).join(" "));
-      const [x, y] = points.at(-1);
-      const marker = trend.querySelector("circle");
-      marker.setAttribute("cx", x);
-      marker.setAttribute("cy", y);
-    }
+    const pct = (value) => value === undefined ? DASH : `${Math.round(value)}%`;
+    const load = (value) => value === undefined ? DASH : value.toFixed(1);
+    $("health").dataset.state = panelState("health",
+      values.macCpu !== undefined || values.p520Mem !== undefined ? 1 : undefined);
+    setText($("mac-cpu"), pct(values.macCpu));
+    setText($("mac-mem"), pct(values.macMem));
+    setText($("p520-load"), load(values.p520Load));
+    setText($("p520-mem"), pct(values.p520Mem));
+    setText($("p520-gpu"), values.gpu);
+    setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
   }
 
   function render() {
@@ -911,7 +965,8 @@
 
     renderSchedule(data, values, focus, today, agenda);
     renderActions(data, values, focus, today, taskState);
-    renderActivity(data);
+    renderProjectPulse(data, values, focus, today);
+    renderSpotify(data);
     renderHealth(values);
     const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
     const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
@@ -1037,15 +1092,14 @@
 
     const forecast = $("forecast");
     forecast.replaceChildren();
-    const days = list(daily?.time).slice(1);
+    const days = list(daily?.time).slice(1, 2);
     forecast.dataset.state = days.length ? status : status === "ready" ? "empty" : status;
-    for (const [index, date] of days.slice(0, 3).entries()) {
+    for (const [index, date] of days.entries()) {
       const day = el("span", "forecast-day");
-      day.append(el("span", "", formatWeekday(dateKey(date))),
+      day.append(el("span", "", "TOMORROW"),
         el("b", "", `${temperature(daily?.temperature_2m_max?.[index + 1])} / ${temperature(daily?.temperature_2m_min?.[index + 1])}`));
       forecast.append(day);
     }
-    if (days.length > 3) forecast.append(el("span", "forecast-more", `+${days.length - 3} more`));
     if (!days.length) setText(forecast, DASH);
   }
 
@@ -1053,7 +1107,7 @@
     const url = "https://api.open-meteo.com/v1/forecast?latitude=37.3382&longitude=-121.8863"
       + "&current=temperature_2m,is_day,weather_code"
       + "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
-      + "&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=4";
+      + "&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=2";
     try {
       state.weather = { ...await getJSON(url), receivedAt: Date.now() };
       state.weatherFailed = false;

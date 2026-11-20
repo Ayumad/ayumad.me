@@ -85,6 +85,16 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
       cron_active: n(h.cron_active),
       cron_no_agent: n(h.cron_no_agent),
       cron_failing_count: n(h.cron_failing_count),
+      active_runs: n(h.active_runs),
+      host: h.host
+        ? {
+            cpu_pct: n(h.host.cpu_pct),
+            mem_pct: n(h.host.mem_pct),
+            mem_used_gb: n(h.host.mem_used_gb),
+            mem_total_gb: n(h.host.mem_total_gb),
+            load: Array.isArray(h.host.load) ? h.host.load.map(Number).filter(Number.isFinite) : null,
+          }
+        : null,
       skills: n(h.skills),
       memory: h.memory ?? null,
       disk: h.disk ?? null,
@@ -153,6 +163,22 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
         : null,
     },
     tasks: { open: n(tasks.open), overdue: n(tasks.overdue), items: [] },
+    spotify: v1.spotify
+      ? {
+          configured: v1.spotify.configured === true,
+          state: v1.spotify.state ?? "unavailable",
+          isPlaying: v1.spotify.isPlaying === true,
+          title: v1.spotify.title ?? null,
+          artists: Array.isArray(v1.spotify.artists) ? v1.spotify.artists.map(String).slice(0, 4) : [],
+          album: v1.spotify.album ?? null,
+          artwork: v1.spotify.artwork ?? null,
+          url: v1.spotify.url ?? null,
+          progressMs: n(v1.spotify.progressMs),
+          durationMs: n(v1.spotify.durationMs),
+          playedAt: v1.spotify.playedAt ?? null,
+          updatedAt: v1.spotify.updatedAt ?? null,
+        }
+      : null,
     school: { upcoming: n(school.upcoming), courses: [], next: [] },
     calendar: {
       count: n(calendar.count) ?? calendarEvents.length,

@@ -150,7 +150,7 @@ main {
 
 .schedule, .actions { display: flex; flex-direction: column; gap: clamp(21px, 4vh, 43px); min-width: 0; }
 .schedule { grid-area: schedule; }
-.actions { grid-area: actions; row-gap: clamp(21px, 3.5vh, 38px); }
+.actions { grid-area: actions; row-gap: clamp(14px, 2.6vh, 28px); }
 .section-head, .map-head {
   display: flex;
   justify-content: space-between;
@@ -283,6 +283,10 @@ button.hub { pointer-events: auto; cursor: pointer; }
 
 .health { border-top: 1px solid var(--line); background: var(--surface); justify-content: space-between; }
 .pulse { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 61px); min-width: 0; }
+.hoststat { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; color: var(--soft); }
+.hoststat small { font-size: clamp(11px, 0.74vw, 14px); text-transform: uppercase; letter-spacing: 0.07em; }
+.hoststat b { color: var(--text); font-size: clamp(13px, 0.93vw, 18px); font-weight: 500; }
+.hoststat > span { color: var(--soft); font-size: clamp(9px, 0.64vw, 12px); letter-spacing: 0.06em; text-transform: uppercase; }
 #pulse { font-size: clamp(13px, 1.1vw, 21px); font-weight: 700; white-space: nowrap; text-transform: uppercase; }
 .pulse-domain { display: flex; align-items: baseline; gap: 9px; white-space: nowrap; color: var(--soft); }
 .pulse-domain small { font-size: clamp(11px, 0.74vw, 14px); text-transform: uppercase; letter-spacing: 0.07em; }
@@ -291,6 +295,31 @@ button.hub { pointer-events: auto; cursor: pointer; }
 #service-trend line { stroke: var(--line); stroke-width: 1; }
 #service-trend polyline { fill: none; stroke: currentColor; stroke-width: 1; }
 #service-trend circle { fill: currentColor; }
+#project-pulse { min-width: 0; }
+.project-card { padding: 12px 0 0; border-bottom: 1px solid var(--fine); }
+.project-top { display: flex; justify-content: space-between; gap: 8px; color: var(--soft); font-size: clamp(9px, .7vw, 13px); text-transform: uppercase; letter-spacing: .06em; }
+.project-name { display: block; margin-top: 7px; overflow: hidden; color: var(--text); font-size: clamp(20px, 1.55vw, 30px); font-weight: 600; letter-spacing: -.03em; line-height: 1.05; text-overflow: ellipsis; white-space: nowrap; }
+.project-next { display: block; margin-top: 7px; overflow: hidden; color: var(--soft); font-size: clamp(12px, .9vw, 17px); line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.project-foot { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.project-trace { position: relative; flex: 1; height: 1px; overflow: hidden; background: var(--line); }
+.project-trace::after { position: absolute; inset: 0 auto 0 -30%; width: 30%; background: var(--cyan); content: ""; animation: project-pulse 4.5s linear infinite; }
+@keyframes project-pulse { to { transform: translateX(430%); } }
+#spotify { min-width: 0; }
+.spotify-card { display: grid; grid-template-columns: 44px minmax(0, 1fr) 14px; gap: 10px; align-items: center; margin-top: 8px; padding: 8px 0; border-bottom: 1px solid var(--fine); color: inherit; }
+.spotify-card:hover .spotify-copy b { color: var(--cyan); }
+.spotify-art { position: relative; display: grid; width: 44px; height: 44px; overflow: hidden; place-items: center; border: 1px solid var(--line); background: var(--surface-2); color: var(--cyan); font: 600 22px/1 var(--mono); }
+.spotify-art img { width: 100%; height: 100%; object-fit: cover; }
+.spotify-copy { display: grid; min-width: 0; gap: 2px; }
+.spotify-state { color: var(--cyan); font-size: clamp(9px, .64vw, 12px); letter-spacing: .08em; text-transform: uppercase; }
+.spotify-copy b, .spotify-copy > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spotify-copy b { color: var(--text); font-size: clamp(13px, 1vw, 19px); font-weight: 500; }
+.spotify-copy > span:last-child { color: var(--soft); font-size: clamp(10px, .76vw, 14px); }
+.spotify-arrow { color: var(--cyan); font: 600 11px/1 var(--mono); }
+.spotify-track { height: 1px; margin-top: 6px; overflow: hidden; background: var(--line); }
+.spotify-track i { display: block; width: 0; height: 100%; background: var(--cyan); }
+@media (prefers-reduced-motion: reduce) {
+  .project-trace::after { animation: none; transform: none; }
+}
 [data-state="stale"] > .section-head .meta,
 [data-state="error"] > .section-head .meta,
 [data-state="stale"] .weather-copy,
@@ -375,7 +404,15 @@ button.hub { pointer-events: auto; cursor: pointer; }
   .map-detail { padding: 5px 9px; gap: 7px; font-size: 11px; }
   .schedule, .actions { display: grid; gap: 7px; }
   .schedule { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
-  .actions { grid-template-columns: minmax(0, 1fr); }
+  .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+  #spotify { grid-column: 1 / -1; }
+  #project-pulse .section-head .meta, #school-panel .section-head .meta { display: none; }
+  .hoststat { gap: 3px; }
+  .hoststat > span { display: none; }
+  .hoststat small { font-size: 8px; letter-spacing: .03em; }
+  .hoststat b { font-size: 9px; }
+  .pulse { gap: 8px; }
+  #updated { font-size: 8px; }
   .section-head { padding: 4px 0 5px; }
   .section-head .meta { font-size: 9px; letter-spacing: 0; }
   .rail-row { gap: 4px; padding: 5px 0; }

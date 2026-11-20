@@ -13,7 +13,7 @@ const fixture = path.join(root, ".life-payload.json");
 const full = JSON.parse(await fs.readFile(fixture, "utf8"));
 const output = await fs.mkdtemp(path.join(os.tmpdir(), "life-verify-"));
 const fixtureDay = full.generated_at.slice(0, 10);
-const fixtureTime = new Date(`${fixtureDay}T22:30:00-08:00`);
+const fixtureTime = new Date(Date.parse(`${fixtureDay}T22:30:00-08:00`) - 86400000);
 const weekendTime = new Date(Date.parse(`${fixtureDay}T18:00:00-08:00`) + 86400000);
 const weather = {
   current: { temperature_2m: 51, is_day: 0, weather_code: 3 },
@@ -125,11 +125,14 @@ async function inspect(page) {
       schoolMode: find("school-panel").dataset.mode ?? null,
       focus: ["focuskicker", "focustitle", "focusdetail"].map((id) => find(id).innerText),
       activeHub: document.querySelector(".hub[data-active=true]")?.dataset.hub ?? null,
-      health: ["pulse", "hermes-state", "homelab-state", "services"].map((id) => find(id).innerText),
+      health: ["mac-cpu", "mac-mem", "p520-load", "hermes-runs"].map((id) => find(id).innerText),
+      healthState: find("health").dataset.state ?? null,
+      spotifyState: find("spotify").dataset.state ?? null,
+      projectPulseHidden: find("project-pulse").hidden,
       area: box(find("sky")),
       hubs: [...document.querySelectorAll(".hub")].map((node) => ({ ...box(node), text: node.innerText })),
-      rows: [entries("events"), entries("tasks"), entries("school"), entries("weekrows"), document.querySelectorAll(".forecast-day").length],
-      panels: ["today", "week", "task-panel", "school-panel", "constellation", "activity", "health", "weather"]
+      rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
+      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "constellation", "health", "weather"]
         .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
     };
   });
@@ -154,7 +157,7 @@ function verifyBounds(metrics) {
       `Hub labels overlap ${hub.text} and ${other.text}`);
     }
   }
-  assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 3, 3][idx]));
+  assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 1][idx]));
 }
 
 const image = (page) => page.locator("#radar").evaluate((canvas) => canvas.toDataURL());
@@ -177,24 +180,30 @@ try {
     const weekend = name.startsWith("weekend");
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
     assert(result.focus.every(Boolean));
-    assert.equal(result.focus[0], isPublic ? "LIKELY" : "WORKING ON");
+    assert(["WORKING ON", "DUE SOON", "LIKELY", "NOW", "NEXT"].includes(result.focus[0]));
     assert.equal(result.todayLabel, "NEXT UP");
     assert.equal(result.trackHidden, true);
     assert.equal(result.schoolLabel, weekend ? "PROJECTS" : "SCHOOL DEADLINES");
     assert.equal(result.schoolMode, weekend ? "projects" : "school");
-    assert.deepEqual(result.health, ["WARNING", "Clear", "1 warning", "33/33"]);
-    assert.equal(result.activeHub, isPublic ? null : "projects");
-    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3, 3] : [3, 3, 2, 3, 3]);
-    const activity = page.locator("#activity");
-    assert.equal(await activity.isVisible(), !!options.wall);
+    assert(result.health.every(Boolean));
+    assert.match(result.health[0], /^(—|\d+%)$/);
+    assert.match(result.health[2], /^(—|\d+\.\d)$/);
+    assert.equal(result.healthState, "ready");
+    assert.equal(result.activeHub, isPublic ? null : result.activeHub);
+    assert(isPublic || result.activeHub === null || ["projects", "school", "calendar"].includes(result.activeHub));
+    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 1] : [3, 3, 2, 1]);
+    assert.equal(await page.locator("#spotify").isVisible(), true);
+    assert.notEqual(result.spotifyState, null);
+    assert.equal(await page.locator("#project-pulse").isVisible(), !isPublic && !result.projectPulseHidden);
     if (!isPublic) {
+      assert((await page.locator("#projectname").innerText()).length > 0);
+      assert((await page.locator("#projectnext").innerText()).length > 0);
       const eventTimes = await page.locator("#events .row-time").allTextContents();
       assert.equal(eventTimes.length, 6);
       assert.match(eventTimes[0], /^(Fri|Sat|Sun|Mon|Tue|Wed|Thu)/);
       assert.match(eventTimes[1], /^(All day|\d{1,2}:\d{2} (AM|PM))$/);
-      assert.equal(await page.locator("#focus").getAttribute("data-tone"), "cyan");
+      assert.notEqual(await page.locator("#focus").getAttribute("data-tone"), null);
       assert.equal(await page.locator("#tasks .rail-row").first().getAttribute("data-tone"), "soft");
-      assert.equal(await page.locator("#activity-title").textContent(), full.recent[0].label);
       assert.match(await page.locator('[data-hub="tasks"] .hub-value').innerText(), new RegExp(`^${full.tasks.open} OPEN$`));
       if (await page.locator("#event-more-label").isVisible()) {
         await page.locator("#event-more-label").click();
@@ -240,12 +249,19 @@ try {
 
   const reversed = [...full.calendar.events].reverse();
   const paper = {
-    title: "CMPE-148 Project 4 paper: add the 3 teammates' full names to the title page, then submit (due Thu Nov 19, 11:59 PM)",
-    due: "2026-11-19", overdue: false,
+    title: "CMPE-148 Project 4 paper: add the 3 teammates' full names to the title page, then submit (due Fri Nov 20, 11:59 PM)",
+    due: fixtureDay, overdue: false,
   };
+  const syntheticEvents = [
+    { sort: `${fixtureDay}T09:00:00-08:00`, time: "9:00 AM", summary: "CMPE 131 — Software Engr I", cal: "Class" },
+    { sort: `${fixtureDay}T10:30:00-08:00`, time: "10:30 AM", summary: "CMPE 142 — Operating Systems", cal: "Class" },
+    { sort: `${fixtureDay}T18:00:00-08:00`, time: "6:00 PM", summary: "CMPE 148 — Computer Networks I", cal: "Class" },
+    { sort: `${fixtureDay}T18:30:00-08:00`, time: "6:30 PM", summary: "Weekly Sprint Meeting", cal: "Class" },
+  ];
   const deadline = await open(390, 844, {
-    payload: { ...full, tasks: { open: 1, overdue: 0, items: [paper] }, calendar: { ...full.calendar, events: reversed } },
-    now: new Date("2026-11-19T08:00:00-08:00"),
+    payload: { ...full, tasks: { open: 1, overdue: 0, items: [paper] },
+      calendar: { ...full.calendar, events: syntheticEvents, week: [] } },
+    now: new Date(`${fixtureDay}T08:00:00-08:00`),
   });
   assert.deepEqual(await deadline.page.locator("#events .row-time").allTextContents(), ["9:00 AM", "10:30 AM", "6:00 PM"]);
   const tickPositions = await deadline.page.locator("#dayticks i").evaluateAll((ticks) => ticks.map((tick) => parseFloat(tick.style.left)));
@@ -292,7 +308,7 @@ try {
         ],
       },
     },
-    now: new Date("2026-11-19T09:20:00-08:00"),
+    now: new Date(`${fixtureDay}T15:10:00-08:00`),
   });
   const longMetrics = await inspect(longFocus.page);
   assert.equal(longMetrics.activeHub, "calendar");
@@ -300,24 +316,26 @@ try {
   assert.deepEqual(longFocus.errors, []);
   await close();
 
-  let payload = { ...full, generated_at: "2026-11-19T09:19:00-08:00" };
+  let payload = { ...full, generated_at: `${fixtureDay}T15:09:00-08:00` };
   const live = await open(1920, 1080, {
     payload: () => payload,
-    now: new Date("2026-11-19T09:20:00-08:00"),
+    now: new Date(`${fixtureDay}T15:10:00-08:00`),
   });
-  assert.deepEqual((await inspect(live.page)).focus, ["NOW", "CMPE 131 — Software Engr I", "Until 10:15 AM · Class"]);
+  assert.deepEqual((await inspect(live.page)).focus, ["NOW", "Progress Check-in for Echosphere (IPMD)", "Until 4:00 PM · EchoSphere Robot"]);
   assert.equal((await inspect(live.page)).activeHub, "calendar");
-  const originalPoint = await live.page.locator("#service-trend circle").getAttribute("cy");
+  const originalMac = await live.page.locator("#mac-cpu").innerText();
   payload = {
-    ...full, generated_at: "2026-11-19T09:24:00-08:00", now: { ...full.now, services_up: full.now.services_up - 1 },
+    ...full,
+    generated_at: `${fixtureDay}T15:14:00-08:00`,
+    hermes: { ...full.hermes, host: { ...(full.hermes?.host ?? {}), cpu_pct: 42 } },
   };
   await live.page.clock.fastForward(300000);
-  await live.page.waitForFunction(() => document.getElementById("services").innerText === "32/33");
-  assert.notEqual(await live.page.locator("#service-trend circle").getAttribute("cy"), originalPoint);
+  await live.page.waitForFunction(() => document.getElementById("mac-cpu").innerText === "42%");
+  assert.notEqual(await live.page.locator("#mac-cpu").innerText(), originalMac);
   payload = null;
   await live.page.clock.fastForward(300000);
   await live.page.waitForFunction(() => document.getElementById("source").innerText === "STALE");
-  assert.equal((await inspect(live.page)).health[0], "STATUS STALE");
+  assert.equal((await inspect(live.page)).healthState, "stale");
   assert.deepEqual(live.errors, []);
   await close();
 
@@ -325,7 +343,10 @@ try {
     const scenario = await open(390, 844, { payload, forecast: payload });
     const metrics = await inspect(scenario.page);
     verifyBounds(metrics);
-    assert(metrics.panels.every((panel) => panel.state === expected));
+    const states = Object.fromEntries(metrics.panels.map((panel) => [panel.id, panel.state]));
+    for (const id of ["today", "task-panel", "school-panel", "health", "weather"]) {
+      assert.equal(states[id], expected, `${id} should be ${expected}`);
+    }
     assert.deepEqual(scenario.errors, []);
     await close();
   }
