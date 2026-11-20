@@ -49,6 +49,8 @@ const privateStrings = [
   ...full.school.next.map(({ title }) => title),
   ...[...full.calendar.events, ...full.calendar.week].map(({ summary }) => summary),
   ...full.recent.map(({ label }) => label),
+  ...(full.codex?.recent ?? []).map(({ title }) => title),
+  ...(full.codex?.remote ?? []).map(({ title }) => title),
   full.brain.top_hub.label,
   ...full.brain.nodes.map(({ id }) => id),
 ].filter((value) => value && value.length > 8);
@@ -171,7 +173,7 @@ try {
     const weekend = name.startsWith("weekend");
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
     assert(result.focus.every(Boolean));
-    assert(["WORKING ON", "DUE SOON", "LIKELY", "NOW", "NEXT"].includes(result.focus[0]));
+    assert(["WORKING ON", "DUE SOON", "CODEX", "LIKELY", "NOW", "NEXT"].includes(result.focus[0]));
     assert.equal(result.todayLabel, "NEXT UP");
     assert.equal(result.trackHidden, true);
     assert.equal(result.schoolLabel, weekend ? "PROJECTS" : "SCHOOL DEADLINES");
@@ -266,19 +268,35 @@ try {
   assert.deepEqual(dates.errors, []);
   await close();
 
+  const remoteFocus = await open(390, 844, {
+    payload: { ...full,
+      tasks: { open: 0, overdue: 0, items: [] },
+      school: { ...full.school, upcoming: 0, next: [] },
+      calendar: { ...full.calendar, events: [], week: [] },
+      codex: { tasks: [], recent: [], remote: [
+        { title: "Cloud Codex task", status: "account", age_min: 5, source: "chatgpt", updated_at: new Date().toISOString() },
+      ] },
+    },
+    now: new Date(`${fixtureDay}T15:10:00-08:00`),
+  });
+  const remoteMetrics = await inspect(remoteFocus.page);
+  assert.equal(remoteMetrics.focus[0], "CODEX");
+  assert.match(remoteMetrics.focus[2], /^Codex account · 5m ago/);
+  assert.deepEqual(remoteFocus.errors, []);
+  await close();
+
   const reduced = await open(390, 844, { reducedMotion: "reduce" });
   const frame = await image(reduced.page);
   await reduced.page.clock.runFor(1100);
   assert.equal(await image(reduced.page), frame);
-  const preferenceTab = await reduced.page.context().newPage();
-  await preferenceTab.route(`${origin}/preferences-test`, (route) => route.fulfill({ contentType: "text/html", body: "" }));
-  await preferenceTab.goto(`${origin}/preferences-test`);
   const canvas = reduced.page.locator("#hermes-field canvas");
   assert.equal(await canvas.getAttribute("data-renderer"), "particles");
-  await preferenceTab.evaluate(() => localStorage.setItem("ayumad-renderer", "dither"));
+  await reduced.page.evaluate(() => {
+    localStorage.setItem("ayumad-renderer", "dither");
+    window.dispatchEvent(new StorageEvent("storage", { key: "ayumad-renderer", newValue: "dither" }));
+  });
   await reduced.page.waitForFunction(() => document.querySelector("#hermes-field canvas").dataset.renderer === "dither");
   assert.notEqual(await image(reduced.page), frame);
-  await preferenceTab.close();
   assert.deepEqual(reduced.errors, []);
   await close();
 

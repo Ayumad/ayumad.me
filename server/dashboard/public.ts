@@ -179,6 +179,7 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
           updatedAt: v1.spotify.updatedAt ?? null,
         }
       : null,
+    codex: null,
     school: { upcoming: n(school.upcoming), courses: [], next: [] },
     calendar: {
       count: n(calendar.count) ?? calendarEvents.length,

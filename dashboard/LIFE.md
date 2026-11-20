@@ -50,11 +50,12 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 ## Active layer
 
-- **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
+- **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → active Codex Cloud task or a recent Codex session (local or ChatGPT-account) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
 - **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
 - Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
 - **Project pulse:** one active project, chosen oldest-first with an open checkbox action and excluding the current focus project; shows last-touched age, next open action, and open-action count. If no project qualifies, the panel is removed.
 - **Now listening:** public `/api/spotify` data reused in the payload; album art, track/artist, playing/recent state, and progress. Degrades to an offline signal without breaking the layout.
+- **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 

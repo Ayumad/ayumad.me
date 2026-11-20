@@ -225,6 +225,33 @@
       });
     }
 
+    const codex = data.codex ?? {};
+    const cloudTask = list(codex.tasks)
+      .filter((task) => /running|in.?progress|queued|pending/i.test(String(task.status ?? "")))
+      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
+    const remoteCodex = list(codex.remote)[0];
+    const localCodex = list(codex.recent)[0];
+    const recentCodex = [remoteCodex, localCodex]
+      .filter(Boolean)
+      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
+    const codexItem = cloudTask || recentCodex;
+    const codexTitle = codexItem?.label || codexItem?.title;
+    if (codexItem && clean(codexTitle)) {
+      const age = Number.isFinite(codexItem.age_min) ? codexItem.age_min : null;
+      if (cloudTask || age === null || age <= 720) {
+        const source = cloudTask ? "Codex Cloud" : codexItem === remoteCodex ? "Codex account" : "Codex session";
+        const ageLabel = age === null ? "active" : age >= 60 ? `${Math.floor(age / 60)}h ago` : `${age}m ago`;
+        candidates.push({
+          hub: "projects", item: codexItem, kicker: "Codex",
+          title: shorten(codexTitle, 44),
+          detail: [source, ageLabel, cloudTask ? cloudTask.status : null]
+            .filter(Boolean).join(" · "),
+          tone: "cyan",
+          score: cloudTask ? 105 : age !== null && age <= 60 ? 94 : age !== null && age <= 180 ? 88 : 78,
+        });
+      }
+    }
+
     const next = weekend ? null : list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);
     if (next) {
       candidates.push({
@@ -661,7 +688,7 @@
     const values = model(data);
     const taskState = taskSchedule(data, today, time.minute);
     const agenda = data.errors?.calendar ? [] : scheduleEvents(data, today, time.minute);
-    const hasFocusData = !!(data.public || data.calendar || data.tasks || data.school || data.recent);
+    const hasFocusData = !!(data.public || data.calendar || data.tasks || data.school || data.recent || data.codex);
     const focus = hasFocusData ? focusFor(data, today, time.minute, taskState.tasks) : {
       title: DASH, kicker: state.failed ? "Unavailable" : DASH, tone: state.failed ? "bad" : "soft",
     };
