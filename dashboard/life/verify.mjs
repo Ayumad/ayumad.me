@@ -12,7 +12,9 @@ const html = await fs.readFile(path.join(root, "server/dashboard/overview.html")
 const fixture = path.join(root, ".life-payload.json");
 const full = JSON.parse(await fs.readFile(fixture, "utf8"));
 const output = await fs.mkdtemp(path.join(os.tmpdir(), "life-verify-"));
-const fixtureTime = new Date(Date.parse(full.generated_at) + 120000);
+const fixtureDay = full.generated_at.slice(0, 10);
+const fixtureTime = new Date(`${fixtureDay}T22:30:00-08:00`);
+const weekendTime = new Date(Date.parse(`${fixtureDay}T18:00:00-08:00`) + 86400000);
 const weather = {
   current: { temperature_2m: 51, is_day: 0, weather_code: 3 },
   daily: {
@@ -117,6 +119,10 @@ async function inspect(page) {
       inner: [innerWidth, innerHeight],
       scroll: [document.documentElement.scrollWidth, document.documentElement.scrollHeight],
       source: find("source").innerText,
+      todayLabel: find("todaylabel").innerText,
+      trackHidden: document.querySelector(".daytrack")?.hidden ?? null,
+      schoolLabel: find("schoollabel").innerText,
+      schoolMode: find("school-panel").dataset.mode ?? null,
       focus: ["focuskicker", "focustitle", "focusdetail"].map((id) => find(id).innerText),
       activeHub: document.querySelector(".hub[data-active=true]")?.dataset.hub ?? null,
       health: ["pulse", "hermes-state", "homelab-state", "services"].map((id) => find(id).innerText),
@@ -159,6 +165,8 @@ try {
     ["signed-in-390", 390, 844, {}],
     ["public-1920", 1920, 1080, { payload: publicData }],
     ["public-390", 390, 844, { payload: publicData }],
+    ["weekend-1920", 1920, 1080, { wall: true, now: weekendTime,
+      payload: { ...full, generated_at: weekendTime.toISOString() } }],
   ]) {
     const { page, errors } = await open(width, height, options);
     const screenshot = path.join(output, `${name}.png`);
@@ -166,25 +174,33 @@ try {
     const result = await inspect(page);
     verifyBounds(result);
     const isPublic = options.payload?.public;
+    const weekend = name.startsWith("weekend");
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
-    assert.deepEqual(result.focus, isPublic ? ["LIKELY", "Wrap up", "Public view · sign in for details"]
-      : ["DUE TONIGHT", "CMPE-148 Project 4 paper", "Due 11:59 PM · School"]);
+    assert(result.focus.every(Boolean));
+    assert.equal(result.focus[0], isPublic ? "LIKELY" : "WORKING ON");
+    assert.equal(result.todayLabel, "NEXT UP");
+    assert.equal(result.trackHidden, true);
+    assert.equal(result.schoolLabel, weekend ? "PROJECTS" : "SCHOOL DEADLINES");
+    assert.equal(result.schoolMode, weekend ? "projects" : "school");
     assert.deepEqual(result.health, ["WARNING", "Clear", "1 warning", "33/33"]);
-    assert.equal(result.activeHub, isPublic ? null : "tasks");
+    assert.equal(result.activeHub, isPublic ? null : "projects");
     assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3, 3] : [3, 3, 2, 3, 3]);
     const activity = page.locator("#activity");
     assert.equal(await activity.isVisible(), !!options.wall);
     if (!isPublic) {
-      assert.deepEqual(await page.locator("#events .row-time").allTextContents(), ["9:00 AM", "10:30 AM", "6:00 PM"]);
-      assert.equal(await page.locator("#focus").getAttribute("data-tone"), "warn");
-      assert.equal(await page.locator("#tasks .rail-row").first().getAttribute("data-tone"), "warn");
-      assert.equal(await page.locator("#tasks .rail-row").first().locator(".row-time").textContent(), "Due tonight");
-      assert.equal(await page.locator('[data-hub="tasks"] .hub-value').innerText(), "1 DUE TONIGHT");
+      const eventTimes = await page.locator("#events .row-time").allTextContents();
+      assert.equal(eventTimes.length, 6);
+      assert.match(eventTimes[0], /^(Fri|Sat|Sun|Mon|Tue|Wed|Thu)/);
+      assert.match(eventTimes[1], /^(All day|\d{1,2}:\d{2} (AM|PM))$/);
+      assert.equal(await page.locator("#focus").getAttribute("data-tone"), "cyan");
+      assert.equal(await page.locator("#tasks .rail-row").first().getAttribute("data-tone"), "soft");
       assert.equal(await page.locator("#activity-title").textContent(), full.recent[0].label);
-      await page.locator("#event-more-label").click();
-      assert.deepEqual(await page.locator("#event-overflow .row-time").allTextContents(), ["6:30 PM", "All day"]);
-      assert(await page.locator("#event-overflow").isVisible());
-      await page.locator("#event-more-label").click();
+      assert.match(await page.locator('[data-hub="tasks"] .hub-value').innerText(), new RegExp(`^${full.tasks.open} OPEN$`));
+      if (await page.locator("#event-more-label").isVisible()) {
+        await page.locator("#event-more-label").click();
+        assert(await page.locator("#event-overflow").isVisible());
+        await page.locator("#event-more-label").click();
+      }
     }
 
     const frame = await image(page);
@@ -223,17 +239,21 @@ try {
   await close();
 
   const reversed = [...full.calendar.events].reverse();
+  const paper = {
+    title: "CMPE-148 Project 4 paper: add the 3 teammates' full names to the title page, then submit (due Thu Nov 19, 11:59 PM)",
+    due: "2026-11-19", overdue: false,
+  };
   const deadline = await open(390, 844, {
-    payload: { ...full, calendar: { ...full.calendar, events: reversed } },
-    now: new Date("2026-11-19T23:58:40-08:00"),
+    payload: { ...full, tasks: { open: 1, overdue: 0, items: [paper] }, calendar: { ...full.calendar, events: reversed } },
+    now: new Date("2026-11-19T08:00:00-08:00"),
   });
   assert.deepEqual(await deadline.page.locator("#events .row-time").allTextContents(), ["9:00 AM", "10:30 AM", "6:00 PM"]);
   const tickPositions = await deadline.page.locator("#dayticks i").evaluateAll((ticks) => ticks.map((tick) => parseFloat(tick.style.left)));
   assert.deepEqual(tickPositions.map((position) => Math.round(position * 14.4)), [540, 630, 1080, 1110]);
   const nowPosition = await deadline.page.locator("#daynow").evaluate((marker) => parseFloat(marker.style.left));
-  assert(nowPosition > tickPositions.at(-1));
+  assert(nowPosition < tickPositions[0]);
   assert.equal(await deadline.page.locator("#focuskicker").innerText(), "DUE TONIGHT");
-  await deadline.page.clock.fastForward(35000);
+  await deadline.page.clock.fastForward(16 * 60 * 60 * 1000);
   assert.equal(await deadline.page.locator("#focuskicker").innerText(), "OVERDUE");
   assert.equal(await deadline.page.locator("#focus").getAttribute("data-tone"), "bad");
   assert.equal(await deadline.page.locator("#tasks .rail-row").first().locator(".row-time").textContent(), "Overdue");

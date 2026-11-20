@@ -29,6 +29,7 @@
   const formatDate = (value) => dateKey(value) && Number.isFinite(+utcDate(dateKey(value)))
     ? dateTag.format(utcDate(dateKey(value))) : DASH;
   const formatWeekday = (key) => key && Number.isFinite(+utcDate(key)) ? weekday.format(utcDate(key)) : DASH;
+  const isWeekend = (key) => ["FRI", "SAT", "SUN"].includes(formatWeekday(key).toUpperCase());
 
   function setText(node, value) {
     const text = String(value ?? DASH);
@@ -135,6 +136,11 @@
     if (String(cal ?? "").includes("@")) return /sjsu|school/i.test(cal) ? "School" : "Personal";
     return cal || "Calendar";
   };
+  const isSchoolEvent = (item) => {
+    const cal = calLabel(item.cal);
+    return cal === "Canvas" || cal === "Class" || !!courseOf(item.summary)
+      || /^(Term Project|Chapter \d|SJSU Title IX|PART FIVE)/i.test(clean(item.summary));
+  };
 
   function taskCopy(item, omitSubject = false) {
     const title = withoutAside(item.title).replace(titleDeadline, "").replace(/[\s,·—-]+$/, "");
@@ -160,6 +166,7 @@
     const phase = minute < 300 ? "Wind down" : minute < 540 ? "Morning setup" : minute < 720 ? "Class block"
       : minute < 1020 ? "Deep work" : minute < 1260 ? "Evening sprint" : "Wrap up";
     const publicView = !!data.public;
+    const weekend = isWeekend(today);
     const candidates = [{
       kicker: "Likely", title: phase, detail: publicView ? "Public view · sign in for details" : "No immediate commitments",
       tone: "soft", score: 10,
@@ -187,7 +194,7 @@
     }
 
     for (const { item, day, time, overdue, tonight, label } of tasks) {
-      if (!label) continue;
+      if (!label || (weekend && item.list === "School")) continue;
       const title = withoutAside(item.title);
       const separator = title.indexOf(":");
       const due = time === null ? day && formatDate(day) : day === today ? formatTime(time) : `${formatDate(day)} at ${formatTime(time)}`;
@@ -215,7 +222,7 @@
       });
     }
 
-    const next = list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);
+    const next = weekend ? null : list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);
     if (next) {
       candidates.push({
         hub: "school", item: next, kicker: "Due soon", title: shorten(next.title, 56),
@@ -326,15 +333,20 @@
     const disclosure = $("event-more");
     const moreLabel = $("event-more-label");
     const moreRows = $("event-overflow");
+    const todayLabel = $("todaylabel");
+    const track = $("today").querySelector(".daytrack");
+    const hours = $("today").querySelector(".dayhours");
     events.replaceChildren();
     ticks.replaceChildren();
     moreRows.replaceChildren();
-    const status = setPanel("today", "calendar", values.events, "calmeta", metric(values.events, "events"));
     const isPublic = !!data.public;
-    const eligible = isPublic ? [] : agenda.filter(({ item }) => item !== focus.item);
-    const rows = eligible.filter(({ item }) => !matchingAssignment(item, focus)).slice(0, 3);
-    const overflow = eligible.filter((entry) => !rows.includes(entry));
+    const weekend = isWeekend(today);
+    const nowMinute = timeInfo().minute;
     const focusCourse = courseOf(focus.item?.summary ?? focus.item?.title ?? focus.item?.course);
+    const hasCurrentFocus = focus.hub === "calendar" && agenda.some(({ item, past }) => item === focus.item && !past);
+    const hasUpcoming = agenda.some(({ item, start, past }) => item !== focus.item && item.time !== "all-day" && start !== null && !past);
+    const nextMode = !hasCurrentFocus && !hasUpcoming;
+    const status = setPanel("today", "calendar", values.events || (nextMode && (list(data.calendar?.week).length || list(data.calendar?.week_days).length) ? 1 : 0), "calmeta", metric(values.events, "events"));
 
     function eventRow(target, { item, start, past }) {
       const lead = start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH;
@@ -344,31 +356,82 @@
       appendRow(target, title.replace(" — ", " · ") || DASH, { lead, title: item.summary, active: related, past });
     }
 
-    for (const entry of rows) eventRow(events, entry);
-    for (const entry of overflow) eventRow(moreRows, entry);
-    disclosure.hidden = !overflow.length;
-    if (disclosure.hidden) {
-      disclosure.open = false;
+    if (nextMode) {
+      setText(todayLabel, "NEXT UP");
+      track.hidden = true;
+      hours.hidden = true;
+      const nextEntries = isPublic ? [] : list(data.calendar?.week)
+        .filter((item) => !weekend || !isSchoolEvent(item))
+        .filter((item) => {
+          const day = dateKey(item.sort);
+          if (day > today) return true;
+          if (day !== today) return false;
+          const start = parseTime(item.time);
+          return start !== null && start > nowMinute;
+        })
+        .map((item) => ({ item, start: parseTime(item.time), date: dateKey(item.sort) }))
+        .filter(({ date }) => date)
+        .sort((a, b) => a.date.localeCompare(b.date) || ((a.start ?? 0) - (b.start ?? 0)));
+      const rows = nextEntries.slice(0, 3);
+      const overflow = nextEntries.slice(3);
+      const compactDate = (date) => date.slice(0, 7) === today.slice(0, 7)
+        ? `${formatWeekday(date)} ${Number(date.slice(8, 10))}`
+        : `${formatWeekday(date)} ${formatDate(date)}`;
+      for (const { item, start, date } of rows) {
+        const title = clean(item.summary).replace(/^\([^)]*\)\s*/, "").split(/\s+-\s+/)[0];
+        appendRow(events, title.replace(" — ", " · ") || DASH, {
+          lead: compactDate(date),
+          tail: start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH,
+          title: item.summary,
+        });
+      }
+      for (const { item, start, date } of overflow) {
+        const title = clean(item.summary).replace(/^\([^)]*\)\s*/, "").split(/\s+-\s+/)[0];
+        appendRow(moreRows, title.replace(" — ", " · ") || DASH, {
+          lead: compactDate(date),
+          tail: start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH,
+          title: item.summary,
+        });
+      }
+      disclosure.hidden = !overflow.length;
+      if (disclosure.hidden) disclosure.open = false;
+      else setText(moreLabel, `+${overflow.length} more`);
+      setText($("calmeta"), isPublic ? "Sign in" : nextEntries.length ? `${nextEntries.length} upcoming` : "Clear");
+      if (!rows.length) finishRail(events, 0, 0, isPublic ? "Sign in for details" : "No upcoming events", status);
+      ticks.replaceChildren();
     } else {
-      setText(moreLabel, `+${overflow.length} more`);
-    }
-
-    const tickTimes = new Map();
-    for (const entry of agenda) {
-      if (entry.start === null) continue;
-      const visible = rows.includes(entry) || entry.item === focus.item || isPublic;
-      tickTimes.set(entry.start, tickTimes.get(entry.start) || visible);
-    }
-    for (const [start, visible] of tickTimes) {
-      const tick = el("i");
-      if (visible) tick.dataset.featured = "true";
-      tick.style.left = `${start / 1440 * 100}%`;
-      ticks.append(tick);
-    }
-
-    const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
-    if (!rows.length && !overflow.length) {
-      finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
+      setText(todayLabel, "TODAY");
+      track.hidden = false;
+      hours.hidden = false;
+      const eligible = isPublic ? [] : agenda.filter(({ item }) => item !== focus.item)
+        .filter(({ item }) => !matchingAssignment(item, focus));
+      eligible.sort((a, b) => Number(a.past) - Number(b.past));
+      const rows = eligible.slice(0, 3);
+      const overflow = eligible.slice(3);
+      for (const entry of rows) eventRow(events, entry);
+      for (const entry of overflow) eventRow(moreRows, entry);
+      disclosure.hidden = !overflow.length;
+      if (disclosure.hidden) {
+        disclosure.open = false;
+      } else {
+        setText(moreLabel, `+${overflow.length} more`);
+      }
+      const tickTimes = new Map();
+      for (const entry of agenda) {
+        if (entry.start === null) continue;
+        const visible = rows.includes(entry) || entry.item === focus.item || isPublic;
+        tickTimes.set(entry.start, tickTimes.get(entry.start) || visible);
+      }
+      for (const [start, visible] of tickTimes) {
+        const tick = el("i");
+        if (visible) tick.dataset.featured = "true";
+        tick.style.left = `${start / 1440 * 100}%`;
+        ticks.append(tick);
+      }
+      const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
+      if (!rows.length && !overflow.length) {
+        finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
+      }
     }
 
     const week = $("weekrows");
@@ -382,12 +445,15 @@
       for (const item of list(data.calendar?.week)) {
         const key = dateKey(item.sort);
         if (!key) continue;
+        if (weekend && isSchoolEvent(item)) continue;
         if (!grouped.has(key)) grouped.set(key, { total: 0, item });
         grouped.get(key).total += 1;
       }
     }
-    const days = [...grouped.entries()].filter(([key]) => key >= today).sort(([a], [b]) => a.localeCompare(b));
-    const weekTotal = count(data.calendar?.week_count, Array.isArray(data.calendar?.week) ? data.calendar.week.length : undefined);
+    const days = [...grouped.entries()].filter(([key]) => nextMode ? key > today : key >= today).sort(([a], [b]) => a.localeCompare(b));
+    const weekTotal = weekend && !isPublic
+      ? [...grouped.values()].reduce((total, entry) => total + (count(entry.total) || 0), 0)
+      : count(data.calendar?.week_count, Array.isArray(data.calendar?.week) ? data.calendar.week.length : undefined);
     const weekStatus = setPanel("week", "calendar", weekTotal, "weekmeta", metric(weekTotal, "items"));
     const shown = weekStatus === "error" ? [] : days.slice(0, 3);
     for (const [key, { total, item }] of shown) {
@@ -404,10 +470,12 @@
   function renderActions(data, values, focus, today, taskState) {
     const tasks = $("tasks");
     const school = $("school");
+    const weekend = isWeekend(today);
     tasks.replaceChildren();
     school.replaceChildren();
     const taskStatus = setPanel("task-panel", "tasks", values.open, "taskmeta", metric(values.open, "open"));
-    const schoolStatus = setPanel("school-panel", "school", values.upcoming, "schoolmeta", metric(values.upcoming, "due"));
+    const schoolStatus = setPanel("school-panel", "school", weekend ? values.projects : values.upcoming,
+      "schoolmeta", weekend ? metric(values.projects, "active") : metric(values.upcoming, "due"));
 
     if (data.public || taskStatus === "error") {
       const label = taskState.overdue > 0 ? metric(taskState.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
@@ -430,19 +498,52 @@
         represented && !ranked.length ? "See current focus" : values.open === 0 ? "Clear" : DASH, taskStatus);
     }
 
-    const upcoming = data.public || schoolStatus === "error" ? [] : list(data.school?.next)
-      .filter((item) => item !== focus.item)
-      .sort(datedFirst);
-    const rows = upcoming.slice(0, 2);
-    for (const item of rows) {
-      const days = relativeDays(item.due, today);
-      appendRow(school, schoolCopy(item), {
-        tail: formatDate(item.due), title: item.title, tone: days < 0 ? "bad" : days <= 3 ? "warn" : "soft",
-      });
+    if (weekend) {
+      $("school-panel").dataset.mode = "projects";
+      setText($("schoollabel"), "PROJECTS");
+      if (data.public) {
+        setText($("schoolmeta"), metric(values.projects, "active"));
+        finishRail(school, 0, 0, "Sign in for details", schoolStatus);
+      } else {
+        const seen = new Set();
+        const projectRows = [];
+        for (const note of list(data.recent)) {
+          if (!/project/i.test(note.folder) || !clean(note.label)) continue;
+          const key = clean(note.label).toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          projectRows.push({ label: clean(note.label), meta: note.age_min < 60 ? `${note.age_min}m ago` : "Recent" });
+        }
+        for (const node of list(data.brain?.nodes)) {
+          if (node.group !== "projects" || !clean(node.label)) continue;
+          const key = clean(node.label).toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          projectRows.push({ label: clean(node.label), meta: "Active" });
+        }
+        const rows = projectRows.slice(0, 2);
+        for (const item of rows) {
+          appendRow(school, shorten(item.label, 48), { tail: item.meta, title: item.label, tone: "violet" });
+        }
+        finishRail(school, rows.length, projectRows.length, values.projects === 0 ? "No active projects" : "Pick a project", schoolStatus);
+      }
+    } else {
+      $("school-panel").dataset.mode = "school";
+      setText($("schoollabel"), "SCHOOL DEADLINES");
+      const upcoming = data.public || schoolStatus === "error" ? [] : list(data.school?.next)
+        .filter((item) => item !== focus.item)
+        .sort(datedFirst);
+      const rows = upcoming.slice(0, 2);
+      for (const item of rows) {
+        const days = relativeDays(item.due, today);
+        appendRow(school, schoolCopy(item), {
+          tail: formatDate(item.due), title: item.title, tone: days < 0 ? "bad" : days <= 3 ? "warn" : "soft",
+        });
+      }
+      const representedByFocus = focus.hub === "school" ? 1 : 0;
+      const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
+      finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
     }
-    const representedByFocus = focus.hub === "school" ? 1 : 0;
-    const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
-    finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
   }
 
   function renderActivity(data) {
@@ -717,14 +818,17 @@
     const task = tasks.find((entry) => entry.overdue) ?? tasks.find((entry) => entry.tonight) ?? tasks[0];
     const deadline = isPublic ? null : list(data.school?.next)[0];
     const recent = isPublic ? null : list(data.recent).find((note) => /project/i.test(note.folder)) ?? list(data.projects).find((item) => item.status === "active");
+    const weekend = isWeekend(clockDate());
     const top = isPublic ? null : data.brain?.top_hub;
     const issue = isPublic ? null : list(data.homelab?.open_issues).find((item) => item.severity === "bad") ?? list(data.homelab?.open_issues)[0];
     const record = (value, tone, level, detail = value, signal) => ({ value, tone, level, detail, signal });
     const hubs = {
       calendar: record(metric(events, "events"), events > 0 ? "cyan" : "soft", events > 0 ? 0.5 : 0,
         upcomingEvent ? `${upcomingEvent.time} · ${shorten(upcomingEvent.summary, 72)}` : metric(events, "events today")),
-      school: record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
-        deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
+      school: weekend
+        ? record("Off", "soft", 0, "No school deadlines · projects")
+        : record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
+          deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
       tasks: record(overdue > 0 ? metric(overdue, "overdue") : tonight > 0 ? metric(tonight, "due tonight") : metric(open, "open"),
         overdue > 0 ? "bad" : tonight > 0 ? "warn" : open > 0 ? "cyan" : "soft",
         overdue > 0 ? 1 : tonight > 0 ? 0.7 : open > 0 ? 0.4 : 0,
