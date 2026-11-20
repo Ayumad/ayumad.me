@@ -1,6 +1,7 @@
 # Life Dashboard Spec — `/dashboard`
 
-> **Status:** shipped 2026-11-18. Source of truth for design iterations.
+> **Status:** shipped 2026-11-18; redesigned around a local focus constellation 2026-11-20.
+> Source of truth for design iterations.
 > Ops spec moved to `BRIEF.md` and `/status`. Do not reintroduce dense ops tables here.
 
 ## Goal
@@ -11,49 +12,63 @@ The ops dashboard (jobs, containers, services, media, timeline) lives at **`/sta
 
 ## Layout
 
-Three columns under a 68 px header, above a 56 px footer:
+The page is one ambient composition, not a grid of monitoring tables:
 
-| Column | Contents |
+| Zone | Contents |
 |---|---|
-| Left (1.12fr) | Large clock + AM/PM, full date, current weather, high/low, `SAN JOSE · CA`, 3-day forecast at the bottom |
-| Center (1.38fr) | `TODAY` agenda (up to 6 events, time + title + calendar label), `THIS WEEK` grouped by day at the bottom |
-| Right (0.9fr) | `TASKS` (4), `SCHOOL` (2), `QUICK` links at the bottom |
+| Hero left | date, oversized clock, seconds, seconds bar |
+| Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
+| Hero right | San Jose weather, current conditions, compact 3-day forecast |
+| Workspace left | `TODAY` timeline + up to 3 events, `THIS WEEK` next 3 days |
+| Workspace center | `FOCUS CONSTELLATION`: center `NOW` + 7 always-labeled domain hubs |
+| Workspace right | up to 3 tasks, 2 school deadlines, one recent-activity line |
+| Footer | Hermes / homelab / services / devices, freshness |
 
-- Grid: `grid-template-rows: 68px minmax(0,1fr) 56px`; `height: 100dvh; overflow: hidden`.
-- At ≤1180 px the right column is hidden and the layout becomes two columns.
-- At ≤760 px it is one column: clock, weather, up to 4 agenda rows, footer. Forecast and week blocks are hidden. The page must still fit 390×844 without scroll.
-- No shadows, gradients, or new dependencies. Tokens live in `dashboard/tokens.css`; the motif is in `dashboard/src/base.css`.
+The hero is a 3-column band; the workspace is `schedule / constellation / actions`; the footer is one row. On phone the hero stacks time + weather, focus goes full-width, the constellation sits full-width, schedule becomes two columns, and actions stack below. No scrolling at 1920×1080 or 390×844.
+
+The old global vault graph is retired from this surface. The useful model is a **local constellation** (Obsidian local-graph logic): 8 labeled nodes total, not 90 notes. The full vault graph belongs in a detail/status view, never on the wall.
+
+## Visual hierarchy
+
+- The clock is the largest element; `CURRENT FOCUS` is the largest *meaningful* element after it.
+- The constellation is the central visual anchor, but labels must be readable before it is decorative.
+- Rails are capped: 3 agenda rows, 3 task rows, 2 school rows, 3 week days, 3 forecast days. `+N more` carries the rest.
+- Long titles are reduced to course/project + action; no two-line paragraphs in the action rails.
+- Use one accent per state: cyan live/info, violet secondary, amber warning/due-soon, red overdue/bad. Color is never the only encoding.
 
 ## Type
 
-- Clock: mono, `clamp(96px, 10.4vw, 196px)`, tabular, tight tracking.
-- Event title: `clamp(16px, 1.25vw, 22px)`, two-line clamp.
-- Task title: 15 px, two-line clamp. Week title: 14 px, two-line clamp.
-- Labels: 10–11 px mono, uppercase, cyan; metadata uses `--soft` for legibility at wall distance.
+- Clock: mono, `clamp(...)`, tabular, tight tracking.
+- Focus title: `clamp(27px, 3.2vw, 62px)`; hero kicker/detail `clamp(14px…22px)`.
+- Rail titles: `clamp(15px, 1.1vw, 21px)` at 1920; metadata 11–15px.
+- Labels: mono uppercase, cyan; secondary text uses `--soft` and sufficient contrast for wall distance.
+- No shadows, gradients, blur, glow, or new dependencies. Hairlines and 2px max radius.
 
-## Visual system
+## Focus constellation
 
-Patterns taken from how real status pages work (Vercel, GitHub, Cloudflare) and Carbon's status-indicator guidance:
-
-- **One large state marker per zone.** The clock, the day rail, the event ring, and the footer pulse each answer one question. Do not turn every line into a badge.
-- **Bars encode quantities** (temperature range, week item counts, due proximity, footer ratios). **Rings encode totals** (today's timed vs all-day split). **Icons encode categories** (weather, vault/canvas/mail/github).
-- **Redundant encoding:** state is always color + shape + label. Never color alone.
-- **Rollup status is the worst child.** The footer warning is the max of job failures and homelab issues.
-- **Keep the indicator count low.** Six hero indicators on `/status`; four footer meters on `/dashboard`. More becomes noise.
-- **Text carries names and times, not status.** Avoid raw emails and implementation words in labels.
+- **NOW** center label; elapsed/remaining ring when the focus has a known window.
+- Seven outer hubs: `CALENDAR`, `SCHOOL`, `TASKS`, `PROJECTS`, `VAULT`, `HOMELAB`, `HERMES`.
+- Each hub always shows its name and a live aggregate: events, deadlines, due/overdue, active projects, notes, homelab warning, jobs.
+- The active focus hub gets one colored spoke and a restrained ring; normal spokes use the domain color, not red.
+- Marker arcs encode state, not arbitrary size. Do not add more nodes. Do not render labels on top of the center.
+- Pointer/tap/keyboard reveals the underlying item on web; the wall has no pointer.
 
 ## Active layer
 
-Motion is part of the design, but it must not fight legibility:
+- **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback.
+- **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
+- **Constellation:** slow deterministic drift (max ~3.5 px on wall, ~1.4 px phone over ~53s); marker pulses on a changed count/status; active hub spoke/ring.
+- **Live health:** footer keeps short service history and updates on the 5-minute payload poll.
+- **Motion budget:** canvas paints capped at ~21 fps; focus/header at 15s; reduced motion draws a single static frame and stops the loop; hidden tabs pause.
+- **Staleness:** wall data stale after 15m, web snapshots after 8h; failed refresh keeps the last good values and flags stale.
 
-- **Clock:** hours + minutes in the large face, seconds in a smaller adjacent face (`:42`), plus a 1px seconds bar that fills every minute.
-- **Sun arc:** the sun dot is repositioned every second from the sunrise/sunset wall-clock minutes, not from a timezone-sensitive `Date`.
-- **Second brain:** a real vault graph, not a decorative topology. `brain_build.py` parses 662 notes and 2,652 wikilinks, keeps the 90 notes with the highest unique in+out degree (542 links), and exposes `{id,label,folder,group,activity,degree,size}`. The page lays it out with a seeded 3D force simulation, adds a degree-based depth bias so hubs sit nearer the camera, and renders a perspective cube, floor grid, depth-sorted nodes, six leader-line labels, and a 72-node ambient field outside the center panel. The camera orbits slowly and responds to pointer parallax; hovering or tapping a node reveals its real note, folder, and link count. Public projection strips labels, folders, paths and the top hub, leaving structure and counts only.
-- **Live activity:** note activity groups (`hermes`, `homelab`, `calendar`, `tasks`, `school`, `journal`, `projects`, `gear`) drive pulsing node rings and amber edges. `HERMES` reacts to failing jobs, `HOMELAB` to warnings, `CALENDAR` to an event within the next hour, `TASKS` to overdue/open, `SCHOOL` to upcoming work.
-- **Focus engine:** the header recalculates every 15 seconds. It prefers the current calendar event (`NOW`, with the real end time), then an overdue/due-today task, then a recently edited project/area note or an imminent next event, then the next school deadline, then a time-of-day fallback. Matching calendar, task, and school rows get a colored marker; matching vault nodes get a white focus ring. The public view shows only the time-of-day label.
-- **Rail and pulse:** the 24-hour rail's now-line moves every second; the footer status dot breathes.
-- **Reduced motion:** all canvas drift, orbit and pulses stop and a static graph is drawn once when `prefers-reduced-motion` is set.
-- **Budget:** 90 nodes / 542 links at 24 fps with four batched edge buckets; hide the graph and ambient layer below 760 px. The center graph flexes into the leftover column height; today shows 3 events + `+N MORE`, and the week rail shows the next 3 days.
+## Refresh
+
+- Clock: every second.
+- Focus recompute: every 15 seconds.
+- Weather: every 15 minutes (Open-Meteo, San Jose, no key).
+- Page data: every 5 minutes (`/dashboard.json` on wall, `/dashboard/data` on web).
+- Service trend: samples from the existing 5-minute poll.
 
 ## Data contract
 
@@ -84,12 +99,6 @@ Motion is part of the design, but it must not fight legibility:
 - **Wall:** `http://10.0.0.54:8795/dashboard.json` is the live v1 payload, served beside `dashboard.html`; the page detects `.html` and fetches `./dashboard.json` first. It shows the full view.
 - Calendar labels: map `Canvas` → `CANVAS`, raw emails → `PERSONAL` / `SCHOOL`, `Class` → `CLASS`.
 - Weather: Open-Meteo, San Jose (`37.3382, -121.8863`), °F, `America/Los_Angeles`, client-side. No key.
-
-## Refresh
-
-- Clock: every second. Weather: every 15 minutes. Snapshot: every 5 minutes.
-- Footer shows `DATA 4M AGO` from `generated_at`, not a wall-clock time, so a stale snapshot is honest.
-- Wall payload refreshes every 5 minutes via `~/.hermes/scripts/dashboard_live_refresh.sh`; the web snapshot is published by `Dashboard Refresh` every 6 hours.
 
 ## Build and routes
 
