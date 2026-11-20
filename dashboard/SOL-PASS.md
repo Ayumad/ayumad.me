@@ -241,3 +241,12 @@ The 1920×1080 wall and 390×844 phone matched their document dimensions with
 zero console or page errors. Both showed 3 agenda rows, 3 task rows, 2 school
 rows, 3 week days, and 3 forecast days. Public privacy, deadline rollover, and
 the two-line mobile focus passed verification. The life build is 19.5 KB gzip.
+
+### Live verification
+
+- P520 kiosk: 1920×1080, no browser chrome, no scroll, 8 labeled hubs,
+  `CURRENT FOCUS` = `DUE TONIGHT · CMPE-148 Project 4 paper`, Today ascending.
+- Chromium GPU + renderer CPU: **~11.5% of one core** after the 21 fps cap.
+- Public site at 1920×1080 and 390×844: 0 console errors, 0 page errors,
+  8 hubs, aggregates only.
+- Screenshot: `/tmp/kiosk-sol.png` (wall), `/tmp/kiosk-sol.png` captured 2026-11-20.
