@@ -25,6 +25,7 @@ import { useArticleBody } from "./articleContent";
 import AsciiOscilloscope from "./AsciiOscilloscope";
 import AsciiScene, { type AsciiSceneName } from "./AsciiScene";
 import ParticleField from "./ParticleField";
+import PhosphorLedger from "./PhosphorLedger";
 import {
   isRenderMode,
   RenderModeContext,
@@ -331,6 +332,7 @@ function HomePage() {
           <p>Bay Area, California</p>
         </aside>
       </section>
+      <PhosphorLedger posts={journalPosts} />
       <section className="home-index section-shell" aria-labelledby="index-title">
         <AsciiDivider />
         <div className="section-title"><p className="label">Navigation</p><h2 id="index-title">Index</h2></div>

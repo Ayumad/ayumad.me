@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
+import { journalPosts } from "./journalContent";
 import { socialLinks } from "./siteContent";
 import { projectArticles } from "./projectContent";
 
@@ -27,6 +28,12 @@ describe("Ayumad.me", () => {
     expect(screen.getByRole("heading", { name: /Ayush Madhukar/i })).toBeInTheDocument();
     expect(screen.getByRole("figure", { name: /interactive real-time ASCII XY oscilloscope/i })).toBeInTheDocument();
     expect(document.querySelector(".oscilloscope-grid")?.textContent?.length).toBeGreaterThan(1_000);
+
+    const ledger = screen.getByRole("region", { name: "Phosphor Ledger" });
+    expect(within(ledger).getByRole("link", { name: /all journal entries/i })).toHaveAttribute("href", "/journal");
+    for (const post of journalPosts.slice(0, 4)) {
+      expect(within(ledger).getByText(post.title).closest("a")).toHaveAttribute("href", "/journal/" + post.slug);
+    }
 
     const navigation = screen.getByRole("navigation", { name: "Main navigation" });
     expect(within(navigation).getAllByRole("link")).toHaveLength(5);
