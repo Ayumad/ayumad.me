@@ -195,7 +195,7 @@ try {
 
     const hub = page.getByRole("button", { name: /vault/i });
     await hub.hover();
-    assert.equal(await page.locator("#hubdetail-text").innerText(), isPublic ? "662 vault notes" : full.brain.top_hub.label);
+    assert.equal(await page.locator("#hubdetail-text").innerText(), isPublic ? `${full.brain.notes ?? full.brain.vault_notes} vault notes` : full.brain.top_hub.label);
     await hub.click();
     assert.equal(await hub.getAttribute("aria-pressed"), "true");
     await page.mouse.move(0, 0);
