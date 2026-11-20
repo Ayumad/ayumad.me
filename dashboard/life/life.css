@@ -176,11 +176,21 @@ body {
 .clock {
   color: var(--text);
   font-family: var(--mono);
-  font-size: clamp(88px, 9.7vw, 182px);
+  font-size: clamp(80px, 8.8vw, 166px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.075em;
   line-height: 0.84;
+}
+
+.secs {
+  align-self: flex-end;
+  padding-bottom: 0.16em;
+  color: var(--soft);
+  font-family: var(--mono);
+  font-size: clamp(22px, 2.1vw, 36px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
 .ampm {
@@ -190,8 +200,24 @@ body {
   letter-spacing: 0.02em;
 }
 
+.secbar {
+  max-width: 340px;
+  height: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+  background: var(--fine);
+}
+
+.secbar i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--cyan);
+  transition: width 1s linear;
+}
+
 .dayline {
-  margin-top: 16px;
+  margin-top: 12px;
   color: var(--soft);
   font-family: var(--mono);
   font-size: 12.5px;
@@ -635,6 +661,27 @@ body {
   margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid var(--fine);
+}
+
+/* second brain */
+
+.brainpanel {
+  min-height: 0;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--fine);
+}
+
+.brainpanel .shead {
+  padding-bottom: 8px;
+  border-bottom: 0;
+}
+
+#brain {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 18vh, 200px);
+  cursor: crosshair;
 }
 
 .weekrows {
@@ -1099,6 +1146,51 @@ body {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 12%, transparent);
 }
 
+.dot.ok {
+  animation: dotpulse 3.8s ease-out infinite;
+}
+
+@keyframes dotpulse {
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 14%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--cyan) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 14%, transparent);
+  }
+}
+
+.wicon {
+  animation: breathe 7s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.sundot {
+  animation: sunpulse 4.5s ease-in-out infinite;
+}
+
+@keyframes sunpulse {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .pstats {
   display: flex;
   align-items: center;
@@ -1159,6 +1251,17 @@ body {
   white-space: nowrap;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .dot.ok,
+  .wicon,
+  .sundot {
+    animation: none;
+  }
+  .secbar i {
+    transition: none;
+  }
+}
+
 /* ── responsive ─────────────────────────────────────────── */
 
 @media (max-width: 1180px) {
@@ -1182,6 +1285,9 @@ body {
   }
   .pstats {
     gap: 12px;
+  }
+  #brain {
+    height: 150px;
   }
 }
 
@@ -1274,6 +1380,9 @@ body {
     font-size: 13.5px;
   }
   .week {
+    display: none;
+  }
+  .brainpanel {
     display: none;
   }
   .lf {

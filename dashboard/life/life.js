@@ -17,6 +17,8 @@
 
   let generatedAt = null;
   let sourceLabel = "SNAPSHOT";
+  let sunRiseMin = null;
+  let sunSetMin = null;
 
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
@@ -106,6 +108,8 @@
     }).formatToParts(now);
     const get = (type) => parts.find((p) => p.type === type)?.value || "";
     $("clock").textContent = `${get("hour")}:${get("minute")}`;
+    $("secs").textContent = ":" + String(now.getSeconds()).padStart(2, "0");
+    $("secfill").style.width = `${(now.getSeconds() / 60) * 100}%`;
     $("ampm").textContent = get("dayPeriod").toUpperCase();
     $("dayline").textContent = new Intl.DateTimeFormat("en-US", {
       timeZone: LA, weekday: "long", month: "long", day: "numeric", year: "numeric",
@@ -114,7 +118,18 @@
       timeZone: LA, weekday: "short", month: "short", day: "numeric",
     }).format(now).toUpperCase();
     updateRailNow();
+    updateSun();
     updateAge();
+  }
+
+  function updateSun() {
+    if (sunRiseMin === null || sunSetMin === null || sunSetMin <= sunRiseMin) return;
+    const progress = Math.max(0, Math.min(1, (nowMinutesLA() - sunRiseMin) / (sunSetMin - sunRiseMin)));
+    const angle = Math.PI * (1 - progress);
+    const x = 150 + 132 * Math.cos(angle);
+    const y = 80 - 66 * Math.sin(angle);
+    $("sundot").setAttribute("cx", x.toFixed(1));
+    $("sundot").setAttribute("cy", y.toFixed(1));
   }
 
   function updateRailNow() {
@@ -274,7 +289,7 @@
 
     const today = todayKey();
     const tomorrow = dayKey(1);
-    const rows = events.slice(0, 6).map((event) => {
+    const rows = events.slice(0, 4).map((event) => {
       const allDay = event.time === "all-day";
       const sortDate = String(event.sort || "").slice(0, 10);
       const dueLater = allDay && sortDate > today;
@@ -291,8 +306,8 @@
           </div>
         </div>`;
     }).join("");
-    const more = events.length > 6
-      ? `<div class="more">+ ${events.length - 6} MORE</div>`
+    const more = events.length > 4
+      ? `<div class="more">+ ${events.length - 4} MORE</div>`
       : "";
     $("events").innerHTML = rows + more;
     renderWeek(data.calendar?.week, false);
@@ -456,6 +471,229 @@
     $("val-iss").textContent = issues || "0";
   }
 
+  const BRAIN_NODES = [
+    { id: "HERMES", label: "HERMES", x: 0.14, y: 0.36, r: 5.5, amp: 4, group: "ops", key: "HERMES" },
+    { id: "HOMELAB", label: "HOMELAB", x: 0.22, y: 0.58, r: 4.8, amp: 3, group: "ops", key: "HOMELAB" },
+    { id: "P520", label: "", x: 0.07, y: 0.18, r: 3.5, amp: 3, group: "ops" },
+    { id: "DOCKER", label: "", x: 0.28, y: 0.16, r: 3.5, amp: 2.5, group: "ops" },
+    { id: "NAS", label: "", x: 0.08, y: 0.7, r: 3, amp: 2.5, group: "ops" },
+    { id: "NETWORK", label: "", x: 0.2, y: 0.84, r: 2.8, amp: 2, group: "ops" },
+    { id: "MEDIA", label: "", x: 0.34, y: 0.5, r: 3.2, amp: 3, group: "ops" },
+    { id: "OPS", label: "", x: 0.36, y: 0.3, r: 2.8, amp: 2, group: "ops" },
+    { id: "VAULT", label: "VAULT", x: 0.5, y: 0.5, r: 7, amp: 2, group: "core", key: "VAULT" },
+    { id: "PROJECTS", label: "PROJECTS", x: 0.43, y: 0.2, r: 5, amp: 3, group: "knowledge", key: "PROJECTS" },
+    { id: "WEBSITE", label: "", x: 0.58, y: 0.12, r: 3.5, amp: 2.5, group: "knowledge" },
+    { id: "RAG", label: "", x: 0.62, y: 0.3, r: 3.5, amp: 2.5, group: "knowledge" },
+    { id: "AI", label: "", x: 0.7, y: 0.48, r: 4, amp: 3, group: "knowledge" },
+    { id: "VOICE", label: "", x: 0.58, y: 0.68, r: 3, amp: 2.5, group: "knowledge" },
+    { id: "SKETCH", label: "", x: 0.44, y: 0.78, r: 3, amp: 2.5, group: "knowledge" },
+    { id: "CALENDAR", label: "CALENDAR", x: 0.84, y: 0.26, r: 5, amp: 2.5, group: "life", key: "CALENDAR" },
+    { id: "TASKS", label: "TASKS", x: 0.9, y: 0.48, r: 5, amp: 2.5, group: "life", key: "TASKS" },
+    { id: "SCHOOL", label: "SCHOOL", x: 0.77, y: 0.14, r: 4, amp: 2.5, group: "life", key: "SCHOOL" },
+    { id: "ACM", label: "", x: 0.93, y: 0.72, r: 3, amp: 2, group: "life" },
+    { id: "JOURNAL", label: "", x: 0.78, y: 0.82, r: 3, amp: 2.5, group: "life" },
+    { id: "GEAR", label: "", x: 0.64, y: 0.88, r: 3, amp: 2, group: "life" },
+    { id: "AUDIO", label: "", x: 0.5, y: 0.92, r: 2.5, amp: 2, group: "life" },
+    { id: "GAMING", label: "", x: 0.85, y: 0.92, r: 2.5, amp: 2, group: "life" },
+  ];
+
+  const BRAIN_LINKS = [
+    ["HERMES", "P520"], ["HERMES", "DOCKER"], ["HERMES", "OPS"], ["HERMES", "HOMELAB"], ["HERMES", "PROJECTS"], ["HERMES", "VAULT"],
+    ["HOMELAB", "P520"], ["HOMELAB", "DOCKER"], ["HOMELAB", "NAS"], ["HOMELAB", "MEDIA"], ["HOMELAB", "NETWORK"],
+    ["P520", "DOCKER"], ["P520", "NETWORK"], ["DOCKER", "MEDIA"], ["NAS", "MEDIA"], ["MEDIA", "OPS"],
+    ["VAULT", "PROJECTS"], ["VAULT", "CALENDAR"], ["VAULT", "TASKS"], ["VAULT", "SCHOOL"], ["VAULT", "JOURNAL"],
+    ["PROJECTS", "WEBSITE"], ["PROJECTS", "RAG"], ["PROJECTS", "AI"], ["PROJECTS", "VOICE"], ["PROJECTS", "SKETCH"],
+    ["WEBSITE", "RAG"], ["RAG", "AI"], ["AI", "VOICE"],
+    ["CALENDAR", "TASKS"], ["CALENDAR", "SCHOOL"], ["CALENDAR", "ACM"], ["CALENDAR", "JOURNAL"],
+    ["TASKS", "SCHOOL"], ["SCHOOL", "ACM"], ["JOURNAL", "GEAR"], ["GEAR", "AUDIO"], ["GEAR", "GAMING"], ["TASKS", "GEAR"],
+  ];
+
+  const BRAIN = (() => {
+    const canvas = $("brain");
+    if (!canvas) return { setActivity() {} };
+    const ctx = canvas.getContext("2d");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const groups = { ops: "#48efd0", knowledge: "#777fc4", life: "#e0b070", core: "#e5f4f2" };
+    const nodes = BRAIN_NODES.map((node) => ({
+      ...node,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.12 + Math.random() * 0.18,
+    }));
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    const links = BRAIN_LINKS.map(([a, b]) => ({ a: byId.get(a), b: byId.get(b) })).filter((link) => link.a && link.b);
+    const meta = $("brainmeta");
+    if (meta) meta.textContent = `${nodes.length} NODES`;
+    const activity = Object.create(null);
+    const pulses = [];
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    let nextPulse = 0;
+    let hover = null;
+    let lastDraw = 0;
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      w = rect.width;
+      h = rect.height;
+    }
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    resize();
+
+    function point(node, time) {
+      const drift = reduce ? 0 : 1;
+      return {
+        x: node.x * w + Math.sin(time * node.speed + node.phase) * node.amp * drift,
+        y: node.y * h + Math.cos(time * node.speed * 1.4 + node.phase) * node.amp * 0.65 * drift,
+      };
+    }
+
+    function level(node) {
+      return activity[node.key] ?? 0;
+    }
+
+    function draw(time) {
+      if (!w || !h) return;
+      ctx.clearRect(0, 0, w, h);
+      for (const link of links) {
+        const a = point(link.a, time);
+        const b = point(link.b, time);
+        const act = Math.max(level(link.a), level(link.b));
+        ctx.strokeStyle = act > 0.55 ? "rgba(72,239,208,0.28)" : "rgba(72,239,208,0.10)";
+        ctx.lineWidth = act > 0.55 ? 1.1 : 0.8;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      for (let i = pulses.length - 1; i >= 0; i -= 1) {
+        const pulse = pulses[i];
+        const progress = (time - pulse.start) / pulse.dur;
+        if (progress >= 1) {
+          pulses.splice(i, 1);
+          continue;
+        }
+        const a = point(pulse.link.a, time);
+        const b = point(pulse.link.b, time);
+        const x = a.x + (b.x - a.x) * progress;
+        const y = a.y + (b.y - a.y) * progress;
+        ctx.globalAlpha = Math.sin(progress * Math.PI) * 0.9;
+        ctx.fillStyle = "#48efd0";
+        ctx.beginPath();
+        ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      for (const node of nodes) {
+        const p = point(node, time);
+        const act = level(node);
+        if (act > 0.5) {
+          const phase = ((time / 1000 + node.phase) % 2.4) / 2.4;
+          ctx.globalAlpha = (1 - phase) * 0.28 * act;
+          ctx.strokeStyle = groups[node.group] || groups.ops;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, node.r + 3 + phase * 10, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+        ctx.fillStyle = groups[node.group] || groups.ops;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, node.r, 0, Math.PI * 2);
+        ctx.fill();
+        if (node.label || hover === node) {
+          ctx.fillStyle = node.group === "core" ? "#e5f4f2" : "#9bb7b3";
+          ctx.font = `${node.group === "core" ? 10 : 9}px "SFMono-Regular", Consolas, monospace`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(node.label || node.id, p.x, p.y + node.r + 4);
+        }
+      }
+    }
+
+    function loop(time) {
+      if (!document.hidden && time - lastDraw > 32) {
+        lastDraw = time;
+        if (!reduce && time > nextPulse) {
+          const link = links[Math.floor(Math.random() * links.length)];
+          if (link) pulses.push({ link, start: time, dur: 900 + Math.random() * 700 });
+          nextPulse = time + 700 + Math.random() * 1200;
+        }
+        draw(time);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener("pointermove", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      let nearest = null;
+      let distance = 18;
+      for (const node of nodes) {
+        const p = point(node, performance.now());
+        const d = Math.hypot(p.x - x, p.y - y);
+        if (d < distance) {
+          distance = d;
+          nearest = node;
+        }
+      }
+      if (nearest !== hover) {
+        hover = nearest;
+        canvas.style.cursor = nearest ? "pointer" : "crosshair";
+        draw(performance.now());
+      }
+    });
+    canvas.addEventListener("pointerleave", () => {
+      hover = null;
+      draw(performance.now());
+    });
+
+    if (reduce) draw(0);
+    else requestAnimationFrame(loop);
+
+    return {
+      setActivity(next) {
+        Object.assign(activity, next);
+        if (reduce) draw(0);
+      },
+    };
+  })();
+
+  function brainActivityFrom(data) {
+    const now = data.now || {};
+    const tasks = data.tasks || {};
+    const school = data.school || {};
+    const failing = Number(now.jobs_failing) || 0;
+    const issues = (Number(now.homelab_issues_bad) || 0) + (Number(now.homelab_issues_warn) || 0);
+    const overdue = Number(tasks.overdue) || 0;
+    const upcoming = Number(school.upcoming) || 0;
+    const nowMin = nowMinutesLA();
+    let calendar = 0.35;
+    for (const event of data.calendar?.events || []) {
+      const hours = parseHours(event.time);
+      if (hours === null) continue;
+      const minutes = hours * 60;
+      if (minutes >= nowMin - 10 && minutes <= nowMin + 45) calendar = 1;
+    }
+    return {
+      HERMES: failing > 0 ? 1 : 0.3,
+      HOMELAB: issues > 0 ? 1 : 0.25,
+      CALENDAR: calendar,
+      TASKS: overdue > 0 ? 1 : 0.35,
+      SCHOOL: Math.min(0.9, 0.25 + upcoming / 10),
+      VAULT: 0.55,
+      PROJECTS: 0.3,
+    };
+  }
+
   function apply(data, source) {
     const isPublic = !!data.public;
     sourceLabel = source === "LIVE" ? "LIVE" : "SNAPSHOT";
@@ -466,6 +704,7 @@
     renderTasks(data, isPublic);
     renderSchool(data, isPublic);
     renderPulse(data);
+    BRAIN.setActivity(brainActivityFrom(data));
     generatedAt = data.generated_at || null;
     updateAge();
   }
@@ -562,19 +801,12 @@
 
       const rise = daily.sunrise?.[0];
       const set = daily.sunset?.[0];
-      if (rise && set) {
+      sunRiseMin = wallMinutes(rise);
+      sunSetMin = wallMinutes(set);
+      if (sunRiseMin !== null && sunSetMin !== null) {
         $("sunrise").textContent = fmtClock(rise);
         $("sunset").textContent = fmtClock(set);
-        const riseMin = wallMinutes(rise);
-        const setMin = wallMinutes(set);
-        if (riseMin !== null && setMin !== null && setMin > riseMin) {
-          const progress = Math.max(0, Math.min(1, (nowMinutesLA() - riseMin) / (setMin - riseMin)));
-          const angle = Math.PI * (1 - progress);
-          const x = 150 + 132 * Math.cos(angle);
-          const y = 80 - 66 * Math.sin(angle);
-          $("sundot").setAttribute("cx", x.toFixed(1));
-          $("sundot").setAttribute("cy", y.toFixed(1));
-        }
+        updateSun();
         $("sunarc").hidden = false;
       } else {
         $("sunarc").hidden = true;

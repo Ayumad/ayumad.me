@@ -29,8 +29,9 @@
       <main class="lm">
         <section class="ltime">
           <div class="clockwrap">
-            <span class="clock" id="clock">--:--</span><span class="ampm" id="ampm">--</span>
+            <span class="clock" id="clock">--:--</span><span class="secs" id="secs">:--</span><span class="ampm" id="ampm">--</span>
           </div>
+          <div class="secbar"><i id="secfill"></i></div>
           <div class="dayline" id="dayline">—</div>
 
           <div class="weather">
@@ -76,6 +77,13 @@
           </div>
           <div class="events" id="events">
             <div class="empty">loading the day…</div>
+          </div>
+          <div class="brainpanel" id="brainpanel">
+            <div class="shead">
+              <span class="slabel">SECOND BRAIN</span>
+              <span class="smeta" id="brainmeta">23 NODES</span>
+            </div>
+            <canvas id="brain" aria-label="Animated map of Ayush's second brain"></canvas>
           </div>
           <div class="week" id="week" hidden>
             <div class="shead">

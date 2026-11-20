@@ -58,16 +58,26 @@ async function shot(url, width, height, file) {
   await page.goto(url, { waitUntil: "networkidle" });
   await page.waitForTimeout(2200);
   await page.screenshot({ path: path.join(ROOT, "dashboard/reference", file) });
+  const before = await page.evaluate(() => document.querySelector("#brain")?.toDataURL() || "");
+  await page.waitForTimeout(700);
+  const after = await page.evaluate(() => document.querySelector("#brain")?.toDataURL() || "");
   const metrics = await page.evaluate(() => ({
     scroll: document.documentElement.scrollHeight,
     inner: window.innerHeight,
     source: document.querySelector("#source")?.textContent,
+    secs: document.querySelector("#secs")?.textContent,
+    meta: document.querySelector("#brainmeta")?.textContent,
+    canvas: (() => {
+      const c = document.querySelector("#brain");
+      return c ? `${c.width}x${c.height}` : "none";
+    })(),
     pulse: document.querySelector("#pulse")?.textContent,
     events: document.querySelector("#events")?.innerText.slice(0, 220),
     week: document.querySelector("#weekmeta")?.textContent,
     tasks: document.querySelector("#tasks")?.innerText.slice(0, 160),
     bars: [...document.querySelectorAll(".pstat")].map((node) => node.innerText.replace(/\n/g, " ")),
   }));
+  metrics.animated = before !== "" && before !== after;
   console.log(file, JSON.stringify(metrics), "errors", errors.length, errors.slice(0, 2));
   await page.close();
 }
