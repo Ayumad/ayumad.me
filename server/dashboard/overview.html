@@ -295,6 +295,34 @@ main {
   background: var(--surface);
 }
 .map-head { padding: 15px 20px 0; }
+.flow-head { align-items: center; }
+.flow-head > div { min-width: 0; }
+#flow-status { display: block; margin-top: 4px; font-size: clamp(17px, 2.05vw, 39px); line-height: 1.05; letter-spacing: -.045em; }
+#flow-detail {
+  display: block;
+  overflow: hidden;
+  margin-top: 4px;
+  color: var(--soft);
+  font-size: clamp(10px, .92vw, 17px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.flow-counts {
+  display: flex;
+  flex: none;
+  align-items: stretch;
+  margin: 0;
+  font-family: ui-monospace, var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.flow-counts div { padding: 1px clamp(8px, 1.2vw, 23px); border-left: 1px solid var(--line); }
+.flow-counts div:last-child { padding-right: 0; }
+.flow-counts dt { color: var(--soft); font-size: clamp(9px, .73vw, 14px); }
+.flow-counts dd { margin: 3px 0 0; color: var(--cyan); font-size: clamp(17px, 1.65vw, 31px); line-height: 1; }
+[data-hermes-state="attention"] #flow-status,
+[data-hermes-state="attention"] #flow-failing { color: var(--warn); }
+[data-hermes-state="stale"] .flow-counts dd,
+[data-hermes-state="unavailable"] .flow-counts dd { color: var(--soft); }
 .sky { position: relative; min-height: 0; }
 #radar, .hubs { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hubs { pointer-events: none; }
@@ -337,6 +365,26 @@ button.hub { pointer-events: auto; cursor: pointer; }
   font-size: clamp(14px, 0.99vw, 19px);
 }
 .map-detail b { flex: none; color: var(--tone, var(--soft)); font-size: 0.83em; letter-spacing: 0.07em; text-transform: uppercase; }
+.map-readouts { min-width: 0; }
+.flow-readout {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding: 9px 20px;
+  color: var(--text);
+  font-size: clamp(12px, .95vw, 18px);
+}
+.flow-readout b {
+  flex: none;
+  color: var(--soft);
+  font: 500 .78em/1.4 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+#flow-result, #hubdetail-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map-readouts .map-detail { padding-block: 8px; border-color: var(--fine); }
 
 .health { border-top: 1px solid var(--line); background: var(--surface); justify-content: space-between; }
 .pulse { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 61px); min-width: 0; }
@@ -447,6 +495,9 @@ button.hub { pointer-events: auto; cursor: pointer; }
     padding-block: 8px;
   }
   .map-head { padding: 8px 9px 0; }
+  .flow-head .label { font-size: 11px; }
+  #flow-status { margin-top: 3px; }
+  .flow-counts dd { margin-top: 2px; }
   .hub {
     min-width: 70px;
     gap: 1px;
@@ -459,6 +510,8 @@ button.hub { pointer-events: auto; cursor: pointer; }
   .hub-value { font-size: 10px; }
   .center .hub-name { font-size: 15px; }
   .map-detail { padding: 5px 9px; gap: 7px; font-size: 11px; }
+  .flow-readout { padding: 4px 9px; gap: 7px; font-size: 11px; }
+  .map-readouts .map-detail { padding-block: 4px; }
   .schedule, .actions { display: grid; gap: 7px; }
   .schedule { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
@@ -545,15 +598,28 @@ button.hub { pointer-events: auto; cursor: pointer; }
 
         <div class="workspace">
           <section id="constellation" class="constellation" aria-labelledby="maplabel">
-            <div class="map-head">
-              <h2 id="maplabel" class="label">Focus constellation</h2>
-              <span id="mapmeta" class="meta">—</span>
+            <div class="map-head flow-head">
+              <div>
+                <h2 id="maplabel" class="label">Hermes Confluence</h2>
+                <strong id="flow-status" role="status">Awaiting telemetry</strong>
+                <span id="flow-detail" hidden></span>
+              </div>
+              <dl class="flow-counts">
+                <div><dt>Active runs</dt><dd id="flow-active">—</dd></div>
+                <div><dt>Failing jobs</dt><dd id="flow-failing">—</dd></div>
+              </dl>
             </div>
             <div class="sky" id="sky">
               <canvas id="radar" aria-hidden="true"></canvas>
               <div id="hubs" class="hubs"></div>
             </div>
-            <div id="hubdetail" class="map-detail"><b id="hubdetail-label">—</b><span id="hubdetail-text">—</span></div>
+            <div class="map-readouts">
+              <div class="flow-readout">
+                <b>Last confirmed result</b>
+                <span id="flow-result" aria-live="polite">—</span>
+              </div>
+              <div id="hubdetail" class="map-detail"><b id="hubdetail-label">—</b><span id="hubdetail-text">—</span></div>
+            </div>
           </section>
 
           <div class="schedule">
@@ -625,6 +691,221 @@ button.hub { pointer-events: auto; cursor: pointer; }
     </div>
 
     <script>
+function createHermesFlow() {
+  const turn = Math.PI * 2;
+  const exit = 1.08;
+  const lanes = [0, .5, .25, .75, .125, .625].map((fraction) => (fraction + .06) * turn);
+  const streamSlots = new Map();
+  const receiptLabels = { succeeded: "completed", failed: "failed", delivered: "delivered" };
+  const headlines = {
+    idle: "Idle",
+    working: "Working",
+    attention: "Needs attention",
+    stale: "Feed delayed",
+    unavailable: "Telemetry unavailable",
+    empty: "Awaiting telemetry",
+  };
+  const asList = (value) => Array.isArray(value) ? value : [];
+  const nameOf = (value) => typeof value === "string" ? value.trim().slice(0, 96) : "";
+  let seed = 120157;
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  const particleCount = 2980;
+  const particles = Array.from({ length: particleCount }, (_, index) => ({
+    orbit: (index + random()) / particleCount * turn,
+    twist: (index % 9) / 9 * turn + (random() - .5) * .54,
+    scatter: random() ** .72,
+    light: random(),
+    x: null,
+    y: null,
+  }));
+  const sparks = Array.from({ length: 104 }, () => ({
+    direction: exit + (random() - .5) * 2.3,
+    speed: .28 + random() * .92,
+    light: .25 + random() * .75,
+  }));
+  let reading = {};
+  let scope;
+  let sourceTime = -Infinity;
+  let result = null;
+  const seenReceipts = new Set();
+  let releases = [];
+  let tone = "empty";
+  let clock = 0;
+  let lastFrame;
+  let currents = [];
+
+  function matchStreams(running, active) {
+    const limit = Math.min(lanes.length, Math.floor(active ?? running.length));
+    const ids = [...new Set(running.map((run) => "run:" + run.run_id))].slice(0, limit);
+    for (let index = ids.length; index < limit; index += 1) ids.push("count:" + index);
+    for (const id of streamSlots.keys()) {
+      if (!ids.includes(id)) streamSlots.delete(id);
+    }
+    for (const id of ids) {
+      if (!streamSlots.has(id)) {
+        const occupied = [...streamSlots.values()];
+        streamSlots.set(id, lanes.find((phase) => !occupied.includes(phase)));
+      }
+    }
+    currents = [...streamSlots.values()];
+  }
+
+  function accept(data, active, failing, animate) {
+    const at = Date.parse(data.generated_at);
+    if (sourceTime !== -Infinity && (!Number.isFinite(at) || at < sourceTime)) return;
+    const flow = data.public ? null : data.hermes?.flow;
+    const currentRuns = asList(flow?.runs).filter((run) => typeof run?.run_id === "string" && nameOf(run.job));
+    const running = currentRuns.filter((run) => run.phase === "running");
+    const pending = currentRuns.find((run) => run.phase === "delivery_pending");
+    const reportedFailures = data.public ? [] : asList(data.hermes?.cron_failing);
+    reading = { active, failing, running, pending, failure: nameOf(reportedFailures[0]?.name) };
+
+    if (!Number.isFinite(at) || at <= sourceTime) return;
+    const receipts = new Map();
+    for (const item of asList(flow?.receipts)) {
+      if (!Object.hasOwn(receiptLabels, item?.outcome) || typeof item.run_id !== "string" || !nameOf(item.job)) continue;
+      const time = Date.parse(item.at);
+      if (!Number.isFinite(time) || time > at) continue;
+      const key = item.run_id + ":" + item.outcome;
+      if (!receipts.has(key)) receipts.set(key, { ...item, time });
+    }
+    const ordered = [...receipts.entries()].sort(([, a], [, b]) => a.time - b.time
+      || Number(a.outcome === "delivered") - Number(b.outcome === "delivered"));
+    for (const [key, receipt] of ordered) {
+      if (seenReceipts.has(key)) continue;
+      seenReceipts.add(key);
+      if (seenReceipts.size > 192) seenReceipts.delete(seenReceipts.values().next().value);
+      if (!result || receipt.time >= result.time) result = receipt;
+      if (animate && sourceTime !== -Infinity && receipt.time > sourceTime && receipt.outcome !== "failed") {
+        releases.push({ time: clock, delivered: receipt.outcome === "delivered" });
+      }
+    }
+    sourceTime = at;
+    releases = releases.slice(-3);
+  }
+
+  function update(data, { active, failing, stale, unavailable, animate }) {
+    const nextScope = data.public ? "public" : "private";
+    if (scope !== nextScope) {
+      scope = nextScope;
+      reading = {};
+      sourceTime = -Infinity;
+      result = null;
+      seenReceipts.clear();
+      streamSlots.clear();
+      releases = [];
+    }
+    if ((!stale && !unavailable) || (stale && sourceTime === -Infinity)) {
+      accept(data, active, failing, animate && !stale);
+    }
+    const { running = [], pending, failure } = reading;
+    tone = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
+      : reading.active > 0 ? "working" : reading.active === 0 && reading.failing === 0 ? "idle" : "empty";
+    const retry = failure && running.some((run) => run.retry === true && nameOf(run.job) === failure);
+    let detail = tone === "stale" ? "Showing last confirmed values" : "";
+    if (tone === "attention" && failure) detail = failure + (retry ? " retry in progress" : " · elevated failure rate");
+    if (tone !== "stale" && tone !== "unavailable" && !detail) {
+      if (pending) detail = nameOf(pending.job) + " · delivery pending";
+      else if (running.length) detail = [...new Set(running.map((run) => nameOf(run.job)))].slice(0, 2).join(" · ");
+    }
+
+    matchStreams(running, reading.active);
+    if (!animate || stale || unavailable) releases = [];
+    return {
+      tone, headline: headlines[tone], detail, active: reading.active, failing: reading.failing,
+      result: result ? nameOf(result.job) + " " + receiptLabels[result.outcome] : null,
+    };
+  }
+
+  function draw(ctx, { width, height, origin, colors, time, animate }) {
+    const step = lastFrame === undefined ? 0 : Math.max(0, Math.min(.15, (time - lastFrame) / 1000));
+    lastFrame = time;
+    if (animate) clock += step * (tone === "stale" ? .22 : 1);
+    const dim = tone === "stale" || tone === "unavailable" || tone === "empty";
+    const scale = Math.min(width * .258, height * .5);
+    const size = width < 450 ? .79 : 1;
+    const rotation = -.39;
+    const cosine = Math.cos(rotation);
+    const sine = Math.sin(rotation);
+    const tilt = .56 + Math.sin(clock * .20) * .05;
+    const jammed = tone === "attention";
+    const queued = !dim && !!reading.pending;
+    const heated = clock * .74;
+    const heads = dim ? [] : currents.map((phase) => phase + heated);
+
+    function point(orbit, twist, radius) {
+      const shell = 1 + Math.cos(twist) * radius;
+      const depth = Math.sin(twist) * radius;
+      const horizontal = Math.cos(orbit) * shell;
+      const vertical = Math.sin(orbit) * shell * tilt + depth * .83;
+      return {
+        x: origin.x + (horizontal * cosine - vertical * sine) * scale,
+        y: origin.y + (horizontal * sine + vertical * cosine) * scale,
+        depth: (Math.sin(orbit) + 1) * .34 + (Math.sin(twist) + 1) * .16,
+      };
+    }
+
+    for (const p of particles) {
+      let angle = p.orbit + clock * .19;
+      const gap = Math.cos(angle - exit);
+      const fault = jammed && gap > .91;
+      const caught = queued && !fault && gap > .94;
+      if (fault || caught) angle = exit + Math.sin(angle - exit) * (fault ? .62 : .83);
+      const twist = p.twist + angle * 3.1 - clock * .24;
+      const shell = (.07 + p.scatter * .22) * (fault ? 1.10 : 1);
+      const { x, y, depth } = point(angle, twist, shell);
+      const current = heads.some((head) => Math.cos(angle - head) > .953);
+      const bright = current || fault || caught;
+      const color = fault ? colors.warn : bright && p.light > .77 ? colors.text : colors.cyan;
+      const alpha = (dim ? .39 : 1) * Math.min(.96, .11 + depth * .3 + p.light * .34 + (bright ? .36 : 0));
+      const dot = size * (.72 + p.light * .98 + (bright ? .34 : 0));
+
+      if (animate && p.light > .65 && p.x !== null && step > 0) {
+        const dx = x - p.x;
+        const dy = y - p.y;
+        if (Math.abs(dx) + Math.abs(dy) < 14) {
+          ctx.beginPath();
+          ctx.moveTo(x - dx * (bright ? 4.8 : 2.4), y - dy * (bright ? 4.8 : 2.4));
+          ctx.lineTo(x, y);
+          ctx.lineWidth = dot * .6;
+          ctx.strokeStyle = color;
+          ctx.globalAlpha = alpha * .46;
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, dot, dot);
+      p.x = x;
+      p.y = y;
+    }
+
+    if (animate) {
+      releases = releases.filter((release) => clock - release.time < 2.3);
+      const gate = point(exit, 0, .07);
+      for (const [index, release] of releases.entries()) {
+        const age = clock - release.time;
+        const reach = scale * age * (release.delivered ? .47 : .27);
+        for (const spark of sparks) {
+          const angle = spark.direction + index * .18 - .27;
+          const dx = Math.cos(angle) * spark.speed * reach;
+          const dy = Math.sin(angle) * spark.speed * reach * .75;
+          ctx.globalAlpha = (1 - age / 2.3) * spark.light;
+          ctx.fillStyle = colors.cyan;
+          ctx.fillRect(gate.x + dx, gate.y + dy, 1 + spark.light, 1 + spark.light);
+        }
+      }
+    }
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 1;
+  }
+
+  return { update, draw };
+}
+
 (() => {
   "use strict";
 
@@ -868,7 +1149,7 @@ button.hub { pointer-events: auto; cursor: pointer; }
     const upcoming = count(school?.upcoming, now?.assignments_upcoming);
     const projects = count(now?.active_projects);
     const notes = count(brain?.vault_notes, brain?.notes);
-    const failing = count(now?.jobs_failing, hermes?.cron_failing_count);
+    const failing = errors?.cron_ledger ? undefined : count(hermes?.cron_failing_count, now?.jobs_failing);
     const jobs = count(now?.jobs_total, hermes?.cron_active);
     const reachable = now?.homelab_reachable ?? homelab?.reachable;
     const bad = count(now?.homelab_issues_bad, homelab?.issue_counts?.bad);
@@ -1265,12 +1546,13 @@ button.hub { pointer-events: auto; cursor: pointer; }
   const CENTER = { x: 50, y: 51 };
   const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const confluence = createHermesFlow();
 
   const radar = (() => {
     const canvas = $("radar");
     const ctx = canvas.getContext("2d");
     const styles = getComputedStyle(document.documentElement);
-    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad"]
+    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad", "text"]
       .map((key) => [key, styles.getPropertyValue(`--${key}`).trim()]));
     const buttons = new Map();
     let width = 0;
@@ -1372,7 +1654,7 @@ button.hub { pointer-events: auto; cursor: pointer; }
     }
 
     function draw(time) {
-      if (!ctx || !width || !height) return;
+      if (!ctx || !width || !height || document.hidden) return;
       ctx.clearRect(0, 0, width, height);
       const compact = width < 450;
       const canMove = !motion.matches && settled && !state.stale;
@@ -1381,18 +1663,7 @@ button.hub { pointer-events: auto; cursor: pointer; }
       const centerTone = colors[focus.tone];
       ctx.lineWidth = 1;
 
-      const radiusX = width * 0.405;
-      const radiusY = height * 0.42;
-      ellipse(origin.x, origin.y, radiusX, radiusY, colors.fine);
-      ellipse(origin.x, origin.y, radiusX * 0.72, radiusY * 0.70, colors.fine);
-      for (let i = 0; i < 24; i += 1) {
-        const angle = i * Math.PI / 12;
-        const length = i % 6 === 0 ? 7 : 3;
-        const x = Math.cos(angle);
-        const y = Math.sin(angle);
-        line({ x: origin.x + x * radiusX, y: origin.y + y * radiusY },
-          { x: origin.x + x * (radiusX + length), y: origin.y + y * (radiusY + length) }, colors.line);
-      }
+      confluence.draw(ctx, { width, height, origin, colors, time, animate: !motion.matches });
 
       HUBS.forEach(({ id, x, y, tone: domainTone }, index) => {
         const info = hubs[id];
@@ -1453,7 +1724,7 @@ button.hub { pointer-events: auto; cursor: pointer; }
 
     function onFrame(time) {
       frame = 0;
-      if (time - lastFrame >= 48) {
+      if (time - lastFrame >= (state.stale ? 125 : 48)) {
         lastFrame = time;
         draw(time);
       }
@@ -1461,7 +1732,7 @@ button.hub { pointer-events: auto; cursor: pointer; }
     }
 
     function syncMotion() {
-      const running = settled && !state.stale && !motion.matches && !document.hidden;
+      const running = (settled || state.data) && !motion.matches && !document.hidden;
       if (running && !frame) frame = requestAnimationFrame(onFrame);
       if (!running && frame) {
         cancelAnimationFrame(frame);
@@ -1571,6 +1842,23 @@ button.hub { pointer-events: auto; cursor: pointer; }
     setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
   }
 
+  function renderConfluence(data, values) {
+    const flow = confluence.update(data, {
+      active: values.activeRuns,
+      failing: values.failing,
+      stale: state.stale,
+      unavailable: Boolean(state.failed && !state.data || data.errors?.hermes),
+      animate: !motion.matches && !document.hidden,
+    });
+    $("constellation").dataset.hermesState = flow.tone;
+    setText($("flow-status"), flow.headline);
+    setText($("flow-active"), flow.active);
+    setText($("flow-failing"), flow.failing);
+    setText($("flow-detail"), flow.detail);
+    $("flow-detail").hidden = !flow.detail;
+    setText($("flow-result"), flow.result ?? (data.public ? DASH : "Awaiting a run receipt"));
+  }
+
   function render() {
     const data = state.data ?? {};
     const time = timeInfo();
@@ -1595,13 +1883,11 @@ button.hub { pointer-events: auto; cursor: pointer; }
     renderProjectPulse(data, values, focus, today);
     renderSpotify(data);
     renderHealth(values);
+    renderConfluence(data, values);
     const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
     const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
     const status = panelState("constellation", available ? 1 : undefined);
     $("constellation").dataset.state = status;
-    const mapLabel = status === "error" ? "Unavailable" : status === "stale" ? "Stale" : available ? "—" : "No data";
-    $("mapmeta").hidden = available && status === "ready";
-    setText($("mapmeta"), mapLabel);
     radar.update(hubs, focus, time.minute, defaultId);
   }
 

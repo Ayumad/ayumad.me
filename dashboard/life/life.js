@@ -241,7 +241,7 @@
     const upcoming = count(school?.upcoming, now?.assignments_upcoming);
     const projects = count(now?.active_projects);
     const notes = count(brain?.vault_notes, brain?.notes);
-    const failing = count(now?.jobs_failing, hermes?.cron_failing_count);
+    const failing = errors?.cron_ledger ? undefined : count(hermes?.cron_failing_count, now?.jobs_failing);
     const jobs = count(now?.jobs_total, hermes?.cron_active);
     const reachable = now?.homelab_reachable ?? homelab?.reachable;
     const bad = count(now?.homelab_issues_bad, homelab?.issue_counts?.bad);
@@ -638,12 +638,13 @@
   const CENTER = { x: 50, y: 51 };
   const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const confluence = createHermesFlow();
 
   const radar = (() => {
     const canvas = $("radar");
     const ctx = canvas.getContext("2d");
     const styles = getComputedStyle(document.documentElement);
-    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad"]
+    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad", "text"]
       .map((key) => [key, styles.getPropertyValue(`--${key}`).trim()]));
     const buttons = new Map();
     let width = 0;
@@ -745,7 +746,7 @@
     }
 
     function draw(time) {
-      if (!ctx || !width || !height) return;
+      if (!ctx || !width || !height || document.hidden) return;
       ctx.clearRect(0, 0, width, height);
       const compact = width < 450;
       const canMove = !motion.matches && settled && !state.stale;
@@ -754,18 +755,7 @@
       const centerTone = colors[focus.tone];
       ctx.lineWidth = 1;
 
-      const radiusX = width * 0.405;
-      const radiusY = height * 0.42;
-      ellipse(origin.x, origin.y, radiusX, radiusY, colors.fine);
-      ellipse(origin.x, origin.y, radiusX * 0.72, radiusY * 0.70, colors.fine);
-      for (let i = 0; i < 24; i += 1) {
-        const angle = i * Math.PI / 12;
-        const length = i % 6 === 0 ? 7 : 3;
-        const x = Math.cos(angle);
-        const y = Math.sin(angle);
-        line({ x: origin.x + x * radiusX, y: origin.y + y * radiusY },
-          { x: origin.x + x * (radiusX + length), y: origin.y + y * (radiusY + length) }, colors.line);
-      }
+      confluence.draw(ctx, { width, height, origin, colors, time, animate: !motion.matches });
 
       HUBS.forEach(({ id, x, y, tone: domainTone }, index) => {
         const info = hubs[id];
@@ -826,7 +816,7 @@
 
     function onFrame(time) {
       frame = 0;
-      if (time - lastFrame >= 48) {
+      if (time - lastFrame >= (state.stale ? 125 : 48)) {
         lastFrame = time;
         draw(time);
       }
@@ -834,7 +824,7 @@
     }
 
     function syncMotion() {
-      const running = settled && !state.stale && !motion.matches && !document.hidden;
+      const running = (settled || state.data) && !motion.matches && !document.hidden;
       if (running && !frame) frame = requestAnimationFrame(onFrame);
       if (!running && frame) {
         cancelAnimationFrame(frame);
@@ -944,6 +934,23 @@
     setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
   }
 
+  function renderConfluence(data, values) {
+    const flow = confluence.update(data, {
+      active: values.activeRuns,
+      failing: values.failing,
+      stale: state.stale,
+      unavailable: Boolean(state.failed && !state.data || data.errors?.hermes),
+      animate: !motion.matches && !document.hidden,
+    });
+    $("constellation").dataset.hermesState = flow.tone;
+    setText($("flow-status"), flow.headline);
+    setText($("flow-active"), flow.active);
+    setText($("flow-failing"), flow.failing);
+    setText($("flow-detail"), flow.detail);
+    $("flow-detail").hidden = !flow.detail;
+    setText($("flow-result"), flow.result ?? (data.public ? DASH : "Awaiting a run receipt"));
+  }
+
   function render() {
     const data = state.data ?? {};
     const time = timeInfo();
@@ -968,13 +975,11 @@
     renderProjectPulse(data, values, focus, today);
     renderSpotify(data);
     renderHealth(values);
+    renderConfluence(data, values);
     const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
     const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
     const status = panelState("constellation", available ? 1 : undefined);
     $("constellation").dataset.state = status;
-    const mapLabel = status === "error" ? "Unavailable" : status === "stale" ? "Stale" : available ? "—" : "No data";
-    $("mapmeta").hidden = available && status === "ready";
-    setText($("mapmeta"), mapLabel);
     radar.update(hubs, focus, time.minute, defaultId);
   }
 

@@ -20,7 +20,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
 | Hero right | San Jose weather, current conditions, tomorrow only |
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
-| Workspace center | `FOCUS CONSTELLATION`: center `NOW` + 7 always-labeled domain hubs |
+| Workspace center | `HERMES CONFLUENCE`: a particle orbit and always-visible Hermes readouts, with `NOW` and the seven domain hubs around the field |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
 | Footer | Mac mini/Hermes and P520 resource status + freshness |
 
@@ -62,7 +62,7 @@ The old global vault graph is retired from this surface. The useful model is a *
 - **Now listening:** public `/api/spotify` data reused in the payload; album art, track/artist, playing/recent state, and progress. Degrades to an offline signal without breaking the layout.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
-- **Constellation:** slow deterministic drift (max ~3.5 px on wall, ~1.4 px phone over ~53s); marker pulses on a changed count/status; active hub spoke/ring.
+- **Constellation:** Confluence drifts at idle, carries a current for each visible active run and holds an amber pocket while a failure is open. The surrounding hubs retain their focus spokes and detail readouts.
 - **Live health:** footer shows Mac mini and P520 resource readings plus active Hermes runs from the 5-minute payload; it links to `/status` for the full breakdown.
 - **Motion budget:** canvas paints capped at ~21 fps; focus/header at 15s; reduced motion draws a single static frame and stops the loop; hidden tabs pause.
 - **Staleness:** wall data stale after 15m, web snapshots after 8h; failed refresh keeps the last good values and flags stale.
@@ -101,6 +101,8 @@ The old global vault graph is retired from this surface. The useful model is a *
 
 - **Public projection:** `calendar.events` keeps `time` only; `tasks.items` and `school.next` are empty; `week_count` is a number. The page renders a count + `SIGN IN FOR DETAILS` instead of titles.
 - **Full snapshot (signed in):** all titles present.
+- Confluence uses `hermes.active_runs`, `hermes.cron_failing_count`, and the dashboard's snapshot freshness rules. Signed-in snapshots can name jobs flagged for elevated failure rates under `hermes.cron_failing`.
+- Optional signed-in `hermes.flow.runs` entries carry `run_id`, `job`, `phase` (`running` or `delivery_pending`), and an optional `retry` boolean. `hermes.flow.receipts` entries carry `run_id`, `job`, `at` (ISO timestamp) and `outcome` (`succeeded`, `failed`, or `delivered`). The initial snapshot can populate the readout. A new successful receipt releases particles from the orbit.
 - **Wall:** `http://10.0.0.54:8795/dashboard.json` is the live v1 payload, served beside `dashboard.html`; the page detects `.html` and fetches `./dashboard.json` first. It shows the full view.
 - Calendar labels: map `Canvas` → `CANVAS`, raw emails → `PERSONAL` / `SCHOOL`, `Class` → `CLASS`.
 - Weather: Open-Meteo, San Jose (`37.3382, -121.8863`), °F, `America/Los_Angeles`, client-side. No key.
