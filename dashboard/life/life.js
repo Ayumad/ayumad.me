@@ -862,10 +862,44 @@
     render();
   }
 
+  // The wall kiosk keeps one Chromium page for days, so a deployed redesign can sit
+  // invisible behind it. Reload when the served page file changes, plus once a night.
+  function watchWallPage() {
+    if (!IS_WALL || location.protocol === "file:") return;
+    const stamp = async () => {
+      try {
+        const response = await fetch(location.pathname, { method: "HEAD", cache: "no-store" });
+        return response.headers.get("etag") || response.headers.get("last-modified");
+      } catch {
+        return null;
+      }
+    };
+    let current = null;
+    stamp().then((value) => { current = value; });
+    setInterval(async () => {
+      const next = await stamp();
+      if (!next) return;
+      if (current && next !== current) {
+        location.reload();
+        return;
+      }
+      current = next;
+    }, 60000);
+    const reloadAt = () => {
+      const now = new Date();
+      const next = new Date(now);
+      next.setHours(4, 0, 0, 0);
+      if (next <= now) next.setDate(next.getDate() + 1);
+      setTimeout(() => location.reload(), next.getTime() - now.getTime());
+    };
+    reloadAt();
+  }
+
   clock();
   render();
   load();
   weather();
+  watchWallPage();
   setInterval(clock, 1000);
   setInterval(render, 15000);
   setInterval(load, 300000);
