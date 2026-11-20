@@ -823,17 +823,30 @@
         level: edgeLevel([a, b]),
       }));
       edgeRows.sort((first, second) => first.z - second.z);
+      const buckets = [
+        { active: false, alpha: 0.04, width: 0.55, rows: [] },
+        { active: false, alpha: 0.065, width: 0.72, rows: [] },
+        { active: false, alpha: 0.09, width: 0.9, rows: [] },
+        { active: true, alpha: 0.14, width: 1.05, rows: [] },
+      ];
       for (const edge of edgeRows) {
-        const a = projected[edge.a];
-        const b = projected[edge.b];
-        const depth = (a.depth + b.depth) / 2;
-        const active = edge.level > 0.55;
-        const alpha = 0.035 + depth * 0.085 + edge.level * 0.095;
-        ctx.strokeStyle = active ? `rgba(224, 176, 112, ${alpha})` : `rgba(72, 239, 208, ${alpha})`;
-        ctx.lineWidth = 0.4 + depth * 0.55 + edge.level * 0.3;
+        const depth = (projected[edge.a].depth + projected[edge.b].depth) / 2;
+        const bucket = edge.level > 0.55 ? 3 : depth < 0.33 ? 0 : depth < 0.66 ? 1 : 2;
+        buckets[bucket].rows.push(edge);
+      }
+      for (const bucket of buckets) {
+        if (!bucket.rows.length) continue;
+        ctx.strokeStyle = bucket.active
+          ? `rgba(224, 176, 112, ${bucket.alpha})`
+          : `rgba(72, 239, 208, ${bucket.alpha})`;
+        ctx.lineWidth = bucket.width;
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
+        for (const edge of bucket.rows) {
+          const a = projected[edge.a];
+          const b = projected[edge.b];
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+        }
         ctx.stroke();
       }
 
@@ -915,7 +928,7 @@
     }
 
     function loop(time) {
-      if (!document.hidden && time - lastDraw > 32) {
+      if (!document.hidden && time - lastDraw > 42) {
         lastDraw = time;
         state.lookX += (state.targetX - state.lookX) * 0.08;
         state.lookY += (state.targetY - state.lookY) * 0.08;
@@ -1141,7 +1154,7 @@
     }
 
     function loop(time) {
-      if (!document.hidden && time - lastDraw > 42) {
+      if (!document.hidden && time - lastDraw > 52) {
         lastDraw = time;
         draw(time);
       }
