@@ -19,6 +19,7 @@
   let sourceLabel = "SNAPSHOT";
   let sunRiseMin = null;
   let sunSetMin = null;
+  const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
 
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
@@ -941,7 +942,7 @@
       const selected = $("brainsel");
       if (!selected) return;
       if (!node) {
-        selected.textContent = "HOVER OR TAP A NODE";
+        selected.textContent = IS_WALL ? "LIVE VAULT GRAPH" : "HOVER OR TAP A NODE";
         return;
       }
       if (node.label) {
@@ -1218,7 +1219,7 @@
   }
 
   async function load() {
-    const isWall = location.pathname.endsWith(".html") || location.protocol === "file:";
+    const isWall = IS_WALL;
     if (!isWall) {
       try {
         apply(await getJSON("/dashboard/data"), "SNAPSHOT");

@@ -48,10 +48,11 @@ Motion is part of the design, but it must not fight legibility:
 
 - **Clock:** hours + minutes in the large face, seconds in a smaller adjacent face (`:42`), plus a 1px seconds bar that fills every minute.
 - **Sun arc:** the sun dot is repositioned every second from the sunrise/sunset wall-clock minutes, not from a timezone-sensitive `Date`.
-- **Second brain:** a 23-node canvas graph in the center column. Nodes drift slowly, signal dots travel along links, and node rings pulse from live activity: `HERMES` (job failures), `HOMELAB` (issues), `CALENDAR` (event within the next 45 min), `TASKS` (overdue), `SCHOOL` (upcoming), `VAULT` (baseline). Hover reveals small-node labels on the web.
+- **Second brain:** a real vault graph, not a decorative topology. `brain_build.py` parses 662 notes and 2,652 wikilinks, keeps the 90 notes with the highest unique in+out degree (542 links), and exposes `{id,label,folder,group,activity,degree,size}`. The page lays it out with a seeded 3D force simulation, adds a degree-based depth bias so hubs sit nearer the camera, and renders a perspective cube, floor grid, depth-sorted nodes, six leader-line labels, and a 72-node ambient field outside the center panel. The camera orbits slowly and responds to pointer parallax; hovering or tapping a node reveals its real note, folder, and link count. Public projection strips labels, folders, paths and the top hub, leaving structure and counts only.
+- **Live activity:** note activity groups (`hermes`, `homelab`, `calendar`, `tasks`, `school`, `journal`, `projects`, `gear`) drive pulsing node rings and amber edges. `HERMES` reacts to failing jobs, `HOMELAB` to warnings, `CALENDAR` to an event within the next hour, `TASKS` to overdue/open, `SCHOOL` to upcoming work.
 - **Rail and pulse:** the 24-hour rail's now-line moves every second; the footer status dot breathes.
-- **Reduced motion:** all canvas drift/pulses stop and the static graph is drawn once when `prefers-reduced-motion` is set.
-- **Budget:** 23 nodes / 39 links at ~30 fps; hide the graph below 760 px.
+- **Reduced motion:** all canvas drift, orbit and pulses stop and a static graph is drawn once when `prefers-reduced-motion` is set.
+- **Budget:** 90 nodes / 542 links at 24 fps with four batched edge buckets; hide the graph and ambient layer below 760 px. The center graph flexes into the leftover column height; today shows 3 events + `+N MORE`, and the week rail shows the next 3 days.
 
 ## Data contract
 
