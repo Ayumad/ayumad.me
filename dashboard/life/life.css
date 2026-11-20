@@ -57,6 +57,80 @@ body {
   min-width: 0;
 }
 
+.lh-c {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+}
+
+.focuswrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.fdot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  align-self: center;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: dotpulse 3.8s ease-in-out infinite;
+}
+
+.fkicker {
+  flex: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ftitle {
+  min-width: 0;
+  max-width: 38vw;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fdetail {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--soft);
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.focuswrap[data-tone="bad"] .fdot {
+  background: var(--bad);
+}
+
+.focuswrap[data-tone="warn"] .fdot {
+  background: var(--warn);
+}
+
+.focuswrap[data-tone="violet"] .fdot {
+  background: var(--violet);
+}
+
+.focuswrap[data-tone="soft"] .fdot {
+  background: var(--soft);
+}
+
 .brand {
   color: var(--text);
   font-family: var(--mono);
@@ -582,6 +656,19 @@ body {
   border-bottom: 0;
 }
 
+.ev.focus {
+  background: rgba(72, 239, 208, 0.045);
+}
+
+.ev.focus .ev-bar {
+  width: 4px;
+  background: var(--focus, var(--cyan));
+}
+
+.ev.focus .ev-n {
+  color: var(--text);
+}
+
 .ev-bar {
   align-self: stretch;
   width: 3px;
@@ -743,6 +830,14 @@ body {
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid var(--fine);
+}
+
+.row.focus {
+  background: rgba(72, 239, 208, 0.045);
+}
+
+.row.focus .row-dot {
+  background: var(--focus, var(--cyan));
 }
 
 .wrow:last-child {
@@ -1316,6 +1411,12 @@ body {
   .lm {
     grid-template-columns: 1fr 1.2fr;
   }
+  .fdetail {
+    display: none;
+  }
+  .lh-c {
+    justify-content: flex-start;
+  }
   .lnext {
     display: none;
   }
@@ -1342,6 +1443,9 @@ body {
 @media (max-width: 760px) {
   .life {
     grid-template-rows: 56px minmax(0, 1fr) 48px;
+  }
+  .lh-c {
+    display: none;
   }
   .lh {
     padding: 0 18px;

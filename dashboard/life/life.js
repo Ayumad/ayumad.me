@@ -16,6 +16,7 @@
     })[c]);
 
   let generatedAt = null;
+  let focusData = null;
   let sourceLabel = "SNAPSHOT";
   let sunRiseMin = null;
   let sunSetMin = null;
@@ -596,7 +597,7 @@
 
   const BRAIN = (() => {
     const canvas = $("brain");
-    if (!canvas) return { setData() {}, setActivity() {} };
+    if (!canvas) return { setData() {}, setActivity() {}, setFocus() {} };
     const ctx = canvas.getContext("2d");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const state = {
@@ -608,6 +609,7 @@
       activity: Object.create(null),
       hover: null,
       selected: null,
+      focus: null,
       lookX: 0,
       lookY: 0,
       targetX: 0,
@@ -677,6 +679,20 @@
       const a = state.nodes[edge[0]];
       const b = state.nodes[edge[1]];
       return Math.max(a ? level(a) : 0, b ? level(b) : 0);
+    }
+
+    function focusNodeMatch(node) {
+      const focus = state.focus;
+      if (!focus) return false;
+      if (focus.kind === "task" && node.activity === "tasks") return true;
+      if (focus.kind === "calendar" && (node.activity === "calendar" || node.activity === "school")) return true;
+      if (focus.kind === "school" && node.activity === "school") return true;
+      const text = `${node.label || ""} ${node.folder || ""}`.toLowerCase();
+      if (focus.course) {
+        const course = String(focus.course).toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (course && text.replace(/[^a-z0-9]/g, "").includes(course)) return true;
+      }
+      return (focus.tokens || []).some((token) => token.length >= 4 && text.includes(token));
     }
 
     function drawSpace(time, cam) {
@@ -907,6 +923,14 @@
           ctx.arc(point.x, point.y, core + 2.5 + phase * 11, 0, Math.PI * 2);
           ctx.stroke();
         }
+        if (focusNodeMatch(node)) {
+          ctx.globalAlpha = 0.96;
+          ctx.strokeStyle = "#e5f4f2";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, core + 5, 0, Math.PI * 2);
+          ctx.stroke();
+        }
       }
       ctx.globalCompositeOperation = "source-over";
       ctx.globalAlpha = 1;
@@ -1056,6 +1080,10 @@
         Object.assign(state.activity, next);
         if (reduce) draw(performance.now());
       },
+      setFocus(focus) {
+        state.focus = focus || null;
+        if (reduce) draw(performance.now());
+      },
     };
   })();
 
@@ -1202,6 +1230,240 @@
   }
 
 
+  function fmtFocusMinutes(minutes) {
+    let hour = Math.floor(minutes / 60) % 24;
+    let minute = Math.round(minutes % 60);
+    if (minute === 60) {
+      hour = (hour + 1) % 24;
+      minute = 0;
+    }
+    const suffix = hour >= 12 ? "PM" : "AM";
+    hour %= 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${String(minute).padStart(2, "0")} ${suffix}`;
+  }
+
+  function focusText(value, max = 54) {
+    let text = String(value || "")
+      .replace(/\[[^\]]*\]/g, " ")
+      .replace(/\s*\(due[^)]*\)/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text.length > max) {
+      const cut = text.slice(0, max);
+      const at = cut.lastIndexOf(" ");
+      text = `${(at > max * 0.55 ? cut.slice(0, at) : cut).trim()}…`;
+    }
+    return text.toUpperCase();
+  }
+
+  function focusTaskTitle(value) {
+    const raw = String(value || "").replace(/\s+/g, " ").trim();
+    const colon = raw.indexOf(":");
+    const base = colon > 12 ? raw.slice(0, colon) : raw;
+    return focusText(base, 46);
+  }
+
+  const FOCUS_STOP = new Set(
+    "the and for with due from this that your into class final test week work task open more about then full names title page submit meeting minutes paper project part chapter quiz homework assignment study".split(" ")
+  );
+
+  function focusTokens(value) {
+    const matches = String(value || "").toLowerCase().match(/[a-z0-9][a-z0-9-]{2,}/g) || [];
+    return [...new Set(matches)].filter((token) => token.length >= 4 && !FOCUS_STOP.has(token)).slice(0, 7);
+  }
+
+  function focusCourse(...values) {
+    for (const value of values) {
+      const match = String(value || "").match(/\b(CMPE|CS|MATH|PHYS|POLS|ENGR|EE|ME|BIOL|CHEM)\s*-?\s*(\d{2,3})\b/i);
+      if (match) return `${match[1].toUpperCase()} ${match[2]}`;
+    }
+    return "";
+  }
+
+  function focusMatches(text, focus) {
+    if (!text || !focus) return false;
+    const low = String(text).toLowerCase();
+    const norm = low.replace(/[^a-z0-9]/g, "");
+    if (focus.course) {
+      const courseNorm = focus.course.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (courseNorm && norm.includes(courseNorm)) return true;
+    }
+    if (focus.raw && low.includes(String(focus.raw).toLowerCase().slice(0, 28))) return true;
+    return (focus.tokens || []).some((token) => token.length >= 5 && low.includes(token));
+  }
+
+  function focusColor(tone) {
+    return {
+      bad: "var(--bad)",
+      warn: "var(--warn)",
+      violet: "var(--violet)",
+      soft: "var(--soft)",
+      cyan: "var(--cyan)",
+    }[tone] || "var(--cyan)";
+  }
+
+  function publicFocus() {
+    const hour = Math.floor(nowMinutesLA() / 60);
+    const title = hour < 5 ? "WIND DOWN" : hour < 9 ? "MORNING SETUP" : hour < 12 ? "CLASS BLOCK" : hour < 17 ? "DEEP WORK" : hour < 21 ? "EVENING SPRINT" : "WRAP UP";
+    return {
+      kind: "public",
+      kicker: "LIKELY",
+      title,
+      detail: "PUBLIC VIEW · SIGN IN FOR DETAIL",
+      tone: "soft",
+      raw: "",
+      course: "",
+      tokens: [],
+    };
+  }
+
+  function computeFocus(data) {
+    if (data.public) return publicFocus();
+
+    const nowMin = nowMinutesLA();
+    const today = todayKey();
+    const candidates = [];
+    const events = Array.isArray(data.calendar?.events) ? data.calendar.events : [];
+    const timed = events.filter((event) => event.time !== "all-day" && String(event.sort || "").slice(0, 10) === today);
+
+    for (const event of timed) {
+      const start = parseHours(event.time);
+      if (start === null) continue;
+      let end = parseHours(event.end_time);
+      if (end === null || end <= start) end = start + 1;
+      const startMin = start * 60;
+      const endMin = end * 60;
+      const course = focusCourse(event.summary, event.cal);
+      const tone = calClass(event.cal) === "personal" ? "warn" : calClass(event.cal) === "canvas" ? "violet" : "cyan";
+      if (startMin <= nowMin && nowMin < endMin) {
+        candidates.push({
+          kind: "calendar",
+          kicker: "NOW",
+          title: focusText(event.summary, 52),
+          detail: `UNTIL ${fmtFocusMinutes(endMin)} · ${calLabel(event.cal) || "CALENDAR"}`,
+          tone,
+          raw: event.summary,
+          course,
+          tokens: [...new Set([...focusTokens(event.summary), ...focusTokens(course)])],
+          score: 120,
+        });
+      } else if (startMin > nowMin && startMin - nowMin <= 120) {
+        const until = startMin - nowMin;
+        candidates.push({
+          kind: "calendar",
+          kicker: "NEXT",
+          title: focusText(event.summary, 52),
+          detail: `IN ${until}M · ${calLabel(event.cal) || "CALENDAR"}`,
+          tone,
+          raw: event.summary,
+          course,
+          tokens: [...new Set([...focusTokens(event.summary), ...focusTokens(course)])],
+          score: 85 - until / 10,
+        });
+      }
+    }
+
+    const taskItems = Array.isArray(data.tasks?.items) ? data.tasks.items : [];
+    for (const item of taskItems) {
+      const overdue = !!item.overdue;
+      const dueToday = String(item.due || "").slice(0, 10) === today;
+      if (!overdue && !dueToday) continue;
+      const dueTime = String(item.title || "").match(/\b(\d{1,2}:\d{2}\s*[AP]M)\b/i)?.[1] || "";
+      const course = focusCourse(item.title, item.list);
+      candidates.push({
+        kind: "task",
+        kicker: overdue ? "OVERDUE" : "DUE TODAY",
+        title: focusTaskTitle(item.title),
+        detail: `${dueTime ? `DUE ${dueTime.toUpperCase()} · ` : ""}${String(item.list || "TASK").toUpperCase()}`,
+        tone: overdue ? "bad" : "warn",
+        raw: item.title,
+        course,
+        tokens: [...new Set([...focusTokens(item.title), ...focusTokens(course)])],
+        score: overdue ? 95 : 85,
+      });
+    }
+
+    for (const note of data.recent || []) {
+      const age = Number(note.age_min);
+      if (!Number.isFinite(age) || age < 0 || age > 180) continue;
+      const course = focusCourse(note.label, note.folder);
+      candidates.push({
+        kind: "recent",
+        kicker: "WORKING ON",
+        title: `WORKING ON ${focusText(note.label, 34)}`,
+        detail: `EDITED ${age}M AGO · ${String(note.folder || "VAULT").toUpperCase()}`,
+        tone: "cyan",
+        raw: note.label,
+        course,
+        tokens: [...new Set([...focusTokens(note.label), ...focusTokens(note.folder), ...focusTokens(course)])],
+        score: age <= 20 ? 92 : age <= 60 ? 80 : 70,
+      });
+    }
+
+    const nextSchool = (Array.isArray(data.school?.next) ? data.school.next : []).find((item) => {
+      const days = daysUntil(item.due);
+      return days !== null && days >= 0;
+    });
+    if (nextSchool) {
+      const days = daysUntil(nextSchool.due);
+      const course = focusCourse(nextSchool.course, nextSchool.title);
+      candidates.push({
+        kind: "school",
+        kicker: "DUE SOON",
+        title: focusText(nextSchool.title, 52),
+        detail: `DUE ${fmtDate(nextSchool.due)} · ${nextSchool.course || "SCHOOL"}`,
+        tone: "violet",
+        raw: nextSchool.title,
+        course,
+        tokens: [...new Set([...focusTokens(nextSchool.title), ...focusTokens(course)])],
+        score: days <= 3 ? 65 : 50,
+      });
+    }
+
+    const hour = nowMin / 60;
+    const fallbackTitle = hour < 5 ? "WIND DOWN" : hour < 9 ? "MORNING SETUP" : hour < 12 ? "CLASS BLOCK" : hour < 17 ? "DEEP WORK" : hour < 21 ? "EVENING SPRINT" : "WRAP UP";
+    const open = Number(data.tasks?.open) || 0;
+    const upcoming = Number(data.school?.upcoming) || 0;
+    candidates.push({
+      kind: "likely",
+      kicker: "LIKELY",
+      title: fallbackTitle,
+      detail: `${open} OPEN · ${upcoming} UPCOMING`,
+      tone: "soft",
+      raw: "",
+      course: "",
+      tokens: [],
+      score: 10,
+    });
+
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates[0];
+  }
+
+  function renderFocus() {
+    if (!focusData) return;
+    const focus = computeFocus(focusData);
+    const wrap = $("focus");
+    if (!wrap) return;
+    wrap.dataset.tone = focus.tone;
+    $("focuskicker").textContent = focus.kicker;
+    $("focustitle").textContent = focus.title;
+    $("focusdetail").textContent = focus.detail;
+    document.documentElement.style.setProperty("--focus", focusColor(focus.tone));
+
+    const active = focus.kind !== "public";
+    document.querySelectorAll(".ev").forEach((row) => {
+      const text = row.querySelector(".ev-n")?.textContent || "";
+      row.classList.toggle("focus", active && focusMatches(text, focus));
+    });
+    document.querySelectorAll("#tasks .row, #school .row").forEach((row) => {
+      const text = row.querySelector(".row-t")?.textContent || "";
+      row.classList.toggle("focus", active && focusMatches(text, focus));
+    });
+    BRAIN.setFocus(active ? focus : null);
+  }
+
   function apply(data, source) {
     const isPublic = !!data.public;
     sourceLabel = source === "LIVE" ? "LIVE" : "SNAPSHOT";
@@ -1214,6 +1476,8 @@
     renderPulse(data);
     BRAIN.setData(data.brain || { nodes: [], links: [] });
     BRAIN.setActivity(brainActivityFrom(data));
+    focusData = data;
+    renderFocus();
     generatedAt = data.generated_at || null;
     updateAge();
   }
@@ -1335,6 +1599,7 @@
   setInterval(clock, 1000);
   load();
   setInterval(load, 300000);
+  setInterval(renderFocus, 15000);
   weather();
   setInterval(weather, 900000);
 })();

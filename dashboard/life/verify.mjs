@@ -39,6 +39,7 @@ const publicPayload = {
   fleet: [],
   journal: [],
   brain: publicBrain,
+  recent: [],
 };
 
 function serve(payload, port) {
@@ -77,6 +78,13 @@ async function shot(url, width, height, file) {
     scroll: document.documentElement.scrollHeight,
     inner: window.innerHeight,
     source: document.querySelector("#source")?.textContent,
+    focus: {
+      kicker: document.querySelector("#focuskicker")?.textContent,
+      title: document.querySelector("#focustitle")?.textContent,
+      detail: document.querySelector("#focusdetail")?.textContent,
+      tone: document.querySelector("#focus")?.dataset.tone,
+      rows: document.querySelectorAll(".focus").length,
+    },
     secs: document.querySelector("#secs")?.textContent,
     meta: document.querySelector("#brainmeta")?.textContent,
     hub: document.querySelector("#brainhub")?.textContent,

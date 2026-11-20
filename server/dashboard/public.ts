@@ -164,6 +164,7 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
       })),
     },
     brain: publicBrain,
+    recent: [],
     fleet: [],
     journal: [],
     now: {
