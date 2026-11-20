@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-19",
+  "summary": "Journal 2026-11-19: quiet day — Retroid Nova still offline so GTA SA install stalled, IKEA LACK shelf fits the 2013 CR-V with the 60/40 fold; cron 790 runs 0 failed, disk 14 GiB free.",
+  "highlights": [
+   "A genuinely quiet day: two interactive asks, both answered from measurements and live device state, and no vault restructuring needed.",
+   "The GTA SA task is blocked on hardware, not tooling — the Nova has been off the tailnet for 14 days; powering it on is the whole unblock.",
+   "The CR-V answer is the tape-measure kind: 75 in clears 70–72 in of floor only by using the split-fold diagonal, so mixed seating (one front, one back) is a hard requirement.",
+   "Disk is the one soft spot at 94% / 14 GiB free — under the 15 GiB warn line, so the 03:30 self-heal is doing real work rather than housekeeping."
+  ]
+ },
+ {
   "date": "2026-11-18",
   "summary": "Journal 2026-11-18: gateway back at 8:25 after a 21h outage; Hermes update + maintenance alerting, model auto-router, P520 kiosk dashboard live, coursework, 90 incentive mails labelled; disk 92%.",
   "highlights": [
@@ -15,7 +25,18 @@
    "Job application pipeline work — details stay in the vault.",
    "**Daily Brief is not a quiet failure — it is silent by design.** `crosswalk_digest.py` returns nothing (exit 0) when the agent board has no posts from the last 24 h; that is the documented behaviour at line 54, and it printed nothing again at 08:41 on a quiet board. It remains a thin 9:30 job that only quotes the crosswalk board, so if a real morning brief (calendar, vault, mail) is wanted at 09:30 that is a *new* job, not a repair. Left as a decision for Ayush rather than built unasked.",
    "Nothing agent-side is open from this pass. The 13 \"late fire\" warnings all trace to the single 21-hour outage window (11:33 Nov 17 → 08:25 Nov 18), not to 13 independent faults.",
-   "Job application pipeline work — details stay in the vault."
+   "Job application pipeline work — details stay in the vault.",
+   "**Vault validator back to zero invalid.** `90 Operations/Hermes/Maintenance Report.md` is regenerated every 6 h and its template never wrote `aliases`, so the 641-note scan kept flagging it (1 invalid). Added `aliases: []` to both the note and `~/.hermes/scripts/maintenance_report.py` so the next regeneration stays clean; validator re-run after the fix.",
+   "**Unswept money ask filed.** The 11:33 session found $430 of live study incentives with nothing tracking them. The $200 Probe Research code (issued Sep 23, expires Dec 22) is now a `Tech` task due Dec 15, mirrored to Apple (`created->Apple` 23:03:55; dry-run `0 action(s) planned`), with a vault line under 🔴 Focus. The $150 Probe reward lapsed Nov 8 and the $80 Amazon card is probably dead — noted, not tasked.",
+   "**Cleanup entry re-measured.** Disk gave back the morning's gain: **92% / 17.1 GiB free** at 23:00 vs 26 GB at 08:30. The vault line now carries tonight's number and drops the stale \"5.2 GB chrome-cdp\" reference (`cache/scratch` is 170 MB; `~/.hermes` totals 19 GB).",
+   "Job application pipeline work — details stay in the vault.",
+   "Coursework — details stay in the vault.",
+   "Minecraft server finished for friends (squaremap + Simple Voice Chat); WAN exposure still needs Ayush's pick (tracked).",
+   "The morning infra pass closed the NAS lease lapse (static IP in container config) and cleared the HERMEX login blocker via the iCloud handoff file.",
+   "**Disk keeps sliding.** 26 → 17 GiB across the day; `tmutil listlocalsnapshots /` is empty, so it is real files, not snapshots. `~/.hermes` is 19 GB (hermes-agent 5.1, installs 3.3, profiles 2.4, backups 1.9, cache 1.2). Self-heal runs 3:30 AM and the free-space alerts fire at <15/<8 GiB; a real reclaim needs the `state.db` maintenance window (gateway stopped) or pruning old installs/backups, both of which need a human window.",
+   "**P520 has 105 pending package upgrades** (09:41 session) that need a reboot window. Not filed as a separate task because the pending P520 IO-fix task needs the same window.",
+   "**One stale task twin, left for a task-capable pass:** `Tech` still carries \"Grant macOS Automation permission for Notes\" although `apple_note.py --list` works and the vault task closed 2026-09-15. Logged in the ops queue — this pass is restricted to filing.",
+   "`🧹 todo-cleanup` remains at 10 items, all waiting on Ayush."
   ]
  },
  {
