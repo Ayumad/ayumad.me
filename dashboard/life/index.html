@@ -4,166 +4,114 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#040707" />
     <title>Life — Ayumad.me</title>
     <style>
 <!--INLINE:../tokens.css-->
-<!--INLINE:../src/base.css-->
 <!--INLINE:life.css-->
     </style>
   </head>
   <body>
-    <canvas id="ambient" aria-hidden="true"></canvas>
     <div class="life">
-      <header class="lh">
-        <div class="lh-l">
-          <a class="brand" href="/">AYUMAD<span>/</span>LIFE</a>
-          <span class="src"><i class="sdot" id="sdot"></i><span id="source">…</span></span>
-        </div>
-        <div class="lh-c">
-          <div class="focuswrap" id="focus" data-tone="soft" aria-live="polite">
-            <i class="fdot"></i>
-            <span class="fkicker" id="focuskicker">FOCUS</span>
-            <span class="ftitle" id="focustitle">CALIBRATING…</span>
-            <span class="fdetail" id="focusdetail">—</span>
-          </div>
-        </div>
-        <div class="lh-r">
-          <span class="hdate" id="hdate">—</span>
-          <a class="lnk" href="/status"><i class="lnk-dot"></i>STATUS</a>
-          <a class="lnk signin" id="signin" href="/dashboard/login?next=%2Fdashboard" hidden>SIGN IN</a>
-        </div>
+      <header class="masthead">
+        <a class="brand" href="/">AYUMAD<span>/</span>LIFE</a>
+        <span id="source" class="source" data-tone="soft">—</span>
+        <nav aria-label="Dashboard links">
+          <a href="/vault">Vault</a>
+          <a href="/status">Status</a>
+          <a id="signin" href="/dashboard/login?next=%2Fdashboard" hidden>Sign in</a>
+        </nav>
       </header>
 
-      <main class="lm">
-        <section class="ltime">
-          <div class="clockwrap">
-            <span class="clock" id="clock">--:--</span><span class="secs" id="secs">:--</span><span class="ampm" id="ampm">--</span>
-          </div>
-          <div class="secbar"><i id="secfill"></i></div>
-          <div class="dayline" id="dayline">—</div>
+      <main>
+        <div class="hero">
+          <section class="time" aria-label="Pacific time">
+            <time id="dayline" class="dayline">—</time>
+            <div class="clockface">
+              <span id="clock">—</span>
+              <span class="clocktail"><span id="ampm">—</span><span id="secs">—</span></span>
+            </div>
+            <div class="clocktrack" aria-hidden="true"><i id="secfill"></i></div>
+          </section>
 
-          <div class="weather">
-            <div class="wtop">
-              <span class="wicon" id="wicon"></span>
-              <span class="wtemp" id="wtemp">—°</span>
+          <section id="focus" class="focus" data-tone="soft" aria-labelledby="focuslabel">
+            <h2 id="focuslabel" class="label">Current focus</h2>
+            <div class="focus-body" aria-live="polite">
+              <span id="focuskicker" class="focus-kicker">—</span>
+              <h1 id="focustitle">—</h1>
+              <p id="focusdetail">—</p>
             </div>
-            <div class="wcond" id="wcond">WEATHER UNAVAILABLE</div>
-            <div class="trange">
-              <span class="tlo" id="tlo">—</span>
-              <span class="tbar"><i id="tfill"></i><b id="tmark"></b></span>
-              <span class="thi" id="thi">—</span>
+          </section>
+
+          <section id="weather" class="weather" aria-labelledby="weatherlabel">
+            <h2 id="weatherlabel" class="label">San Jose weather</h2>
+            <div class="conditions">
+              <span id="wicon" class="weather-icon"></span>
+              <b id="wtemp">—</b>
+              <span class="weather-copy"><span id="wcond">—</span><span id="wrange" class="meta">—</span></span>
             </div>
-            <div class="sunarc" id="sunarc">
-              <svg viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
-                <path class="arc" d="M18 80 A132 66 0 0 1 282 80" />
-                <line class="horizon" x1="6" y1="80" x2="294" y2="80" />
-                <circle class="sundot" id="sundot" cx="150" cy="14" r="3.5" />
-              </svg>
-              <div class="sunlabels">
-                <span><i class="sicon rise"></i>SUNRISE <b id="sunrise">—</b></span>
-                <span><i class="sicon set"></i>SUNSET <b id="sunset">—</b></span>
+            <div id="forecast" class="forecast" aria-label="Forecast">—</div>
+          </section>
+        </div>
+
+        <div class="workspace">
+          <section id="constellation" class="constellation" aria-labelledby="maplabel">
+            <div class="map-head">
+              <h2 id="maplabel" class="label">Focus constellation</h2>
+              <span id="mapmeta" class="meta">—</span>
+            </div>
+            <div class="sky" id="sky">
+              <canvas id="radar" aria-hidden="true"></canvas>
+              <div id="hubs" class="hubs"></div>
+            </div>
+            <div id="hubdetail" class="map-detail"><b id="hubdetail-label">—</b><span id="hubdetail-text">—</span></div>
+          </section>
+
+          <div class="schedule">
+            <section id="today" aria-labelledby="todaylabel">
+              <div class="section-head">
+                <h2 id="todaylabel" class="label">Today</h2><span id="calmeta" class="meta">—</span>
               </div>
-            </div>
+              <div class="daytrack" aria-hidden="true"><i id="dayfill"></i><span id="dayticks"></span></div>
+              <div class="dayhours meta" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+              <ul id="events" class="rail"><li class="placeholder">—</li></ul>
+            </section>
+            <section id="week" aria-labelledby="weeklabel">
+              <div class="section-head">
+                <h2 id="weeklabel" class="label">This week</h2><span id="weekmeta" class="meta">—</span>
+              </div>
+              <ul id="weekrows" class="rail"><li class="placeholder">—</li></ul>
+            </section>
           </div>
 
-          <div class="forecast" id="forecast" hidden>
-            <div class="flabel">NEXT 3 DAYS</div>
-            <div class="frows" id="frows"></div>
+          <div class="actions">
+            <section id="task-panel" aria-labelledby="tasklabel">
+              <div class="section-head">
+                <h2 id="tasklabel" class="label">Tasks</h2><span id="taskmeta" class="meta">—</span>
+              </div>
+              <ul id="tasks" class="rail"><li class="placeholder">—</li></ul>
+            </section>
+            <section id="school-panel" aria-labelledby="schoollabel">
+              <div class="section-head">
+                <h2 id="schoollabel" class="label">School deadlines</h2><span id="schoolmeta" class="meta">—</span>
+              </div>
+              <ul id="school" class="rail"><li class="placeholder">—</li></ul>
+            </section>
           </div>
-        </section>
-
-        <section class="lagenda">
-          <div class="shead">
-            <span class="slabel">TODAY</span>
-            <span class="smeta" id="calmeta">—</span>
-          </div>
-          <div class="dayrail" aria-hidden="true">
-            <div class="rail-line"></div>
-            <div class="rail-now" id="railnow"></div>
-            <div class="rail-events" id="railevents"></div>
-            <div class="rail-hours"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
-          </div>
-          <div class="events" id="events">
-            <div class="empty">loading the day…</div>
-          </div>
-          <div class="brainpanel" id="brainpanel">
-            <div class="shead">
-              <span class="slabel">SECOND BRAIN</span>
-              <span class="smeta" id="brainmeta">—</span>
-            </div>
-            <canvas id="brain" aria-label="A real 3D map of Ayush's Obsidian notes and wikilinks"></canvas>
-            <div class="brainhud">
-              <span id="brainhub">HUB —</span>
-              <span id="brainsel">HOVER OR TAP A NODE</span>
-            </div>
-          </div>
-          <div class="week" id="week" hidden>
-            <div class="shead">
-              <span class="slabel">THIS WEEK</span>
-              <span class="smeta" id="weekmeta">—</span>
-            </div>
-            <div class="weekrows" id="weekrows"></div>
-            <div class="weekchart" id="weekchart" hidden></div>
-          </div>
-        </section>
-
-        <section class="lnext">
-          <div class="block">
-            <div class="shead">
-              <span class="slabel">TASKS</span>
-              <span class="smeta" id="taskmeta">—</span>
-            </div>
-            <div class="rows" id="tasks"><div class="empty">—</div></div>
-          </div>
-          <div class="block">
-            <div class="shead">
-              <span class="slabel">SCHOOL</span>
-              <span class="smeta" id="schoolmeta">—</span>
-            </div>
-            <div class="rows" id="school"><div class="empty">—</div></div>
-          </div>
-          <div class="block links">
-            <div class="shead">
-              <span class="slabel">QUICK</span>
-            </div>
-            <div class="lgrid">
-              <a href="/vault">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3h10v10H3zM3 6h10M6 6v7" /></svg>
-                VAULT
-              </a>
-              <a href="https://canvas.sjsu.edu" target="_blank" rel="noreferrer">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="1" /><path d="M5 8h6M8 5v6" /></svg>
-                CANVAS
-              </a>
-              <a href="https://mail.google.com" target="_blank" rel="noreferrer">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1" /><path d="m2 5 6 5 6-5" /></svg>
-                GMAIL
-              </a>
-              <a href="https://github.com/Ayumad" target="_blank" rel="noreferrer">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 13c-3 1-3-2-4-2m8 4v-2c0-1 .3-1.4 0-2-2 0-3-1-3-3 0-1 .3-1.7 1-2 0-.8 0-1.5-.3-2 0 0-1 0-2 1a5 5 0 0 0-4 0c-1-1-2-1-2-1-.3.5-.3 1.2-.3 2 .7.3 1 1 1 2 0 2-1 3-3 3-.3.6 0 1 0 2v2" /></svg>
-                GITHUB
-              </a>
-            </div>
-          </div>
-        </section>
+        </div>
       </main>
 
-      <footer class="lf">
+      <footer id="health" class="health">
         <a class="pulse" href="/status">
-          <span class="pstate"><i class="dot" id="dot"></i><b id="pulse">SYSTEM —</b></span>
-          <span class="pstats">
-            <span class="pstat"><small>JOBS</small><i><b id="bar-jobs"></b></i><em id="val-jobs">—</em></span>
-            <span class="pstat"><small>CTR</small><i><b id="bar-ctr"></b></i><em id="val-ctr">—</em></span>
-            <span class="pstat"><small>DEV</small><i><b id="bar-dev"></b></i><em id="val-dev">—</em></span>
-            <span class="pstat"><small>ALRT</small><i class="iss"><b id="bar-iss"></b></i><em id="val-iss">—</em></span>
+          <span id="pulse" data-tone="soft">—</span>
+          <span class="pulse-domain"><small>Hermes</small><b id="hermes-state">—</b></span>
+          <span class="pulse-domain"><small>Homelab</small><b id="homelab-state">—</b></span>
+          <span class="pulse-domain services">
+            <small>Services</small><b id="services">—</b>
+            <svg id="service-trend" viewBox="0 0 88 20" aria-hidden="true"><line x1="3" x2="85" y1="17" y2="17" /><polyline /><circle r="2" /></svg>
           </span>
+          <span class="pulse-domain devices"><small>Devices</small><b id="devices">—</b></span>
         </a>
-        <div class="fright">
-          <span id="updated">—</span>
-          <span class="fsep">·</span>
-          <span>AYUMAD.ME</span>
-        </div>
+        <span id="updated" class="meta">—</span>
       </footer>
     </div>
 

@@ -1,27 +1,759 @@
-/* life.js — one screen, no dependencies. Visual encoding first: a day rail,
-   rings, bars, due-date meters, and weather icons. Text carries names and
-   times only. Public data is counts; signed-in and wall data carry titles. */
 (() => {
   "use strict";
 
   const LA = "America/Los_Angeles";
-  const $ = (id) => document.getElementById(id);
-  const esc = (value) =>
-    String(value ?? "").replace(/[&<>"']/g, (c) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    })[c]);
-
-  let generatedAt = null;
-  let focusData = null;
-  let sourceLabel = "SNAPSHOT";
-  let sunRiseMin = null;
-  let sunSetMin = null;
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
+  const DASH = "—";
+  const $ = (id) => document.getElementById(id);
+  const list = (value) => Array.isArray(value) ? value.filter(Boolean) : [];
+  const count = (...values) => values.find((value) => Number.isFinite(value) && value >= 0);
+  const metric = (value, label) => value === undefined ? DASH : `${value} ${label}`;
+  const dateKey = (value) => String(value ?? "").match(/^\d{4}-\d{2}-\d{2}/)?.[0] ?? "";
+  const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
+  const dateFormat = new Intl.DateTimeFormat("en-CA", {
+    timeZone: LA, year: "numeric", month: "2-digit", day: "2-digit",
+  });
+  const dayFormat = new Intl.DateTimeFormat("en-US", {
+    timeZone: LA, weekday: "long", month: "short", day: "numeric",
+  });
+  const timeFormat = new Intl.DateTimeFormat("en-US", { timeZone: LA, hour: "numeric", minute: "2-digit" });
+  const dateTag = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric" });
+  const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
+  const state = { data: null, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
+  const clockDate = () => {
+    const parts = Object.fromEntries(dateFormat.formatToParts(new Date()).map(({ type, value }) => [type, value]));
+    return `${parts.year}-${parts.month}-${parts.day}`;
+  };
+  const utcDate = (key) => new Date(`${key}T12:00:00Z`);
+  const formatDate = (value) => dateKey(value) && Number.isFinite(+utcDate(dateKey(value)))
+    ? dateTag.format(utcDate(dateKey(value))) : DASH;
+  const formatWeekday = (key) => key && Number.isFinite(+utcDate(key)) ? weekday.format(utcDate(key)) : DASH;
+
+  function setText(node, value) {
+    const text = String(value ?? DASH);
+    if (node.textContent !== text) node.textContent = text;
+  }
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function timeInfo(now = new Date()) {
+    const parts = Object.fromEntries(timeFormat.formatToParts(now).map(({ type, value }) => [type, value]));
+    const minute = (Number(parts.hour) % 12) * 60 + Number(parts.minute) + (parts.dayPeriod === "PM" ? 720 : 0);
+    return { minute, second: now.getSeconds(), face: `${parts.hour}:${parts.minute}`, period: parts.dayPeriod };
+  }
+
+  function parseTime(value) {
+    const parts = String(value ?? "").match(/^(1[0-2]|0?[1-9]):([0-5]\d)\s*([AP])M$/i);
+    return parts ? (Number(parts[1]) % 12) * 60 + Number(parts[2]) + (parts[3].toUpperCase() === "P" ? 720 : 0) : null;
+  }
+
+  function formatTime(minutes) {
+    const value = Math.floor(minutes) % 1440;
+    return `${Math.floor(value / 60) % 12 || 12}:${String(value % 60).padStart(2, "0")} ${value >= 720 ? "PM" : "AM"}`;
+  }
+
+  function relativeDays(value, today) {
+    const key = dateKey(value);
+    return key ? (+utcDate(key) - +utcDate(today)) / 86400000 : NaN;
+  }
+
+  function clean(value) {
+    return String(value ?? "").replace(/\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function shorten(value, max) {
+    const text = clean(value);
+    if (!text) return DASH;
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const space = cut.lastIndexOf(" ");
+    return `${(space > max * 0.55 ? cut.slice(0, space) : cut).trimEnd()}…`;
+  }
+
+  const withoutAside = (value) => clean(value).replace(/\s*\([^)]*\)/g, "").trim();
+  const courseOf = (value) => String(value ?? "").match(/\b(CMPE|CS|MATH|PHYS|POLS|ENGR|EE|ME|BIOL|CHEM)\s*-?\s*(\d{2,3})\b/i)?.slice(1).join(" ").toUpperCase();
+  const projectOf = (value) => clean(value).match(/\bproject\s+\d+\b/i)?.[0].toLowerCase();
+  const deadlineOf = (item) => {
+    const match = String(item.title ?? "").match(/\b(?:due|by)\b([^()]*?)\b(\d{1,2}:\d{2}\s*[AP]M)\b/i);
+    return { time: match?.[2]?.toUpperCase(), day: match?.[1]?.match(/\b[A-Za-z]{3} \d{1,2}\b/)?.[0] };
+  };
+  const datedFirst = (a, b) => (dateKey(a.due) || "9999-12-31").localeCompare(dateKey(b.due) || "9999-12-31");
+  const sentence = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+  const calLabel = (cal) => {
+    if (/canvas/i.test(cal)) return "Canvas";
+    if (/class/i.test(cal)) return "Class";
+    if (String(cal ?? "").includes("@")) return /sjsu|school/i.test(cal) ? "School" : "Personal";
+    return cal || "Calendar";
+  };
+
+  function taskCopy(item, omitSubject = false) {
+    const title = withoutAside(item.title);
+    const separator = title.indexOf(": ");
+    const action = separator > -1 ? title.slice(separator + 2) : title;
+    const [primary, followup] = action.split(/, then\s/i, 2);
+    const shortAction = primary.split(/\s+[—+]\s+/)[0];
+    if (omitSubject && separator > -1) {
+      const second = followup && followup.length <= 12 ? ` · ${sentence(followup)}` : "";
+      return `${shorten(sentence(shortAction), second ? 33 : 54)}${second}`;
+    }
+    return shorten(separator > -1 ? `${title.slice(0, separator)} · ${shortAction}` : shortAction, 54);
+  }
+
+  function schoolCopy(item) {
+    const title = withoutAside(item.title).replace(/^Term Project:\s*/i, "").split(/\s+and\s+|\s+-\s+|\s*[-–]\s*Requires\b/i)[0];
+    return shorten(title ? [item.course, title].filter(Boolean).join(" · ") : "", 54);
+  }
+
+  function focusFor(data, today, minute) {
+    const phase = minute < 300 ? "Wind down" : minute < 540 ? "Morning setup" : minute < 720 ? "Class block"
+      : minute < 1020 ? "Deep work" : minute < 1260 ? "Evening sprint" : "Wrap up";
+    const publicView = !!data.public;
+    const candidates = [{
+      kicker: "Likely", title: phase, detail: publicView ? "Public view · sign in for details" : "No immediate commitments",
+      tone: "soft", score: 10,
+    }];
+    if (publicView) return candidates[0];
+    const { errors } = data;
+    for (const item of list(errors?.calendar ? null : data.calendar?.events)) {
+      if (dateKey(item.sort) !== today) continue;
+      const start = parseTime(item.time);
+      if (start === null) continue;
+      const reportedEnd = parseTime(item.end_time);
+      const end = reportedEnd > start ? reportedEnd : start + 1;
+      const label = calLabel(item.cal);
+      const common = { hub: "calendar", title: shorten(item.summary, 56), item, tone: label === "Canvas" ? "violet" : "cyan" };
+      if (start <= minute && minute < end) {
+        candidates.push({
+          ...common, kicker: "Now",
+          detail: reportedEnd > start ? `Until ${formatTime(end)} · ${label}` : label,
+          window: reportedEnd > start ? [start, end] : null, score: 120,
+        });
+      } else if (start > minute && start - minute <= 120) {
+        const wait = start - minute;
+        candidates.push({ ...common, kicker: "Next", detail: `In ${wait}m · ${label}`, window: [start - 120, start], score: 85 - wait / 10 });
+      }
+    }
+
+    for (const item of list(errors?.tasks ? null : data.tasks?.items)) {
+      if (!item.overdue && dateKey(item.due) !== today) continue;
+      const title = withoutAside(item.title);
+      const separator = title.indexOf(":");
+      const { time: due, day } = deadlineOf(item);
+      const minutes = parseTime(due);
+      const timeAppliesToday = day ? day.toLowerCase() === formatDate(today).toLowerCase() : dateKey(item.due) === today;
+      candidates.push({
+        hub: "tasks", item, kicker: item.overdue ? "Overdue" : "Due today",
+        title: shorten(separator > 12 ? title.slice(0, separator) : title, 49),
+        detail: [due && `Due ${due}`, item.list || "Task"].filter(Boolean).join(" · "),
+        tone: item.overdue ? "bad" : "warn",
+        window: minutes !== null && minutes > 0 && timeAppliesToday ? [0, minutes] : null,
+        score: item.overdue ? 95 : 85,
+      });
+    }
+
+    const stamp = Date.parse(data.generated_at);
+    const elapsed = Number.isFinite(stamp) ? Math.max(0, Math.floor((Date.now() - stamp) / 60000)) : 0;
+    for (const note of list(errors?.recent ? null : data.recent)) {
+      if (!Number.isFinite(note.age_min) || note.age_min < 0) continue;
+      const age = note.age_min + elapsed;
+      if (age > 180) continue;
+      const hub = /project/i.test(note.folder) ? "projects" : "vault";
+      candidates.push({
+        hub, item: note, kicker: "Working on", title: shorten(note.label, 44),
+        detail: `Edited ${age}m ago · ${note.folder || "Vault"}`,
+        tone: "cyan", score: age <= 20 ? 92 : age <= 60 ? 80 : 70,
+      });
+    }
+
+    const next = list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);
+    if (next) {
+      candidates.push({
+        hub: "school", item: next, kicker: "Due soon", title: shorten(next.title, 56),
+        detail: `Due ${formatDate(next.due)}${next.course ? ` · ${next.course}` : ""}`,
+        tone: "violet", score: relativeDays(next.due, today) <= 3 ? 65 : 50,
+      });
+    }
+
+    return candidates.reduce((best, item) => item.score > best.score ? item : best);
+  }
+
+  function model(data) {
+    const { now = {}, tasks, school, calendar, brain, homelab, hermes, errors } = data;
+    const events = count(calendar?.count, Array.isArray(calendar?.events) ? calendar.events.length : undefined);
+    const open = count(tasks?.open, now?.open_tasks);
+    const overdue = count(tasks?.overdue, now?.overdue_tasks);
+    const upcoming = count(school?.upcoming, now?.assignments_upcoming);
+    const projects = count(now?.active_projects);
+    const notes = count(brain?.vault_notes, brain?.notes);
+    const failing = count(now?.jobs_failing, hermes?.cron_failing_count);
+    const jobs = count(now?.jobs_total, hermes?.cron_active);
+    const reachable = now?.homelab_reachable ?? homelab?.reachable;
+    const bad = count(now?.homelab_issues_bad, homelab?.issue_counts?.bad);
+    const warn = count(now?.homelab_issues_warn, homelab?.issue_counts?.warn);
+    const up = count(now?.services_up, homelab?.services_up);
+    const total = count(now?.services_total, homelab?.services_total);
+    const devicesUp = count(now?.devices_online);
+    const devicesTotal = count(now?.devices_total);
+    const services = up !== undefined && total !== undefined ? `${up}/${total}` : DASH;
+    const devices = devicesUp !== undefined && devicesTotal !== undefined ? `${devicesUp}/${devicesTotal}` : DASH;
+    const serviceLoss = up !== undefined && total !== undefined && up < total;
+    const lab = reachable === false ? ["Offline", "bad"]
+      : bad > 0 ? [metric(bad, bad === 1 ? "issue" : "issues"), "bad"]
+        : warn > 0 ? [metric(warn, warn === 1 ? "warning" : "warnings"), "warn"]
+          : serviceLoss ? ["Degraded", "warn"]
+            : errors?.homelab ? ["Unavailable", "bad"]
+              : reachable === true && bad === 0 && warn === 0 ? ["Clear", "cyan"] : [DASH, "soft"];
+    const agent = failing > 0 ? [metric(failing, "failing"), "bad"]
+      : errors?.hermes ? ["Unavailable", "bad"]
+        : failing === 0 && jobs > 0 ? ["Clear", "cyan"] : jobs === 0 ? ["No jobs", "soft"] : [DASH, "soft"];
+    const tone = lab[1] === "bad" || agent[1] === "bad" ? "bad" : lab[1] === "warn" ? "warn"
+      : lab[1] === "cyan" && agent[1] === "cyan" ? "cyan" : "soft";
+    return { events, open, overdue, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total };
+  }
+
+  function panelState(key, value) {
+    if (state.failed && !state.data) return "error";
+    if (state.data?.errors?.[key]) return "error";
+    if (state.stale) return "stale";
+    return value === undefined || value === 0 ? "empty" : "ready";
+  }
+
+  function setPanel(id, key, value, meta, label) {
+    const status = panelState(key, value);
+    $(id).dataset.state = status;
+    const text = status === "error" ? "Unavailable" : label;
+    setText($(meta), text);
+    return status;
+  }
+
+  function appendRow(target, text, options = {}) {
+    const row = el("li", "rail-row");
+    const { lead, tail, title, tone, active, past, textClass } = options;
+    if (past) row.dataset.past = "true";
+    if (active) row.dataset.active = "true";
+    if (tone) row.dataset.tone = tone;
+    if (lead) row.append(el("span", `row-time leading ${textClass || ""}`, lead));
+    if (text === null) {
+      row.classList.add("date-only");
+    } else {
+      const label = el("span", `row-text${textClass === "week-day" ? " week-title" : ""}`, text);
+      if (title) label.title = title;
+      row.append(label);
+    }
+    if (tail) row.append(el("span", textClass === "week-day" ? "row-time week-count" : "row-time", tail));
+    target.append(row);
+  }
+
+  function finishRail(target, shown, total, empty, status) {
+    if (!shown) {
+      target.append(el("li", "placeholder rail-empty", status === "error" ? "Data unavailable" : empty));
+    } else if (total > shown) {
+      target.append(el("li", "row-more", `+${total - shown} more`));
+    }
+  }
+
+  function matchingAssignment(event, focus) {
+    const project = projectOf(event.summary);
+    const eventCourse = courseOf(event.summary);
+    return focus.hub === "tasks" && event.time === "all-day" && project &&
+      project === projectOf(focus.item.title) && eventCourse && eventCourse === courseOf(focus.item.title);
+  }
+
+  function scheduleEvents(data, focus, today, minute) {
+    return list(data.calendar?.events).filter((event) => event !== focus.item && !matchingAssignment(event, focus)
+      && (!dateKey(event.sort) || dateKey(event.sort) >= today))
+      .map((item, index) => {
+        const start = parseTime(item.time);
+        const end = parseTime(item.end_time) ?? (start === null ? null : start + 1);
+        const date = dateKey(item.sort);
+        const order = date > today ? 1 : start === null ? 2 : end > minute ? 0 : 3;
+        return { item, start, date, order, index };
+      })
+      .sort((a, b) => a.order - b.order || (a.order === 3 ? b.start - a.start : a.index - b.index));
+  }
+
+  function renderSchedule(data, values, focus, today, minute) {
+    const events = $("events");
+    const ticks = $("dayticks");
+    events.replaceChildren();
+    ticks.replaceChildren();
+    const status = setPanel("today", "calendar", values.events, "calmeta", metric(values.events, "events"));
+    const isPublic = !!data.public;
+    const agenda = scheduleEvents(isPublic ? {} : data, focus, today, minute);
+    const rows = status === "error" ? [] : agenda.slice(0, 3);
+    for (const { item, start, date, order } of rows) {
+      const lead = date > today ? formatDate(date) : start !== null ? item.time : item.time === "all-day" ? "All day" : DASH;
+      const itemCourse = courseOf(item.summary);
+      const focusCourse = courseOf(focus.item?.summary ?? focus.item?.title ?? focus.item?.course);
+      const related = order !== 3 && itemCourse && itemCourse === focusCourse;
+      const title = clean(item.summary).replace(/^\([^)]*\)\s*/, "").split(/\s+-\s+/)[0];
+      appendRow(events, shorten(title, 39), { lead, title: item.summary, active: related, past: order === 3 });
+    }
+    if (status !== "error") {
+      for (const item of list(data.calendar?.events)) {
+        const start = parseTime(item.time);
+        if (start === null || (!isPublic && dateKey(item.sort) > today)) continue;
+        const tick = el("i");
+        tick.style.left = `${start / 1440 * 100}%`;
+        ticks.append(tick);
+      }
+    }
+
+    const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
+    const representedByFocus = focus.hub === "calendar" ? 1 : 0;
+    finishRail(events, rows.length, (values.events ?? agenda.length) - representedByFocus,
+      representedByFocus && !agenda.length ? "See current focus" : empty, status);
+
+    const week = $("weekrows");
+    week.replaceChildren();
+    const grouped = new Map();
+    if (isPublic) {
+      for (const item of list(data.calendar?.week_days)) {
+        if (dateKey(item.date)) grouped.set(item.date, { total: count(item.count) });
+      }
+    } else {
+      for (const item of list(data.calendar?.week)) {
+        const key = dateKey(item.sort);
+        if (!key) continue;
+        if (!grouped.has(key)) grouped.set(key, { total: 0, item });
+        grouped.get(key).total += 1;
+      }
+    }
+    const days = [...grouped.entries()].filter(([key]) => key >= today).sort(([a], [b]) => a.localeCompare(b));
+    const weekTotal = count(data.calendar?.week_count, Array.isArray(data.calendar?.week) ? data.calendar.week.length : undefined);
+    const weekStatus = setPanel("week", "calendar", weekTotal, "weekmeta", metric(weekTotal, "items"));
+    const shown = weekStatus === "error" ? [] : days.slice(0, 3);
+    for (const [key, { total, item }] of shown) {
+      appendRow(week, isPublic ? null : shorten(item?.summary, 39), {
+        lead: `${formatWeekday(key)} ${formatDate(key)}`, tail: metric(total, total === 1 ? "item" : "items"),
+        title: item?.summary, textClass: "week-day",
+      });
+    }
+    finishRail(week, shown.length, days.length, weekTotal === 0 ? "Clear week" : DASH, weekStatus);
+  }
+
+  function renderActions(data, values, focus, today) {
+    const tasks = $("tasks");
+    const school = $("school");
+    tasks.replaceChildren();
+    school.replaceChildren();
+    const taskStatus = setPanel("task-panel", "tasks", values.open, "taskmeta", metric(values.open, "open"));
+    const schoolStatus = setPanel("school-panel", "school", values.upcoming, "schoolmeta", metric(values.upcoming, "due"));
+
+    if (data.public || taskStatus === "error") {
+      const label = values.overdue > 0 ? metric(values.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
+      finishRail(tasks, 0, 0, label, taskStatus);
+    } else {
+      const represented = focus.hub === "tasks" && !withoutAside(focus.item.title).includes(": ") ? 1 : 0;
+      const ranked = list(data.tasks?.items).filter((item) => !represented || item !== focus.item).sort((a, b) => Number(b === focus.item) - Number(a === focus.item)
+        || Number(!!b.overdue) - Number(!!a.overdue) || datedFirst(a, b));
+      const rows = ranked.slice(0, 3);
+      for (const item of rows) {
+        const active = item === focus.item;
+        const imminent = dateKey(item.due) === today;
+        const { time: due } = deadlineOf(item);
+        appendRow(tasks, taskCopy(item, active), {
+          tail: active && due ? "" : item.overdue ? "Overdue" : imminent && due ? due : formatDate(item.due),
+          title: item.title, active, tone: item.overdue ? "bad" : imminent ? "warn" : "soft",
+        });
+      }
+      finishRail(tasks, rows.length, values.open === undefined ? ranked.length : values.open - represented,
+        represented && !ranked.length ? "See current focus" : values.open === 0 ? "Clear" : DASH, taskStatus);
+    }
+
+    const upcoming = data.public || schoolStatus === "error" ? [] : list(data.school?.next)
+      .filter((item) => item !== focus.item)
+      .sort(datedFirst);
+    const rows = upcoming.slice(0, 2);
+    for (const item of rows) {
+      const days = relativeDays(item.due, today);
+      appendRow(school, schoolCopy(item), {
+        tail: formatDate(item.due), title: item.title, tone: days < 0 ? "bad" : days <= 3 ? "warn" : "soft",
+      });
+    }
+    const representedByFocus = focus.hub === "school" ? 1 : 0;
+    const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
+    finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
+  }
+
+  const HUBS = [
+    { id: "calendar", name: "Calendar", x: 26, y: 12 },
+    { id: "school", name: "School", x: 74, y: 12 },
+    { id: "tasks", name: "Tasks", x: 84, y: 43 },
+    { id: "projects", name: "Projects", x: 75, y: 74 },
+    { id: "vault", name: "Vault", x: 50, y: 77 },
+    { id: "homelab", name: "Homelab", x: 25, y: 74 },
+    { id: "hermes", name: "Hermes", x: 16, y: 43 },
+  ];
+  const CENTER = { x: 50, y: 43 };
+  const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+
+  const radar = (() => {
+    const canvas = $("radar");
+    const ctx = canvas.getContext("2d");
+    const styles = getComputedStyle(document.documentElement);
+    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad"]
+      .map((key) => [key, styles.getPropertyValue(`--${key}`).trim()]));
+    const buttons = new Map();
+    let width = 0;
+    let height = 0;
+    let hubs = {};
+    let focus = { tone: "soft" };
+    let progress = null;
+    let settled = false;
+    let activity = new Map();
+    let selected = null;
+    let hovered = null;
+    let keyboard = null;
+    let defaultHub = null;
+    let frame = 0;
+    let lastFrame = 0;
+
+    function place(node, { x, y }) {
+      node.style.setProperty("--x", `${x}%`);
+      node.style.setProperty("--y", `${y}%`);
+      $("hubs").append(node);
+    }
+
+    const center = el("span", "hub center");
+    center.dataset.tone = "soft";
+    center.append(el("span", "hub-name", "Now"));
+    place(center, CENTER);
+
+    for (const hub of HUBS) {
+      const button = el("button", "hub");
+      button.type = "button";
+      button.dataset.hub = hub.id;
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-controls", "hubdetail");
+      button.append(el("span", "hub-name", hub.name), el("span", "hub-value", DASH));
+      buttons.set(hub.id, button);
+      place(button, hub);
+      button.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") hovered = hub.id;
+        showDetail();
+      });
+      button.addEventListener("pointerleave", () => {
+        hovered = null;
+        showDetail();
+      });
+      button.addEventListener("focus", () => {
+        if (button.matches(":focus-visible")) keyboard = hub.id;
+        showDetail();
+      });
+      button.addEventListener("blur", () => {
+        keyboard = null;
+        showDetail();
+      });
+      button.addEventListener("click", () => {
+        selected = selected === hub.id ? null : hub.id;
+        showDetail();
+      });
+      button.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        selected = hovered = keyboard = null;
+        showDetail();
+      });
+    }
+
+    function showDetail() {
+      const id = hovered ?? keyboard ?? selected ?? defaultHub;
+      const info = hubs[id];
+      $("hubdetail").dataset.tone = info?.tone ?? "soft";
+      setText($("hubdetail-label"), info ? hubName(id) : "Constellation");
+      setText($("hubdetail-text"), info?.detail ?? (state.failed ? "Data unavailable" : DASH));
+      for (const [key, button] of buttons) button.setAttribute("aria-pressed", String(key === selected));
+    }
+
+    function resize() {
+      const box = canvas.getBoundingClientRect();
+      width = box.width;
+      height = box.height;
+      const scale = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      ctx?.setTransform(scale, 0, 0, scale, 0, 0);
+      draw(performance.now());
+    }
+
+    function ellipse(x, y, rx, ry, color, start = 0, end = Math.PI * 2) {
+      if (rx <= 0 || ry <= 0 || end <= start) return;
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, start, end);
+      ctx.stroke();
+    }
+
+    function line(a, b, color) {
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    function draw(time) {
+      if (!ctx || !width || !height) return;
+      ctx.clearRect(0, 0, width, height);
+      const compact = width < 450;
+      const canMove = !motion.matches && settled && !state.stale;
+      const origin = { x: width * CENTER.x / 100, y: height * CENTER.y / 100 };
+      const ring = compact ? 27 : 48;
+      const centerTone = colors[focus.tone];
+      ctx.lineWidth = 1;
+
+      const radiusX = width * 0.415;
+      const radiusY = height * 0.39;
+      ellipse(origin.x, origin.y, radiusX, radiusY, colors.fine);
+      ellipse(origin.x, origin.y, radiusX * 0.72, radiusY * 0.70, colors.fine);
+      for (let i = 0; i < 24; i += 1) {
+        const angle = i * Math.PI / 12;
+        const length = i % 6 === 0 ? 7 : 3;
+        const x = Math.cos(angle);
+        const y = Math.sin(angle);
+        line({ x: origin.x + x * radiusX, y: origin.y + y * radiusY },
+          { x: origin.x + x * (radiusX + length), y: origin.y + y * (radiusY + length) }, colors.line);
+      }
+
+      HUBS.forEach(({ id, x, y }, index) => {
+        const info = hubs[id];
+        const active = focus.hub === id;
+        const amplitude = canMove ? (compact ? 1.4 : 3.5) : 0;
+        const angle = time / 8500 + index * Math.PI * 2 / HUBS.length;
+        const anchor = { x: width * x / 100, y: height * y / 100 };
+        const point = { x: anchor.x + Math.cos(angle) * amplitude, y: anchor.y + Math.sin(angle) * amplitude };
+        const tone = colors[active ? focus.tone : info?.tone ?? "soft"];
+        const radius = (compact ? 4 : 5.5) + (active ? (compact ? 2 : 3) : 0);
+        const outer = radius + (compact ? 2 : 3);
+        line(origin, point, active ? tone : colors.line);
+        ctx.fillStyle = colors.surface;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, outer, 0, Math.PI * 2);
+        ctx.fill();
+        ellipse(point.x, point.y, outer, outer, active ? tone : colors.line);
+        if (info?.level > 0) ellipse(point.x, point.y, outer, outer, tone,
+          -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * info.level);
+        ctx.fillStyle = tone;
+        const dot = active ? 2.5 : 1.5;
+        ctx.fillRect(point.x - dot, point.y - dot, dot * 2, dot * 2);
+        const pulse = (time - (activity.get(id) ?? -6000)) / 1800;
+        if (canMove && pulse >= 0 && pulse < 1) {
+          const size = outer + pulse * (compact ? 7 : 12);
+          ctx.globalAlpha = (1 - pulse) * 0.6;
+          ellipse(point.x, point.y, size, size, tone);
+          ctx.globalAlpha = 1;
+        }
+      });
+
+      ctx.fillStyle = colors.surface;
+      ctx.beginPath();
+      ctx.arc(origin.x, origin.y, ring, 0, Math.PI * 2);
+      ctx.fill();
+      ellipse(origin.x, origin.y, ring, ring, colors.line);
+      ellipse(origin.x, origin.y, ring - 5, ring - 5, colors.fine);
+      if (progress === null) {
+        for (let i = 0; i < 4; i += 1) {
+          const angle = i * Math.PI / 2 - Math.PI / 4;
+          ellipse(origin.x, origin.y, ring, ring, centerTone, angle - 0.10, angle + 0.10);
+        }
+      } else {
+        ellipse(origin.x, origin.y, ring, ring, centerTone, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
+      }
+    }
+
+    function onFrame(time) {
+      frame = 0;
+      if (time - lastFrame >= 48) {
+        lastFrame = time;
+        draw(time);
+      }
+      syncMotion();
+    }
+
+    function syncMotion() {
+      const running = settled && !state.stale && !motion.matches && !document.hidden;
+      if (running && !frame) frame = requestAnimationFrame(onFrame);
+      if (!running && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    }
+
+    motion.addEventListener("change", () => {
+      syncMotion();
+      draw(performance.now());
+    });
+    document.addEventListener("visibilitychange", syncMotion);
+    new ResizeObserver(resize).observe(canvas);
+
+    return {
+      update(next, current, minute, defaultId) {
+        const time = performance.now();
+        if (settled && !state.stale) {
+          for (const { id } of HUBS) {
+            if (next[id]?.value !== hubs[id]?.value || next[id]?.detail !== hubs[id]?.detail || next[id]?.signal !== hubs[id]?.signal
+              || (current.hub === id && focus.hub !== id)) activity.set(id, time);
+          }
+        }
+        hubs = next;
+        focus = current;
+        defaultHub = defaultId;
+        settled = Object.values(next).some(({ value }) => value !== DASH && value !== "Unavailable");
+        progress = current.window ? clamp((minute - current.window[0]) / (current.window[1] - current.window[0])) : null;
+        center.dataset.tone = current.tone;
+        for (const [id, button] of buttons) {
+          button.dataset.tone = next[id]?.tone ?? "soft";
+          button.dataset.active = String(id === current.hub);
+          setText(button.lastElementChild, next[id]?.value);
+        }
+        showDetail();
+        draw(time);
+        syncMotion();
+      },
+    };
+  })();
+
+  function hubData(data, values, focus, time) {
+    const isPublic = !!data.public;
+    const { open, events, overdue, upcoming, projects, notes, lab, agent, jobs, failing, services } = values;
+    const upcomingEvents = scheduleEvents(isPublic ? {} : data, focus, clockDate(), time.minute);
+    const upcomingEvent = upcomingEvents.find(({ order, start }) => order < 2 && start !== null)?.item;
+    const task = isPublic ? null : list(data.tasks?.items).find((item) => item.overdue) ?? list(data.tasks?.items)[0];
+    const deadline = isPublic ? null : list(data.school?.next)[0];
+    const recent = isPublic ? null : list(data.recent).find((note) => /project/i.test(note.folder)) ?? list(data.projects).find((item) => item.status === "active");
+    const top = isPublic ? null : data.brain?.top_hub;
+    const issue = isPublic ? null : list(data.homelab?.open_issues).find((item) => item.severity === "bad") ?? list(data.homelab?.open_issues)[0];
+    const record = (value, tone, level, detail = value, signal) => ({ value, tone, level, detail, signal });
+    const hubs = {
+      calendar: record(metric(events, "events"), events > 0 ? "cyan" : "soft", events > 0 ? 0.5 : 0,
+        upcomingEvent ? `${upcomingEvent.time} · ${shorten(upcomingEvent.summary, 72)}` : metric(events, "events today")),
+      school: record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
+        deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
+      tasks: record(overdue > 0 ? metric(overdue, "overdue") : metric(open, "open"), overdue > 0 ? "bad" : open > 0 ? "cyan" : "soft",
+        overdue > 0 ? 1 : open > 0 ? 0.4 : 0, task ? taskCopy(task, false) : metric(open, "open tasks"), open),
+      projects: record(metric(projects, "active"), projects > 0 ? "violet" : "soft", projects > 0 ? 0.5 : 0,
+        recent ? shorten(recent.label ?? recent.name, 72) : metric(projects, "active projects")),
+      vault: record(metric(notes, "notes"), notes > 0 ? "violet" : "soft", notes > 0 ? 0.4 : 0,
+        top?.label ? shorten(top.label, 72) : metric(notes, "vault notes")),
+      homelab: record(lab[0], lab[1], lab[1] === "cyan" ? 0.5 : lab[1] === "soft" ? 0 : 1,
+        issue?.text ? shorten(sentence(issue.text.split(" — ").at(-1)), 72) : services !== DASH ? `${services} services up` : lab[0], services),
+      hermes: record(failing === 0 && jobs !== undefined ? metric(jobs, "jobs") : agent[0], agent[1],
+        agent[1] === "cyan" ? 0.5 : agent[1] === "bad" ? 1 : 0,
+        jobs !== undefined && failing !== undefined ? `${Math.max(0, jobs - failing)}/${jobs} jobs without failures` : agent[0]),
+    };
+    for (const [id, hub] of Object.entries(hubs)) {
+      const key = id === "vault" ? "brain" : id;
+      if (panelState(key, hub.value === DASH ? undefined : 1) === "error") {
+        hubs[id] = record("Unavailable", "bad", 0);
+      }
+    }
+    return {
+      hubs,
+      defaultId: lab[1] === "warn" || lab[1] === "bad" ? "homelab" : agent[1] === "bad" ? "hermes"
+        : recent && focus.hub !== "projects" ? "projects" : upcomingEvent ? "calendar" : jobs !== undefined ? "hermes" : null,
+    };
+  }
+
+  const samples = [];
+
+  function recordServices(stamp, { up, total }) {
+    if (!Number.isFinite(stamp) || state.stale || up === undefined || !(total > 0) || state.data?.errors?.homelab) return;
+    if (samples.length && samples.at(-1).stamp >= stamp) return;
+    samples.push({ stamp, value: clamp(up / total) });
+    if (samples.length > 12) samples.shift();
+  }
+
+  function renderHealth(values) {
+    const { lab, agent, devices, services, tone } = values;
+    $("health").dataset.state = panelState("health", tone === "soft" ? undefined : 1);
+    const report = state.failed && !state.data ? "Status unavailable" : state.stale ? "Status stale"
+      : tone === "bad" ? "Needs attention" : tone === "warn" ? "Warning" : tone === "cyan" ? "All clear" : "System —";
+    $("pulse").dataset.tone = state.failed && !state.data ? "bad" : state.stale ? "warn" : tone;
+    setText($("pulse"), report);
+    for (const [id, [label, color]] of [["hermes-state", agent], ["homelab-state", lab]]) {
+      $(id).dataset.tone = color;
+      setText($(id), label);
+    }
+    setText($("devices"), devices);
+    setText($("services"), services);
+    const trend = $("service-trend");
+    trend.hidden = !samples.length || state.stale || services === DASH;
+    if (!trend.hidden) {
+      const points = samples.map(({ value }, index) => [3 + (12 - samples.length + index) * 7.4, 17 - value * 14]);
+      trend.querySelector("polyline").setAttribute("points", points.map((point) => point.join(",")).join(" "));
+      const [x, y] = points.at(-1);
+      const marker = trend.querySelector("circle");
+      marker.setAttribute("cx", x);
+      marker.setAttribute("cy", y);
+    }
+  }
+
+  function render() {
+    const data = state.data ?? {};
+    const time = timeInfo();
+    const today = clockDate();
+    const values = model(data);
+    const hasFocusData = !!(data.public || data.calendar || data.tasks || data.school || data.recent);
+    const focus = hasFocusData ? focusFor(data, today, time.minute) : {
+      title: DASH, kicker: state.failed ? "Unavailable" : DASH, tone: state.failed ? "bad" : "soft",
+    };
+    $("focus").dataset.state = panelState("focus", hasFocusData ? 1 : undefined);
+    $("focus").dataset.tone = focus.tone;
+    document.documentElement.style.setProperty("--focus-tone", `var(--${focus.tone})`);
+    setText($("focuskicker"), focus.kicker);
+    setText($("focustitle"), focus.title);
+    setText($("focusdetail"), focus.detail);
+    $("signin").hidden = !data.public;
+
+    renderSchedule(data, values, focus, today, time.minute);
+    renderActions(data, values, focus, today);
+    renderHealth(values);
+    const { hubs, defaultId } = hubData(data, values, focus, time);
+    const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
+    const status = panelState("constellation", available ? 1 : undefined);
+    $("constellation").dataset.state = status;
+    const mapLabel = status === "error" ? "Unavailable" : status === "stale" ? "Stale" : available ? "—" : "No data";
+    $("mapmeta").hidden = available && status === "ready";
+    setText($("mapmeta"), mapLabel);
+    radar.update(hubs, focus, time.minute, defaultId);
+  }
+
+  function refreshSource(now) {
+    const stamp = Date.parse(state.data?.generated_at);
+    const minutes = Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 60000)) : null;
+    const stale = !!state.data && (state.failed || (minutes !== null && minutes >= (state.source === "Live" ? 15 : 480)));
+    const status = state.failed && !state.data ? "Offline" : stale ? "Stale" : state.data?.public ? "Public" : state.source || DASH;
+    if (state.stale !== stale) {
+      state.stale = stale;
+      render();
+    }
+    setText($("source"), status);
+    $("source").dataset.tone = status === "Offline" ? "bad" : stale ? "warn" : status === "Live" ? "cyan" : "soft";
+    setText($("updated"), minutes === null ? DASH : minutes < 1 ? "Updated now" : minutes < 60 ? `Updated ${minutes}m ago` : `Updated ${Math.floor(minutes / 60)}h ago`);
+  }
+
+  function clock() {
+    const now = new Date();
+    const time = timeInfo(now);
+    setText($("clock"), time.face);
+    setText($("secs"), `:${String(time.second).padStart(2, "0")}`);
+    setText($("ampm"), time.period);
+    setText($("dayline"), dayFormat.format(now));
+    $("dayline").dateTime = clockDate();
+    $("secfill").style.width = `${time.second / 60 * 100}%`;
+    $("dayfill").style.width = `${(time.minute + time.second / 60) / 1440 * 100}%`;
+    refreshSource(+now);
+    if (state.weather && !state.weatherFailed && +now - state.weather.receivedAt >= 1800000 && $("weather").dataset.state !== "stale") {
+      renderWeather();
+    }
+  }
   const WMO = {
     0: "CLEAR", 1: "MOSTLY CLEAR", 2: "PARTLY CLOUDY", 3: "OVERCAST",
     45: "FOG", 48: "FREEZING FOG",
@@ -64,110 +796,6 @@
     return ICONS.cloud;
   }
 
-  const todayKey = () => dayKey(0);
-
-  function dayKey(offset = 0) {
-    const date = new Date();
-    date.setDate(date.getDate() + offset);
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: LA, year: "numeric", month: "2-digit", day: "2-digit",
-    }).format(date);
-  }
-
-  function calLabel(cal) {
-    const value = String(cal || "").trim();
-    if (!value) return "";
-    if (/canvas/i.test(value)) return "CANVAS";
-    if (value.includes("@")) return /sjsu|school/i.test(value) ? "SCHOOL" : "PERSONAL";
-    if (/class/i.test(value)) return "CLASS";
-    return value.toUpperCase();
-  }
-
-  function calClass(cal) {
-    const label = calLabel(cal);
-    if (label === "CLASS") return "class";
-    if (label === "CANVAS") return "canvas";
-    if (label === "PERSONAL") return "personal";
-    return "";
-  }
-
-  function updateAge() {
-    if (!generatedAt) {
-      $("updated").textContent = "—";
-      return;
-    }
-    const minutes = Math.max(0, Math.round((Date.now() - Date.parse(generatedAt)) / 60000));
-    if (!Number.isFinite(minutes)) $("updated").textContent = "—";
-    else if (minutes < 1) $("updated").textContent = `${sourceLabel} NOW`;
-    else if (minutes < 60) $("updated").textContent = `${sourceLabel} ${minutes}M AGO`;
-    else $("updated").textContent = `${sourceLabel} ${Math.round(minutes / 60)}H AGO`;
-  }
-
-  function clock() {
-    const now = new Date();
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, hour: "numeric", minute: "2-digit", hour12: true,
-    }).formatToParts(now);
-    const get = (type) => parts.find((p) => p.type === type)?.value || "";
-    $("clock").textContent = `${get("hour")}:${get("minute")}`;
-    $("secs").textContent = ":" + String(now.getSeconds()).padStart(2, "0");
-    $("secfill").style.width = `${(now.getSeconds() / 60) * 100}%`;
-    $("ampm").textContent = get("dayPeriod").toUpperCase();
-    $("dayline").textContent = new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, weekday: "long", month: "long", day: "numeric", year: "numeric",
-    }).format(now).toUpperCase();
-    $("hdate").textContent = new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, weekday: "short", month: "short", day: "numeric",
-    }).format(now).toUpperCase();
-    updateRailNow();
-    updateSun();
-    updateAge();
-  }
-
-  function updateSun() {
-    if (sunRiseMin === null || sunSetMin === null || sunSetMin <= sunRiseMin) return;
-    const progress = Math.max(0, Math.min(1, (nowMinutesLA() - sunRiseMin) / (sunSetMin - sunRiseMin)));
-    const angle = Math.PI * (1 - progress);
-    const x = 150 + 132 * Math.cos(angle);
-    const y = 80 - 66 * Math.sin(angle);
-    $("sundot").setAttribute("cx", x.toFixed(1));
-    $("sundot").setAttribute("cy", y.toFixed(1));
-  }
-
-  function updateRailNow() {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, hour: "numeric", minute: "numeric", hour12: false,
-    }).formatToParts(new Date());
-    const hour = Number(parts.find((p) => p.type === "hour")?.value || 0) % 24;
-    const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
-    $("railnow").style.left = `${((hour * 60 + minute) / 1440) * 100}%`;
-  }
-
-  function parseHours(time) {
-    const match = String(time || "").match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (!match) return null;
-    let hour = Number(match[1]) % 12;
-    if (/PM/i.test(match[3])) hour += 12;
-    return hour + Number(match[2]) / 60;
-  }
-
-  function renderRail(events) {
-    const timed = events.filter((event) => event.time !== "all-day");
-    $("railevents").innerHTML = timed.map((event) => {
-      const hours = parseHours(event.time);
-      if (hours === null) return "";
-      return `<i class="rev" style="left:${(hours / 24) * 100}%;background:${eventColor(event.cal)}"></i>`;
-    }).join("");
-  }
-
-  function eventColor(cal) {
-    const cls = calClass(cal);
-    if (cls === "class") return "var(--cyan)";
-    if (cls === "canvas") return "var(--violet)";
-    if (cls === "personal") return "var(--warn)";
-    return "var(--soft)";
-  }
-
   async function getJSON(url) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 7000);
@@ -186,1365 +814,39 @@
     }
   }
 
-  function fmtDate(value) {
-    const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (!match) return String(value || "").toUpperCase();
-    const date = new Date(`${match[1]}-${match[2]}-${match[3]}T12:00:00Z`);
-    return new Intl.DateTimeFormat("en-US", {
-      timeZone: "UTC", month: "short", day: "numeric",
-    }).format(date).toUpperCase();
+
+  function temperature(value) {
+    return Number.isFinite(value) ? `${Math.round(value)}°` : DASH;
   }
 
-  function fmtClock(iso) {
-    const minutes = wallMinutes(iso);
-    if (minutes === null) return "—";
-    let hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-    const suffix = hour >= 12 ? "PM" : "AM";
-    hour %= 12;
-    if (hour === 0) hour = 12;
-    return `${hour}:${String(minute).padStart(2, "0")} ${suffix}`;
-  }
+  function renderWeather() {
+    const weather = state.weather;
+    const daily = weather?.daily;
+    const current = weather?.current;
+    const temp = temperature(current?.temperature_2m);
+    const condition = Number.isInteger(current?.weather_code) ? WMO[current.weather_code] : undefined;
+    const old = weather && (state.weatherFailed || Date.now() - weather.receivedAt >= 1800000);
+    const status = old ? "stale" : state.weatherFailed ? "error" : temp === DASH && !condition ? "empty" : "ready";
+    $("weather").dataset.state = status;
+    setText($("wtemp"), temp);
+    setText($("wcond"), status === "stale" ? "Weather stale" : status === "error" ? "Unavailable" : condition ?? DASH);
+    const high = temperature(daily?.temperature_2m_max?.[0]);
+    const low = temperature(daily?.temperature_2m_min?.[0]);
+    setText($("wrange"), high === DASH && low === DASH ? DASH : `${high} / ${low}`);
+    $("wicon").innerHTML = condition ? iconFor(current.weather_code, current.is_day) : "";
 
-  function wallMinutes(iso) {
-    const match = String(iso || "").match(/T(\d{2}):(\d{2})/);
-    return match ? Number(match[1]) * 60 + Number(match[2]) : null;
-  }
-
-  function nowMinutesLA() {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: LA, hour: "numeric", minute: "numeric", hour12: false,
-    }).formatToParts(new Date());
-    const hour = Number(parts.find((p) => p.type === "hour")?.value || 0) % 24;
-    const minute = Number(parts.find((p) => p.type === "minute")?.value || 0);
-    return hour * 60 + minute;
-  }
-
-  function daysUntil(value) {
-    const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (!match) return null;
-    const target = Date.parse(`${match[1]}-${match[2]}-${match[3]}T12:00:00Z`);
-    return Math.floor((target - Date.now()) / 86400000);
-  }
-
-  function dueInfo(value, horizon = 30) {
-    const days = daysUntil(value);
-    if (days === null) return { pct: 0, cls: "", label: "" };
-    const pct = Math.max(3, Math.min(100, 100 - (days / horizon) * 90));
-    const cls = days < 0 ? "bad" : days <= 3 ? "warn" : "";
-    return { pct, cls, days };
-  }
-
-  function dueBar(value, horizon = 30) {
-    const info = dueInfo(value, horizon);
-    if (info.days === null) return "";
-    const cls = info.cls ? ` ${info.cls}` : "";
-    return `<span class="duebar"><i class="${cls.trim()}" style="width:${info.pct}%"></i></span>`;
-  }
-
-  function renderCalendar(data, isPublic) {
-    const events = Array.isArray(data.calendar?.events) ? data.calendar.events : [];
-    const count = Number.isFinite(data.calendar?.count) ? data.calendar.count : events.length;
-    $("calmeta").textContent = count ? `${count} EVENT${count === 1 ? "" : "S"}` : "CLEAR";
-    renderRail(events);
-
-    if (isPublic) {
-      const total = Math.max(1, events.length);
-      const timed = events.filter((event) => event.time !== "all-day").length;
-      const allDay = Math.max(0, events.length - timed);
-      const timedPct = (timed / total) * 100;
-      const gap = allDay ? 2 : 0;
-      const timedArc = Math.max(0, timedPct - gap);
-      const allDayArc = allDay ? Math.max(0, 100 - timedPct - gap) : 0;
-      const next = events.find((event) => event.time && event.time !== "all-day")?.time;
-      $("events").innerHTML = `
-        <div class="pub">
-          <div class="pubring">
-            <svg viewBox="0 0 120 120">
-              <circle class="bg" cx="60" cy="60" r="46" pathLength="100" />
-              <circle class="seg timed" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${timedArc} ${100 - timedArc}" stroke-dashoffset="0" />
-              <circle class="seg allday" cx="60" cy="60" r="46" pathLength="100"
-                stroke-dasharray="${allDayArc} ${100 - allDayArc}"
-                stroke-dashoffset="${-timedPct}" />
-            </svg>
-            <div class="pub-center"><b>${count}</b><small>EVENTS</small></div>
-          </div>
-          <div>
-            <div class="publegend">
-              <span><i></i>${timed} TIMED</span>
-              <span><i class="violet"></i>${allDay} ALL DAY</span>
-            </div>
-            <div class="pubnext"><span>NEXT</span> ${next ? esc(next) : "—"}</div>
-            <div class="pubsign">Sign in for titles</div>
-          </div>
-        </div>`;
-      renderWeek(data.calendar?.week_count ?? 0, true, data.calendar?.week_days);
-      return;
+    const forecast = $("forecast");
+    forecast.replaceChildren();
+    const days = list(daily?.time).slice(1);
+    forecast.dataset.state = days.length ? status : status === "ready" ? "empty" : status;
+    for (const [index, date] of days.slice(0, 3).entries()) {
+      const day = el("span", "forecast-day");
+      day.append(el("span", "", formatWeekday(dateKey(date))),
+        el("b", "", `${temperature(daily?.temperature_2m_max?.[index + 1])} / ${temperature(daily?.temperature_2m_min?.[index + 1])}`));
+      forecast.append(day);
     }
-
-    if (!events.length) {
-      $("events").innerHTML = `<div class="empty">clear day</div>`;
-      renderWeek(data.calendar?.week, false);
-      return;
-    }
-
-    const today = todayKey();
-    const tomorrow = dayKey(1);
-    const rows = events.slice(0, 3).map((event) => {
-      const allDay = event.time === "all-day";
-      const sortDate = String(event.sort || "").slice(0, 10);
-      const dueLater = allDay && sortDate > today;
-      const dueLabel = sortDate === tomorrow ? "DUE TOMORROW" : "DUE SOON";
-      const label = allDay ? (dueLater ? dueLabel : "ALL DAY") : event.time || "—";
-      const cls = calClass(event.cal);
-      return `
-        <div class="ev">
-          <i class="ev-bar ${cls}"></i>
-          <div class="ev-t ${allDay ? "allday" : ""}">${esc(label)}</div>
-          <div>
-            <div class="ev-n">${esc(event.summary || "untitled")}</div>
-            <div class="ev-c ${cls}">${esc(calLabel(event.cal))}</div>
-          </div>
-        </div>`;
-    }).join("");
-    const more = events.length > 3
-      ? `<div class="more">+ ${events.length - 3} MORE</div>`
-      : "";
-    $("events").innerHTML = rows + more;
-    renderWeek(data.calendar?.week, false);
-  }
-
-  function renderWeek(week, isPublic, weekDays) {
-    const block = $("week");
-    const rows = $("weekrows");
-    const chart = $("weekchart");
-    const meta = $("weekmeta");
-
-    if (isPublic) {
-      const count = Number(week) || 0;
-      const days = Array.isArray(weekDays) ? weekDays.slice(-7) : [];
-      block.hidden = count === 0;
-      meta.textContent = `${count} ITEMS`;
-      rows.innerHTML = "";
-      chart.hidden = days.length === 0;
-      if (!days.length) return;
-      const max = Math.max(1, ...days.map((day) => Number(day.count) || 0));
-      chart.innerHTML = days.map((day) => {
-        const date = String(day.date || "");
-        const label = date
-          ? new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "narrow" })
-              .format(new Date(`${date}T12:00:00Z`))
-          : "·";
-        const height = Math.max(2, ((Number(day.count) || 0) / max) * 100);
-        return `<span class="wbar ${date === todayKey() ? "today" : ""}">
-          <i style="height:${height}%"></i><small>${esc(label)}</small></span>`;
-      }).join("");
-      return;
-    }
-
-    const items = Array.isArray(week) ? week : [];
-    const groups = new Map();
-    for (const event of items) {
-      const date = String(event.sort || "").slice(0, 10);
-      if (!groups.has(date)) groups.set(date, []);
-      groups.get(date).push(event);
-    }
-    const days = [...groups.entries()].slice(0, 3);
-    const max = Math.max(1, ...days.map(([, events]) => events.length));
-    block.hidden = days.length === 0;
-    meta.textContent = items.length ? `${items.length} ITEMS` : "";
-    chart.hidden = true;
-    rows.innerHTML = days.map(([date, events]) => {
-      const day = date
-        ? new Intl.DateTimeFormat("en-US", {
-            timeZone: "UTC", weekday: "short", month: "short", day: "numeric",
-          }).format(new Date(`${date}T12:00:00Z`)).toUpperCase()
-        : "—";
-      return `
-        <div class="wrow">
-          <span class="wday">${esc(day)}</span>
-          <span class="wcount"><b>${events.length}</b><i><em style="width:${(events.length / max) * 100}%"></em></i></span>
-          <span class="wname">${esc(events[0].summary || "untitled")}</span>
-        </div>`;
-    }).join("");
-  }
-
-  function renderTasks(data, isPublic) {
-    const tasks = data.tasks || {};
-    const open = Number(tasks.open) || 0;
-    const overdue = Number(tasks.overdue) || 0;
-    $("taskmeta").textContent = `${open} OPEN`;
-
-    if (isPublic) {
-      const ratio = open + overdue ? open / (open + overdue) : 0;
-      $("tasks").innerHTML = `
-        <div class="row-count"><span class="countbar"><i style="width:${ratio * 100}%"></i></span>${open} OPEN</div>
-        <div class="row-count"><span class="countbar"><i style="width:${overdue ? Math.min(100, overdue / Math.max(1, open) * 100) : 0}%;background:var(--bad)"></i></span>${overdue} OVERDUE</div>`;
-      return;
-    }
-
-    const items = Array.isArray(tasks.items) ? tasks.items.slice(0, 4) : [];
-    $("tasks").innerHTML = items.length
-      ? items.map((item) => {
-          const dot = item.overdue ? "bad" : "";
-          return `
-            <div class="row">
-              <i class="row-dot ${dot}"></i>
-              <div class="row-body">
-                <div class="row-t">${esc(item.title || "untitled")}</div>
-                <div class="row-m ${item.overdue ? "bad" : ""}">
-                  ${dueBar(item.due, 30)}${item.overdue ? "OVERDUE" : fmtDate(item.due) || "NO DATE"}
-                </div>
-              </div>
-            </div>`;
-        }).join("")
-      : `<div class="empty">clear</div>`;
-  }
-
-  function renderSchool(data, isPublic) {
-    const school = data.school || {};
-    const upcoming = Number(school.upcoming) || 0;
-    $("schoolmeta").textContent = `${upcoming} UPCOMING`;
-
-    if (isPublic) {
-      const ratio = Math.min(1, upcoming / 7);
-      $("school").innerHTML = `
-        <div class="row-count"><span class="countbar"><i style="width:${ratio * 100}%"></i></span>${upcoming} UPCOMING</div>`;
-      return;
-    }
-
-    const next = Array.isArray(school.next) ? school.next.slice(0, 2) : [];
-    $("school").innerHTML = next.length
-      ? next.map((item) => `
-          <div class="row">
-            <i class="row-dot ${item.overdue ? "bad" : "warn"}"></i>
-            <div class="row-body">
-              <div class="row-t">${esc(item.title || item.course || "untitled")}</div>
-              <div class="row-m">
-                <span class="cchip">${esc(item.course || "—")}</span>
-                ${dueBar(item.due, 7)}${fmtDate(item.due)}
-              </div>
-            </div>
-          </div>`).join("")
-      : `<div class="empty">clear</div>`;
-  }
-
-  function setBar(id, pct, color) {
-    const bar = $(id);
-    if (!bar) return;
-    bar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
-    if (color) bar.style.background = color;
-  }
-
-  function renderPulse(data) {
-    const now = data.now || {};
-    const failing = Number(now.jobs_failing) || 0;
-    const bad = (Number(now.homelab_issues_bad) || 0) + failing;
-    const warn = Number(now.homelab_issues_warn) || 0;
-    const dot = $("dot");
-
-    if (bad > 0) {
-      $("pulse").textContent = `${bad} ISSUE${bad === 1 ? "" : "S"}`;
-      dot.className = "dot bad";
-    } else if (warn > 0) {
-      $("pulse").textContent = `${warn} WARNING${warn === 1 ? "" : "S"}`;
-      dot.className = "dot warn";
-    } else {
-      $("pulse").textContent = "ALL CLEAR";
-      dot.className = "dot ok";
-    }
-
-    const jobsTotal = Number(now.jobs_total) || 0;
-    const jobsActive = Math.max(0, jobsTotal - failing);
-    const ctrRunning = Number(now.containers_running) || 0;
-    const ctrTotal = Number(data.homelab?.containers?.total) || ctrRunning || 1;
-    const devOnline = Number(now.devices_online) || 0;
-    const devTotal = Number(now.devices_total) || 1;
-    const issues = bad + warn;
-
-    setBar("bar-jobs", jobsTotal ? (jobsActive / jobsTotal) * 100 : 0);
-    setBar("bar-ctr", (ctrRunning / ctrTotal) * 100);
-    setBar("bar-dev", (devOnline / devTotal) * 100);
-    setBar("bar-iss", issues ? Math.min(100, issues * 25) : 0, bad ? "var(--bad)" : "var(--warn)");
-    $("val-jobs").textContent = jobsTotal ? `${jobsActive}/${jobsTotal}` : "—";
-    $("val-ctr").textContent = ctrRunning ? `${ctrRunning}/${ctrTotal}` : "—";
-    $("val-dev").textContent = devTotal ? `${devOnline}/${devTotal}` : "—";
-    $("val-iss").textContent = issues || "0";
-  }
-
-  const BRAIN_COLORS = {
-    projects: "#777fc4",
-    areas: "#48efd0",
-    ops: "#48efd0",
-    ai: "#8f92e8",
-    system: "#dbe9e5",
-    journal: "#e0b070",
-    root: "#e5f4f2",
-  };
-
-  function seededRandom(seed) {
-    let value = seed >>> 0;
-    return () => {
-      value = (value * 1664525 + 1013904223) >>> 0;
-      return value / 4294967296;
-    };
-  }
-
-  function layoutBrain(nodes, links) {
-    const count = nodes.length;
-    const rand = seededRandom(0x9e3779b9);
-    const pos = nodes.map((_, index) => {
-      const u = (index + 0.5) / Math.max(1, count);
-      const theta = Math.acos(1 - 2 * u);
-      const phi = Math.PI * (1 + Math.sqrt(5)) * index;
-      return {
-        x: Math.sin(theta) * Math.cos(phi),
-        y: Math.sin(theta) * Math.sin(phi) * 0.78,
-        z: Math.cos(theta),
-      };
-    });
-
-    const indexById = new Map(nodes.map((node, index) => [node.id, index]));
-    const edges = [];
-    for (const link of links || []) {
-      const a = indexById.get(link?.[0]);
-      const b = indexById.get(link?.[1]);
-      if (a == null || b == null || a === b) continue;
-      edges.push([a, b]);
-    }
-
-    for (let iteration = 0; iteration < 150; iteration += 1) {
-      const disp = pos.map(() => ({ x: 0, y: 0, z: 0 }));
-      for (let i = 0; i < count; i += 1) {
-        for (let j = i + 1; j < count; j += 1) {
-          let dx = pos[i].x - pos[j].x;
-          let dy = pos[i].y - pos[j].y;
-          let dz = pos[i].z - pos[j].z;
-          let d2 = dx * dx + dy * dy + dz * dz;
-          if (d2 < 0.0004) {
-            dx = rand() * 0.02 - 0.01;
-            dy = rand() * 0.02 - 0.01;
-            dz = rand() * 0.02 - 0.01;
-            d2 = dx * dx + dy * dy + dz * dz + 0.0004;
-          }
-          const d = Math.sqrt(d2);
-          const force = 0.018 / (d2 + 0.006);
-          const ux = dx / d;
-          const uy = dy / d;
-          const uz = dz / d;
-          disp[i].x += ux * force;
-          disp[i].y += uy * force;
-          disp[i].z += uz * force;
-          disp[j].x -= ux * force;
-          disp[j].y -= uy * force;
-          disp[j].z -= uz * force;
-        }
-      }
-      for (const [a, b] of edges) {
-        let dx = pos[b].x - pos[a].x;
-        let dy = pos[b].y - pos[a].y;
-        let dz = pos[b].z - pos[a].z;
-        let d = Math.hypot(dx, dy, dz);
-        if (d < 0.001) {
-          dx = 0.01;
-          dy = 0;
-          dz = 0;
-          d = 0.01;
-        }
-        const force = (d - 0.34) * 0.055;
-        const ux = dx / d;
-        const uy = dy / d;
-        const uz = dz / d;
-        disp[a].x += ux * force;
-        disp[a].y += uy * force;
-        disp[a].z += uz * force;
-        disp[b].x -= ux * force;
-        disp[b].y -= uy * force;
-        disp[b].z -= uz * force;
-      }
-      for (let i = 0; i < count; i += 1) {
-        disp[i].x -= pos[i].x * 0.025;
-        disp[i].y -= pos[i].y * 0.025;
-        disp[i].z -= pos[i].z * 0.025;
-        pos[i].x += Math.max(-0.09, Math.min(0.09, disp[i].x));
-        pos[i].y += Math.max(-0.09, Math.min(0.09, disp[i].y));
-        pos[i].z += Math.max(-0.09, Math.min(0.09, disp[i].z));
-        pos[i].x *= 0.996;
-        pos[i].y *= 0.996;
-        pos[i].z *= 0.996;
-      }
-    }
-
-    let maxX = 0.001;
-    let maxY = 0.001;
-    let maxZ = 0.001;
-    const maxDegree = Math.max(1, ...nodes.map((node) => Number(node.degree) || 0));
-    for (let index = 0; index < pos.length; index += 1) {
-      const importance = (Number(nodes[index].degree) || 0) / maxDegree;
-      pos[index].z += (0.5 - importance) * 0.7;
-      maxX = Math.max(maxX, Math.abs(pos[index].x));
-      maxY = Math.max(maxY, Math.abs(pos[index].y));
-      maxZ = Math.max(maxZ, Math.abs(pos[index].z));
-    }
-    for (const point of pos) {
-      point.x /= maxX;
-      point.y /= maxY;
-      point.z /= maxZ;
-    }
-    return { pos, edges };
-  }
-
-  const BRAIN = (() => {
-    const canvas = $("brain");
-    if (!canvas) return { setData() {}, setActivity() {}, setFocus() {} };
-    const ctx = canvas.getContext("2d");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const state = {
-      nodes: [],
-      edges: [],
-      links: 0,
-      topHub: null,
-      signature: "",
-      activity: Object.create(null),
-      hover: null,
-      selected: null,
-      focus: null,
-      lookX: 0,
-      lookY: 0,
-      targetX: 0,
-      targetY: 0,
-    };
-    const pulses = [];
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-    let lastDraw = 0;
-    let nextPulse = 0;
-
-    function resize() {
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      width = rect.width;
-      height = rect.height;
-    }
-
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
-    resize();
-
-    function camera(time) {
-      const yaw = 0.55 + state.lookX + (reduce ? 0 : time * 0.000045);
-      const pitch = -0.32 + state.lookY + (reduce ? 0 : Math.sin(time * 0.00007) * 0.05);
-      return {
-        cosY: Math.cos(yaw),
-        sinY: Math.sin(yaw),
-        cosP: Math.cos(pitch),
-        sinP: Math.sin(pitch),
-      };
-    }
-
-    function project(point, time, cam) {
-      const drift = reduce ? 0 : 1;
-      const x0 = point.x + Math.sin(time * 0.00019 + point.y * 3.1) * 0.018 * drift;
-      const y0 = point.y + Math.cos(time * 0.00023 + point.z * 3.7) * 0.014 * drift;
-      const z0 = point.z + Math.sin(time * 0.00017 + point.x * 2.3) * 0.016 * drift;
-      const x1 = x0 * cam.cosY - z0 * cam.sinY;
-      const z1 = x0 * cam.sinY + z0 * cam.cosY;
-      const y1 = y0 * cam.cosP - z1 * cam.sinP;
-      const z2 = y0 * cam.sinP + z1 * cam.cosP;
-      const scale = 1 / (1.55 + z2 * 0.65);
-      return {
-        x: width / 2 + x1 * scale * width * 0.46,
-        y: height / 2 + y1 * scale * height * 0.44,
-        z: z2,
-        scale,
-        depth: (z2 + 1) / 2,
-      };
-    }
-
-    function level(node) {
-      return state.activity[node.activity] ?? 0;
-    }
-
-    function colorFor(group) {
-      return BRAIN_COLORS[group] || BRAIN_COLORS.areas;
-    }
-
-    function edgeLevel(edge) {
-      const a = state.nodes[edge[0]];
-      const b = state.nodes[edge[1]];
-      return Math.max(a ? level(a) : 0, b ? level(b) : 0);
-    }
-
-    function focusNodeMatch(node) {
-      const focus = state.focus;
-      if (!focus) return false;
-      if (focus.kind === "task" && node.activity === "tasks") return true;
-      if (focus.kind === "calendar" && (node.activity === "calendar" || node.activity === "school")) return true;
-      if (focus.kind === "school" && node.activity === "school") return true;
-      const text = `${node.label || ""} ${node.folder || ""}`.toLowerCase();
-      if (focus.course) {
-        const course = String(focus.course).toLowerCase().replace(/[^a-z0-9]/g, "");
-        if (course && text.replace(/[^a-z0-9]/g, "").includes(course)) return true;
-      }
-      return (focus.tokens || []).some((token) => token.length >= 4 && text.includes(token));
-    }
-
-    function drawSpace(time, cam) {
-      const box = 1.18;
-      ctx.strokeStyle = "rgba(72, 239, 208, 0.11)";
-      ctx.lineWidth = 0.65;
-      for (let line = -3; line <= 3; line += 1) {
-        const x = (line / 3) * box;
-        const a = project({ x, y: box, z: -box }, time, cam);
-        const b = project({ x, y: box, z: box }, time, cam);
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-        const c = project({ x: -box, y: box, z: x }, time, cam);
-        const d = project({ x: box, y: box, z: x }, time, cam);
-        ctx.beginPath();
-        ctx.moveTo(c.x, c.y);
-        ctx.lineTo(d.x, d.y);
-        ctx.stroke();
-      }
-
-      ctx.strokeStyle = "rgba(72, 239, 208, 0.09)";
-      ctx.lineWidth = 0.55;
-      const corners = [];
-      for (const x of [-box, box]) {
-        for (const y of [-box, box]) {
-          for (const z of [-box, box]) corners.push(project({ x, y, z }, time, cam));
-        }
-      }
-      const edges = [
-        [0, 1], [0, 2], [1, 3], [2, 3],
-        [4, 5], [4, 6], [5, 7], [6, 7],
-        [0, 4], [1, 5], [2, 6], [3, 7],
-      ];
-      for (const [a, b] of edges) {
-        ctx.beginPath();
-        ctx.moveTo(corners[a].x, corners[a].y);
-        ctx.lineTo(corners[b].x, corners[b].y);
-        ctx.stroke();
-      }
-    }
-
-    function labelNodes() {
-      const priority = [
-        "loadout hub",
-        "journal calendar",
-        "todo master",
-        "homelab",
-        "personal website",
-        "home",
-        "obsidian rag assistant",
-        "ai engineering curriculum",
-      ];
-      const picked = [];
-      const used = new Set();
-      const add = (node) => {
-        if (!node || used.has(node)) return;
-        used.add(node);
-        picked.push(node);
-      };
-      for (const key of priority) {
-        const exact = state.nodes.find((node) => String(node.label || "").toLowerCase() === key && !used.has(node));
-        add(exact || state.nodes.find((node) => String(node.label || "").toLowerCase().includes(key) && !used.has(node)));
-        if (picked.length >= 6) break;
-      }
-      if (picked.length < 6) {
-        for (const node of state.nodes.slice().sort((a, b) => (b.degree || 0) - (a.degree || 0))) {
-          if (picked.length >= 6) break;
-          add(node);
-        }
-      }
-      return picked;
-    }
-
-    function drawLabels(projected) {
-      const picks = labelNodes();
-      if (!picks.length) return;
-
-      const boxes = [];
-      for (const node of picks) {
-        const index = state.nodes.indexOf(node);
-        if (index < 0) continue;
-        const point = projected[index];
-        if (point.depth < 0.16) continue;
-        const hub = (node.degree || 0) >= 60;
-        ctx.font = `${hub ? 11.5 : 10.5}px "SFMono-Regular", Consolas, monospace`;
-        const text = String(node.label).toUpperCase().slice(0, 22);
-        const textWidth = ctx.measureText(text).width;
-        const core = Math.max(2, point.scale * (2 + (node.size || 3) * 0.5));
-        const outward = point.x < width / 2 ? -1 : 1;
-        let placed = null;
-        for (const dir of [outward, -outward]) {
-          for (const dy of [-10, 10, -24, 24]) {
-            const anchorX = point.x + dir * (core + 12);
-            const anchorY = point.y + dy;
-            const box = {
-              x: dir > 0 ? anchorX : anchorX - textWidth - 6,
-              y: anchorY - 7,
-              w: textWidth + 6,
-              h: 14,
-            };
-            if (box.x < 2 || box.x + box.w > width - 2 || box.y < 2 || box.y + box.h > height - 2) continue;
-            if (boxes.some((other) => box.x < other.x + other.w && box.x + box.w > other.x && box.y < other.y + other.h && box.y + box.h > other.y)) continue;
-            placed = { dir, anchorX, anchorY, box };
-            break;
-          }
-          if (placed) break;
-        }
-        if (!placed) continue;
-        boxes.push(placed.box);
-        const lineX = placed.dir > 0 ? placed.anchorX : placed.anchorX;
-        const nodeEdgeX = point.x + placed.dir * core;
-        ctx.globalAlpha = 0.32;
-        ctx.strokeStyle = hub ? "#e0b070" : "#48efd0";
-        ctx.lineWidth = 0.7;
-        ctx.beginPath();
-        ctx.moveTo(nodeEdgeX, point.y);
-        ctx.lineTo(lineX, placed.anchorY);
-        ctx.stroke();
-        ctx.globalAlpha = 0.92;
-        ctx.fillStyle = "rgba(4, 7, 7, 0.9)";
-        ctx.fillRect(placed.box.x, placed.box.y, placed.box.w, placed.box.h);
-        ctx.textAlign = placed.dir > 0 ? "left" : "right";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = hub ? "#e5f4f2" : "#cfe9e4";
-        ctx.fillText(text, placed.dir > 0 ? placed.anchorX + 3 : placed.anchorX - 3, placed.anchorY);
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function draw(time) {
-      if (!width || !height) return;
-      ctx.clearRect(0, 0, width, height);
-      if (!state.nodes.length) return;
-
-      const cam = camera(time);
-      const projected = state.nodes.map((node) => project(node, time, cam));
-      drawSpace(time, cam);
-
-      const edgeRows = state.edges.map(([a, b]) => ({
-        a,
-        b,
-        z: (projected[a].z + projected[b].z) / 2,
-        level: edgeLevel([a, b]),
-      }));
-      edgeRows.sort((first, second) => first.z - second.z);
-      const buckets = [
-        { active: false, alpha: 0.04, width: 0.55, rows: [] },
-        { active: false, alpha: 0.065, width: 0.72, rows: [] },
-        { active: false, alpha: 0.09, width: 0.9, rows: [] },
-        { active: true, alpha: 0.14, width: 1.05, rows: [] },
-      ];
-      for (const edge of edgeRows) {
-        const depth = (projected[edge.a].depth + projected[edge.b].depth) / 2;
-        const bucket = edge.level > 0.55 ? 3 : depth < 0.33 ? 0 : depth < 0.66 ? 1 : 2;
-        buckets[bucket].rows.push(edge);
-      }
-      for (const bucket of buckets) {
-        if (!bucket.rows.length) continue;
-        ctx.strokeStyle = bucket.active
-          ? `rgba(224, 176, 112, ${bucket.alpha})`
-          : `rgba(72, 239, 208, ${bucket.alpha})`;
-        ctx.lineWidth = bucket.width;
-        ctx.beginPath();
-        for (const edge of bucket.rows) {
-          const a = projected[edge.a];
-          const b = projected[edge.b];
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-        }
-        ctx.stroke();
-      }
-
-      if (!reduce && time > nextPulse && state.edges.length) {
-        const edge = state.edges[Math.floor(Math.random() * state.edges.length)];
-        const active = edgeLevel(edge) > 0.55;
-        pulses.push({
-          edge,
-          start: time,
-          duration: 850 + Math.random() * 900,
-          color: active ? "#e0b070" : "#48efd0",
-        });
-        nextPulse = time + 260 + Math.random() * 700;
-      }
-      for (let index = pulses.length - 1; index >= 0; index -= 1) {
-        const pulse = pulses[index];
-        const progress = (time - pulse.start) / pulse.duration;
-        if (progress >= 1) {
-          pulses.splice(index, 1);
-          continue;
-        }
-        const a = project(state.nodes[pulse.edge[0]], time, cam);
-        const b = project(state.nodes[pulse.edge[1]], time, cam);
-        const x = a.x + (b.x - a.x) * progress;
-        const y = a.y + (b.y - a.y) * progress;
-        ctx.globalAlpha = Math.sin(progress * Math.PI) * 0.9;
-        ctx.fillStyle = pulse.color;
-        ctx.beginPath();
-        ctx.arc(x, y, 1.6 + a.depth * 1.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-
-      const order = state.nodes.map((_, index) => index).sort((a, b) => projected[a].z - projected[b].z);
-      ctx.globalCompositeOperation = "lighter";
-      for (const index of order) {
-        const node = state.nodes[index];
-        const point = projected[index];
-        const core = Math.max(1.1, (1.25 + (node.size || 3) * 0.46) * point.scale);
-        const color = colorFor(node.group);
-        const active = level(node);
-        ctx.globalAlpha = 0.045 + point.depth * 0.075;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, core * 3.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 0.56 + point.depth * 0.4;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, core, 0, Math.PI * 2);
-        ctx.fill();
-        if (active > 0.5) {
-          const phase = ((time / 1000 + index * 0.23) % 2.5) / 2.5;
-          ctx.globalAlpha = (1 - phase) * 0.34 * active;
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 0.9;
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, core + 2.5 + phase * 11, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-        if (focusNodeMatch(node)) {
-          ctx.globalAlpha = 0.96;
-          ctx.strokeStyle = "#e5f4f2";
-          ctx.lineWidth = 1.2;
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, core + 5, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      }
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1;
-
-      if (state.hover || state.selected) {
-        const node = state.selected || state.hover;
-        const index = state.nodes.indexOf(node);
-        if (index >= 0) {
-          const point = projected[index];
-          const core = Math.max(1.1, (1.25 + (node.size || 3) * 0.46) * point.scale);
-          ctx.strokeStyle = "#e5f4f2";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, core + 4, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-      }
-
-      drawLabels(projected);
-    }
-
-    function loop(time) {
-      if (!document.hidden && time - lastDraw > 42) {
-        lastDraw = time;
-        state.lookX += (state.targetX - state.lookX) * 0.08;
-        state.lookY += (state.targetY - state.lookY) * 0.08;
-        draw(time);
-      }
-      requestAnimationFrame(loop);
-    }
-
-    function selectionText(node) {
-      const selected = $("brainsel");
-      if (!selected) return;
-      if (!node) {
-        selected.textContent = IS_WALL ? "LIVE VAULT GRAPH" : "HOVER OR TAP A NODE";
-        return;
-      }
-      if (node.label) {
-        selected.textContent = `${String(node.label).toUpperCase()} · ${String(node.folder || "").toUpperCase()} · ${node.degree || 0} LINKS`;
-      } else {
-        selected.textContent = `${String(node.group || "note").toUpperCase()} CLUSTER · ${node.degree || 0} LINKS`;
-      }
-    }
-
-    function nodeAt(x, y, projected) {
-      let nearest = null;
-      let distance = 15;
-      for (let index = 0; index < state.nodes.length; index += 1) {
-        const point = projected[index];
-        const core = Math.max(1.1, (1.25 + (state.nodes[index].size || 3) * 0.46) * point.scale);
-        const d = Math.hypot(point.x - x, point.y - y);
-        if (d < Math.max(distance, core + 4)) {
-          distance = d;
-          nearest = state.nodes[index];
-        }
-      }
-      return nearest;
-    }
-
-    canvas.addEventListener("pointermove", (event) => {
-      const rect = canvas.getBoundingClientRect();
-      state.targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 0.42;
-      state.targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 0.22;
-      const time = performance.now();
-      const cam = camera(time);
-      const projected = state.nodes.map((node) => project(node, time, cam));
-      const nearest = nodeAt(event.clientX - rect.left, event.clientY - rect.top, projected);
-      if (nearest !== state.hover) {
-        state.hover = nearest;
-        canvas.style.cursor = nearest ? "pointer" : "crosshair";
-        if (!state.selected) selectionText(nearest);
-        draw(time);
-      }
-    });
-
-    canvas.addEventListener("pointerleave", () => {
-      state.hover = null;
-      state.targetX = 0;
-      state.targetY = 0;
-      if (!state.selected) selectionText(null);
-      draw(performance.now());
-    });
-
-    canvas.addEventListener("click", (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const time = performance.now();
-      const cam = camera(time);
-      const projected = state.nodes.map((node) => project(node, time, cam));
-      const nearest = nodeAt(event.clientX - rect.left, event.clientY - rect.top, projected);
-      state.selected = nearest === state.selected ? null : nearest;
-      selectionText(state.selected);
-      draw(time);
-    });
-
-    if (reduce) draw(0);
-    else requestAnimationFrame(loop);
-
-    return {
-      setData(brain) {
-        const nodes = Array.isArray(brain?.nodes) ? brain.nodes : [];
-        const signature = nodes.map((node) => node.id).join("|");
-        if (!nodes.length) {
-          state.nodes = [];
-          state.edges = [];
-          state.signature = "";
-          state.links = 0;
-          state.topHub = null;
-          const meta = $("brainmeta");
-          if (meta) meta.textContent = "—";
-          const hub = $("brainhub");
-          if (hub) hub.textContent = "NO GRAPH DATA";
-          draw(performance.now());
-          return;
-        }
-        if (signature !== state.signature) {
-          const laid = layoutBrain(nodes, brain.links || []);
-          state.nodes = nodes.map((node, index) => ({
-            ...node,
-            x: laid.pos[index].x,
-            y: laid.pos[index].y,
-            z: laid.pos[index].z,
-          }));
-          state.edges = laid.edges;
-          state.signature = signature;
-        } else {
-          state.nodes = state.nodes.map((node, index) => ({ ...node, ...nodes[index], x: node.x, y: node.y, z: node.z }));
-        }
-        state.links = (brain.links || []).length;
-        state.topHub = brain.top_hub || null;
-        state.selected = null;
-        const total = brain.notes ?? brain.vault_notes;
-        const meta = $("brainmeta");
-        if (meta) meta.textContent = `${nodes.length}/${total || "?"} NODES · ${state.links} LINKS`;
-        const hub = $("brainhub");
-        if (hub) {
-          hub.textContent = state.topHub?.label
-            ? `HUB ${String(state.topHub.label).toUpperCase()} · ${state.topHub.degree} LINKS`
-            : total
-              ? `VAULT ${total} NOTES · PUBLIC VIEW`
-              : `${nodes.length} NODES · ${state.links} LINKS`;
-        }
-        selectionText(null);
-        if (reduce) draw(performance.now());
-      },
-      setActivity(next) {
-        Object.assign(state.activity, next);
-        if (reduce) draw(performance.now());
-      },
-      setFocus(focus) {
-        state.focus = focus || null;
-        if (reduce) draw(performance.now());
-      },
-    };
-  })();
-
-  const AMBIENT = (() => {
-    const canvas = $("ambient");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const rand = seededRandom(0xc0ffee);
-    const nodes = Array.from({ length: 72 }, () => ({
-      x: rand() * 2 - 1,
-      y: rand() * 2 - 1,
-      z: rand() * 2 - 1,
-      size: 0.6 + rand() * 1.6,
-      tone: rand() > 0.7 ? "#777fc4" : "#48efd0",
-    }));
-    const edges = [];
-    for (let i = 0; i < nodes.length; i += 1) {
-      const distances = [];
-      for (let j = 0; j < nodes.length; j += 1) {
-        if (i === j) continue;
-        distances.push({
-          j,
-          d: Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y, nodes[i].z - nodes[j].z),
-        });
-      }
-      distances.sort((a, b) => a.d - b.d);
-      for (const nearest of distances.slice(0, 2)) {
-        const key = i < nearest.j ? `${i}:${nearest.j}` : `${nearest.j}:${i}`;
-        if (!edges.some((edge) => edge.key === key)) edges.push({ a: i, b: nearest.j, key });
-      }
-    }
-    let width = 0;
-    let height = 0;
-    let dpr = 1;
-    let lastDraw = 0;
-
-    function resize() {
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      width = rect.width;
-      height = rect.height;
-    }
-
-    const observer = new ResizeObserver(resize);
-    observer.observe(canvas);
-    resize();
-
-    function project(point, time) {
-      const yaw = 0.2 + (reduce ? 0 : time * 0.000012);
-      const pitch = -0.32;
-      const cosY = Math.cos(yaw);
-      const sinY = Math.sin(yaw);
-      const cosP = Math.cos(pitch);
-      const sinP = Math.sin(pitch);
-      const x1 = point.x * cosY - point.z * sinY;
-      const z1 = point.x * sinY + point.z * cosY;
-      const y1 = point.y * cosP - z1 * sinP;
-      const z2 = point.y * sinP + z1 * cosP;
-      const scale = 1 / (1.7 + z2 * 0.5);
-      return {
-        x: width / 2 + x1 * scale * width * 0.49,
-        y: height / 2 + y1 * scale * height * 0.52,
-        scale,
-        depth: (z2 + 1) / 2,
-      };
-    }
-
-    function draw(time) {
-      if (!width || !height) return;
-      ctx.clearRect(0, 0, width, height);
-      const projected = nodes.map((node) => project(node, time));
-      ctx.strokeStyle = "rgba(72, 239, 208, 0.06)";
-      ctx.lineWidth = 0.55;
-      for (const edge of edges) {
-        const a = projected[edge.a];
-        const b = projected[edge.b];
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-      for (let i = 0; i < nodes.length; i += 1) {
-        const point = projected[i];
-        const node = nodes[i];
-        ctx.globalAlpha = 0.16 + point.depth * 0.28;
-        ctx.fillStyle = node.tone;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, Math.max(0.7, node.size * point.scale), 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function loop(time) {
-      if (!document.hidden && time - lastDraw > 52) {
-        lastDraw = time;
-        draw(time);
-      }
-      requestAnimationFrame(loop);
-    }
-
-    if (reduce) draw(0);
-    else requestAnimationFrame(loop);
-  })();
-
-  function brainActivityFrom(data) {
-    const now = data.now || {};
-    const tasks = data.tasks || {};
-    const school = data.school || {};
-    const failing = Number(now.jobs_failing) || 0;
-    const issues = (Number(now.homelab_issues_bad) || 0) + (Number(now.homelab_issues_warn) || 0);
-    const overdue = Number(tasks.overdue) || 0;
-    const open = Number(tasks.open) || Number(now.open_tasks) || 0;
-    const upcoming = Number(school.upcoming) || 0;
-    const active = Number(now.active_projects) || 0;
-    const journal = Array.isArray(data.journal) ? data.journal.length : 0;
-    const nowMin = nowMinutesLA();
-    let calendar = 0.18;
-    let timed = 0;
-    for (const event of data.calendar?.events || []) {
-      const hours = parseHours(event.time);
-      if (hours === null) continue;
-      timed += 1;
-      const minutes = hours * 60;
-      if (minutes >= nowMin - 15 && minutes <= nowMin + 60) calendar = 1;
-    }
-    if (calendar < 0.5 && timed > 0) calendar = 0.35;
-    return {
-      hermes: failing > 0 ? 1 : 0.22,
-      homelab: issues > 0 ? 1 : 0.25,
-      calendar,
-      tasks: overdue > 0 ? 1 : open > 0 ? 0.55 : 0.2,
-      school: upcoming > 0 ? Math.min(1, 0.35 + upcoming * 0.08) : 0.2,
-      journal: journal > 0 ? 0.55 : 0.2,
-      projects: active > 0 ? 0.55 : 0.2,
-      gear: 0.18,
-      vault: 0.45,
-    };
-  }
-
-
-  function fmtFocusMinutes(minutes) {
-    let hour = Math.floor(minutes / 60) % 24;
-    let minute = Math.round(minutes % 60);
-    if (minute === 60) {
-      hour = (hour + 1) % 24;
-      minute = 0;
-    }
-    const suffix = hour >= 12 ? "PM" : "AM";
-    hour %= 12;
-    if (hour === 0) hour = 12;
-    return `${hour}:${String(minute).padStart(2, "0")} ${suffix}`;
-  }
-
-  function focusText(value, max = 54) {
-    let text = String(value || "")
-      .replace(/\[[^\]]*\]/g, " ")
-      .replace(/\s*\(due[^)]*\)/gi, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (text.length > max) {
-      const cut = text.slice(0, max);
-      const at = cut.lastIndexOf(" ");
-      text = `${(at > max * 0.55 ? cut.slice(0, at) : cut).trim()}…`;
-    }
-    return text.toUpperCase();
-  }
-
-  function focusTaskTitle(value) {
-    const raw = String(value || "").replace(/\s+/g, " ").trim();
-    const colon = raw.indexOf(":");
-    const base = colon > 12 ? raw.slice(0, colon) : raw;
-    return focusText(base, 46);
-  }
-
-  const FOCUS_STOP = new Set(
-    "the and for with due from this that your into class final test week work task open more about then full names title page submit meeting minutes paper project part chapter quiz homework assignment study".split(" ")
-  );
-
-  function focusTokens(value) {
-    const matches = String(value || "").toLowerCase().match(/[a-z0-9][a-z0-9-]{2,}/g) || [];
-    return [...new Set(matches)].filter((token) => token.length >= 4 && !FOCUS_STOP.has(token)).slice(0, 7);
-  }
-
-  function focusCourse(...values) {
-    for (const value of values) {
-      const match = String(value || "").match(/\b(CMPE|CS|MATH|PHYS|POLS|ENGR|EE|ME|BIOL|CHEM)\s*-?\s*(\d{2,3})\b/i);
-      if (match) return `${match[1].toUpperCase()} ${match[2]}`;
-    }
-    return "";
-  }
-
-  function focusMatches(text, focus) {
-    if (!text || !focus) return false;
-    const low = String(text).toLowerCase();
-    const norm = low.replace(/[^a-z0-9]/g, "");
-    if (focus.course) {
-      const courseNorm = focus.course.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (courseNorm && norm.includes(courseNorm)) return true;
-    }
-    if (focus.raw && low.includes(String(focus.raw).toLowerCase().slice(0, 28))) return true;
-    return (focus.tokens || []).some((token) => token.length >= 5 && low.includes(token));
-  }
-
-  function focusColor(tone) {
-    return {
-      bad: "var(--bad)",
-      warn: "var(--warn)",
-      violet: "var(--violet)",
-      soft: "var(--soft)",
-      cyan: "var(--cyan)",
-    }[tone] || "var(--cyan)";
-  }
-
-  function publicFocus() {
-    const hour = Math.floor(nowMinutesLA() / 60);
-    const title = hour < 5 ? "WIND DOWN" : hour < 9 ? "MORNING SETUP" : hour < 12 ? "CLASS BLOCK" : hour < 17 ? "DEEP WORK" : hour < 21 ? "EVENING SPRINT" : "WRAP UP";
-    return {
-      kind: "public",
-      kicker: "LIKELY",
-      title,
-      detail: "PUBLIC VIEW · SIGN IN FOR DETAIL",
-      tone: "soft",
-      raw: "",
-      course: "",
-      tokens: [],
-    };
-  }
-
-  function computeFocus(data) {
-    if (data.public) return publicFocus();
-
-    const nowMin = nowMinutesLA();
-    const today = todayKey();
-    const candidates = [];
-    const events = Array.isArray(data.calendar?.events) ? data.calendar.events : [];
-    const timed = events.filter((event) => event.time !== "all-day" && String(event.sort || "").slice(0, 10) === today);
-
-    for (const event of timed) {
-      const start = parseHours(event.time);
-      if (start === null) continue;
-      let end = parseHours(event.end_time);
-      if (end === null || end <= start) end = start + 1;
-      const startMin = start * 60;
-      const endMin = end * 60;
-      const course = focusCourse(event.summary, event.cal);
-      const tone = calClass(event.cal) === "personal" ? "warn" : calClass(event.cal) === "canvas" ? "violet" : "cyan";
-      if (startMin <= nowMin && nowMin < endMin) {
-        candidates.push({
-          kind: "calendar",
-          kicker: "NOW",
-          title: focusText(event.summary, 52),
-          detail: `UNTIL ${fmtFocusMinutes(endMin)} · ${calLabel(event.cal) || "CALENDAR"}`,
-          tone,
-          raw: event.summary,
-          course,
-          tokens: [...new Set([...focusTokens(event.summary), ...focusTokens(course)])],
-          score: 120,
-        });
-      } else if (startMin > nowMin && startMin - nowMin <= 120) {
-        const until = startMin - nowMin;
-        candidates.push({
-          kind: "calendar",
-          kicker: "NEXT",
-          title: focusText(event.summary, 52),
-          detail: `IN ${until}M · ${calLabel(event.cal) || "CALENDAR"}`,
-          tone,
-          raw: event.summary,
-          course,
-          tokens: [...new Set([...focusTokens(event.summary), ...focusTokens(course)])],
-          score: 85 - until / 10,
-        });
-      }
-    }
-
-    const taskItems = Array.isArray(data.tasks?.items) ? data.tasks.items : [];
-    for (const item of taskItems) {
-      const overdue = !!item.overdue;
-      const dueToday = String(item.due || "").slice(0, 10) === today;
-      if (!overdue && !dueToday) continue;
-      const dueTime = String(item.title || "").match(/\b(\d{1,2}:\d{2}\s*[AP]M)\b/i)?.[1] || "";
-      const course = focusCourse(item.title, item.list);
-      candidates.push({
-        kind: "task",
-        kicker: overdue ? "OVERDUE" : "DUE TODAY",
-        title: focusTaskTitle(item.title),
-        detail: `${dueTime ? `DUE ${dueTime.toUpperCase()} · ` : ""}${String(item.list || "TASK").toUpperCase()}`,
-        tone: overdue ? "bad" : "warn",
-        raw: item.title,
-        course,
-        tokens: [...new Set([...focusTokens(item.title), ...focusTokens(course)])],
-        score: overdue ? 95 : 85,
-      });
-    }
-
-    for (const note of data.recent || []) {
-      const age = Number(note.age_min);
-      if (!Number.isFinite(age) || age < 0 || age > 180) continue;
-      const course = focusCourse(note.label, note.folder);
-      candidates.push({
-        kind: "recent",
-        kicker: "WORKING ON",
-        title: `WORKING ON ${focusText(note.label, 34)}`,
-        detail: `EDITED ${age}M AGO · ${String(note.folder || "VAULT").toUpperCase()}`,
-        tone: "cyan",
-        raw: note.label,
-        course,
-        tokens: [...new Set([...focusTokens(note.label), ...focusTokens(note.folder), ...focusTokens(course)])],
-        score: age <= 20 ? 92 : age <= 60 ? 80 : 70,
-      });
-    }
-
-    const nextSchool = (Array.isArray(data.school?.next) ? data.school.next : []).find((item) => {
-      const days = daysUntil(item.due);
-      return days !== null && days >= 0;
-    });
-    if (nextSchool) {
-      const days = daysUntil(nextSchool.due);
-      const course = focusCourse(nextSchool.course, nextSchool.title);
-      candidates.push({
-        kind: "school",
-        kicker: "DUE SOON",
-        title: focusText(nextSchool.title, 52),
-        detail: `DUE ${fmtDate(nextSchool.due)} · ${nextSchool.course || "SCHOOL"}`,
-        tone: "violet",
-        raw: nextSchool.title,
-        course,
-        tokens: [...new Set([...focusTokens(nextSchool.title), ...focusTokens(course)])],
-        score: days <= 3 ? 65 : 50,
-      });
-    }
-
-    const hour = nowMin / 60;
-    const fallbackTitle = hour < 5 ? "WIND DOWN" : hour < 9 ? "MORNING SETUP" : hour < 12 ? "CLASS BLOCK" : hour < 17 ? "DEEP WORK" : hour < 21 ? "EVENING SPRINT" : "WRAP UP";
-    const open = Number(data.tasks?.open) || 0;
-    const upcoming = Number(data.school?.upcoming) || 0;
-    candidates.push({
-      kind: "likely",
-      kicker: "LIKELY",
-      title: fallbackTitle,
-      detail: `${open} OPEN · ${upcoming} UPCOMING`,
-      tone: "soft",
-      raw: "",
-      course: "",
-      tokens: [],
-      score: 10,
-    });
-
-    candidates.sort((a, b) => b.score - a.score);
-    return candidates[0];
-  }
-
-  function renderFocus() {
-    if (!focusData) return;
-    const focus = computeFocus(focusData);
-    const wrap = $("focus");
-    if (!wrap) return;
-    wrap.dataset.tone = focus.tone;
-    $("focuskicker").textContent = focus.kicker;
-    $("focustitle").textContent = focus.title;
-    $("focusdetail").textContent = focus.detail;
-    document.documentElement.style.setProperty("--focus", focusColor(focus.tone));
-
-    const active = focus.kind !== "public";
-    document.querySelectorAll(".ev").forEach((row) => {
-      const text = row.querySelector(".ev-n")?.textContent || "";
-      row.classList.toggle("focus", active && focusMatches(text, focus));
-    });
-    document.querySelectorAll("#tasks .row, #school .row").forEach((row) => {
-      const text = row.querySelector(".row-t")?.textContent || "";
-      row.classList.toggle("focus", active && focusMatches(text, focus));
-    });
-    BRAIN.setFocus(active ? focus : null);
-  }
-
-  function apply(data, source) {
-    const isPublic = !!data.public;
-    sourceLabel = source === "LIVE" ? "LIVE" : "SNAPSHOT";
-    $("source").textContent = isPublic ? "PUBLIC" : source;
-    $("sdot").className = "sdot" + (isPublic ? " public" : source === "SNAPSHOT" ? " snapshot" : "");
-    $("signin").hidden = !isPublic;
-    renderCalendar(data, isPublic);
-    renderTasks(data, isPublic);
-    renderSchool(data, isPublic);
-    renderPulse(data);
-    BRAIN.setData(data.brain || { nodes: [], links: [] });
-    BRAIN.setActivity(brainActivityFrom(data));
-    focusData = data;
-    renderFocus();
-    generatedAt = data.generated_at || null;
-    updateAge();
-  }
-
-  async function load() {
-    const isWall = IS_WALL;
-    if (!isWall) {
-      try {
-        apply(await getJSON("/dashboard/data"), "SNAPSHOT");
-        return;
-      } catch {
-        /* fall through to a local payload */
-      }
-    }
-    try {
-      apply(await getJSON("./dashboard.json"), "LIVE");
-      return;
-    } catch {
-      /* fall through */
-    }
-    try {
-      apply(await getJSON("/dashboard.json"), "LIVE");
-      return;
-    } catch {
-      /* fall through */
-    }
-    $("source").textContent = "OFFLINE";
-    $("sdot").className = "sdot offline";
-    $("events").innerHTML = `<div class="empty">data unavailable</div>`;
-    $("tasks").innerHTML = `<div class="empty">—</div>`;
-    $("school").innerHTML = `<div class="empty">—</div>`;
-    $("pulse").textContent = "STATUS UNAVAILABLE";
-    $("dot").className = "dot";
-    $("railevents").innerHTML = "";
-  }
-
-  function renderForecast(daily) {
-    const times = Array.isArray(daily.time) ? daily.time : [];
-    if (times.length < 2) {
-      $("forecast").hidden = true;
-      return;
-    }
-    const highs = times.map((_, i) => Number(daily.temperature_2m_max?.[i]));
-    const lows = times.map((_, i) => Number(daily.temperature_2m_min?.[i]));
-    const top = Math.max(...highs.filter(Number.isFinite));
-    const bottom = Math.min(...lows.filter(Number.isFinite));
-    const span = Math.max(1, top - bottom);
-    const rows = [];
-    for (let i = 1; i < Math.min(times.length, 4); i += 1) {
-      const day = new Intl.DateTimeFormat("en-US", {
-        timeZone: LA, weekday: "short",
-      }).format(new Date(`${times[i]}T12:00:00`)).toUpperCase();
-      const code = Number(daily.weather_code?.[i]);
-      const high = highs[i];
-      const low = lows[i];
-      const offset = ((low - bottom) / span) * 100;
-      const width = Math.max(6, ((high - low) / span) * 100);
-      rows.push(`
-        <div class="frow">
-          <span class="fday">${esc(day)}</span>
-          <span class="ficon">${iconFor(code, 1)}</span>
-          <span class="fbar"><i style="left:${offset}%;width:${width}%"></i></span>
-          <span class="fhl">${Math.round(high)}° / ${Math.round(low)}°</span>
-        </div>`);
-    }
-    $("frows").innerHTML = rows.join("");
-    $("forecast").hidden = rows.length === 0;
+    if (days.length > 3) forecast.append(el("span", "forecast-more", `+${days.length - 3} more`));
+    if (!days.length) setText(forecast, DASH);
   }
 
   async function weather() {
@@ -1553,53 +855,35 @@
       + "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
       + "&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=4";
     try {
-      const data = await getJSON(url);
-      const current = data.current || {};
-      const daily = data.daily || {};
-      const code = Number(current.weather_code);
-      const temp = Math.round(Number(current.temperature_2m));
-      const high = Math.round(Number(daily.temperature_2m_max?.[0]));
-      const low = Math.round(Number(daily.temperature_2m_min?.[0]));
-
-      $("wtemp").textContent = Number.isFinite(temp) ? `${temp}°` : "—°";
-      $("wcond").textContent = WMO[code] || "WEATHER";
-      $("wicon").innerHTML = iconFor(code, current.is_day);
-      $("tlo").textContent = Number.isFinite(low) ? `${low}°` : "—";
-      $("thi").textContent = Number.isFinite(high) ? `${high}°` : "—";
-      if (Number.isFinite(temp) && Number.isFinite(high) && Number.isFinite(low) && high > low) {
-        const pct = Math.max(0, Math.min(100, ((temp - low) / (high - low)) * 100));
-        $("tfill").style.width = `${pct}%`;
-        $("tmark").style.left = `calc(${pct}% - 1px)`;
-      }
-
-      const rise = daily.sunrise?.[0];
-      const set = daily.sunset?.[0];
-      sunRiseMin = wallMinutes(rise);
-      sunSetMin = wallMinutes(set);
-      if (sunRiseMin !== null && sunSetMin !== null) {
-        $("sunrise").textContent = fmtClock(rise);
-        $("sunset").textContent = fmtClock(set);
-        updateSun();
-        $("sunarc").hidden = false;
-      } else {
-        $("sunarc").hidden = true;
-      }
-      renderForecast(daily);
+      state.weather = { ...await getJSON(url), receivedAt: Date.now() };
+      state.weatherFailed = false;
     } catch {
-      $("wcond").textContent = "WEATHER UNAVAILABLE";
-      $("wicon").innerHTML = ICONS.cloud;
-      $("tlo").textContent = "—";
-      $("thi").textContent = "—";
-      $("sunarc").hidden = true;
-      $("forecast").hidden = true;
+      state.weatherFailed = true;
     }
+    renderWeather();
+  }
+
+  async function load() {
+    try {
+      const data = await getJSON(IS_WALL ? "./dashboard.json" : "/dashboard/data");
+      if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("invalid dashboard payload");
+      state.data = data;
+      state.source = IS_WALL ? "Live" : "Snapshot";
+      state.failed = false;
+    } catch {
+      state.failed = true;
+    }
+    refreshSource(Date.now());
+    if (state.data) recordServices(Date.parse(state.data.generated_at), model(state.data));
+    render();
   }
 
   clock();
-  setInterval(clock, 1000);
+  render();
   load();
-  setInterval(load, 300000);
-  setInterval(renderFocus, 15000);
   weather();
+  setInterval(clock, 1000);
+  setInterval(render, 15000);
+  setInterval(load, 300000);
   setInterval(weather, 900000);
 })();
