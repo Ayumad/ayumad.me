@@ -13,14 +13,24 @@ function createHermesFlow(canvas) {
   const turn = Math.PI * 2;
   const slots = [
     { x: .29, y: .46, color: mint }, { x: .70, y: .43, color: accent },
-    { x: .49, y: .69, color: mint }, { x: .35, y: .27, color: light },
-    { x: .76, y: .70, color: mint }, { x: .54, y: .35, color: accent },
+    { x: .49, y: .63, color: mint }, { x: .35, y: .27, color: light },
+    { x: .76, y: .65, color: mint }, { x: .54, y: .35, color: accent },
   ];
   const warning = { x: .73, y: .61, color: amber };
   const idle = { x: .50, y: .52, color: mint };
   const runSlots = new Map();
   const seen = new Set();
   const modes = new Set(["ascii", "dither", "glitch", "particles", "crt"]);
+  const outcomes = { succeeded: "completed", delivered: "delivered", failed: "failed" };
+  const headlines = {
+    stale: "Feed delayed",
+    unavailable: "Telemetry unavailable",
+    attention: "Needs attention",
+    working: "Working",
+    idle: "Idle",
+    empty: "Awaiting telemetry",
+  };
+  const jobName = (value) => typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, 90) : "";
   const glyphs = [".", ":", "+", "*"];
   const threshold = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
   let seed = 61779;
@@ -41,7 +51,7 @@ function createHermesFlow(canvas) {
     vx: 0,
     vy: 0,
   }));
-  const dust = Array.from({ length: 460 }, () => ({ x: random(), y: random(), bright: random() }));
+  const dust = Array.from({ length: 325 }, () => ({ x: random(), y: random(), bright: random() }));
   const sparks = Array.from({ length: 106 }, () => ({
     angle: random() * turn, speed: .29 + random() * .87, light: random(),
   }));
@@ -54,6 +64,7 @@ function createHermesFlow(canvas) {
   let sourceTime = -Infinity;
   let publicView;
   let reading = {};
+  let lastResult = null;
   let stale = false;
   let faded = true;
   let currents = [];
@@ -91,17 +102,22 @@ function createHermesFlow(canvas) {
     }
     currents = [];
     for (const index of runSlots.values()) currents[index] = slots[index];
-    reading = { active, failing };
+    const flagged = !data.public && Array.isArray(data.hermes?.cron_failing) ? data.hermes.cron_failing[0]?.name : null;
+    reading = { active, failing, flagged: jobName(flagged), runningJob: jobName(running[0]?.job) };
 
     if (!Number.isFinite(receivedAt) || receivedAt <= sourceTime) return;
     for (const receipt of Array.isArray(flow?.receipts) ? flow.receipts : []) {
-      if (typeof receipt?.run_id !== "string" || !["succeeded", "delivered"].includes(receipt.outcome)) continue;
+      if (typeof receipt?.run_id !== "string" || !Object.hasOwn(outcomes, receipt.outcome)) continue;
       const when = Date.parse(receipt.at);
       const key = receipt.run_id + ":" + receipt.outcome;
       if (!Number.isFinite(when) || when > receivedAt || seen.has(key)) continue;
       seen.add(key);
       if (seen.size > 192) seen.delete(seen.values().next().value);
-      if (sourceTime !== -Infinity && when > sourceTime && !stale && !motion.matches && !document.hidden) {
+      const name = jobName(receipt.job);
+      if (name && (!lastResult || when > lastResult.when || (when === lastResult.when && receipt.outcome === "delivered"))) {
+        lastResult = { when, text: name + " " + outcomes[receipt.outcome] };
+      }
+      if (receipt.outcome !== "failed" && sourceTime !== -Infinity && when > sourceTime && !stale && !motion.matches && !document.hidden) {
         const slot = previousSlots.get("run:" + receipt.run_id) ?? runSlots.get("run:" + receipt.run_id);
         releases.push({ origin: slots[slot] ?? idle, born: clock });
       }
@@ -115,6 +131,7 @@ function createHermesFlow(canvas) {
       publicView = Boolean(data.public);
       sourceTime = -Infinity;
       reading = {};
+      lastResult = null;
       currents = [];
       runSlots.clear();
       seen.clear();
@@ -129,14 +146,13 @@ function createHermesFlow(canvas) {
     const state = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
       : reading.active > 0 ? "working" : faded ? "empty" : "idle";
     canvas.dataset.state = state;
-    const summary = ["Hermes particle visualizer"];
-    if (stale) summary.push("Feed delayed");
-    if (unavailable) summary.push("Telemetry unavailable");
-    if (reading.active !== undefined) summary.push(reading.active + " active runs");
-    if (reading.failing !== undefined) summary.push(reading.failing + " failing jobs");
-    const label = summary.join(". ");
-    if (canvas.getAttribute("aria-label") !== label) canvas.setAttribute("aria-label", label);
+    const counts = [];
+    if (reading.active !== undefined) counts.push(reading.active + " active");
+    if (reading.failing > 0) counts.push(reading.failing + " flagged");
+    const detail = state === "attention" && reading.flagged ? reading.flagged + " · elevated failure rate"
+      : state === "working" && reading.active === 1 ? reading.runningJob : "";
     if (motion.matches) paint(true);
+    return { headline: headlines[state], counts: counts.join(" · "), detail, lastResult };
   }
 
   function halo(x, y, radius, color, opacity) {
@@ -232,14 +248,15 @@ function createHermesFlow(canvas) {
     for (const p of swarm) {
       const failed = p.fault && reading.failing > 0;
       const current = failed ? warning : currents[p.lane];
-      const spread = .32 + .68 * Math.sqrt(1 - p.u * p.u);
+      const knot = Math.exp(-21 * (p.u - .06) ** 2);
+      const spread = (.32 + .68 * Math.sqrt(1 - p.u * p.u)) * (1 - .68 * knot);
       const swirl = p.angle + clock * .46;
       const bend = p.u * 4.4 + clock * .36 + p.band * 2.1;
       const depth = Math.cos(swirl + bend * .61) * spread;
       const wave = Math.sin(bend) * .55 + Math.sin(bend * 1.54 - p.band * 3) * .19;
       const fuzz = (p.spread - .5) * .24;
       let tx = (.5 + (p.u * .428 + depth * .025 + fuzz * .30) * (1 + depth * .067)) * width;
-      let ty = (.51 - p.u * .129 + (wave + Math.sin(swirl) * spread * .63 + fuzz) * .248) * height;
+      let ty = (.47 - p.u * .155 + (wave + Math.sin(swirl) * spread * .63 + fuzz) * .248) * height;
       if (current) {
         const orbit = (.11 + p.spread * .89) * Math.sqrt(Math.max(.06, 1 - p.u * p.u));
         const phase = p.angle + clock * (failed ? .44 : 1.19) + p.u * 3.9;
@@ -262,9 +279,10 @@ function createHermesFlow(canvas) {
         p.y += p.vy;
       }
       const front = .26 + (depth + 1) * .36;
-      const glow = strength * Math.min(.97, front * (.27 + p.bright * .73) + (failed ? .16 : 0));
+      const glow = strength * Math.min(.97, front * (.26 + p.bright * .68) + knot * .12 + (failed ? .16 : 0));
       const dot = .7 + front * p.bright * 1.49 + (failed ? .23 : 0);
-      const color = failed && faded ? mint : current?.color ?? (p.band > .78 ? accent : mint);
+      const ambient = knot > .62 && p.bright > .86 ? light : p.band > .8 ? accent : mint;
+      const color = failed && faded ? mint : current?.color ?? ambient;
       if (traced && p.bright > .29) {
         const target = snap ? ctx : trail ?? ctx;
         target.globalAlpha = glow * (snap ? .24 : .31);

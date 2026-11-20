@@ -236,7 +236,7 @@ main {
   min-height: 0;
   overflow: hidden;
   border: 1px solid var(--line);
-  --grid-ink: color-mix(in srgb, var(--line) 48%, transparent);
+  --grid-ink: color-mix(in srgb, var(--line) 35%, transparent);
   background:
     radial-gradient(ellipse at 49% 53%, color-mix(in srgb, var(--cyan) 8%, transparent), transparent 64%),
     linear-gradient(var(--grid-ink) 1px, transparent 1px) center / 100% 43px,
@@ -261,6 +261,37 @@ main {
   background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 46%, transparent) 3px 4px);
   mask-image: none;
 }
+.hermes-context {
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0;
+  padding: clamp(15px, 2.3vw, 33px) clamp(11px, 1.35vw, 22px) clamp(11px, 1.15vw, 18px);
+  background: linear-gradient(transparent, color-mix(in srgb, var(--bg) 96%, transparent) 38%, var(--bg));
+}
+.hermes-signal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 3px 8px;
+}
+.hermes-signal h2 { grid-column: 1 / -1; font-size: clamp(10px, .73vw, 14px); }
+#hermes-status {
+  font-size: clamp(17px, 1.55vw, 30px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+#hermes-counts {
+  color: var(--soft);
+  font: 500 clamp(10px, .82vw, 16px)/1.35 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.hermes-field:has(canvas[data-state="attention"]) #hermes-status { color: var(--warn); }
+.hermes-note { margin-top: 5px; color: var(--soft); font-size: clamp(11px, .85vw, 16px); overflow-wrap: anywhere; }
+.hermes-receipt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 9px; }
+.hermes-receipt .meta,
+.hermes-receipt time { color: var(--soft); font: 500 .83em/1.35 var(--mono); }
+#hermes-result { color: var(--text); }
 
 .health { border-top: 1px solid var(--line); background: var(--surface); justify-content: space-between; }
 .pulse { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 61px); min-width: 0; }

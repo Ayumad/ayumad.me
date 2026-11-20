@@ -124,12 +124,12 @@ async function inspect(page) {
       schoolLabel: find("schoollabel").innerText,
       schoolMode: find("school-panel").dataset.mode ?? null,
       focus: ["focuskicker", "focustitle", "focusdetail"].map((id) => find(id).innerText),
-      health: ["mac-cpu", "mac-mem", "p520-load", "hermes-runs"].map((id) => find(id).innerText),
+      health: ["mac-cpu", "mac-mem", "p520-load", "p520-mem", "p520-gpu"].map((id) => find(id).innerText),
       healthState: find("health").dataset.state ?? null,
       spotifyState: find("spotify").dataset.state ?? null,
       projectPulseHidden: find("project-pulse").hidden,
       field: box(document.querySelector("#hermes-field canvas")),
-      fieldText: find("hermes-field").textContent.trim(),
+      readout: box(document.querySelector(".hermes-context")),
       rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
       panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "hermes-field", "health", "weather"]
         .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
@@ -145,9 +145,9 @@ function verifyBounds(metrics) {
     assert(panel.y >= 0 && panel.y + panel.height <= limit + 0.25, `${panel.id} ends at ${panel.y + panel.height}, limit ${limit}`);
   }
   const panel = metrics.panels.find(({ id }) => id === "hermes-field");
-  assert.equal(metrics.fieldText, "");
   assert(Math.abs(metrics.field.width - (panel.width - 2)) < 1);
   assert(Math.abs(metrics.field.height - (panel.height - 2)) < 1);
+  assert(metrics.readout.y >= panel.y && metrics.readout.y + metrics.readout.height <= panel.y + panel.height);
   assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 1][idx]));
 }
 
@@ -183,6 +183,7 @@ try {
     assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 1] : [3, 3, 2, 1]);
     assert.equal(await page.locator("#spotify").isVisible(), true);
     assert.notEqual(result.spotifyState, null);
+    assert((await page.locator("#hermes-status").innerText()).length > 0);
     assert.equal(await page.locator("#project-pulse").isVisible(), !isPublic && !result.projectPulseHidden);
     if (!isPublic) {
       assert((await page.locator("#projectname").innerText()).length > 0);
@@ -207,6 +208,7 @@ try {
     assert.notEqual(await page.locator("#secs").innerText(), seconds, "Clock seconds should tick");
 
     if (isPublic) {
+      assert.equal(await page.locator("#hermes-receipt").isVisible(), false);
       verifyPrivacy(await page.locator("body").innerText());
       verifyPrivacy(await page.content());
     }

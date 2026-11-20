@@ -17,6 +17,9 @@
     timeZone: LA, weekday: "long", month: "short", day: "numeric",
   });
   const timeFormat = new Intl.DateTimeFormat("en-US", { timeZone: LA, hour: "numeric", minute: "2-digit" });
+  const receiptFormat = new Intl.DateTimeFormat("en-US", {
+    timeZone: LA, month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
   const dateTag = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric" });
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
@@ -625,7 +628,30 @@
     setText($("p520-load"), load(values.p520Load));
     setText($("p520-mem"), pct(values.p520Mem));
     setText($("p520-gpu"), values.gpu);
-    setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
+  }
+
+  function renderHermes(data, values) {
+    const signal = confluence.update(data, {
+      active: values.activeRuns,
+      failing: values.failing,
+      stale: state.stale,
+      unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
+    });
+    setText($("hermes-status"), signal.headline);
+    const counts = $("hermes-counts");
+    counts.hidden = !signal.counts;
+    setText(counts, signal.counts);
+    const job = $("hermes-job");
+    job.hidden = !signal.detail;
+    setText(job, signal.detail);
+
+    const result = signal.lastResult;
+    $("hermes-receipt").hidden = !result;
+    setText($("hermes-result"), result?.text ?? "");
+    const at = $("hermes-result-time");
+    setText(at, result ? receiptFormat.format(result.when) : "");
+    if (result) at.dateTime = new Date(result.when).toISOString();
+    else at.removeAttribute("datetime");
   }
 
   function render() {
@@ -652,12 +678,7 @@
     renderProjectPulse(data, values, focus, today);
     renderSpotify(data);
     renderHealth(values);
-    confluence.update(data, {
-      active: values.activeRuns,
-      failing: values.failing,
-      stale: state.stale,
-      unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
-    });
+    renderHermes(data, values);
   }
 
   function refreshSource(now) {

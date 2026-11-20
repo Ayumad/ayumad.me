@@ -20,7 +20,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
 | Hero right | San Jose weather, current conditions, tomorrow only |
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
-| Workspace center | Full-panel Hermes particle weave |
+| Workspace center | Hermes particle weave with a single status readout |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
 | Footer | Mac mini/Hermes and P520 resource status + freshness |
 
@@ -46,7 +46,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 - The original Confluence weave drifts at idle. Active Hermes runs pull strands into separate currents, and a flagged job gathers a sustained amber pocket.
 - The web dashboard follows the saved homepage renderer. ASCII uses glyphs, Dither uses ordered stippling, Glitch offsets narrow bands, Particles uses fading trails, and CRT+ adds scan lines. The field defaults to Particles on a fresh browser or wall display.
-- The canvas has a nonvisual description of feed freshness and available counts.
+- The edge readout shows Hermes status and known run counts. It adds a flagged job and the latest confirmed result when the signed-in feed provides them.
 
 ## Active layer
 
@@ -58,7 +58,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
-- **Live health:** footer shows Mac mini and P520 resource readings plus active Hermes runs from the 5-minute payload; it links to `/status` for the full breakdown.
+- The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
 - **Motion budget:** canvas paints capped at ~21 fps; focus/header at 15s; reduced motion draws a single static frame and stops the loop; hidden tabs pause.
 - **Staleness:** wall data stale after 15m, web snapshots after 8h; failed refresh keeps the last good values and flags stale.
 

@@ -54,9 +54,22 @@
         </div>
 
         <div class="workspace">
-          <div class="hermes-field" id="hermes-field">
-            <canvas role="img" aria-label="Hermes particle visualizer"></canvas>
-          </div>
+          <section class="hermes-field" id="hermes-field" aria-labelledby="hermes-label">
+            <canvas aria-hidden="true"></canvas>
+            <div class="hermes-context">
+              <div class="hermes-signal" role="status" aria-atomic="true">
+                <h2 class="label" id="hermes-label">Hermes</h2>
+                <strong id="hermes-status">Awaiting telemetry</strong>
+                <span id="hermes-counts" hidden></span>
+              </div>
+              <p class="hermes-note" id="hermes-job" hidden></p>
+              <p class="hermes-note hermes-receipt" id="hermes-receipt" hidden>
+                <span class="meta">Last result</span>
+                <span id="hermes-result"></span>
+                <time id="hermes-result-time"></time>
+              </p>
+            </div>
+          </section>
 
           <div class="schedule">
             <section id="today" aria-labelledby="todaylabel">
@@ -120,7 +133,6 @@
         <a class="pulse" href="/status">
           <span class="hoststat"><small>Mac mini</small><b id="mac-cpu">—</b><span>CPU</span><b id="mac-mem">—</b><span>MEM</span></span>
           <span class="hoststat"><small>P520</small><b id="p520-load">—</b><span>LOAD</span><b id="p520-mem">—</b><span>MEM</span><b id="p520-gpu">—</b><span>GPU</span></span>
-          <span class="hoststat"><small>Hermes</small><b id="hermes-runs">—</b><span>RUNNING</span></span>
         </a>
         <span id="updated" class="meta">—</span>
       </footer>
