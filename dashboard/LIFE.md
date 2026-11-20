@@ -42,6 +42,17 @@ Patterns taken from how real status pages work (Vercel, GitHub, Cloudflare) and 
 - **Keep the indicator count low.** Six hero indicators on `/status`; four footer meters on `/dashboard`. More becomes noise.
 - **Text carries names and times, not status.** Avoid raw emails and implementation words in labels.
 
+## Active layer
+
+Motion is part of the design, but it must not fight legibility:
+
+- **Clock:** hours + minutes in the large face, seconds in a smaller adjacent face (`:42`), plus a 1px seconds bar that fills every minute.
+- **Sun arc:** the sun dot is repositioned every second from the sunrise/sunset wall-clock minutes, not from a timezone-sensitive `Date`.
+- **Second brain:** a 23-node canvas graph in the center column. Nodes drift slowly, signal dots travel along links, and node rings pulse from live activity: `HERMES` (job failures), `HOMELAB` (issues), `CALENDAR` (event within the next 45 min), `TASKS` (overdue), `SCHOOL` (upcoming), `VAULT` (baseline). Hover reveals small-node labels on the web.
+- **Rail and pulse:** the 24-hour rail's now-line moves every second; the footer status dot breathes.
+- **Reduced motion:** all canvas drift/pulses stop and the static graph is drawn once when `prefers-reduced-motion` is set.
+- **Budget:** 23 nodes / 39 links at ~30 fps; hide the graph below 760 px.
+
 ## Data contract
 
 `/dashboard/data` returns the v1 dashboard snapshot.
