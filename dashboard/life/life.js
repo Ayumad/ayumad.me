@@ -21,8 +21,8 @@
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
   const state = { data: null, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
-  const clockDate = () => {
-    const parts = Object.fromEntries(dateFormat.formatToParts(new Date()).map(({ type, value }) => [type, value]));
+  const clockDate = (now = new Date()) => {
+    const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
   };
   const utcDate = (key) => new Date(`${key}T12:00:00Z`);
@@ -79,10 +79,54 @@
   const withoutAside = (value) => clean(value).replace(/\s*\([^)]*\)/g, "").trim();
   const courseOf = (value) => String(value ?? "").match(/\b(CMPE|CS|MATH|PHYS|POLS|ENGR|EE|ME|BIOL|CHEM)\s*-?\s*(\d{2,3})\b/i)?.slice(1).join(" ").toUpperCase();
   const projectOf = (value) => clean(value).match(/\bproject\s+\d+\b/i)?.[0].toLowerCase();
-  const deadlineOf = (item) => {
-    const match = String(item.title ?? "").match(/\b(?:due|by)\b([^()]*?)\b(\d{1,2}:\d{2}\s*[AP]M)\b/i);
-    return { time: match?.[2]?.toUpperCase(), day: match?.[1]?.match(/\b[A-Za-z]{3} \d{1,2}\b/)?.[0] };
-  };
+  const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  const titleDeadline = /\b(?:due|by)\s+(?:(today|tonight)\b[ ,]*|(?:\w+\s+)?([a-z]{3})[a-z]*\s+(\d{1,2})(?:,?\s+(\d{4}))?\b[ ,]*)?(\d{1,2}:\d{2}\s*[AP]M)\b/i;
+
+  function deadlineOf(item, today, minute, snapshotDay) {
+    const fieldDate = dateKey(item.due);
+    const stamp = /T.*(?:Z|[+-]\d\d:\d\d)$/i.test(item.due) ? new Date(item.due) : null;
+    const timed = stamp && Number.isFinite(+stamp);
+    let day = timed ? clockDate(stamp) : fieldDate;
+    let time = timed ? timeInfo(stamp).minute : null;
+    const explicit = String(item.title ?? "").match(titleDeadline);
+    if (explicit) {
+      const [, relative, month, date, year, clock] = explicit;
+      const matchTime = parseTime(clock);
+      const monthIndex = months.indexOf(month?.toLowerCase());
+      let matchDay = relative ? snapshotDay || day : day;
+      if (monthIndex >= 0) {
+        // Use the due field to anchor abbreviated dates around New Year's.
+        const anchor = day || today;
+        const anchorYear = Number(anchor.slice(0, 4));
+        const years = year ? [Number(year)] : [anchorYear, anchorYear - 1, anchorYear + 1];
+        const suffix = `-${String(monthIndex + 1).padStart(2, "0")}-${date.padStart(2, "0")}`;
+        matchDay = years.map((value) => `${value}${suffix}`)
+          .filter((key) => Number.isFinite(+utcDate(key)) && utcDate(key).toISOString().startsWith(key))
+          .sort((a, b) => Math.abs(relativeDays(a, anchor)) - Math.abs(relativeDays(b, anchor)))[0];
+      }
+      if (matchDay && matchTime !== null) {
+        day = matchDay;
+        time = matchTime;
+      }
+    }
+    const overdue = day ? day < today || (day === today && time !== null && minute >= time) : item.overdue === true;
+    const imminent = day === today && !overdue;
+    const tonight = imminent && time !== null && time >= 1080;
+    return { day, time, overdue, imminent, tonight, label: overdue ? "Overdue" : tonight ? "Due tonight" : imminent ? "Due today" : null };
+  }
+
+  function taskSchedule(data, today, minute) {
+    const reported = count(data.tasks?.overdue, data.now?.overdue_tasks);
+    if (data.public || data.errors?.tasks) return { tasks: [], overdue: reported, tonight: 0 };
+    const snapshot = new Date(data.generated_at ?? NaN);
+    const snapshotDay = Number.isFinite(+snapshot) ? clockDate(snapshot) : "";
+    const tasks = list(data.tasks?.items).map((item) => ({ item, ...deadlineOf(item, today, minute, snapshotDay) }));
+    // Replace only the flags for tasks included in this snapshot's item list.
+    const flagged = tasks.filter(({ item }) => item.overdue === true).length;
+    const verified = tasks.filter(({ overdue }) => overdue).length;
+    const overdue = reported === undefined ? verified || undefined : Math.max(0, reported - flagged) + verified;
+    return { tasks, overdue, tonight: tasks.filter(({ tonight }) => tonight).length };
+  }
   const datedFirst = (a, b) => (dateKey(a.due) || "9999-12-31").localeCompare(dateKey(b.due) || "9999-12-31");
   const sentence = (text) => text.charAt(0).toUpperCase() + text.slice(1);
   const calLabel = (cal) => {
@@ -93,24 +137,26 @@
   };
 
   function taskCopy(item, omitSubject = false) {
-    const title = withoutAside(item.title);
+    const title = withoutAside(item.title).replace(titleDeadline, "").replace(/[\s,·—-]+$/, "");
     const separator = title.indexOf(": ");
     const action = separator > -1 ? title.slice(separator + 2) : title;
     const [primary, followup] = action.split(/, then\s/i, 2);
-    const shortAction = primary.split(/\s+[—+]\s+/)[0];
+    const shortAction = primary.split(/\s+[—+]\s+/)[0]
+      .replace(/\b(website|app) for (?:looking through|browsing|viewing) (?:my |the )?(.+)$/i, "$2 $1");
     if (omitSubject && separator > -1) {
       const second = followup && followup.length <= 12 ? ` · ${sentence(followup)}` : "";
-      return `${shorten(sentence(shortAction), second ? 33 : 54)}${second}`;
+      const compact = shortAction.replace(/\bthe (\d+ )?(teammates['’]) full names\b/i, "$1$2 names");
+      return `${sentence(second ? compact.replace(/\s+to the title page$/i, "") : compact)}${second}`;
     }
-    return shorten(separator > -1 ? `${title.slice(0, separator)} · ${shortAction}` : shortAction, 54);
+    return (separator > -1 ? `${title.slice(0, separator)} · ${shortAction}` : shortAction) || DASH;
   }
 
   function schoolCopy(item) {
     const title = withoutAside(item.title).replace(/^Term Project:\s*/i, "").split(/\s+and\s+|\s+-\s+|\s*[-–]\s*Requires\b/i)[0];
-    return shorten(title ? [item.course, title].filter(Boolean).join(" · ") : "", 54);
+    return title ? [item.course, title].filter(Boolean).join(" · ") : DASH;
   }
 
-  function focusFor(data, today, minute) {
+  function focusFor(data, today, minute, tasks) {
     const phase = minute < 300 ? "Wind down" : minute < 540 ? "Morning setup" : minute < 720 ? "Class block"
       : minute < 1020 ? "Deep work" : minute < 1260 ? "Evening sprint" : "Wrap up";
     const publicView = !!data.public;
@@ -140,20 +186,18 @@
       }
     }
 
-    for (const item of list(errors?.tasks ? null : data.tasks?.items)) {
-      if (!item.overdue && dateKey(item.due) !== today) continue;
+    for (const { item, day, time, overdue, tonight, label } of tasks) {
+      if (!label) continue;
       const title = withoutAside(item.title);
       const separator = title.indexOf(":");
-      const { time: due, day } = deadlineOf(item);
-      const minutes = parseTime(due);
-      const timeAppliesToday = day ? day.toLowerCase() === formatDate(today).toLowerCase() : dateKey(item.due) === today;
+      const due = time === null ? day && formatDate(day) : day === today ? formatTime(time) : `${formatDate(day)} at ${formatTime(time)}`;
       candidates.push({
-        hub: "tasks", item, kicker: item.overdue ? "Overdue" : "Due today",
+        hub: "tasks", item, kicker: label,
         title: shorten(separator > 12 ? title.slice(0, separator) : title, 49),
         detail: [due && `Due ${due}`, item.list || "Task"].filter(Boolean).join(" · "),
-        tone: item.overdue ? "bad" : "warn",
-        window: minutes !== null && minutes > 0 && timeAppliesToday ? [0, minutes] : null,
-        score: item.overdue ? 95 : 85,
+        tone: overdue ? "bad" : "warn",
+        window: day === today && time > 0 ? [0, time] : null,
+        score: overdue ? 95 : tonight ? 94 : 85,
       });
     }
 
@@ -187,7 +231,6 @@
     const { now = {}, tasks, school, calendar, brain, homelab, hermes, errors } = data;
     const events = count(calendar?.count, Array.isArray(calendar?.events) ? calendar.events.length : undefined);
     const open = count(tasks?.open, now?.open_tasks);
-    const overdue = count(tasks?.overdue, now?.overdue_tasks);
     const upcoming = count(school?.upcoming, now?.assignments_upcoming);
     const projects = count(now?.active_projects);
     const notes = count(brain?.vault_notes, brain?.notes);
@@ -214,7 +257,7 @@
         : failing === 0 && jobs > 0 ? ["Clear", "cyan"] : jobs === 0 ? ["No jobs", "soft"] : [DASH, "soft"];
     const tone = lab[1] === "bad" || agent[1] === "bad" ? "bad" : lab[1] === "warn" ? "warn"
       : lab[1] === "cyan" && agent[1] === "cyan" ? "cyan" : "soft";
-    return { events, open, overdue, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total };
+    return { events, open, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total };
   }
 
   function panelState(key, value) {
@@ -265,50 +308,68 @@
       project === projectOf(focus.item.title) && eventCourse && eventCourse === courseOf(focus.item.title);
   }
 
-  function scheduleEvents(data, focus, today, minute) {
-    return list(data.calendar?.events).filter((event) => event !== focus.item && !matchingAssignment(event, focus)
-      && (!dateKey(event.sort) || dateKey(event.sort) >= today))
-      .map((item, index) => {
+  function scheduleEvents(data, today, minute) {
+    return list(data.calendar?.events)
+      .filter(({ sort }) => !dateKey(sort) || dateKey(sort) === today)
+      .map((item) => {
         const start = parseTime(item.time);
-        const end = parseTime(item.end_time) ?? (start === null ? null : start + 1);
-        const date = dateKey(item.sort);
-        const order = date > today ? 1 : start === null ? 2 : end > minute ? 0 : 3;
-        return { item, start, date, order, index };
+        const end = parseTime(item.end_time);
+        const past = start !== null && minute >= Math.max(start + 1, end ?? 0);
+        return { item, start, past };
       })
-      .sort((a, b) => a.order - b.order || (a.order === 3 ? b.start - a.start : a.index - b.index));
+      .sort((a, b) => (a.start ?? 1440) - (b.start ?? 1440));
   }
 
-  function renderSchedule(data, values, focus, today, minute) {
+  function renderSchedule(data, values, focus, today, agenda) {
     const events = $("events");
     const ticks = $("dayticks");
+    const disclosure = $("event-more");
+    const moreLabel = $("event-more-label");
+    const moreRows = $("event-overflow");
     events.replaceChildren();
     ticks.replaceChildren();
+    moreRows.replaceChildren();
     const status = setPanel("today", "calendar", values.events, "calmeta", metric(values.events, "events"));
     const isPublic = !!data.public;
-    const agenda = scheduleEvents(isPublic ? {} : data, focus, today, minute);
-    const rows = status === "error" ? [] : agenda.slice(0, 3);
-    for (const { item, start, date, order } of rows) {
-      const lead = date > today ? formatDate(date) : start !== null ? item.time : item.time === "all-day" ? "All day" : DASH;
+    const eligible = isPublic ? [] : agenda.filter(({ item }) => item !== focus.item);
+    const rows = eligible.filter(({ item }) => !matchingAssignment(item, focus)).slice(0, 3);
+    const overflow = eligible.filter((entry) => !rows.includes(entry));
+    const focusCourse = courseOf(focus.item?.summary ?? focus.item?.title ?? focus.item?.course);
+
+    function eventRow(target, { item, start, past }) {
+      const lead = start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH;
       const itemCourse = courseOf(item.summary);
-      const focusCourse = courseOf(focus.item?.summary ?? focus.item?.title ?? focus.item?.course);
-      const related = order !== 3 && itemCourse && itemCourse === focusCourse;
+      const related = !past && itemCourse && itemCourse === focusCourse;
       const title = clean(item.summary).replace(/^\([^)]*\)\s*/, "").split(/\s+-\s+/)[0];
-      appendRow(events, shorten(title, 39), { lead, title: item.summary, active: related, past: order === 3 });
+      appendRow(target, title.replace(" — ", " · ") || DASH, { lead, title: item.summary, active: related, past });
     }
-    if (status !== "error") {
-      for (const item of list(data.calendar?.events)) {
-        const start = parseTime(item.time);
-        if (start === null || (!isPublic && dateKey(item.sort) > today)) continue;
-        const tick = el("i");
-        tick.style.left = `${start / 1440 * 100}%`;
-        ticks.append(tick);
-      }
+
+    for (const entry of rows) eventRow(events, entry);
+    for (const entry of overflow) eventRow(moreRows, entry);
+    disclosure.hidden = !overflow.length;
+    if (disclosure.hidden) {
+      disclosure.open = false;
+    } else {
+      setText(moreLabel, `+${overflow.length} more`);
+    }
+
+    const tickTimes = new Map();
+    for (const entry of agenda) {
+      if (entry.start === null) continue;
+      const visible = rows.includes(entry) || entry.item === focus.item || isPublic;
+      tickTimes.set(entry.start, tickTimes.get(entry.start) || visible);
+    }
+    for (const [start, visible] of tickTimes) {
+      const tick = el("i");
+      if (visible) tick.dataset.featured = "true";
+      tick.style.left = `${start / 1440 * 100}%`;
+      ticks.append(tick);
     }
 
     const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
-    const representedByFocus = focus.hub === "calendar" ? 1 : 0;
-    finishRail(events, rows.length, (values.events ?? agenda.length) - representedByFocus,
-      representedByFocus && !agenda.length ? "See current focus" : empty, status);
+    if (!rows.length && !overflow.length) {
+      finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
+    }
 
     const week = $("weekrows");
     week.replaceChildren();
@@ -330,7 +391,9 @@
     const weekStatus = setPanel("week", "calendar", weekTotal, "weekmeta", metric(weekTotal, "items"));
     const shown = weekStatus === "error" ? [] : days.slice(0, 3);
     for (const [key, { total, item }] of shown) {
-      appendRow(week, isPublic ? null : shorten(item?.summary, 39), {
+      const title = withoutAside(item?.summary);
+      const caption = /^Term Project:/i.test(title) ? schoolCopy({ title }) : title || DASH;
+      appendRow(week, isPublic ? null : caption, {
         lead: `${formatWeekday(key)} ${formatDate(key)}`, tail: metric(total, total === 1 ? "item" : "items"),
         title: item?.summary, textClass: "week-day",
       });
@@ -338,7 +401,7 @@
     finishRail(week, shown.length, days.length, weekTotal === 0 ? "Clear week" : DASH, weekStatus);
   }
 
-  function renderActions(data, values, focus, today) {
+  function renderActions(data, values, focus, today, taskState) {
     const tasks = $("tasks");
     const school = $("school");
     tasks.replaceChildren();
@@ -347,20 +410,20 @@
     const schoolStatus = setPanel("school-panel", "school", values.upcoming, "schoolmeta", metric(values.upcoming, "due"));
 
     if (data.public || taskStatus === "error") {
-      const label = values.overdue > 0 ? metric(values.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
+      const label = taskState.overdue > 0 ? metric(taskState.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
       finishRail(tasks, 0, 0, label, taskStatus);
     } else {
       const represented = focus.hub === "tasks" && !withoutAside(focus.item.title).includes(": ") ? 1 : 0;
-      const ranked = list(data.tasks?.items).filter((item) => !represented || item !== focus.item).sort((a, b) => Number(b === focus.item) - Number(a === focus.item)
-        || Number(!!b.overdue) - Number(!!a.overdue) || datedFirst(a, b));
+      const ranked = taskState.tasks.filter(({ item }) => !represented || item !== focus.item)
+        .sort((a, b) => Number(b.item === focus.item) - Number(a.item === focus.item)
+          || Number(b.overdue) - Number(a.overdue) || (a.day || "9999").localeCompare(b.day || "9999")
+          || (a.time ?? 1440) - (b.time ?? 1440));
       const rows = ranked.slice(0, 3);
-      for (const item of rows) {
+      for (const { item, day, label, overdue, imminent } of rows) {
         const active = item === focus.item;
-        const imminent = dateKey(item.due) === today;
-        const { time: due } = deadlineOf(item);
         appendRow(tasks, taskCopy(item, active), {
-          tail: active && due ? "" : item.overdue ? "Overdue" : imminent && due ? due : formatDate(item.due),
-          title: item.title, active, tone: item.overdue ? "bad" : imminent ? "warn" : "soft",
+          tail: label ?? formatDate(day),
+          title: item.title, active, tone: overdue ? "bad" : imminent ? "warn" : "soft",
         });
       }
       finishRail(tasks, rows.length, values.open === undefined ? ranked.length : values.open - represented,
@@ -382,16 +445,30 @@
     finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
   }
 
+  function renderActivity(data) {
+    const panel = $("activity");
+    panel.hidden = !!data.public;
+    const note = data.public ? null : list(data.recent).find(({ label }) => clean(label));
+    const status = setPanel("activity", "recent", note ? 1 : undefined, "activity-meta", "");
+    const stamp = Date.parse(data.generated_at);
+    const age = note && Number.isFinite(note.age_min) && note.age_min >= 0 && Number.isFinite(stamp)
+      ? note.age_min + Math.max(0, Math.floor((Date.now() - stamp) / 60000)) : null;
+    const label = status === "error" ? "Data unavailable" : note ? clean(note.label) : "No recent activity";
+    setText($("activity-title"), label);
+    setText($("activity-age"), status === "error" || !note ? "" : age === null ? DASH : age < 60 ? `${age}m ago` : `${Math.floor(age / 60)}h ago`);
+    if (status === "stale") setText($("activity-meta"), "Stale");
+  }
+
   const HUBS = [
-    { id: "calendar", name: "Calendar", x: 26, y: 12 },
-    { id: "school", name: "School", x: 74, y: 12 },
-    { id: "tasks", name: "Tasks", x: 84, y: 43 },
-    { id: "projects", name: "Projects", x: 75, y: 74 },
-    { id: "vault", name: "Vault", x: 50, y: 77 },
-    { id: "homelab", name: "Homelab", x: 25, y: 74 },
-    { id: "hermes", name: "Hermes", x: 16, y: 43 },
+    { id: "tasks", name: "Tasks", x: 50, y: 26, tone: "cyan" },
+    { id: "school", name: "School", x: 24, y: 17, tone: "violet" },
+    { id: "calendar", name: "Calendar", x: 16, y: 46, tone: "cyan" },
+    { id: "projects", name: "Projects", x: 76, y: 17, tone: "violet" },
+    { id: "vault", name: "Vault", x: 84, y: 46, tone: "violet" },
+    { id: "homelab", name: "Homelab", x: 27, y: 75, tone: "cyan" },
+    { id: "hermes", name: "Hermes", x: 73, y: 75, tone: "cyan" },
   ];
-  const CENTER = { x: 50, y: 43 };
+  const CENTER = { x: 50, y: 51 };
   const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -433,6 +510,7 @@
       button.dataset.hub = hub.id;
       button.setAttribute("aria-pressed", "false");
       button.setAttribute("aria-controls", "hubdetail");
+      if (hub.id === "tasks") button.classList.add("label-above");
       button.append(el("span", "hub-name", hub.name), el("span", "hub-value", DASH));
       buttons.set(hub.id, button);
       place(button, hub);
@@ -505,12 +583,12 @@
       const compact = width < 450;
       const canMove = !motion.matches && settled && !state.stale;
       const origin = { x: width * CENTER.x / 100, y: height * CENTER.y / 100 };
-      const ring = compact ? 27 : 48;
+      const ring = compact ? 23 : 48;
       const centerTone = colors[focus.tone];
       ctx.lineWidth = 1;
 
-      const radiusX = width * 0.415;
-      const radiusY = height * 0.39;
+      const radiusX = width * 0.405;
+      const radiusY = height * 0.42;
       ellipse(origin.x, origin.y, radiusX, radiusY, colors.fine);
       ellipse(origin.x, origin.y, radiusX * 0.72, radiusY * 0.70, colors.fine);
       for (let i = 0; i < 24; i += 1) {
@@ -522,7 +600,7 @@
           { x: origin.x + x * (radiusX + length), y: origin.y + y * (radiusY + length) }, colors.line);
       }
 
-      HUBS.forEach(({ id, x, y }, index) => {
+      HUBS.forEach(({ id, x, y, tone: domainTone }, index) => {
         const info = hubs[id];
         const active = focus.hub === id;
         const amplitude = canMove ? (compact ? 1.4 : 3.5) : 0;
@@ -532,7 +610,18 @@
         const tone = colors[active ? focus.tone : info?.tone ?? "soft"];
         const radius = (compact ? 4 : 5.5) + (active ? (compact ? 2 : 3) : 0);
         const outer = radius + (compact ? 2 : 3);
-        line(origin, point, active ? tone : colors.line);
+        if (active) {
+          const dx = point.x - origin.x;
+          const dy = point.y - origin.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance > ring + outer) {
+            const edge = { x: origin.x + dx * ring / distance, y: origin.y + dy * ring / distance };
+            const spokeTone = focus.tone === "bad" ? tone : colors[domainTone];
+            ctx.globalAlpha = 0.65;
+            line(edge, point, spokeTone);
+            ctx.globalAlpha = 1;
+          }
+        }
         ctx.fillStyle = colors.surface;
         ctx.beginPath();
         ctx.arc(point.x, point.y, outer, 0, Math.PI * 2);
@@ -620,12 +709,12 @@
     };
   })();
 
-  function hubData(data, values, focus, time) {
+  function hubData(data, values, focus, agenda, taskState) {
     const isPublic = !!data.public;
-    const { open, events, overdue, upcoming, projects, notes, lab, agent, jobs, failing, services } = values;
-    const upcomingEvents = scheduleEvents(isPublic ? {} : data, focus, clockDate(), time.minute);
-    const upcomingEvent = upcomingEvents.find(({ order, start }) => order < 2 && start !== null)?.item;
-    const task = isPublic ? null : list(data.tasks?.items).find((item) => item.overdue) ?? list(data.tasks?.items)[0];
+    const { open, events, upcoming, projects, notes, lab, agent, jobs, failing, services } = values;
+    const { tasks, overdue, tonight } = taskState;
+    const upcomingEvent = isPublic ? null : agenda.find(({ past, start, item }) => !past && start !== null && item !== focus.item)?.item;
+    const task = tasks.find((entry) => entry.overdue) ?? tasks.find((entry) => entry.tonight) ?? tasks[0];
     const deadline = isPublic ? null : list(data.school?.next)[0];
     const recent = isPublic ? null : list(data.recent).find((note) => /project/i.test(note.folder)) ?? list(data.projects).find((item) => item.status === "active");
     const top = isPublic ? null : data.brain?.top_hub;
@@ -636,8 +725,10 @@
         upcomingEvent ? `${upcomingEvent.time} · ${shorten(upcomingEvent.summary, 72)}` : metric(events, "events today")),
       school: record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
         deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
-      tasks: record(overdue > 0 ? metric(overdue, "overdue") : metric(open, "open"), overdue > 0 ? "bad" : open > 0 ? "cyan" : "soft",
-        overdue > 0 ? 1 : open > 0 ? 0.4 : 0, task ? taskCopy(task, false) : metric(open, "open tasks"), open),
+      tasks: record(overdue > 0 ? metric(overdue, "overdue") : tonight > 0 ? metric(tonight, "due tonight") : metric(open, "open"),
+        overdue > 0 ? "bad" : tonight > 0 ? "warn" : open > 0 ? "cyan" : "soft",
+        overdue > 0 ? 1 : tonight > 0 ? 0.7 : open > 0 ? 0.4 : 0,
+        task ? taskCopy(task.item) : metric(open, "open tasks"), open),
       projects: record(metric(projects, "active"), projects > 0 ? "violet" : "soft", projects > 0 ? 0.5 : 0,
         recent ? shorten(recent.label ?? recent.name, 72) : metric(projects, "active projects")),
       vault: record(metric(notes, "notes"), notes > 0 ? "violet" : "soft", notes > 0 ? 0.4 : 0,
@@ -700,8 +791,10 @@
     const time = timeInfo();
     const today = clockDate();
     const values = model(data);
+    const taskState = taskSchedule(data, today, time.minute);
+    const agenda = data.errors?.calendar ? [] : scheduleEvents(data, today, time.minute);
     const hasFocusData = !!(data.public || data.calendar || data.tasks || data.school || data.recent);
-    const focus = hasFocusData ? focusFor(data, today, time.minute) : {
+    const focus = hasFocusData ? focusFor(data, today, time.minute, taskState.tasks) : {
       title: DASH, kicker: state.failed ? "Unavailable" : DASH, tone: state.failed ? "bad" : "soft",
     };
     $("focus").dataset.state = panelState("focus", hasFocusData ? 1 : undefined);
@@ -712,10 +805,11 @@
     setText($("focusdetail"), focus.detail);
     $("signin").hidden = !data.public;
 
-    renderSchedule(data, values, focus, today, time.minute);
-    renderActions(data, values, focus, today);
+    renderSchedule(data, values, focus, today, agenda);
+    renderActions(data, values, focus, today, taskState);
+    renderActivity(data);
     renderHealth(values);
-    const { hubs, defaultId } = hubData(data, values, focus, time);
+    const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
     const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
     const status = panelState("constellation", available ? 1 : undefined);
     $("constellation").dataset.state = status;
@@ -746,9 +840,11 @@
     setText($("secs"), `:${String(time.second).padStart(2, "0")}`);
     setText($("ampm"), time.period);
     setText($("dayline"), dayFormat.format(now));
-    $("dayline").dateTime = clockDate();
+    $("dayline").dateTime = clockDate(now);
     $("secfill").style.width = `${time.second / 60 * 100}%`;
-    $("dayfill").style.width = `${(time.minute + time.second / 60) / 1440 * 100}%`;
+    const dayProgress = `${(time.minute + time.second / 60) / 1440 * 100}%`;
+    $("dayfill").style.width = dayProgress;
+    $("daynow").style.left = dayProgress;
     refreshSource(+now);
     if (state.weather && !state.weatherFailed && +now - state.weather.receivedAt >= 1800000 && $("weather").dataset.state !== "stale") {
       renderWeather();

@@ -123,18 +123,18 @@ async function inspect(page) {
       area: box(find("sky")),
       hubs: [...document.querySelectorAll(".hub")].map((node) => ({ ...box(node), text: node.innerText })),
       rows: [entries("events"), entries("tasks"), entries("school"), entries("weekrows"), document.querySelectorAll(".forecast-day").length],
-      panels: ["today", "week", "task-panel", "school-panel", "constellation", "health", "weather"]
-        .map((id) => ({ ...box(find(id)), state: find(id).dataset.state })),
+      panels: ["today", "week", "task-panel", "school-panel", "constellation", "activity", "health", "weather"]
+        .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
     };
   });
 }
 
 function verifyBounds(metrics) {
   assert.deepEqual(metrics.scroll, metrics.inner);
-  const footer = metrics.panels.at(-2);
+  const footer = metrics.panels.find(({ id }) => id === "health");
   for (const panel of metrics.panels) {
     const limit = panel === footer ? metrics.inner[1] : footer.y;
-    assert(panel.y >= 0 && panel.y + panel.height <= limit + 0.25, "Panel outside its allotted viewport space");
+    assert(panel.y >= 0 && panel.y + panel.height <= limit + 0.25, `${panel.id} ends at ${panel.y + panel.height}, limit ${limit}`);
   }
   assert.equal(metrics.hubs.length, 8);
   const { x, y, width, height } = metrics.area;
@@ -168,10 +168,24 @@ try {
     const isPublic = options.payload?.public;
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
     assert.deepEqual(result.focus, isPublic ? ["LIKELY", "Wrap up", "Public view · sign in for details"]
-      : ["OVERDUE", "CMPE-148 Project 4 paper", "Due 11:59 PM · School"]);
+      : ["DUE TONIGHT", "CMPE-148 Project 4 paper", "Due 11:59 PM · School"]);
     assert.deepEqual(result.health, ["WARNING", "Clear", "1 warning", "33/33"]);
     assert.equal(result.activeHub, isPublic ? null : "tasks");
     assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3, 3] : [3, 3, 2, 3, 3]);
+    const activity = page.locator("#activity");
+    assert.equal(await activity.isVisible(), !!options.wall);
+    if (!isPublic) {
+      assert.deepEqual(await page.locator("#events .row-time").allTextContents(), ["9:00 AM", "10:30 AM", "6:00 PM"]);
+      assert.equal(await page.locator("#focus").getAttribute("data-tone"), "warn");
+      assert.equal(await page.locator("#tasks .rail-row").first().getAttribute("data-tone"), "warn");
+      assert.equal(await page.locator("#tasks .rail-row").first().locator(".row-time").textContent(), "Due tonight");
+      assert.equal(await page.locator('[data-hub="tasks"] .hub-value').innerText(), "1 DUE TONIGHT");
+      assert.equal(await page.locator("#activity-title").textContent(), full.recent[0].label);
+      await page.locator("#event-more-label").click();
+      assert.deepEqual(await page.locator("#event-overflow .row-time").allTextContents(), ["6:30 PM", "All day"]);
+      assert(await page.locator("#event-overflow").isVisible());
+      await page.locator("#event-more-label").click();
+    }
 
     const frame = await image(page);
     const seconds = await page.locator("#secs").innerText();
@@ -206,6 +220,37 @@ try {
     verifyPrivacy(await mixed.page.content());
   }
   assert.deepEqual(mixed.errors, []);
+  await close();
+
+  const reversed = [...full.calendar.events].reverse();
+  const deadline = await open(390, 844, {
+    payload: { ...full, calendar: { ...full.calendar, events: reversed } },
+    now: new Date("2026-11-19T23:58:40-08:00"),
+  });
+  assert.deepEqual(await deadline.page.locator("#events .row-time").allTextContents(), ["9:00 AM", "10:30 AM", "6:00 PM"]);
+  const tickPositions = await deadline.page.locator("#dayticks i").evaluateAll((ticks) => ticks.map((tick) => parseFloat(tick.style.left)));
+  assert.deepEqual(tickPositions.map((position) => Math.round(position * 14.4)), [540, 630, 1080, 1110]);
+  const nowPosition = await deadline.page.locator("#daynow").evaluate((marker) => parseFloat(marker.style.left));
+  assert(nowPosition > tickPositions.at(-1));
+  assert.equal(await deadline.page.locator("#focuskicker").innerText(), "DUE TONIGHT");
+  await deadline.page.clock.fastForward(35000);
+  assert.equal(await deadline.page.locator("#focuskicker").innerText(), "OVERDUE");
+  assert.equal(await deadline.page.locator("#focus").getAttribute("data-tone"), "bad");
+  assert.equal(await deadline.page.locator("#tasks .rail-row").first().locator(".row-time").textContent(), "Overdue");
+  assert.equal(await deadline.page.locator('[data-hub="tasks"] .hub-value').innerText(), "1 OVERDUE");
+  assert.deepEqual(deadline.errors, []);
+  await close();
+
+  const dates = await open(390, 844, {
+    payload: { ...full, tasks: { open: 8, overdue: 2, items: [
+      { title: "Future due date: Review draft", due: "2026-11-20", overdue: true },
+      { title: "Passed due date: Submit draft", due: "2026-11-18", overdue: false },
+    ] } },
+  });
+  assert.deepEqual((await inspect(dates.page)).focus, ["OVERDUE", "Passed due date", "Due Nov 18 · Task"]);
+  assert.deepEqual(await dates.page.locator("#tasks .row-time").allTextContents(), ["Overdue", "Nov 20"]);
+  assert.equal(await dates.page.locator('[data-hub="tasks"] .hub-value').innerText(), "2 OVERDUE");
+  assert.deepEqual(dates.errors, []);
   await close();
 
   const reduced = await open(390, 844, { reducedMotion: "reduce" });
@@ -264,7 +309,7 @@ try {
     assert.deepEqual(scenario.errors, []);
     await close();
   }
-  console.log("Privacy, event focus, reduced motion, health updates, stale, empty, and offline views passed.");
+  console.log("Privacy, agenda order and timeline, deadline rollover, event focus, reduced motion, health updates, stale, empty, and offline views passed.");
 } finally {
   await browser?.close();
 }

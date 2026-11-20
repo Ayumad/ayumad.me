@@ -221,3 +221,23 @@ production public projection and DOM, the reduced-motion frame, a service
 sample change, and stale, empty, and offline states. The fixture reports Hermes
 clear, one homelab warning, and 33 of 33 services up. Screenshots use a frozen
 fixture clock and deterministic weather. The verifier prints their local paths.
+
+### Refinement pass
+
+Today shows the earliest three events in start-time order. The timeline marks
+the same starts and uses a cyan diamond for the current time. Opening `+2 more`
+in the evening fixture reveals the 6:30 PM event and the all-day assignment.
+The task's explicit 11:59 PM Pacific deadline drives the hero, rail, and Tasks
+hub on wall and signed-in views. All three turn from amber to red after the
+deadline. The public view still uses the aggregate supplied by its payload.
+
+The wall rails use larger type and shorter labels, with one signed-in Recent
+activity line below School deadlines. The constellation keeps eight labels and
+draws a single spoke to the active hub. The spoke uses the domain color for
+normal focus and red for an overdue focus. Motion timing remains 15 seconds for
+focus updates and up to 21 canvas frames per second.
+
+The 1920×1080 wall and 390×844 phone matched their document dimensions with
+zero console or page errors. Both showed 3 agenda rows, 3 task rows, 2 school
+rows, 3 week days, and 3 forecast days. Public privacy, deadline rollover, and
+the two-line mobile focus passed verification. The life build is 19.5 KB gzip.

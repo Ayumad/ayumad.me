@@ -71,9 +71,13 @@
               <div class="section-head">
                 <h2 id="todaylabel" class="label">Today</h2><span id="calmeta" class="meta">—</span>
               </div>
-              <div class="daytrack" aria-hidden="true"><i id="dayfill"></i><span id="dayticks"></span></div>
+              <div class="daytrack" aria-hidden="true"><i id="dayfill"></i><span id="dayticks"></span><i id="daynow"></i></div>
               <div class="dayhours meta" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
               <ul id="events" class="rail"><li class="placeholder">—</li></ul>
+              <details id="event-more" hidden>
+                <summary id="event-more-label" class="row-more"></summary>
+                <ul id="event-overflow" aria-label="More events today"></ul>
+              </details>
             </section>
             <section id="week" aria-labelledby="weeklabel">
               <div class="section-head">
@@ -95,6 +99,12 @@
                 <h2 id="schoollabel" class="label">School deadlines</h2><span id="schoolmeta" class="meta">—</span>
               </div>
               <ul id="school" class="rail"><li class="placeholder">—</li></ul>
+            </section>
+            <section id="activity" aria-labelledby="activity-label">
+              <div class="section-head">
+                <h2 id="activity-label" class="label">Recent activity</h2><span id="activity-meta" class="meta"></span>
+              </div>
+              <div class="rail-row"><span id="activity-title" class="row-text">—</span><span id="activity-age" class="row-time"></span></div>
             </section>
           </div>
         </div>
