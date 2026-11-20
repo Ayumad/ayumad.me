@@ -1,6 +1,6 @@
 # Life Dashboard Spec — `/dashboard`
 
-> **Status:** shipped 2026-11-18; redesigned around a local focus constellation 2026-11-20.
+> **Status:** shipped 2026-11-18. The workspace centers on the Hermes particle visualizer.
 > Source of truth for design iterations.
 > Ops spec moved to `BRIEF.md` and `/status`. Do not reintroduce dense ops tables here.
 
@@ -20,18 +20,16 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
 | Hero right | San Jose weather, current conditions, tomorrow only |
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
-| Workspace center | `HERMES CONFLUENCE`: a particle orbit and always-visible Hermes readouts, with `NOW` and the seven domain hubs around the field |
+| Workspace center | Full-panel Hermes particle weave |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
 | Footer | Mac mini/Hermes and P520 resource status + freshness |
 
-The hero is a 3-column band; the workspace is `schedule / constellation / actions`; the footer is one row. On phone the hero stacks time + weather, focus goes full-width, the constellation sits full-width, schedule and actions each use two columns, and the footer compresses to host stats. No scrolling at 1920×1080 or 390×844.
-
-The old global vault graph is retired from this surface. The useful model is a **local constellation** (Obsidian local-graph logic): 8 labeled nodes total, not 90 notes. The full vault graph belongs in a detail/status view, never on the wall.
+The hero is a three-column band above the schedule, particle field, and actions. The footer takes one row. On phones, focus and the particle field go full-width, the schedule and actions use two columns, and the footer compresses to host stats. The page fits 1920×1080 and 390×844 without scrolling.
 
 ## Visual hierarchy
 
 - The clock is the largest element; `CURRENT FOCUS` is the largest *meaningful* element after it.
-- The constellation is the central visual anchor, but labels must be readable before it is decorative.
+- The central canvas fills its panel with particles.
 - Rails are capped: 3 agenda rows, 3 near-term task rows, 2 school rows, 1 forecast day. `+N more` carries the rest; tasks due more than 7 days out are not rendered.
 - Long titles are reduced to course/project + action; no two-line paragraphs in the action rails.
 - Use one accent per state: cyan live/info, violet secondary, amber warning/due-soon, red overdue/bad. Color is never the only encoding.
@@ -42,27 +40,24 @@ The old global vault graph is retired from this surface. The useful model is a *
 - Focus title: `clamp(27px, 3.2vw, 62px)`; hero kicker/detail `clamp(14px…22px)`.
 - Rail titles: `clamp(15px, 1.1vw, 21px)` at 1920; metadata 11–15px.
 - Labels: mono uppercase, cyan; secondary text uses `--soft` and sufficient contrast for wall distance.
-- No shadows, gradients, blur, glow, or new dependencies. Hairlines and 2px max radius.
+- Page chrome uses hairlines and a 2px maximum radius. The particle field uses native Canvas rendering.
 
-## Focus constellation
+## Hermes particle visualizer
 
-- **NOW** center label; elapsed/remaining ring when the focus has a known window.
-- Seven outer hubs: `CALENDAR`, `SCHOOL`, `TASKS`, `PROJECTS`, `VAULT`, `HOMELAB`, `HERMES`.
-- Each hub always shows its name and a live aggregate: events, deadlines, due/overdue, active projects, notes, homelab warning, jobs.
-- The active focus hub gets one colored spoke and a restrained ring; normal spokes use the domain color, not red.
-- Marker arcs encode state, not arbitrary size. Do not add more nodes. Do not render labels on top of the center.
-- Pointer/tap/keyboard reveals the underlying item on web; the wall has no pointer.
+- The original Confluence weave drifts at idle. Active Hermes runs pull strands into separate currents, and a flagged job gathers a sustained amber pocket.
+- The web dashboard follows the saved homepage renderer. ASCII uses glyphs, Dither uses ordered stippling, Glitch offsets narrow bands, Particles uses fading trails, and CRT+ adds scan lines. The field defaults to Particles on a fresh browser or wall display.
+- The canvas has a nonvisual description of feed freshness and available counts.
 
 ## Active layer
 
 - **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
 - **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
-- **Weekend mode:** Fri–Sun replaces `SCHOOL DEADLINES` with `PROJECTS` (recent project notes first), changes the school hub to `OFF`, and removes school calendar/deadline items from `NEXT UP`. Classes and deadlines resume Monday.
+- Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
 - **Project pulse:** one active project, chosen oldest-first with an open checkbox action and excluding the current focus project; shows last-touched age, next open action, and open-action count. If no project qualifies, the panel is removed.
 - **Now listening:** public `/api/spotify` data reused in the payload; album art, track/artist, playing/recent state, and progress. Degrades to an offline signal without breaking the layout.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
-- **Constellation:** Confluence drifts at idle, carries a current for each visible active run and holds an amber pocket while a failure is open. The surrounding hubs retain their focus spokes and detail readouts.
+
 - **Live health:** footer shows Mac mini and P520 resource readings plus active Hermes runs from the 5-minute payload; it links to `/status` for the full breakdown.
 - **Motion budget:** canvas paints capped at ~21 fps; focus/header at 15s; reduced motion draws a single static frame and stops the loop; hidden tabs pause.
 - **Staleness:** wall data stale after 15m, web snapshots after 8h; failed refresh keeps the last good values and flags stale.
@@ -101,15 +96,15 @@ The old global vault graph is retired from this surface. The useful model is a *
 
 - **Public projection:** `calendar.events` keeps `time` only; `tasks.items` and `school.next` are empty; `week_count` is a number. The page renders a count + `SIGN IN FOR DETAILS` instead of titles.
 - **Full snapshot (signed in):** all titles present.
-- Confluence uses `hermes.active_runs`, `hermes.cron_failing_count`, and the dashboard's snapshot freshness rules. Signed-in snapshots can name jobs flagged for elevated failure rates under `hermes.cron_failing`.
-- Optional signed-in `hermes.flow.runs` entries carry `run_id`, `job`, `phase` (`running` or `delivery_pending`), and an optional `retry` boolean. `hermes.flow.receipts` entries carry `run_id`, `job`, `at` (ISO timestamp) and `outcome` (`succeeded`, `failed`, or `delivered`). The initial snapshot can populate the readout. A new successful receipt releases particles from the orbit.
+- Confluence uses the Hermes active-run and failing-job counts and the dashboard's snapshot freshness rules.
+- Signed-in snapshots can give active runs stable identifiers to keep them on consistent currents. A new explicit success or delivery receipt releases particles.
 - **Wall:** `http://10.0.0.54:8795/dashboard.json` is the live v1 payload, served beside `dashboard.html`; the page detects `.html` and fetches `./dashboard.json` first. It shows the full view.
 - Calendar labels: map `Canvas` → `CANVAS`, raw emails → `PERSONAL` / `SCHOOL`, `Class` → `CLASS`.
 - Weather: Open-Meteo, San Jose (`37.3382, -121.8863`), °F, `America/Los_Angeles`, client-side. No key.
 
 ## Build and routes
 
-- Source: `dashboard/life/{index.html,life.css,life.js}`.
+- Source files live in dashboard/life/.
 - Build: `node scripts/build-dashboard.mjs` → `server/dashboard/overview.html` (life) and `server/dashboard/status.html` (ops).
 - Route: `/dashboard` → `api/dashboard.ts` → `overview.html`; `/status` → `status.html`.
 - Data: `/dashboard/data` and `/status/data`, full when the session cookie is valid, sanitized otherwise.

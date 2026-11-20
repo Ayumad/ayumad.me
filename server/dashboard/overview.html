@@ -91,7 +91,7 @@ ul { padding: 0; list-style: none; }
 .masthead { border-bottom: 1px solid var(--line); }
 .masthead nav { display: flex; gap: 24px; margin-left: auto; color: var(--soft); }
 .brand, .source, nav, .label, .meta, .dayline, .focus-kicker, .forecast,
-.clockface, .row-time, .row-more, .hub, .map-detail b, .health {
+.clockface, .row-time, .row-more, .health {
   font-family: ui-monospace, var(--mono);
   font-variant-numeric: tabular-nums;
 }
@@ -198,7 +198,7 @@ main {
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 1.8fr) minmax(0, 1.18fr);
-  grid-template-areas: "schedule map actions";
+  grid-template-areas: "schedule flow actions";
   grid-template-rows: minmax(0, 1fr);
   gap: clamp(18px, 2vw, 38px);
   min-height: 0;
@@ -208,7 +208,7 @@ main {
 .schedule, .actions { display: flex; flex-direction: column; gap: clamp(21px, 4vh, 43px); min-width: 0; }
 .schedule { grid-area: schedule; }
 .actions { grid-area: actions; row-gap: clamp(14px, 2.6vh, 28px); }
-.section-head, .map-head {
+.section-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -274,7 +274,7 @@ main {
 .row-text { flex: 1; min-width: 0; font-size: clamp(15px, 1.15vw, 22px); font-weight: 500; }
 .row-time { flex: none; color: var(--tone, var(--soft)); font-size: clamp(11px, 0.84vw, 16px); white-space: nowrap; }
 .row-time.leading { min-width: 5em; }
-.row-text, .hub-value, #hubdetail-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-more, .placeholder { padding-top: 12px; color: var(--soft); font-size: 14px; }
 .rail-empty, .placeholder { color: var(--soft); }
 .rail-empty { font-size: clamp(14px, 1vw, 19px); }
@@ -285,106 +285,39 @@ main {
 #activity .label, #activity .row-text { color: var(--soft); }
 #activity .row-text { font-size: clamp(14px, 1.04vw, 20px); }
 
-.constellation {
-  grid-area: map;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+.hermes-field {
+  grid-area: flow;
+  position: relative;
+  isolation: isolate;
   min-width: 0;
   min-height: 0;
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.map-head { padding: 15px 20px 0; }
-.flow-head { align-items: center; }
-.flow-head > div { min-width: 0; }
-#flow-status { display: block; margin-top: 4px; font-size: clamp(17px, 2.05vw, 39px); line-height: 1.05; letter-spacing: -.045em; }
-#flow-detail {
-  display: block;
   overflow: hidden;
-  margin-top: 4px;
-  color: var(--soft);
-  font-size: clamp(10px, .92vw, 17px);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  border: 1px solid var(--line);
+  --grid-ink: color-mix(in srgb, var(--line) 48%, transparent);
+  background:
+    radial-gradient(ellipse at 49% 53%, color-mix(in srgb, var(--cyan) 8%, transparent), transparent 64%),
+    linear-gradient(var(--grid-ink) 1px, transparent 1px) center / 100% 43px,
+    linear-gradient(90deg, var(--grid-ink) 1px, transparent 1px) center / 43px 100%,
+    var(--surface);
 }
-.flow-counts {
-  display: flex;
-  flex: none;
-  align-items: stretch;
-  margin: 0;
-  font-family: ui-monospace, var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-.flow-counts div { padding: 1px clamp(8px, 1.2vw, 23px); border-left: 1px solid var(--line); }
-.flow-counts div:last-child { padding-right: 0; }
-.flow-counts dt { color: var(--soft); font-size: clamp(9px, .73vw, 14px); }
-.flow-counts dd { margin: 3px 0 0; color: var(--cyan); font-size: clamp(17px, 1.65vw, 31px); line-height: 1; }
-[data-hermes-state="attention"] #flow-status,
-[data-hermes-state="attention"] #flow-failing { color: var(--warn); }
-[data-hermes-state="stale"] .flow-counts dd,
-[data-hermes-state="unavailable"] .flow-counts dd { color: var(--soft); }
-.sky { position: relative; min-height: 0; }
-#radar, .hubs { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hubs { pointer-events: none; }
-.hub {
+.hermes-field canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.hermes-field::after {
   position: absolute;
-  top: var(--y);
-  left: var(--x);
-  display: grid;
-  place-items: center;
-  gap: 2px;
-  min-width: 104px;
-  padding: 18px 5px 5px;
-  border: 0;
-  background: transparent;
-  color: var(--text);
-  transform: translate(-50%, -10px);
-  text-align: center;
-  white-space: nowrap;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: radial-gradient(circle, color-mix(in srgb, var(--cyan) 27%, transparent) .65px, transparent 1px) 0 0 / 5px 5px;
+  mask-image: radial-gradient(ellipse 130px 85px at 3% 98%, black, transparent 96%),
+    radial-gradient(ellipse 150px 105px at 98% 3%, black, transparent 96%);
 }
-button.hub { pointer-events: auto; cursor: pointer; }
-.hub-name { font-size: clamp(13px, 1.04vw, 20px); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-.hub-value { color: var(--tone); font-size: clamp(12px, 0.88vw, 17px); text-transform: uppercase; }
-.hub[aria-pressed="true"], button.hub:hover { background: var(--surface-2); }
-.hub[data-active="true"] .hub-name { color: var(--focus-tone); }
-.hub.label-above { padding: 5px 5px 17px; transform: translate(-50%, calc(-100% + 9px)); }
-.hub.center {
-  min-width: 0;
-  padding: 0;
-  transform: translate(-50%, -50%);
+.hermes-field:has([data-renderer="dither"]) { --grid-ink: color-mix(in srgb, var(--line) 25%, transparent); }
+.hermes-field:has([data-renderer="dither"])::after {
+  mask-image: linear-gradient(135deg, black, transparent 35% 64%, black);
 }
-.center .hub-name { color: var(--tone); font-size: clamp(14px, 1.45vw, 28px); letter-spacing: 0.1em; }
-.map-detail {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  min-width: 0;
-  padding: 12px 20px;
-  border-top: 1px solid var(--line);
-  color: var(--soft);
-  font-size: clamp(14px, 0.99vw, 19px);
+.hermes-field:has([data-renderer="crt"])::after {
+  background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 46%, transparent) 3px 4px);
+  mask-image: none;
 }
-.map-detail b { flex: none; color: var(--tone, var(--soft)); font-size: 0.83em; letter-spacing: 0.07em; text-transform: uppercase; }
-.map-readouts { min-width: 0; }
-.flow-readout {
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  border-top: 1px solid var(--line);
-  padding: 9px 20px;
-  color: var(--text);
-  font-size: clamp(12px, .95vw, 18px);
-}
-.flow-readout b {
-  flex: none;
-  color: var(--soft);
-  font: 500 .78em/1.4 var(--mono);
-  letter-spacing: .05em;
-  text-transform: uppercase;
-}
-#flow-result, #hubdetail-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.map-readouts .map-detail { padding-block: 8px; border-color: var(--fine); }
 
 .health { border-top: 1px solid var(--line); background: var(--surface); justify-content: space-between; }
 .pulse { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 61px); min-width: 0; }
@@ -490,28 +423,10 @@ button.hub { pointer-events: auto; cursor: pointer; }
   .workspace {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(166px, 1fr) auto auto;
-    grid-template-areas: "map" "schedule" "actions";
+    grid-template-areas: "flow" "schedule" "actions";
     gap: 8px;
     padding-block: 8px;
   }
-  .map-head { padding: 8px 9px 0; }
-  .flow-head .label { font-size: 11px; }
-  #flow-status { margin-top: 3px; }
-  .flow-counts dd { margin-top: 2px; }
-  .hub {
-    min-width: 70px;
-    gap: 1px;
-    padding: 9px 2px 0;
-    line-height: 1.08;
-    transform: translate(-50%, -4px);
-  }
-  .hub.label-above { padding: 0 2px 10px; transform: translate(-50%, calc(-100% + 4px)); }
-  .hub-name { font-size: 11px; letter-spacing: 0.02em; }
-  .hub-value { font-size: 10px; }
-  .center .hub-name { font-size: 15px; }
-  .map-detail { padding: 5px 9px; gap: 7px; font-size: 11px; }
-  .flow-readout { padding: 4px 9px; gap: 7px; font-size: 11px; }
-  .map-readouts .map-detail { padding-block: 4px; }
   .schedule, .actions { display: grid; gap: 7px; }
   .schedule { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
@@ -597,30 +512,9 @@ button.hub { pointer-events: auto; cursor: pointer; }
         </div>
 
         <div class="workspace">
-          <section id="constellation" class="constellation" aria-labelledby="maplabel">
-            <div class="map-head flow-head">
-              <div>
-                <h2 id="maplabel" class="label">Hermes Confluence</h2>
-                <strong id="flow-status" role="status">Awaiting telemetry</strong>
-                <span id="flow-detail" hidden></span>
-              </div>
-              <dl class="flow-counts">
-                <div><dt>Active runs</dt><dd id="flow-active">—</dd></div>
-                <div><dt>Failing jobs</dt><dd id="flow-failing">—</dd></div>
-              </dl>
-            </div>
-            <div class="sky" id="sky">
-              <canvas id="radar" aria-hidden="true"></canvas>
-              <div id="hubs" class="hubs"></div>
-            </div>
-            <div class="map-readouts">
-              <div class="flow-readout">
-                <b>Last confirmed result</b>
-                <span id="flow-result" aria-live="polite">—</span>
-              </div>
-              <div id="hubdetail" class="map-detail"><b id="hubdetail-label">—</b><span id="hubdetail-text">—</span></div>
-            </div>
-          </section>
+          <div class="hermes-field" id="hermes-field">
+            <canvas role="img" aria-label="Hermes particle visualizer"></canvas>
+          </div>
 
           <div class="schedule">
             <section id="today" aria-labelledby="todaylabel">
@@ -691,219 +585,341 @@ button.hub { pointer-events: auto; cursor: pointer; }
     </div>
 
     <script>
-function createHermesFlow() {
+function createHermesFlow(canvas) {
+  const ctx = canvas.getContext("2d");
+  const trails = document.createElement("canvas");
+  const trail = trails.getContext("2d");
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const preferenceKey = "ayumad-renderer";
+  const styles = getComputedStyle(canvas);
+  const mint = styles.getPropertyValue("--cyan").trim();
+  const accent = styles.getPropertyValue("--violet").trim();
+  const light = styles.getPropertyValue("--text").trim();
+  const amber = styles.getPropertyValue("--warn").trim();
+  const mono = styles.getPropertyValue("--mono").trim();
   const turn = Math.PI * 2;
-  const exit = 1.08;
-  const lanes = [0, .5, .25, .75, .125, .625].map((fraction) => (fraction + .06) * turn);
-  const streamSlots = new Map();
-  const receiptLabels = { succeeded: "completed", failed: "failed", delivered: "delivered" };
-  const headlines = {
-    idle: "Idle",
-    working: "Working",
-    attention: "Needs attention",
-    stale: "Feed delayed",
-    unavailable: "Telemetry unavailable",
-    empty: "Awaiting telemetry",
-  };
-  const asList = (value) => Array.isArray(value) ? value : [];
-  const nameOf = (value) => typeof value === "string" ? value.trim().slice(0, 96) : "";
-  let seed = 120157;
-  const random = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+  const slots = [
+    { x: .29, y: .46, color: mint }, { x: .70, y: .43, color: accent },
+    { x: .49, y: .69, color: mint }, { x: .35, y: .27, color: light },
+    { x: .76, y: .70, color: mint }, { x: .54, y: .35, color: accent },
+  ];
+  const warning = { x: .73, y: .61, color: amber };
+  const idle = { x: .50, y: .52, color: mint };
+  const runSlots = new Map();
+  const seen = new Set();
+  const modes = new Set(["ascii", "dither", "glitch", "particles", "crt"]);
+  const glyphs = [".", ":", "+", "*"];
+  const threshold = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  let seed = 61779;
+  function random() {
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
     return seed / 4294967296;
-  };
-  const particleCount = 2980;
-  const particles = Array.from({ length: particleCount }, (_, index) => ({
-    orbit: (index + random()) / particleCount * turn,
-    twist: (index % 9) / 9 * turn + (random() - .5) * .54,
-    scatter: random() ** .72,
-    light: random(),
+  }
+  const swarm = Array.from({ length: 2900 }, (_, index) => ({
+    lane: Math.floor(index / 4) % slots.length,
+    fault: index % 4 === 0,
+    u: random() * 2 - 1,
+    band: Math.floor(random() * 11) / 11,
+    angle: random() * turn,
+    spread: random(),
+    bright: random(),
     x: null,
     y: null,
+    vx: 0,
+    vy: 0,
   }));
-  const sparks = Array.from({ length: 104 }, () => ({
-    direction: exit + (random() - .5) * 2.3,
-    speed: .28 + random() * .92,
-    light: .25 + random() * .75,
+  const dust = Array.from({ length: 460 }, () => ({ x: random(), y: random(), bright: random() }));
+  const sparks = Array.from({ length: 106 }, () => ({
+    angle: random() * turn, speed: .29 + random() * .87, light: random(),
   }));
-  let reading = {};
-  let scope;
-  let sourceTime = -Infinity;
-  let result = null;
-  const seenReceipts = new Set();
-  let releases = [];
-  let tone = "empty";
+  let width = 0;
+  let height = 0;
+  let renderer = "particles";
+  let frame = 0;
+  let previousFrame = 0;
   let clock = 0;
-  let lastFrame;
+  let sourceTime = -Infinity;
+  let publicView;
+  let reading = {};
+  let stale = false;
+  let faded = true;
   let currents = [];
+  let releases = [];
 
-  function matchStreams(running, active) {
-    const limit = Math.min(lanes.length, Math.floor(active ?? running.length));
-    const ids = [...new Set(running.map((run) => "run:" + run.run_id))].slice(0, limit);
-    for (let index = ids.length; index < limit; index += 1) ids.push("count:" + index);
-    for (const id of streamSlots.keys()) {
-      if (!ids.includes(id)) streamSlots.delete(id);
+  function usePreference() {
+    let saved;
+    try {
+      saved = localStorage.getItem(preferenceKey);
+    } catch {
+      // Storage can be disabled on a kiosk.
+    }
+    renderer = modes.has(saved) ? saved : "particles";
+    canvas.dataset.renderer = renderer;
+    paint(true);
+  }
+
+  function readSnapshot(data, active, failing, receivedAt) {
+    if (sourceTime !== -Infinity && (!Number.isFinite(receivedAt) || receivedAt < sourceTime)) return;
+    const flow = data.public ? null : data.hermes?.flow;
+    const runs = Array.isArray(flow?.runs) ? flow.runs : [];
+    const running = runs.filter((run) => run?.phase === "running" && typeof run.run_id === "string");
+    const capacity = Math.min(slots.length, Math.floor(active ?? running.length));
+    const ids = [...new Set(running.map((run) => "run:" + run.run_id))].slice(0, capacity);
+    for (let index = ids.length; index < capacity; index += 1) ids.push("count:" + index);
+    const previousSlots = new Map(runSlots);
+    for (const id of runSlots.keys()) {
+      if (!ids.includes(id)) runSlots.delete(id);
     }
     for (const id of ids) {
-      if (!streamSlots.has(id)) {
-        const occupied = [...streamSlots.values()];
-        streamSlots.set(id, lanes.find((phase) => !occupied.includes(phase)));
+      if (!runSlots.has(id)) {
+        const occupied = [...runSlots.values()];
+        runSlots.set(id, slots.findIndex((_, index) => !occupied.includes(index)));
       }
     }
-    currents = [...streamSlots.values()];
-  }
+    currents = [];
+    for (const index of runSlots.values()) currents[index] = slots[index];
+    reading = { active, failing };
 
-  function accept(data, active, failing, animate) {
-    const at = Date.parse(data.generated_at);
-    if (sourceTime !== -Infinity && (!Number.isFinite(at) || at < sourceTime)) return;
-    const flow = data.public ? null : data.hermes?.flow;
-    const currentRuns = asList(flow?.runs).filter((run) => typeof run?.run_id === "string" && nameOf(run.job));
-    const running = currentRuns.filter((run) => run.phase === "running");
-    const pending = currentRuns.find((run) => run.phase === "delivery_pending");
-    const reportedFailures = data.public ? [] : asList(data.hermes?.cron_failing);
-    reading = { active, failing, running, pending, failure: nameOf(reportedFailures[0]?.name) };
-
-    if (!Number.isFinite(at) || at <= sourceTime) return;
-    const receipts = new Map();
-    for (const item of asList(flow?.receipts)) {
-      if (!Object.hasOwn(receiptLabels, item?.outcome) || typeof item.run_id !== "string" || !nameOf(item.job)) continue;
-      const time = Date.parse(item.at);
-      if (!Number.isFinite(time) || time > at) continue;
-      const key = item.run_id + ":" + item.outcome;
-      if (!receipts.has(key)) receipts.set(key, { ...item, time });
-    }
-    const ordered = [...receipts.entries()].sort(([, a], [, b]) => a.time - b.time
-      || Number(a.outcome === "delivered") - Number(b.outcome === "delivered"));
-    for (const [key, receipt] of ordered) {
-      if (seenReceipts.has(key)) continue;
-      seenReceipts.add(key);
-      if (seenReceipts.size > 192) seenReceipts.delete(seenReceipts.values().next().value);
-      if (!result || receipt.time >= result.time) result = receipt;
-      if (animate && sourceTime !== -Infinity && receipt.time > sourceTime && receipt.outcome !== "failed") {
-        releases.push({ time: clock, delivered: receipt.outcome === "delivered" });
+    if (!Number.isFinite(receivedAt) || receivedAt <= sourceTime) return;
+    for (const receipt of Array.isArray(flow?.receipts) ? flow.receipts : []) {
+      if (typeof receipt?.run_id !== "string" || !["succeeded", "delivered"].includes(receipt.outcome)) continue;
+      const when = Date.parse(receipt.at);
+      const key = receipt.run_id + ":" + receipt.outcome;
+      if (!Number.isFinite(when) || when > receivedAt || seen.has(key)) continue;
+      seen.add(key);
+      if (seen.size > 192) seen.delete(seen.values().next().value);
+      if (sourceTime !== -Infinity && when > sourceTime && !stale && !motion.matches && !document.hidden) {
+        const slot = previousSlots.get("run:" + receipt.run_id) ?? runSlots.get("run:" + receipt.run_id);
+        releases.push({ origin: slots[slot] ?? idle, born: clock });
       }
     }
-    sourceTime = at;
     releases = releases.slice(-3);
+    sourceTime = receivedAt;
   }
 
-  function update(data, { active, failing, stale, unavailable, animate }) {
-    const nextScope = data.public ? "public" : "private";
-    if (scope !== nextScope) {
-      scope = nextScope;
-      reading = {};
+  function update(data, { active, failing, stale: delayed, unavailable }) {
+    if (Boolean(data.public) !== publicView) {
+      publicView = Boolean(data.public);
       sourceTime = -Infinity;
-      result = null;
-      seenReceipts.clear();
-      streamSlots.clear();
+      reading = {};
+      currents = [];
+      runSlots.clear();
+      seen.clear();
       releases = [];
     }
+    stale = delayed;
     if ((!stale && !unavailable) || (stale && sourceTime === -Infinity)) {
-      accept(data, active, failing, animate && !stale);
+      readSnapshot(data, active, failing, Date.parse(data.generated_at));
     }
-    const { running = [], pending, failure } = reading;
-    tone = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
-      : reading.active > 0 ? "working" : reading.active === 0 && reading.failing === 0 ? "idle" : "empty";
-    const retry = failure && running.some((run) => run.retry === true && nameOf(run.job) === failure);
-    let detail = tone === "stale" ? "Showing last confirmed values" : "";
-    if (tone === "attention" && failure) detail = failure + (retry ? " retry in progress" : " · elevated failure rate");
-    if (tone !== "stale" && tone !== "unavailable" && !detail) {
-      if (pending) detail = nameOf(pending.job) + " · delivery pending";
-      else if (running.length) detail = [...new Set(running.map((run) => nameOf(run.job)))].slice(0, 2).join(" · ");
-    }
-
-    matchStreams(running, reading.active);
-    if (!animate || stale || unavailable) releases = [];
-    return {
-      tone, headline: headlines[tone], detail, active: reading.active, failing: reading.failing,
-      result: result ? nameOf(result.job) + " " + receiptLabels[result.outcome] : null,
-    };
+    faded = stale || unavailable || (reading.active === undefined && reading.failing === undefined);
+    if (faded || motion.matches || document.hidden) releases = [];
+    const state = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
+      : reading.active > 0 ? "working" : faded ? "empty" : "idle";
+    canvas.dataset.state = state;
+    const summary = ["Hermes particle visualizer"];
+    if (stale) summary.push("Feed delayed");
+    if (unavailable) summary.push("Telemetry unavailable");
+    if (reading.active !== undefined) summary.push(reading.active + " active runs");
+    if (reading.failing !== undefined) summary.push(reading.failing + " failing jobs");
+    const label = summary.join(". ");
+    if (canvas.getAttribute("aria-label") !== label) canvas.setAttribute("aria-label", label);
+    if (motion.matches) paint(true);
   }
 
-  function draw(ctx, { width, height, origin, colors, time, animate }) {
-    const step = lastFrame === undefined ? 0 : Math.max(0, Math.min(.15, (time - lastFrame) / 1000));
-    lastFrame = time;
-    if (animate) clock += step * (tone === "stale" ? .22 : 1);
-    const dim = tone === "stale" || tone === "unavailable" || tone === "empty";
-    const scale = Math.min(width * .258, height * .5);
-    const size = width < 450 ? .79 : 1;
-    const rotation = -.39;
-    const cosine = Math.cos(rotation);
-    const sine = Math.sin(rotation);
-    const tilt = .56 + Math.sin(clock * .20) * .05;
-    const jammed = tone === "attention";
-    const queued = !dim && !!reading.pending;
-    const heated = clock * .74;
-    const heads = dim ? [] : currents.map((phase) => phase + heated);
+  function halo(x, y, radius, color, opacity) {
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    glow.addColorStop(0, color);
+    glow.addColorStop(1, "transparent");
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = glow;
+    ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+  }
 
-    function point(orbit, twist, radius) {
-      const shell = 1 + Math.cos(twist) * radius;
-      const depth = Math.sin(twist) * radius;
-      const horizontal = Math.cos(orbit) * shell;
-      const vertical = Math.sin(orbit) * shell * tilt + depth * .83;
-      return {
-        x: origin.x + (horizontal * cosine - vertical * sine) * scale,
-        y: origin.y + (horizontal * sine + vertical * cosine) * scale,
-        depth: (Math.sin(orbit) + 1) * .34 + (Math.sin(twist) + 1) * .16,
-      };
-    }
-
-    for (const p of particles) {
-      let angle = p.orbit + clock * .19;
-      const gap = Math.cos(angle - exit);
-      const fault = jammed && gap > .91;
-      const caught = queued && !fault && gap > .94;
-      if (fault || caught) angle = exit + Math.sin(angle - exit) * (fault ? .62 : .83);
-      const twist = p.twist + angle * 3.1 - clock * .24;
-      const shell = (.07 + p.scatter * .22) * (fault ? 1.10 : 1);
-      const { x, y, depth } = point(angle, twist, shell);
-      const current = heads.some((head) => Math.cos(angle - head) > .953);
-      const bright = current || fault || caught;
-      const color = fault ? colors.warn : bright && p.light > .77 ? colors.text : colors.cyan;
-      const alpha = (dim ? .39 : 1) * Math.min(.96, .11 + depth * .3 + p.light * .34 + (bright ? .36 : 0));
-      const dot = size * (.72 + p.light * .98 + (bright ? .34 : 0));
-
-      if (animate && p.light > .65 && p.x !== null && step > 0) {
-        const dx = x - p.x;
-        const dy = y - p.y;
-        if (Math.abs(dx) + Math.abs(dy) < 14) {
-          ctx.beginPath();
-          ctx.moveTo(x - dx * (bright ? 4.8 : 2.4), y - dy * (bright ? 4.8 : 2.4));
-          ctx.lineTo(x, y);
-          ctx.lineWidth = dot * .6;
-          ctx.strokeStyle = color;
-          ctx.globalAlpha = alpha * .46;
-          ctx.stroke();
-        }
+  function stamp(particle, dot, color, opacity) {
+    const x = particle.x;
+    const y = particle.y;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = opacity;
+    if (renderer === "ascii") {
+      if (particle.bright > .25) ctx.fillText(glyphs[Math.floor(particle.bright * glyphs.length)], x, y);
+    } else if (renderer === "dither") {
+      const col = Math.round(x / 3);
+      const row = Math.round(y / 3);
+      if (opacity > (threshold[(row & 3) * 4 + (col & 3)] + .5) / 16) {
+        ctx.fillRect(col * 3, row * 3, 2, 2);
       }
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = color;
+    } else if (renderer === "glitch") {
+      const band = Math.floor(y / 15);
+      const slip = ((band + Math.floor(clock * 5)) % 11 === 0) ? Math.sin(clock * 3 + band) * width * .024 : 0;
+      ctx.fillRect(x + slip, y, dot * (slip ? 2.2 : 1.1), dot);
+    } else {
       ctx.fillRect(x, y, dot, dot);
-      p.x = x;
-      p.y = y;
     }
+  }
 
-    if (animate) {
-      releases = releases.filter((release) => clock - release.time < 2.3);
-      const gate = point(exit, 0, .07);
-      for (const [index, release] of releases.entries()) {
-        const age = clock - release.time;
-        const reach = scale * age * (release.delivered ? .47 : .27);
-        for (const spark of sparks) {
-          const angle = spark.direction + index * .18 - .27;
-          const dx = Math.cos(angle) * spark.speed * reach;
-          const dy = Math.sin(angle) * spark.speed * reach * .75;
-          ctx.globalAlpha = (1 - age / 2.3) * spark.light;
-          ctx.fillStyle = colors.cyan;
-          ctx.fillRect(gate.x + dx, gate.y + dy, 1 + spark.light, 1 + spark.light);
-        }
+  function scatter(size, strength) {
+    releases = releases.filter((release) => clock - release.born < 2.65);
+    for (const release of releases) {
+      const age = clock - release.born;
+      const fade = (1 - age / 2.65) * strength;
+      const x = release.origin.x * width;
+      const y = release.origin.y * height;
+      const distance = 4 + age * size * .24;
+      ctx.strokeStyle = release.origin.color;
+      ctx.globalAlpha = fade * fade * .53;
+      ctx.lineWidth = 1.15;
+      ctx.beginPath();
+      ctx.ellipse(x, y, distance, distance * .59, -.26, 0, turn);
+      ctx.stroke();
+      for (const spark of sparks) {
+        const radius = distance * spark.speed;
+        const dx = Math.cos(spark.angle) * radius;
+        const dy = Math.sin(spark.angle) * radius * .72;
+        ctx.globalAlpha = fade * (.15 + spark.light * .52);
+        ctx.lineWidth = .62 + spark.light;
+        ctx.beginPath();
+        ctx.moveTo(x + dx * .82, y + dy * .82);
+        ctx.lineTo(x + dx, y + dy);
+        ctx.stroke();
       }
     }
-    ctx.lineWidth = 1;
+  }
+
+  function paint(snap) {
+    if (!ctx || !width || !height || document.hidden) return;
+    const traced = renderer !== "dither" && renderer !== "ascii";
+    const strength = faded ? .48 : 1;
+    const size = Math.min(width, height * 1.7);
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = (width < 470 ? "6px " : "8px ") + mono;
+    if (trail) {
+      if (snap || !traced) trail.clearRect(0, 0, width, height);
+      else {
+        trail.globalCompositeOperation = "destination-out";
+        trail.globalAlpha = 1;
+        trail.fillStyle = renderer === "crt" ? "rgba(0,0,0,.085)" : "rgba(0,0,0,.12)";
+        trail.fillRect(0, 0, width, height);
+        trail.globalCompositeOperation = "source-over";
+      }
+    }
+
+    ctx.fillStyle = mint;
+    for (const point of dust) {
+      ctx.globalAlpha = strength * (.055 + point.bright * .14);
+      const dot = point.bright > .97 ? 1.5 : .8;
+      ctx.fillRect(point.x * width, point.y * height, dot, dot);
+    }
+    if (reading.failing > 0) halo(warning.x * width, warning.y * height, size * .18, faded ? mint : amber, .19 * strength);
+    currents.forEach((slot) => halo(slot.x * width, slot.y * height, size * .24, slot.color, .095 * strength));
+    if (trail && !snap && traced) {
+      ctx.globalAlpha = 1;
+      ctx.drawImage(trails, 0, 0, width, height);
+    }
+
+    for (const p of swarm) {
+      const failed = p.fault && reading.failing > 0;
+      const current = failed ? warning : currents[p.lane];
+      const spread = .32 + .68 * Math.sqrt(1 - p.u * p.u);
+      const swirl = p.angle + clock * .46;
+      const bend = p.u * 4.4 + clock * .36 + p.band * 2.1;
+      const depth = Math.cos(swirl + bend * .61) * spread;
+      const wave = Math.sin(bend) * .55 + Math.sin(bend * 1.54 - p.band * 3) * .19;
+      const fuzz = (p.spread - .5) * .24;
+      let tx = (.5 + (p.u * .428 + depth * .025 + fuzz * .30) * (1 + depth * .067)) * width;
+      let ty = (.51 - p.u * .129 + (wave + Math.sin(swirl) * spread * .63 + fuzz) * .248) * height;
+      if (current) {
+        const orbit = (.11 + p.spread * .89) * Math.sqrt(Math.max(.06, 1 - p.u * p.u));
+        const phase = p.angle + clock * (failed ? .44 : 1.19) + p.u * 3.9;
+        const radius = size * (failed ? .117 : .205);
+        const x = current.x * width + Math.cos(phase) * radius * orbit * 1.3 + p.u * radius * .46;
+        const y = current.y * height + Math.sin(phase) * radius * orbit * .64 - p.u * radius * .28;
+        const pull = failed ? .89 : .71 + p.spread * .20;
+        tx += (x - tx) * pull;
+        ty += (y - ty) * pull;
+      }
+      if (snap || p.x === null) {
+        p.x = tx;
+        p.y = ty;
+        p.vx = 0;
+        p.vy = 0;
+      } else {
+        p.vx = (p.vx + (tx - p.x) * .092) * .81;
+        p.vy = (p.vy + (ty - p.y) * .092) * .81;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+      const front = .26 + (depth + 1) * .36;
+      const glow = strength * Math.min(.97, front * (.27 + p.bright * .73) + (failed ? .16 : 0));
+      const dot = .7 + front * p.bright * 1.49 + (failed ? .23 : 0);
+      const color = failed && faded ? mint : current?.color ?? (p.band > .78 ? accent : mint);
+      if (traced && p.bright > .29) {
+        const target = snap ? ctx : trail ?? ctx;
+        target.globalAlpha = glow * (snap ? .24 : .31);
+        target.strokeStyle = color;
+        target.lineWidth = dot * .52;
+        target.beginPath();
+        target.moveTo(p.x - (snap ? Math.cos(bend) * 6 : p.vx * 5.6),
+          p.y - (snap ? Math.sin(swirl) * 4 : p.vy * 5.6));
+        target.lineTo(p.x, p.y);
+        target.stroke();
+      }
+      stamp(p, dot, color, glow);
+    }
+    if (!motion.matches) scatter(size, strength);
     ctx.globalAlpha = 1;
   }
 
-  return { update, draw };
+  function resize() {
+    if (!ctx) return;
+    const bounds = canvas.getBoundingClientRect();
+    width = bounds.width;
+    height = bounds.height;
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.65);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (trail) {
+      trails.width = canvas.width;
+      trails.height = canvas.height;
+      trail.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    paint(true);
+  }
+
+  function step(now) {
+    frame = 0;
+    if (motion.matches || document.hidden) return;
+    if (!previousFrame || now - previousFrame >= (stale ? 110 : 46)) {
+      if (previousFrame) clock += Math.min(.14, (now - previousFrame) / 1000) * (stale ? .24 : 1);
+      previousFrame = now;
+      paint(false);
+    }
+    frame = requestAnimationFrame(step);
+  }
+
+  function syncMotion() {
+    if (!ctx) return;
+    if (document.hidden || motion.matches) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      previousFrame = 0;
+      releases = [];
+      paint(true);
+    } else if (!frame) {
+      frame = requestAnimationFrame(step);
+    }
+  }
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === preferenceKey || event.key === null) usePreference();
+  });
+  document.addEventListener("visibilitychange", syncMotion);
+  motion.addEventListener("change", syncMotion);
+  new ResizeObserver(resize).observe(canvas);
+  usePreference();
+  resize();
+  syncMotion();
+  return { update };
 }
 
 (() => {
@@ -1143,24 +1159,14 @@ function createHermesFlow() {
   }
 
   function model(data) {
-    const { now = {}, tasks, school, calendar, brain, homelab, hermes, errors } = data;
+    const { now = {}, tasks, school, calendar, homelab, hermes, errors } = data;
     const events = count(calendar?.count, Array.isArray(calendar?.events) ? calendar.events.length : undefined);
     const open = count(tasks?.open, now?.open_tasks);
     const upcoming = count(school?.upcoming, now?.assignments_upcoming);
     const projects = count(now?.active_projects);
-    const notes = count(brain?.vault_notes, brain?.notes);
     const failing = errors?.cron_ledger ? undefined : count(hermes?.cron_failing_count, now?.jobs_failing);
-    const jobs = count(now?.jobs_total, hermes?.cron_active);
-    const reachable = now?.homelab_reachable ?? homelab?.reachable;
-    const bad = count(now?.homelab_issues_bad, homelab?.issue_counts?.bad);
-    const warn = count(now?.homelab_issues_warn, homelab?.issue_counts?.warn);
     const up = count(now?.services_up, homelab?.services_up);
     const total = count(now?.services_total, homelab?.services_total);
-    const devicesUp = count(now?.devices_online);
-    const devicesTotal = count(now?.devices_total);
-    const services = up !== undefined && total !== undefined ? `${up}/${total}` : DASH;
-    const devices = devicesUp !== undefined && devicesTotal !== undefined ? `${devicesUp}/${devicesTotal}` : DASH;
-    const serviceLoss = up !== undefined && total !== undefined && up < total;
     const mac = hermes?.host ?? {};
     const macCpu = count(mac.cpu_pct);
     const macMem = count(mac.mem_pct)
@@ -1176,19 +1182,7 @@ function createHermesFlow() {
     const gpu = gpuOwner ? gpuOwner.replace(/-vm$/i, "").toUpperCase()
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);
-    const lab = reachable === false ? ["Offline", "bad"]
-      : bad > 0 ? [metric(bad, bad === 1 ? "issue" : "issues"), "bad"]
-        : warn > 0 ? [metric(warn, warn === 1 ? "warning" : "warnings"), "warn"]
-          : serviceLoss ? ["Degraded", "warn"]
-            : errors?.homelab ? ["Unavailable", "bad"]
-              : reachable === true && bad === 0 && warn === 0 ? ["Clear", "cyan"] : [DASH, "soft"];
-    const agent = failing > 0 ? [metric(failing, "failing"), "bad"]
-      : errors?.hermes ? ["Unavailable", "bad"]
-        : failing === 0 && jobs > 0 ? ["Clear", "cyan"] : jobs === 0 ? ["No jobs", "soft"] : [DASH, "soft"];
-    const tone = lab[1] === "bad" || agent[1] === "bad" ? "bad" : lab[1] === "warn" ? "warn"
-      : lab[1] === "cyan" && agent[1] === "cyan" ? "cyan" : "soft";
-    return { events, open, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total,
-      macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
+    return { events, open, upcoming, projects, failing, up, total, macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
   }
 
   function panelState(key, value) {
@@ -1534,291 +1528,7 @@ function createHermesFlow() {
     if (status === "stale") setText($("activity-meta"), "Stale");
   }
 
-  const HUBS = [
-    { id: "tasks", name: "Tasks", x: 50, y: 26, tone: "cyan" },
-    { id: "school", name: "School", x: 24, y: 17, tone: "violet" },
-    { id: "calendar", name: "Calendar", x: 16, y: 46, tone: "cyan" },
-    { id: "projects", name: "Projects", x: 76, y: 17, tone: "violet" },
-    { id: "vault", name: "Vault", x: 84, y: 46, tone: "violet" },
-    { id: "homelab", name: "Homelab", x: 27, y: 75, tone: "cyan" },
-    { id: "hermes", name: "Hermes", x: 73, y: 75, tone: "cyan" },
-  ];
-  const CENTER = { x: 50, y: 51 };
-  const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const confluence = createHermesFlow();
-
-  const radar = (() => {
-    const canvas = $("radar");
-    const ctx = canvas.getContext("2d");
-    const styles = getComputedStyle(document.documentElement);
-    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad", "text"]
-      .map((key) => [key, styles.getPropertyValue(`--${key}`).trim()]));
-    const buttons = new Map();
-    let width = 0;
-    let height = 0;
-    let hubs = {};
-    let focus = { tone: "soft" };
-    let progress = null;
-    let settled = false;
-    let activity = new Map();
-    let selected = null;
-    let hovered = null;
-    let keyboard = null;
-    let defaultHub = null;
-    let frame = 0;
-    let lastFrame = 0;
-
-    function place(node, { x, y }) {
-      node.style.setProperty("--x", `${x}%`);
-      node.style.setProperty("--y", `${y}%`);
-      $("hubs").append(node);
-    }
-
-    const center = el("span", "hub center");
-    center.dataset.tone = "soft";
-    center.append(el("span", "hub-name", "Now"));
-    place(center, CENTER);
-
-    for (const hub of HUBS) {
-      const button = el("button", "hub");
-      button.type = "button";
-      button.dataset.hub = hub.id;
-      button.setAttribute("aria-pressed", "false");
-      button.setAttribute("aria-controls", "hubdetail");
-      if (hub.id === "tasks") button.classList.add("label-above");
-      button.append(el("span", "hub-name", hub.name), el("span", "hub-value", DASH));
-      buttons.set(hub.id, button);
-      place(button, hub);
-      button.addEventListener("pointerenter", (event) => {
-        if (event.pointerType !== "touch") hovered = hub.id;
-        showDetail();
-      });
-      button.addEventListener("pointerleave", () => {
-        hovered = null;
-        showDetail();
-      });
-      button.addEventListener("focus", () => {
-        if (button.matches(":focus-visible")) keyboard = hub.id;
-        showDetail();
-      });
-      button.addEventListener("blur", () => {
-        keyboard = null;
-        showDetail();
-      });
-      button.addEventListener("click", () => {
-        selected = selected === hub.id ? null : hub.id;
-        showDetail();
-      });
-      button.addEventListener("keydown", (event) => {
-        if (event.key !== "Escape") return;
-        selected = hovered = keyboard = null;
-        showDetail();
-      });
-    }
-
-    function showDetail() {
-      const id = hovered ?? keyboard ?? selected ?? defaultHub;
-      const info = hubs[id];
-      $("hubdetail").dataset.tone = info?.tone ?? "soft";
-      setText($("hubdetail-label"), info ? hubName(id) : "Constellation");
-      setText($("hubdetail-text"), info?.detail ?? (state.failed ? "Data unavailable" : DASH));
-      for (const [key, button] of buttons) button.setAttribute("aria-pressed", String(key === selected));
-    }
-
-    function resize() {
-      const box = canvas.getBoundingClientRect();
-      width = box.width;
-      height = box.height;
-      const scale = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(width * scale);
-      canvas.height = Math.round(height * scale);
-      ctx?.setTransform(scale, 0, 0, scale, 0, 0);
-      draw(performance.now());
-    }
-
-    function ellipse(x, y, rx, ry, color, start = 0, end = Math.PI * 2) {
-      if (rx <= 0 || ry <= 0 || end <= start) return;
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.ellipse(x, y, rx, ry, 0, start, end);
-      ctx.stroke();
-    }
-
-    function line(a, b, color) {
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    }
-
-    function draw(time) {
-      if (!ctx || !width || !height || document.hidden) return;
-      ctx.clearRect(0, 0, width, height);
-      const compact = width < 450;
-      const canMove = !motion.matches && settled && !state.stale;
-      const origin = { x: width * CENTER.x / 100, y: height * CENTER.y / 100 };
-      const ring = compact ? 23 : 48;
-      const centerTone = colors[focus.tone];
-      ctx.lineWidth = 1;
-
-      confluence.draw(ctx, { width, height, origin, colors, time, animate: !motion.matches });
-
-      HUBS.forEach(({ id, x, y, tone: domainTone }, index) => {
-        const info = hubs[id];
-        const active = focus.hub === id;
-        const amplitude = canMove ? (compact ? 1.4 : 3.5) : 0;
-        const angle = time / 8500 + index * Math.PI * 2 / HUBS.length;
-        const anchor = { x: width * x / 100, y: height * y / 100 };
-        const point = { x: anchor.x + Math.cos(angle) * amplitude, y: anchor.y + Math.sin(angle) * amplitude };
-        const tone = colors[active ? focus.tone : info?.tone ?? "soft"];
-        const radius = (compact ? 4 : 5.5) + (active ? (compact ? 2 : 3) : 0);
-        const outer = radius + (compact ? 2 : 3);
-        if (active) {
-          const dx = point.x - origin.x;
-          const dy = point.y - origin.y;
-          const distance = Math.hypot(dx, dy);
-          if (distance > ring + outer) {
-            const edge = { x: origin.x + dx * ring / distance, y: origin.y + dy * ring / distance };
-            const spokeTone = focus.tone === "bad" ? tone : colors[domainTone];
-            ctx.globalAlpha = 0.65;
-            line(edge, point, spokeTone);
-            ctx.globalAlpha = 1;
-          }
-        }
-        ctx.fillStyle = colors.surface;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, outer, 0, Math.PI * 2);
-        ctx.fill();
-        ellipse(point.x, point.y, outer, outer, active ? tone : colors.line);
-        if (info?.level > 0) ellipse(point.x, point.y, outer, outer, tone,
-          -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * info.level);
-        ctx.fillStyle = tone;
-        const dot = active ? 2.5 : 1.5;
-        ctx.fillRect(point.x - dot, point.y - dot, dot * 2, dot * 2);
-        const pulse = (time - (activity.get(id) ?? -6000)) / 1800;
-        if (canMove && pulse >= 0 && pulse < 1) {
-          const size = outer + pulse * (compact ? 7 : 12);
-          ctx.globalAlpha = (1 - pulse) * 0.6;
-          ellipse(point.x, point.y, size, size, tone);
-          ctx.globalAlpha = 1;
-        }
-      });
-
-      ctx.fillStyle = colors.surface;
-      ctx.beginPath();
-      ctx.arc(origin.x, origin.y, ring, 0, Math.PI * 2);
-      ctx.fill();
-      ellipse(origin.x, origin.y, ring, ring, colors.line);
-      ellipse(origin.x, origin.y, ring - 5, ring - 5, colors.fine);
-      if (progress === null) {
-        for (let i = 0; i < 4; i += 1) {
-          const angle = i * Math.PI / 2 - Math.PI / 4;
-          ellipse(origin.x, origin.y, ring, ring, centerTone, angle - 0.10, angle + 0.10);
-        }
-      } else {
-        ellipse(origin.x, origin.y, ring, ring, centerTone, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
-      }
-    }
-
-    function onFrame(time) {
-      frame = 0;
-      if (time - lastFrame >= (state.stale ? 125 : 48)) {
-        lastFrame = time;
-        draw(time);
-      }
-      syncMotion();
-    }
-
-    function syncMotion() {
-      const running = (settled || state.data) && !motion.matches && !document.hidden;
-      if (running && !frame) frame = requestAnimationFrame(onFrame);
-      if (!running && frame) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-      }
-    }
-
-    motion.addEventListener("change", () => {
-      syncMotion();
-      draw(performance.now());
-    });
-    document.addEventListener("visibilitychange", syncMotion);
-    new ResizeObserver(resize).observe(canvas);
-
-    return {
-      update(next, current, minute, defaultId) {
-        const time = performance.now();
-        if (settled && !state.stale) {
-          for (const { id } of HUBS) {
-            if (next[id]?.value !== hubs[id]?.value || next[id]?.detail !== hubs[id]?.detail || next[id]?.signal !== hubs[id]?.signal
-              || (current.hub === id && focus.hub !== id)) activity.set(id, time);
-          }
-        }
-        hubs = next;
-        focus = current;
-        defaultHub = defaultId;
-        settled = Object.values(next).some(({ value }) => value !== DASH && value !== "Unavailable");
-        progress = current.window ? clamp((minute - current.window[0]) / (current.window[1] - current.window[0])) : null;
-        center.dataset.tone = current.tone;
-        for (const [id, button] of buttons) {
-          button.dataset.tone = next[id]?.tone ?? "soft";
-          button.dataset.active = String(id === current.hub);
-          setText(button.lastElementChild, next[id]?.value);
-        }
-        showDetail();
-        draw(time);
-        syncMotion();
-      },
-    };
-  })();
-
-  function hubData(data, values, focus, agenda, taskState) {
-    const isPublic = !!data.public;
-    const { open, events, upcoming, projects, notes, lab, agent, jobs, failing, services } = values;
-    const { tasks, overdue, tonight } = taskState;
-    const upcomingEvent = isPublic ? null : agenda.find(({ past, start, item }) => !past && start !== null && item !== focus.item)?.item;
-    const task = tasks.find((entry) => entry.overdue) ?? tasks.find((entry) => entry.tonight) ?? tasks[0];
-    const deadline = isPublic ? null : list(data.school?.next)[0];
-    const recent = isPublic ? null : list(data.recent).find((note) => /project/i.test(note.folder)) ?? list(data.projects).find((item) => item.status === "active");
-    const weekend = isWeekend(clockDate());
-    const top = isPublic ? null : data.brain?.top_hub;
-    const issue = isPublic ? null : list(data.homelab?.open_issues).find((item) => item.severity === "bad") ?? list(data.homelab?.open_issues)[0];
-    const record = (value, tone, level, detail = value, signal) => ({ value, tone, level, detail, signal });
-    const hubs = {
-      calendar: record(metric(events, "events"), events > 0 ? "cyan" : "soft", events > 0 ? 0.5 : 0,
-        upcomingEvent ? `${upcomingEvent.time} · ${shorten(upcomingEvent.summary, 72)}` : metric(events, "events today")),
-      school: weekend
-        ? record("Off", "soft", 0, "No school deadlines · projects")
-        : record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
-          deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
-      tasks: record(overdue > 0 ? metric(overdue, "overdue") : tonight > 0 ? metric(tonight, "due tonight") : metric(open, "open"),
-        overdue > 0 ? "bad" : tonight > 0 ? "warn" : open > 0 ? "cyan" : "soft",
-        overdue > 0 ? 1 : tonight > 0 ? 0.7 : open > 0 ? 0.4 : 0,
-        task ? taskCopy(task.item) : metric(open, "open tasks"), open),
-      projects: record(metric(projects, "active"), projects > 0 ? "violet" : "soft", projects > 0 ? 0.5 : 0,
-        recent ? shorten(recent.label ?? recent.name, 72) : metric(projects, "active projects")),
-      vault: record(metric(notes, "notes"), notes > 0 ? "violet" : "soft", notes > 0 ? 0.4 : 0,
-        top?.label ? shorten(top.label, 72) : metric(notes, "vault notes")),
-      homelab: record(lab[0], lab[1], lab[1] === "cyan" ? 0.5 : lab[1] === "soft" ? 0 : 1,
-        issue?.text ? shorten(sentence(issue.text.split(" — ").at(-1)), 72) : services !== DASH ? `${services} services up` : lab[0], services),
-      hermes: record(failing === 0 && jobs !== undefined ? metric(jobs, "jobs") : agent[0], agent[1],
-        agent[1] === "cyan" ? 0.5 : agent[1] === "bad" ? 1 : 0,
-        jobs !== undefined && failing !== undefined ? `${Math.max(0, jobs - failing)}/${jobs} jobs without failures` : agent[0]),
-    };
-    for (const [id, hub] of Object.entries(hubs)) {
-      const key = id === "vault" ? "brain" : id;
-      if (panelState(key, hub.value === DASH ? undefined : 1) === "error") {
-        hubs[id] = record("Unavailable", "bad", 0);
-      }
-    }
-    return {
-      hubs,
-      defaultId: lab[1] === "warn" || lab[1] === "bad" ? "homelab" : agent[1] === "bad" ? "hermes"
-        : recent && focus.hub !== "projects" ? "projects" : upcomingEvent ? "calendar" : jobs !== undefined ? "hermes" : null,
-    };
-  }
+  const confluence = createHermesFlow($("hermes-field").querySelector("canvas"));
 
   const samples = [];
 
@@ -1840,23 +1550,6 @@ function createHermesFlow() {
     setText($("p520-mem"), pct(values.p520Mem));
     setText($("p520-gpu"), values.gpu);
     setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
-  }
-
-  function renderConfluence(data, values) {
-    const flow = confluence.update(data, {
-      active: values.activeRuns,
-      failing: values.failing,
-      stale: state.stale,
-      unavailable: Boolean(state.failed && !state.data || data.errors?.hermes),
-      animate: !motion.matches && !document.hidden,
-    });
-    $("constellation").dataset.hermesState = flow.tone;
-    setText($("flow-status"), flow.headline);
-    setText($("flow-active"), flow.active);
-    setText($("flow-failing"), flow.failing);
-    setText($("flow-detail"), flow.detail);
-    $("flow-detail").hidden = !flow.detail;
-    setText($("flow-result"), flow.result ?? (data.public ? DASH : "Awaiting a run receipt"));
   }
 
   function render() {
@@ -1883,12 +1576,12 @@ function createHermesFlow() {
     renderProjectPulse(data, values, focus, today);
     renderSpotify(data);
     renderHealth(values);
-    renderConfluence(data, values);
-    const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
-    const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
-    const status = panelState("constellation", available ? 1 : undefined);
-    $("constellation").dataset.state = status;
-    radar.update(hubs, focus, time.minute, defaultId);
+    confluence.update(data, {
+      active: values.activeRuns,
+      failing: values.failing,
+      stale: state.stale,
+      unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
+    });
   }
 
   function refreshSource(now) {

@@ -235,24 +235,14 @@
   }
 
   function model(data) {
-    const { now = {}, tasks, school, calendar, brain, homelab, hermes, errors } = data;
+    const { now = {}, tasks, school, calendar, homelab, hermes, errors } = data;
     const events = count(calendar?.count, Array.isArray(calendar?.events) ? calendar.events.length : undefined);
     const open = count(tasks?.open, now?.open_tasks);
     const upcoming = count(school?.upcoming, now?.assignments_upcoming);
     const projects = count(now?.active_projects);
-    const notes = count(brain?.vault_notes, brain?.notes);
     const failing = errors?.cron_ledger ? undefined : count(hermes?.cron_failing_count, now?.jobs_failing);
-    const jobs = count(now?.jobs_total, hermes?.cron_active);
-    const reachable = now?.homelab_reachable ?? homelab?.reachable;
-    const bad = count(now?.homelab_issues_bad, homelab?.issue_counts?.bad);
-    const warn = count(now?.homelab_issues_warn, homelab?.issue_counts?.warn);
     const up = count(now?.services_up, homelab?.services_up);
     const total = count(now?.services_total, homelab?.services_total);
-    const devicesUp = count(now?.devices_online);
-    const devicesTotal = count(now?.devices_total);
-    const services = up !== undefined && total !== undefined ? `${up}/${total}` : DASH;
-    const devices = devicesUp !== undefined && devicesTotal !== undefined ? `${devicesUp}/${devicesTotal}` : DASH;
-    const serviceLoss = up !== undefined && total !== undefined && up < total;
     const mac = hermes?.host ?? {};
     const macCpu = count(mac.cpu_pct);
     const macMem = count(mac.mem_pct)
@@ -268,19 +258,7 @@
     const gpu = gpuOwner ? gpuOwner.replace(/-vm$/i, "").toUpperCase()
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);
-    const lab = reachable === false ? ["Offline", "bad"]
-      : bad > 0 ? [metric(bad, bad === 1 ? "issue" : "issues"), "bad"]
-        : warn > 0 ? [metric(warn, warn === 1 ? "warning" : "warnings"), "warn"]
-          : serviceLoss ? ["Degraded", "warn"]
-            : errors?.homelab ? ["Unavailable", "bad"]
-              : reachable === true && bad === 0 && warn === 0 ? ["Clear", "cyan"] : [DASH, "soft"];
-    const agent = failing > 0 ? [metric(failing, "failing"), "bad"]
-      : errors?.hermes ? ["Unavailable", "bad"]
-        : failing === 0 && jobs > 0 ? ["Clear", "cyan"] : jobs === 0 ? ["No jobs", "soft"] : [DASH, "soft"];
-    const tone = lab[1] === "bad" || agent[1] === "bad" ? "bad" : lab[1] === "warn" ? "warn"
-      : lab[1] === "cyan" && agent[1] === "cyan" ? "cyan" : "soft";
-    return { events, open, upcoming, projects, notes, failing, jobs, services, devices, lab, agent, tone, up, total,
-      macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
+    return { events, open, upcoming, projects, failing, up, total, macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
   }
 
   function panelState(key, value) {
@@ -626,291 +604,7 @@
     if (status === "stale") setText($("activity-meta"), "Stale");
   }
 
-  const HUBS = [
-    { id: "tasks", name: "Tasks", x: 50, y: 26, tone: "cyan" },
-    { id: "school", name: "School", x: 24, y: 17, tone: "violet" },
-    { id: "calendar", name: "Calendar", x: 16, y: 46, tone: "cyan" },
-    { id: "projects", name: "Projects", x: 76, y: 17, tone: "violet" },
-    { id: "vault", name: "Vault", x: 84, y: 46, tone: "violet" },
-    { id: "homelab", name: "Homelab", x: 27, y: 75, tone: "cyan" },
-    { id: "hermes", name: "Hermes", x: 73, y: 75, tone: "cyan" },
-  ];
-  const CENTER = { x: 50, y: 51 };
-  const hubName = (id) => HUBS.find((hub) => hub.id === id)?.name;
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const confluence = createHermesFlow();
-
-  const radar = (() => {
-    const canvas = $("radar");
-    const ctx = canvas.getContext("2d");
-    const styles = getComputedStyle(document.documentElement);
-    const colors = Object.fromEntries(["surface", "line", "fine", "cyan", "soft", "violet", "warn", "bad", "text"]
-      .map((key) => [key, styles.getPropertyValue(`--${key}`).trim()]));
-    const buttons = new Map();
-    let width = 0;
-    let height = 0;
-    let hubs = {};
-    let focus = { tone: "soft" };
-    let progress = null;
-    let settled = false;
-    let activity = new Map();
-    let selected = null;
-    let hovered = null;
-    let keyboard = null;
-    let defaultHub = null;
-    let frame = 0;
-    let lastFrame = 0;
-
-    function place(node, { x, y }) {
-      node.style.setProperty("--x", `${x}%`);
-      node.style.setProperty("--y", `${y}%`);
-      $("hubs").append(node);
-    }
-
-    const center = el("span", "hub center");
-    center.dataset.tone = "soft";
-    center.append(el("span", "hub-name", "Now"));
-    place(center, CENTER);
-
-    for (const hub of HUBS) {
-      const button = el("button", "hub");
-      button.type = "button";
-      button.dataset.hub = hub.id;
-      button.setAttribute("aria-pressed", "false");
-      button.setAttribute("aria-controls", "hubdetail");
-      if (hub.id === "tasks") button.classList.add("label-above");
-      button.append(el("span", "hub-name", hub.name), el("span", "hub-value", DASH));
-      buttons.set(hub.id, button);
-      place(button, hub);
-      button.addEventListener("pointerenter", (event) => {
-        if (event.pointerType !== "touch") hovered = hub.id;
-        showDetail();
-      });
-      button.addEventListener("pointerleave", () => {
-        hovered = null;
-        showDetail();
-      });
-      button.addEventListener("focus", () => {
-        if (button.matches(":focus-visible")) keyboard = hub.id;
-        showDetail();
-      });
-      button.addEventListener("blur", () => {
-        keyboard = null;
-        showDetail();
-      });
-      button.addEventListener("click", () => {
-        selected = selected === hub.id ? null : hub.id;
-        showDetail();
-      });
-      button.addEventListener("keydown", (event) => {
-        if (event.key !== "Escape") return;
-        selected = hovered = keyboard = null;
-        showDetail();
-      });
-    }
-
-    function showDetail() {
-      const id = hovered ?? keyboard ?? selected ?? defaultHub;
-      const info = hubs[id];
-      $("hubdetail").dataset.tone = info?.tone ?? "soft";
-      setText($("hubdetail-label"), info ? hubName(id) : "Constellation");
-      setText($("hubdetail-text"), info?.detail ?? (state.failed ? "Data unavailable" : DASH));
-      for (const [key, button] of buttons) button.setAttribute("aria-pressed", String(key === selected));
-    }
-
-    function resize() {
-      const box = canvas.getBoundingClientRect();
-      width = box.width;
-      height = box.height;
-      const scale = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(width * scale);
-      canvas.height = Math.round(height * scale);
-      ctx?.setTransform(scale, 0, 0, scale, 0, 0);
-      draw(performance.now());
-    }
-
-    function ellipse(x, y, rx, ry, color, start = 0, end = Math.PI * 2) {
-      if (rx <= 0 || ry <= 0 || end <= start) return;
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.ellipse(x, y, rx, ry, 0, start, end);
-      ctx.stroke();
-    }
-
-    function line(a, b, color) {
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-    }
-
-    function draw(time) {
-      if (!ctx || !width || !height || document.hidden) return;
-      ctx.clearRect(0, 0, width, height);
-      const compact = width < 450;
-      const canMove = !motion.matches && settled && !state.stale;
-      const origin = { x: width * CENTER.x / 100, y: height * CENTER.y / 100 };
-      const ring = compact ? 23 : 48;
-      const centerTone = colors[focus.tone];
-      ctx.lineWidth = 1;
-
-      confluence.draw(ctx, { width, height, origin, colors, time, animate: !motion.matches });
-
-      HUBS.forEach(({ id, x, y, tone: domainTone }, index) => {
-        const info = hubs[id];
-        const active = focus.hub === id;
-        const amplitude = canMove ? (compact ? 1.4 : 3.5) : 0;
-        const angle = time / 8500 + index * Math.PI * 2 / HUBS.length;
-        const anchor = { x: width * x / 100, y: height * y / 100 };
-        const point = { x: anchor.x + Math.cos(angle) * amplitude, y: anchor.y + Math.sin(angle) * amplitude };
-        const tone = colors[active ? focus.tone : info?.tone ?? "soft"];
-        const radius = (compact ? 4 : 5.5) + (active ? (compact ? 2 : 3) : 0);
-        const outer = radius + (compact ? 2 : 3);
-        if (active) {
-          const dx = point.x - origin.x;
-          const dy = point.y - origin.y;
-          const distance = Math.hypot(dx, dy);
-          if (distance > ring + outer) {
-            const edge = { x: origin.x + dx * ring / distance, y: origin.y + dy * ring / distance };
-            const spokeTone = focus.tone === "bad" ? tone : colors[domainTone];
-            ctx.globalAlpha = 0.65;
-            line(edge, point, spokeTone);
-            ctx.globalAlpha = 1;
-          }
-        }
-        ctx.fillStyle = colors.surface;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, outer, 0, Math.PI * 2);
-        ctx.fill();
-        ellipse(point.x, point.y, outer, outer, active ? tone : colors.line);
-        if (info?.level > 0) ellipse(point.x, point.y, outer, outer, tone,
-          -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * info.level);
-        ctx.fillStyle = tone;
-        const dot = active ? 2.5 : 1.5;
-        ctx.fillRect(point.x - dot, point.y - dot, dot * 2, dot * 2);
-        const pulse = (time - (activity.get(id) ?? -6000)) / 1800;
-        if (canMove && pulse >= 0 && pulse < 1) {
-          const size = outer + pulse * (compact ? 7 : 12);
-          ctx.globalAlpha = (1 - pulse) * 0.6;
-          ellipse(point.x, point.y, size, size, tone);
-          ctx.globalAlpha = 1;
-        }
-      });
-
-      ctx.fillStyle = colors.surface;
-      ctx.beginPath();
-      ctx.arc(origin.x, origin.y, ring, 0, Math.PI * 2);
-      ctx.fill();
-      ellipse(origin.x, origin.y, ring, ring, colors.line);
-      ellipse(origin.x, origin.y, ring - 5, ring - 5, colors.fine);
-      if (progress === null) {
-        for (let i = 0; i < 4; i += 1) {
-          const angle = i * Math.PI / 2 - Math.PI / 4;
-          ellipse(origin.x, origin.y, ring, ring, centerTone, angle - 0.10, angle + 0.10);
-        }
-      } else {
-        ellipse(origin.x, origin.y, ring, ring, centerTone, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * progress);
-      }
-    }
-
-    function onFrame(time) {
-      frame = 0;
-      if (time - lastFrame >= (state.stale ? 125 : 48)) {
-        lastFrame = time;
-        draw(time);
-      }
-      syncMotion();
-    }
-
-    function syncMotion() {
-      const running = (settled || state.data) && !motion.matches && !document.hidden;
-      if (running && !frame) frame = requestAnimationFrame(onFrame);
-      if (!running && frame) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-      }
-    }
-
-    motion.addEventListener("change", () => {
-      syncMotion();
-      draw(performance.now());
-    });
-    document.addEventListener("visibilitychange", syncMotion);
-    new ResizeObserver(resize).observe(canvas);
-
-    return {
-      update(next, current, minute, defaultId) {
-        const time = performance.now();
-        if (settled && !state.stale) {
-          for (const { id } of HUBS) {
-            if (next[id]?.value !== hubs[id]?.value || next[id]?.detail !== hubs[id]?.detail || next[id]?.signal !== hubs[id]?.signal
-              || (current.hub === id && focus.hub !== id)) activity.set(id, time);
-          }
-        }
-        hubs = next;
-        focus = current;
-        defaultHub = defaultId;
-        settled = Object.values(next).some(({ value }) => value !== DASH && value !== "Unavailable");
-        progress = current.window ? clamp((minute - current.window[0]) / (current.window[1] - current.window[0])) : null;
-        center.dataset.tone = current.tone;
-        for (const [id, button] of buttons) {
-          button.dataset.tone = next[id]?.tone ?? "soft";
-          button.dataset.active = String(id === current.hub);
-          setText(button.lastElementChild, next[id]?.value);
-        }
-        showDetail();
-        draw(time);
-        syncMotion();
-      },
-    };
-  })();
-
-  function hubData(data, values, focus, agenda, taskState) {
-    const isPublic = !!data.public;
-    const { open, events, upcoming, projects, notes, lab, agent, jobs, failing, services } = values;
-    const { tasks, overdue, tonight } = taskState;
-    const upcomingEvent = isPublic ? null : agenda.find(({ past, start, item }) => !past && start !== null && item !== focus.item)?.item;
-    const task = tasks.find((entry) => entry.overdue) ?? tasks.find((entry) => entry.tonight) ?? tasks[0];
-    const deadline = isPublic ? null : list(data.school?.next)[0];
-    const recent = isPublic ? null : list(data.recent).find((note) => /project/i.test(note.folder)) ?? list(data.projects).find((item) => item.status === "active");
-    const weekend = isWeekend(clockDate());
-    const top = isPublic ? null : data.brain?.top_hub;
-    const issue = isPublic ? null : list(data.homelab?.open_issues).find((item) => item.severity === "bad") ?? list(data.homelab?.open_issues)[0];
-    const record = (value, tone, level, detail = value, signal) => ({ value, tone, level, detail, signal });
-    const hubs = {
-      calendar: record(metric(events, "events"), events > 0 ? "cyan" : "soft", events > 0 ? 0.5 : 0,
-        upcomingEvent ? `${upcomingEvent.time} · ${shorten(upcomingEvent.summary, 72)}` : metric(events, "events today")),
-      school: weekend
-        ? record("Off", "soft", 0, "No school deadlines · projects")
-        : record(metric(upcoming, "due"), upcoming > 0 ? "violet" : "soft", upcoming > 0 ? 0.6 : 0,
-          deadline ? `${formatDate(deadline.due)} · ${schoolCopy(deadline)}` : metric(upcoming, "upcoming deadlines")),
-      tasks: record(overdue > 0 ? metric(overdue, "overdue") : tonight > 0 ? metric(tonight, "due tonight") : metric(open, "open"),
-        overdue > 0 ? "bad" : tonight > 0 ? "warn" : open > 0 ? "cyan" : "soft",
-        overdue > 0 ? 1 : tonight > 0 ? 0.7 : open > 0 ? 0.4 : 0,
-        task ? taskCopy(task.item) : metric(open, "open tasks"), open),
-      projects: record(metric(projects, "active"), projects > 0 ? "violet" : "soft", projects > 0 ? 0.5 : 0,
-        recent ? shorten(recent.label ?? recent.name, 72) : metric(projects, "active projects")),
-      vault: record(metric(notes, "notes"), notes > 0 ? "violet" : "soft", notes > 0 ? 0.4 : 0,
-        top?.label ? shorten(top.label, 72) : metric(notes, "vault notes")),
-      homelab: record(lab[0], lab[1], lab[1] === "cyan" ? 0.5 : lab[1] === "soft" ? 0 : 1,
-        issue?.text ? shorten(sentence(issue.text.split(" — ").at(-1)), 72) : services !== DASH ? `${services} services up` : lab[0], services),
-      hermes: record(failing === 0 && jobs !== undefined ? metric(jobs, "jobs") : agent[0], agent[1],
-        agent[1] === "cyan" ? 0.5 : agent[1] === "bad" ? 1 : 0,
-        jobs !== undefined && failing !== undefined ? `${Math.max(0, jobs - failing)}/${jobs} jobs without failures` : agent[0]),
-    };
-    for (const [id, hub] of Object.entries(hubs)) {
-      const key = id === "vault" ? "brain" : id;
-      if (panelState(key, hub.value === DASH ? undefined : 1) === "error") {
-        hubs[id] = record("Unavailable", "bad", 0);
-      }
-    }
-    return {
-      hubs,
-      defaultId: lab[1] === "warn" || lab[1] === "bad" ? "homelab" : agent[1] === "bad" ? "hermes"
-        : recent && focus.hub !== "projects" ? "projects" : upcomingEvent ? "calendar" : jobs !== undefined ? "hermes" : null,
-    };
-  }
+  const confluence = createHermesFlow($("hermes-field").querySelector("canvas"));
 
   const samples = [];
 
@@ -932,23 +626,6 @@
     setText($("p520-mem"), pct(values.p520Mem));
     setText($("p520-gpu"), values.gpu);
     setText($("hermes-runs"), values.activeRuns === undefined ? DASH : String(values.activeRuns));
-  }
-
-  function renderConfluence(data, values) {
-    const flow = confluence.update(data, {
-      active: values.activeRuns,
-      failing: values.failing,
-      stale: state.stale,
-      unavailable: Boolean(state.failed && !state.data || data.errors?.hermes),
-      animate: !motion.matches && !document.hidden,
-    });
-    $("constellation").dataset.hermesState = flow.tone;
-    setText($("flow-status"), flow.headline);
-    setText($("flow-active"), flow.active);
-    setText($("flow-failing"), flow.failing);
-    setText($("flow-detail"), flow.detail);
-    $("flow-detail").hidden = !flow.detail;
-    setText($("flow-result"), flow.result ?? (data.public ? DASH : "Awaiting a run receipt"));
   }
 
   function render() {
@@ -975,12 +652,12 @@
     renderProjectPulse(data, values, focus, today);
     renderSpotify(data);
     renderHealth(values);
-    renderConfluence(data, values);
-    const { hubs, defaultId } = hubData(data, values, focus, agenda, taskState);
-    const available = Object.values(hubs).some(({ value }) => value !== DASH && value !== "Unavailable");
-    const status = panelState("constellation", available ? 1 : undefined);
-    $("constellation").dataset.state = status;
-    radar.update(hubs, focus, time.minute, defaultId);
+    confluence.update(data, {
+      active: values.activeRuns,
+      failing: values.failing,
+      stale: state.stale,
+      unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
+    });
   }
 
   function refreshSource(now) {

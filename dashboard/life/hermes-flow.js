@@ -1,214 +1,336 @@
-function createHermesFlow() {
+function createHermesFlow(canvas) {
+  const ctx = canvas.getContext("2d");
+  const trails = document.createElement("canvas");
+  const trail = trails.getContext("2d");
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const preferenceKey = "ayumad-renderer";
+  const styles = getComputedStyle(canvas);
+  const mint = styles.getPropertyValue("--cyan").trim();
+  const accent = styles.getPropertyValue("--violet").trim();
+  const light = styles.getPropertyValue("--text").trim();
+  const amber = styles.getPropertyValue("--warn").trim();
+  const mono = styles.getPropertyValue("--mono").trim();
   const turn = Math.PI * 2;
-  const exit = 1.08;
-  const lanes = [0, .5, .25, .75, .125, .625].map((fraction) => (fraction + .06) * turn);
-  const streamSlots = new Map();
-  const receiptLabels = { succeeded: "completed", failed: "failed", delivered: "delivered" };
-  const headlines = {
-    idle: "Idle",
-    working: "Working",
-    attention: "Needs attention",
-    stale: "Feed delayed",
-    unavailable: "Telemetry unavailable",
-    empty: "Awaiting telemetry",
-  };
-  const asList = (value) => Array.isArray(value) ? value : [];
-  const nameOf = (value) => typeof value === "string" ? value.trim().slice(0, 96) : "";
-  let seed = 120157;
-  const random = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+  const slots = [
+    { x: .29, y: .46, color: mint }, { x: .70, y: .43, color: accent },
+    { x: .49, y: .69, color: mint }, { x: .35, y: .27, color: light },
+    { x: .76, y: .70, color: mint }, { x: .54, y: .35, color: accent },
+  ];
+  const warning = { x: .73, y: .61, color: amber };
+  const idle = { x: .50, y: .52, color: mint };
+  const runSlots = new Map();
+  const seen = new Set();
+  const modes = new Set(["ascii", "dither", "glitch", "particles", "crt"]);
+  const glyphs = [".", ":", "+", "*"];
+  const threshold = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+  let seed = 61779;
+  function random() {
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
     return seed / 4294967296;
-  };
-  const particleCount = 2980;
-  const particles = Array.from({ length: particleCount }, (_, index) => ({
-    orbit: (index + random()) / particleCount * turn,
-    twist: (index % 9) / 9 * turn + (random() - .5) * .54,
-    scatter: random() ** .72,
-    light: random(),
+  }
+  const swarm = Array.from({ length: 2900 }, (_, index) => ({
+    lane: Math.floor(index / 4) % slots.length,
+    fault: index % 4 === 0,
+    u: random() * 2 - 1,
+    band: Math.floor(random() * 11) / 11,
+    angle: random() * turn,
+    spread: random(),
+    bright: random(),
     x: null,
     y: null,
+    vx: 0,
+    vy: 0,
   }));
-  const sparks = Array.from({ length: 104 }, () => ({
-    direction: exit + (random() - .5) * 2.3,
-    speed: .28 + random() * .92,
-    light: .25 + random() * .75,
+  const dust = Array.from({ length: 460 }, () => ({ x: random(), y: random(), bright: random() }));
+  const sparks = Array.from({ length: 106 }, () => ({
+    angle: random() * turn, speed: .29 + random() * .87, light: random(),
   }));
-  let reading = {};
-  let scope;
-  let sourceTime = -Infinity;
-  let result = null;
-  const seenReceipts = new Set();
-  let releases = [];
-  let tone = "empty";
+  let width = 0;
+  let height = 0;
+  let renderer = "particles";
+  let frame = 0;
+  let previousFrame = 0;
   let clock = 0;
-  let lastFrame;
+  let sourceTime = -Infinity;
+  let publicView;
+  let reading = {};
+  let stale = false;
+  let faded = true;
   let currents = [];
+  let releases = [];
 
-  function matchStreams(running, active) {
-    const limit = Math.min(lanes.length, Math.floor(active ?? running.length));
-    const ids = [...new Set(running.map((run) => "run:" + run.run_id))].slice(0, limit);
-    for (let index = ids.length; index < limit; index += 1) ids.push("count:" + index);
-    for (const id of streamSlots.keys()) {
-      if (!ids.includes(id)) streamSlots.delete(id);
+  function usePreference() {
+    let saved;
+    try {
+      saved = localStorage.getItem(preferenceKey);
+    } catch {
+      // Storage can be disabled on a kiosk.
+    }
+    renderer = modes.has(saved) ? saved : "particles";
+    canvas.dataset.renderer = renderer;
+    paint(true);
+  }
+
+  function readSnapshot(data, active, failing, receivedAt) {
+    if (sourceTime !== -Infinity && (!Number.isFinite(receivedAt) || receivedAt < sourceTime)) return;
+    const flow = data.public ? null : data.hermes?.flow;
+    const runs = Array.isArray(flow?.runs) ? flow.runs : [];
+    const running = runs.filter((run) => run?.phase === "running" && typeof run.run_id === "string");
+    const capacity = Math.min(slots.length, Math.floor(active ?? running.length));
+    const ids = [...new Set(running.map((run) => "run:" + run.run_id))].slice(0, capacity);
+    for (let index = ids.length; index < capacity; index += 1) ids.push("count:" + index);
+    const previousSlots = new Map(runSlots);
+    for (const id of runSlots.keys()) {
+      if (!ids.includes(id)) runSlots.delete(id);
     }
     for (const id of ids) {
-      if (!streamSlots.has(id)) {
-        const occupied = [...streamSlots.values()];
-        streamSlots.set(id, lanes.find((phase) => !occupied.includes(phase)));
+      if (!runSlots.has(id)) {
+        const occupied = [...runSlots.values()];
+        runSlots.set(id, slots.findIndex((_, index) => !occupied.includes(index)));
       }
     }
-    currents = [...streamSlots.values()];
-  }
+    currents = [];
+    for (const index of runSlots.values()) currents[index] = slots[index];
+    reading = { active, failing };
 
-  function accept(data, active, failing, animate) {
-    const at = Date.parse(data.generated_at);
-    if (sourceTime !== -Infinity && (!Number.isFinite(at) || at < sourceTime)) return;
-    const flow = data.public ? null : data.hermes?.flow;
-    const currentRuns = asList(flow?.runs).filter((run) => typeof run?.run_id === "string" && nameOf(run.job));
-    const running = currentRuns.filter((run) => run.phase === "running");
-    const pending = currentRuns.find((run) => run.phase === "delivery_pending");
-    const reportedFailures = data.public ? [] : asList(data.hermes?.cron_failing);
-    reading = { active, failing, running, pending, failure: nameOf(reportedFailures[0]?.name) };
-
-    if (!Number.isFinite(at) || at <= sourceTime) return;
-    const receipts = new Map();
-    for (const item of asList(flow?.receipts)) {
-      if (!Object.hasOwn(receiptLabels, item?.outcome) || typeof item.run_id !== "string" || !nameOf(item.job)) continue;
-      const time = Date.parse(item.at);
-      if (!Number.isFinite(time) || time > at) continue;
-      const key = item.run_id + ":" + item.outcome;
-      if (!receipts.has(key)) receipts.set(key, { ...item, time });
-    }
-    const ordered = [...receipts.entries()].sort(([, a], [, b]) => a.time - b.time
-      || Number(a.outcome === "delivered") - Number(b.outcome === "delivered"));
-    for (const [key, receipt] of ordered) {
-      if (seenReceipts.has(key)) continue;
-      seenReceipts.add(key);
-      if (seenReceipts.size > 192) seenReceipts.delete(seenReceipts.values().next().value);
-      if (!result || receipt.time >= result.time) result = receipt;
-      if (animate && sourceTime !== -Infinity && receipt.time > sourceTime && receipt.outcome !== "failed") {
-        releases.push({ time: clock, delivered: receipt.outcome === "delivered" });
+    if (!Number.isFinite(receivedAt) || receivedAt <= sourceTime) return;
+    for (const receipt of Array.isArray(flow?.receipts) ? flow.receipts : []) {
+      if (typeof receipt?.run_id !== "string" || !["succeeded", "delivered"].includes(receipt.outcome)) continue;
+      const when = Date.parse(receipt.at);
+      const key = receipt.run_id + ":" + receipt.outcome;
+      if (!Number.isFinite(when) || when > receivedAt || seen.has(key)) continue;
+      seen.add(key);
+      if (seen.size > 192) seen.delete(seen.values().next().value);
+      if (sourceTime !== -Infinity && when > sourceTime && !stale && !motion.matches && !document.hidden) {
+        const slot = previousSlots.get("run:" + receipt.run_id) ?? runSlots.get("run:" + receipt.run_id);
+        releases.push({ origin: slots[slot] ?? idle, born: clock });
       }
     }
-    sourceTime = at;
     releases = releases.slice(-3);
+    sourceTime = receivedAt;
   }
 
-  function update(data, { active, failing, stale, unavailable, animate }) {
-    const nextScope = data.public ? "public" : "private";
-    if (scope !== nextScope) {
-      scope = nextScope;
-      reading = {};
+  function update(data, { active, failing, stale: delayed, unavailable }) {
+    if (Boolean(data.public) !== publicView) {
+      publicView = Boolean(data.public);
       sourceTime = -Infinity;
-      result = null;
-      seenReceipts.clear();
-      streamSlots.clear();
+      reading = {};
+      currents = [];
+      runSlots.clear();
+      seen.clear();
       releases = [];
     }
+    stale = delayed;
     if ((!stale && !unavailable) || (stale && sourceTime === -Infinity)) {
-      accept(data, active, failing, animate && !stale);
+      readSnapshot(data, active, failing, Date.parse(data.generated_at));
     }
-    const { running = [], pending, failure } = reading;
-    tone = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
-      : reading.active > 0 ? "working" : reading.active === 0 && reading.failing === 0 ? "idle" : "empty";
-    const retry = failure && running.some((run) => run.retry === true && nameOf(run.job) === failure);
-    let detail = tone === "stale" ? "Showing last confirmed values" : "";
-    if (tone === "attention" && failure) detail = failure + (retry ? " retry in progress" : " · elevated failure rate");
-    if (tone !== "stale" && tone !== "unavailable" && !detail) {
-      if (pending) detail = nameOf(pending.job) + " · delivery pending";
-      else if (running.length) detail = [...new Set(running.map((run) => nameOf(run.job)))].slice(0, 2).join(" · ");
-    }
-
-    matchStreams(running, reading.active);
-    if (!animate || stale || unavailable) releases = [];
-    return {
-      tone, headline: headlines[tone], detail, active: reading.active, failing: reading.failing,
-      result: result ? nameOf(result.job) + " " + receiptLabels[result.outcome] : null,
-    };
+    faded = stale || unavailable || (reading.active === undefined && reading.failing === undefined);
+    if (faded || motion.matches || document.hidden) releases = [];
+    const state = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
+      : reading.active > 0 ? "working" : faded ? "empty" : "idle";
+    canvas.dataset.state = state;
+    const summary = ["Hermes particle visualizer"];
+    if (stale) summary.push("Feed delayed");
+    if (unavailable) summary.push("Telemetry unavailable");
+    if (reading.active !== undefined) summary.push(reading.active + " active runs");
+    if (reading.failing !== undefined) summary.push(reading.failing + " failing jobs");
+    const label = summary.join(". ");
+    if (canvas.getAttribute("aria-label") !== label) canvas.setAttribute("aria-label", label);
+    if (motion.matches) paint(true);
   }
 
-  function draw(ctx, { width, height, origin, colors, time, animate }) {
-    const step = lastFrame === undefined ? 0 : Math.max(0, Math.min(.15, (time - lastFrame) / 1000));
-    lastFrame = time;
-    if (animate) clock += step * (tone === "stale" ? .22 : 1);
-    const dim = tone === "stale" || tone === "unavailable" || tone === "empty";
-    const scale = Math.min(width * .258, height * .5);
-    const size = width < 450 ? .79 : 1;
-    const rotation = -.39;
-    const cosine = Math.cos(rotation);
-    const sine = Math.sin(rotation);
-    const tilt = .56 + Math.sin(clock * .20) * .05;
-    const jammed = tone === "attention";
-    const queued = !dim && !!reading.pending;
-    const heated = clock * .74;
-    const heads = dim ? [] : currents.map((phase) => phase + heated);
+  function halo(x, y, radius, color, opacity) {
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    glow.addColorStop(0, color);
+    glow.addColorStop(1, "transparent");
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = glow;
+    ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+  }
 
-    function point(orbit, twist, radius) {
-      const shell = 1 + Math.cos(twist) * radius;
-      const depth = Math.sin(twist) * radius;
-      const horizontal = Math.cos(orbit) * shell;
-      const vertical = Math.sin(orbit) * shell * tilt + depth * .83;
-      return {
-        x: origin.x + (horizontal * cosine - vertical * sine) * scale,
-        y: origin.y + (horizontal * sine + vertical * cosine) * scale,
-        depth: (Math.sin(orbit) + 1) * .34 + (Math.sin(twist) + 1) * .16,
-      };
-    }
-
-    for (const p of particles) {
-      let angle = p.orbit + clock * .19;
-      const gap = Math.cos(angle - exit);
-      const fault = jammed && gap > .91;
-      const caught = queued && !fault && gap > .94;
-      if (fault || caught) angle = exit + Math.sin(angle - exit) * (fault ? .62 : .83);
-      const twist = p.twist + angle * 3.1 - clock * .24;
-      const shell = (.07 + p.scatter * .22) * (fault ? 1.10 : 1);
-      const { x, y, depth } = point(angle, twist, shell);
-      const current = heads.some((head) => Math.cos(angle - head) > .953);
-      const bright = current || fault || caught;
-      const color = fault ? colors.warn : bright && p.light > .77 ? colors.text : colors.cyan;
-      const alpha = (dim ? .39 : 1) * Math.min(.96, .11 + depth * .3 + p.light * .34 + (bright ? .36 : 0));
-      const dot = size * (.72 + p.light * .98 + (bright ? .34 : 0));
-
-      if (animate && p.light > .65 && p.x !== null && step > 0) {
-        const dx = x - p.x;
-        const dy = y - p.y;
-        if (Math.abs(dx) + Math.abs(dy) < 14) {
-          ctx.beginPath();
-          ctx.moveTo(x - dx * (bright ? 4.8 : 2.4), y - dy * (bright ? 4.8 : 2.4));
-          ctx.lineTo(x, y);
-          ctx.lineWidth = dot * .6;
-          ctx.strokeStyle = color;
-          ctx.globalAlpha = alpha * .46;
-          ctx.stroke();
-        }
+  function stamp(particle, dot, color, opacity) {
+    const x = particle.x;
+    const y = particle.y;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = opacity;
+    if (renderer === "ascii") {
+      if (particle.bright > .25) ctx.fillText(glyphs[Math.floor(particle.bright * glyphs.length)], x, y);
+    } else if (renderer === "dither") {
+      const col = Math.round(x / 3);
+      const row = Math.round(y / 3);
+      if (opacity > (threshold[(row & 3) * 4 + (col & 3)] + .5) / 16) {
+        ctx.fillRect(col * 3, row * 3, 2, 2);
       }
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = color;
+    } else if (renderer === "glitch") {
+      const band = Math.floor(y / 15);
+      const slip = ((band + Math.floor(clock * 5)) % 11 === 0) ? Math.sin(clock * 3 + band) * width * .024 : 0;
+      ctx.fillRect(x + slip, y, dot * (slip ? 2.2 : 1.1), dot);
+    } else {
       ctx.fillRect(x, y, dot, dot);
-      p.x = x;
-      p.y = y;
     }
+  }
 
-    if (animate) {
-      releases = releases.filter((release) => clock - release.time < 2.3);
-      const gate = point(exit, 0, .07);
-      for (const [index, release] of releases.entries()) {
-        const age = clock - release.time;
-        const reach = scale * age * (release.delivered ? .47 : .27);
-        for (const spark of sparks) {
-          const angle = spark.direction + index * .18 - .27;
-          const dx = Math.cos(angle) * spark.speed * reach;
-          const dy = Math.sin(angle) * spark.speed * reach * .75;
-          ctx.globalAlpha = (1 - age / 2.3) * spark.light;
-          ctx.fillStyle = colors.cyan;
-          ctx.fillRect(gate.x + dx, gate.y + dy, 1 + spark.light, 1 + spark.light);
-        }
+  function scatter(size, strength) {
+    releases = releases.filter((release) => clock - release.born < 2.65);
+    for (const release of releases) {
+      const age = clock - release.born;
+      const fade = (1 - age / 2.65) * strength;
+      const x = release.origin.x * width;
+      const y = release.origin.y * height;
+      const distance = 4 + age * size * .24;
+      ctx.strokeStyle = release.origin.color;
+      ctx.globalAlpha = fade * fade * .53;
+      ctx.lineWidth = 1.15;
+      ctx.beginPath();
+      ctx.ellipse(x, y, distance, distance * .59, -.26, 0, turn);
+      ctx.stroke();
+      for (const spark of sparks) {
+        const radius = distance * spark.speed;
+        const dx = Math.cos(spark.angle) * radius;
+        const dy = Math.sin(spark.angle) * radius * .72;
+        ctx.globalAlpha = fade * (.15 + spark.light * .52);
+        ctx.lineWidth = .62 + spark.light;
+        ctx.beginPath();
+        ctx.moveTo(x + dx * .82, y + dy * .82);
+        ctx.lineTo(x + dx, y + dy);
+        ctx.stroke();
       }
     }
-    ctx.lineWidth = 1;
+  }
+
+  function paint(snap) {
+    if (!ctx || !width || !height || document.hidden) return;
+    const traced = renderer !== "dither" && renderer !== "ascii";
+    const strength = faded ? .48 : 1;
+    const size = Math.min(width, height * 1.7);
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = (width < 470 ? "6px " : "8px ") + mono;
+    if (trail) {
+      if (snap || !traced) trail.clearRect(0, 0, width, height);
+      else {
+        trail.globalCompositeOperation = "destination-out";
+        trail.globalAlpha = 1;
+        trail.fillStyle = renderer === "crt" ? "rgba(0,0,0,.085)" : "rgba(0,0,0,.12)";
+        trail.fillRect(0, 0, width, height);
+        trail.globalCompositeOperation = "source-over";
+      }
+    }
+
+    ctx.fillStyle = mint;
+    for (const point of dust) {
+      ctx.globalAlpha = strength * (.055 + point.bright * .14);
+      const dot = point.bright > .97 ? 1.5 : .8;
+      ctx.fillRect(point.x * width, point.y * height, dot, dot);
+    }
+    if (reading.failing > 0) halo(warning.x * width, warning.y * height, size * .18, faded ? mint : amber, .19 * strength);
+    currents.forEach((slot) => halo(slot.x * width, slot.y * height, size * .24, slot.color, .095 * strength));
+    if (trail && !snap && traced) {
+      ctx.globalAlpha = 1;
+      ctx.drawImage(trails, 0, 0, width, height);
+    }
+
+    for (const p of swarm) {
+      const failed = p.fault && reading.failing > 0;
+      const current = failed ? warning : currents[p.lane];
+      const spread = .32 + .68 * Math.sqrt(1 - p.u * p.u);
+      const swirl = p.angle + clock * .46;
+      const bend = p.u * 4.4 + clock * .36 + p.band * 2.1;
+      const depth = Math.cos(swirl + bend * .61) * spread;
+      const wave = Math.sin(bend) * .55 + Math.sin(bend * 1.54 - p.band * 3) * .19;
+      const fuzz = (p.spread - .5) * .24;
+      let tx = (.5 + (p.u * .428 + depth * .025 + fuzz * .30) * (1 + depth * .067)) * width;
+      let ty = (.51 - p.u * .129 + (wave + Math.sin(swirl) * spread * .63 + fuzz) * .248) * height;
+      if (current) {
+        const orbit = (.11 + p.spread * .89) * Math.sqrt(Math.max(.06, 1 - p.u * p.u));
+        const phase = p.angle + clock * (failed ? .44 : 1.19) + p.u * 3.9;
+        const radius = size * (failed ? .117 : .205);
+        const x = current.x * width + Math.cos(phase) * radius * orbit * 1.3 + p.u * radius * .46;
+        const y = current.y * height + Math.sin(phase) * radius * orbit * .64 - p.u * radius * .28;
+        const pull = failed ? .89 : .71 + p.spread * .20;
+        tx += (x - tx) * pull;
+        ty += (y - ty) * pull;
+      }
+      if (snap || p.x === null) {
+        p.x = tx;
+        p.y = ty;
+        p.vx = 0;
+        p.vy = 0;
+      } else {
+        p.vx = (p.vx + (tx - p.x) * .092) * .81;
+        p.vy = (p.vy + (ty - p.y) * .092) * .81;
+        p.x += p.vx;
+        p.y += p.vy;
+      }
+      const front = .26 + (depth + 1) * .36;
+      const glow = strength * Math.min(.97, front * (.27 + p.bright * .73) + (failed ? .16 : 0));
+      const dot = .7 + front * p.bright * 1.49 + (failed ? .23 : 0);
+      const color = failed && faded ? mint : current?.color ?? (p.band > .78 ? accent : mint);
+      if (traced && p.bright > .29) {
+        const target = snap ? ctx : trail ?? ctx;
+        target.globalAlpha = glow * (snap ? .24 : .31);
+        target.strokeStyle = color;
+        target.lineWidth = dot * .52;
+        target.beginPath();
+        target.moveTo(p.x - (snap ? Math.cos(bend) * 6 : p.vx * 5.6),
+          p.y - (snap ? Math.sin(swirl) * 4 : p.vy * 5.6));
+        target.lineTo(p.x, p.y);
+        target.stroke();
+      }
+      stamp(p, dot, color, glow);
+    }
+    if (!motion.matches) scatter(size, strength);
     ctx.globalAlpha = 1;
   }
 
-  return { update, draw };
+  function resize() {
+    if (!ctx) return;
+    const bounds = canvas.getBoundingClientRect();
+    width = bounds.width;
+    height = bounds.height;
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.65);
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (trail) {
+      trails.width = canvas.width;
+      trails.height = canvas.height;
+      trail.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    paint(true);
+  }
+
+  function step(now) {
+    frame = 0;
+    if (motion.matches || document.hidden) return;
+    if (!previousFrame || now - previousFrame >= (stale ? 110 : 46)) {
+      if (previousFrame) clock += Math.min(.14, (now - previousFrame) / 1000) * (stale ? .24 : 1);
+      previousFrame = now;
+      paint(false);
+    }
+    frame = requestAnimationFrame(step);
+  }
+
+  function syncMotion() {
+    if (!ctx) return;
+    if (document.hidden || motion.matches) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      previousFrame = 0;
+      releases = [];
+      paint(true);
+    } else if (!frame) {
+      frame = requestAnimationFrame(step);
+    }
+  }
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === preferenceKey || event.key === null) usePreference();
+  });
+  document.addEventListener("visibilitychange", syncMotion);
+  motion.addEventListener("change", syncMotion);
+  new ResizeObserver(resize).observe(canvas);
+  usePreference();
+  resize();
+  syncMotion();
+  return { update };
 }

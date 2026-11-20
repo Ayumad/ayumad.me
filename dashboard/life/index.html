@@ -54,30 +54,9 @@
         </div>
 
         <div class="workspace">
-          <section id="constellation" class="constellation" aria-labelledby="maplabel">
-            <div class="map-head flow-head">
-              <div>
-                <h2 id="maplabel" class="label">Hermes Confluence</h2>
-                <strong id="flow-status" role="status">Awaiting telemetry</strong>
-                <span id="flow-detail" hidden></span>
-              </div>
-              <dl class="flow-counts">
-                <div><dt>Active runs</dt><dd id="flow-active">—</dd></div>
-                <div><dt>Failing jobs</dt><dd id="flow-failing">—</dd></div>
-              </dl>
-            </div>
-            <div class="sky" id="sky">
-              <canvas id="radar" aria-hidden="true"></canvas>
-              <div id="hubs" class="hubs"></div>
-            </div>
-            <div class="map-readouts">
-              <div class="flow-readout">
-                <b>Last confirmed result</b>
-                <span id="flow-result" aria-live="polite">—</span>
-              </div>
-              <div id="hubdetail" class="map-detail"><b id="hubdetail-label">—</b><span id="hubdetail-text">—</span></div>
-            </div>
-          </section>
+          <div class="hermes-field" id="hermes-field">
+            <canvas role="img" aria-label="Hermes particle visualizer"></canvas>
+          </div>
 
           <div class="schedule">
             <section id="today" aria-labelledby="todaylabel">

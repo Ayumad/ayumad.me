@@ -124,15 +124,14 @@ async function inspect(page) {
       schoolLabel: find("schoollabel").innerText,
       schoolMode: find("school-panel").dataset.mode ?? null,
       focus: ["focuskicker", "focustitle", "focusdetail"].map((id) => find(id).innerText),
-      activeHub: document.querySelector(".hub[data-active=true]")?.dataset.hub ?? null,
       health: ["mac-cpu", "mac-mem", "p520-load", "hermes-runs"].map((id) => find(id).innerText),
       healthState: find("health").dataset.state ?? null,
       spotifyState: find("spotify").dataset.state ?? null,
       projectPulseHidden: find("project-pulse").hidden,
-      area: box(find("sky")),
-      hubs: [...document.querySelectorAll(".hub")].map((node) => ({ ...box(node), text: node.innerText })),
+      field: box(document.querySelector("#hermes-field canvas")),
+      fieldText: find("hermes-field").textContent.trim(),
       rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
-      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "constellation", "health", "weather"]
+      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "hermes-field", "health", "weather"]
         .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
     };
   });
@@ -145,22 +144,14 @@ function verifyBounds(metrics) {
     const limit = panel === footer ? metrics.inner[1] : footer.y;
     assert(panel.y >= 0 && panel.y + panel.height <= limit + 0.25, `${panel.id} ends at ${panel.y + panel.height}, limit ${limit}`);
   }
-  assert.equal(metrics.hubs.length, 8);
-  const { x, y, width, height } = metrics.area;
-  for (const [index, hub] of metrics.hubs.entries()) {
-    assert(hub.text && hub.width > 0 && hub.height > 0);
-    assert(hub.x >= x && hub.x + hub.width <= x + width && hub.y >= y && hub.y + hub.height <= y + height,
-      `Hub outside constellation ${hub.text}`);
-    for (const other of metrics.hubs.slice(index + 1)) {
-      assert(hub.x + hub.width <= other.x || other.x + other.width <= hub.x ||
-        hub.y + hub.height <= other.y || other.y + other.height <= hub.y,
-      `Hub labels overlap ${hub.text} and ${other.text}`);
-    }
-  }
+  const panel = metrics.panels.find(({ id }) => id === "hermes-field");
+  assert.equal(metrics.fieldText, "");
+  assert(Math.abs(metrics.field.width - (panel.width - 2)) < 1);
+  assert(Math.abs(metrics.field.height - (panel.height - 2)) < 1);
   assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 1][idx]));
 }
 
-const image = (page) => page.locator("#radar").evaluate((canvas) => canvas.toDataURL());
+const image = (page) => page.locator("#hermes-field canvas").evaluate((canvas) => canvas.toDataURL());
 
 try {
   for (const [name, width, height, options] of [
@@ -189,8 +180,6 @@ try {
     assert.match(result.health[0], /^(—|\d+%)$/);
     assert.match(result.health[2], /^(—|\d+\.\d)$/);
     assert.equal(result.healthState, "ready");
-    assert.equal(result.activeHub, isPublic ? null : result.activeHub);
-    assert(isPublic || result.activeHub === null || ["projects", "school", "calendar"].includes(result.activeHub));
     assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 1] : [3, 3, 2, 1]);
     assert.equal(await page.locator("#spotify").isVisible(), true);
     assert.notEqual(result.spotifyState, null);
@@ -204,7 +193,6 @@ try {
       assert.match(eventTimes[1], /^(All day|\d{1,2}:\d{2} (AM|PM))$/);
       assert.notEqual(await page.locator("#focus").getAttribute("data-tone"), null);
       assert.equal(await page.locator("#tasks .rail-row").first().getAttribute("data-tone"), "soft");
-      assert.match(await page.locator('[data-hub="tasks"] .hub-value').innerText(), new RegExp(`^${full.tasks.open} OPEN$`));
       if (await page.locator("#event-more-label").isVisible()) {
         await page.locator("#event-more-label").click();
         assert(await page.locator("#event-overflow").isVisible());
@@ -215,35 +203,24 @@ try {
     const frame = await image(page);
     const seconds = await page.locator("#secs").innerText();
     await page.clock.runFor(1100);
-    assert.notEqual(await image(page), frame, "Constellation should drift");
+    assert.notEqual(await image(page), frame, "The particle field should drift");
     assert.notEqual(await page.locator("#secs").innerText(), seconds, "Clock seconds should tick");
 
-    const hub = page.getByRole("button", { name: /vault/i });
-    await hub.hover();
-    assert.equal(await page.locator("#hubdetail-text").innerText(), isPublic ? `${full.brain.notes ?? full.brain.vault_notes} vault notes` : full.brain.top_hub.label);
-    await hub.click();
-    assert.equal(await hub.getAttribute("aria-pressed"), "true");
-    await page.mouse.move(0, 0);
-    assert.equal(await page.locator("#hubdetail-label").innerText(), "VAULT");
     if (isPublic) {
-      for (const button of await page.locator("button.hub").all()) await button.click();
       verifyPrivacy(await page.locator("body").innerText());
       verifyPrivacy(await page.content());
     }
 
     assert.deepEqual(errors, []);
     console.log(name, JSON.stringify({
-      viewport: result.inner, scroll: result.scroll, focus: result.focus, hubs: result.hubs.length, rows: result.rows,
+      viewport: result.inner, scroll: result.scroll, focus: result.focus, field: result.field, rows: result.rows,
       health: result.health, animated: true, errors: errors.length, screenshot,
     }));
     await close();
   }
 
   const mixed = await open(390, 844, { payload: { ...full, public: true } });
-  for (const button of await mixed.page.locator("button.hub").all()) {
-    await button.click();
-    verifyPrivacy(await mixed.page.content());
-  }
+  verifyPrivacy(await mixed.page.content());
   assert.deepEqual(mixed.errors, []);
   await close();
 
@@ -273,7 +250,6 @@ try {
   assert.equal(await deadline.page.locator("#focuskicker").innerText(), "OVERDUE");
   assert.equal(await deadline.page.locator("#focus").getAttribute("data-tone"), "bad");
   assert.equal(await deadline.page.locator("#tasks .rail-row").first().locator(".row-time").textContent(), "Overdue");
-  assert.equal(await deadline.page.locator('[data-hub="tasks"] .hub-value').innerText(), "1 OVERDUE");
   assert.deepEqual(deadline.errors, []);
   await close();
 
@@ -285,7 +261,6 @@ try {
   });
   assert.deepEqual((await inspect(dates.page)).focus, ["OVERDUE", "Passed due date", "Due Nov 18 · Task"]);
   assert.deepEqual(await dates.page.locator("#tasks .row-time").allTextContents(), ["Overdue", "Nov 20"]);
-  assert.equal(await dates.page.locator('[data-hub="tasks"] .hub-value').innerText(), "2 OVERDUE");
   assert.deepEqual(dates.errors, []);
   await close();
 
@@ -293,6 +268,15 @@ try {
   const frame = await image(reduced.page);
   await reduced.page.clock.runFor(1100);
   assert.equal(await image(reduced.page), frame);
+  const preferenceTab = await reduced.page.context().newPage();
+  await preferenceTab.route(`${origin}/preferences-test`, (route) => route.fulfill({ contentType: "text/html", body: "" }));
+  await preferenceTab.goto(`${origin}/preferences-test`);
+  const canvas = reduced.page.locator("#hermes-field canvas");
+  assert.equal(await canvas.getAttribute("data-renderer"), "particles");
+  await preferenceTab.evaluate(() => localStorage.setItem("ayumad-renderer", "dither"));
+  await reduced.page.waitForFunction(() => document.querySelector("#hermes-field canvas").dataset.renderer === "dither");
+  assert.notEqual(await image(reduced.page), frame);
+  await preferenceTab.close();
   assert.deepEqual(reduced.errors, []);
   await close();
 
@@ -311,7 +295,7 @@ try {
     now: new Date(`${fixtureDay}T15:10:00-08:00`),
   });
   const longMetrics = await inspect(longFocus.page);
-  assert.equal(longMetrics.activeHub, "calendar");
+  assert.equal(longMetrics.focus[0], "NOW");
   verifyBounds(longMetrics);
   assert.deepEqual(longFocus.errors, []);
   await close();
@@ -322,7 +306,6 @@ try {
     now: new Date(`${fixtureDay}T15:10:00-08:00`),
   });
   assert.deepEqual((await inspect(live.page)).focus, ["NOW", "Progress Check-in for Echosphere (IPMD)", "Until 4:00 PM · EchoSphere Robot"]);
-  assert.equal((await inspect(live.page)).activeHub, "calendar");
   const originalMac = await live.page.locator("#mac-cpu").innerText();
   payload = {
     ...full,
