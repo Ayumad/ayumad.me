@@ -14,6 +14,17 @@ for (const event of full.calendar?.week ?? []) {
   const date = String(event.sort || "").slice(0, 10);
   if (date) counts.set(date, (counts.get(date) ?? 0) + 1);
 }
+const brainIndex = new Map((full.brain?.nodes ?? []).map((node, i) => [node.id, `n${i}`]));
+const publicBrain = {
+  notes: full.brain?.vault_notes ?? null,
+  count: full.brain?.nodes?.length ?? 0,
+  nodes: (full.brain?.nodes ?? []).map((node, i) => ({
+    id: `n${i}`, group: node.group, activity: node.activity, degree: node.degree, size: node.size,
+  })),
+  links: (full.brain?.links ?? [])
+    .map(([a, b]) => [brainIndex.get(a), brainIndex.get(b)])
+    .filter(([a, b]) => a && b),
+};
 const publicPayload = {
   ...full,
   public: true,
@@ -27,6 +38,7 @@ const publicPayload = {
   },
   fleet: [],
   journal: [],
+  brain: publicBrain,
 };
 
 function serve(payload, port) {
@@ -67,6 +79,7 @@ async function shot(url, width, height, file) {
     source: document.querySelector("#source")?.textContent,
     secs: document.querySelector("#secs")?.textContent,
     meta: document.querySelector("#brainmeta")?.textContent,
+    hub: document.querySelector("#brainhub")?.textContent,
     canvas: (() => {
       const c = document.querySelector("#brain");
       return c ? `${c.width}x${c.height}` : "none";
@@ -76,7 +89,29 @@ async function shot(url, width, height, file) {
     week: document.querySelector("#weekmeta")?.textContent,
     tasks: document.querySelector("#tasks")?.innerText.slice(0, 160),
     bars: [...document.querySelectorAll(".pstat")].map((node) => node.innerText.replace(/\n/g, " ")),
+    rects: (() => {
+      const out = {};
+      for (const id of ["events", "brainpanel", "brain", "week"]) {
+        const node = document.getElementById(id);
+        if (!node) continue;
+        const rect = node.getBoundingClientRect();
+        out[id] = [Math.round(rect.top), Math.round(rect.height)];
+      }
+      return out;
+    })(),
   }));
+  const brainBox = await page.locator("#brain").boundingBox();
+  let hover = null;
+  if (brainBox) {
+    for (let fx = 0.2; fx <= 0.8 && !hover; fx += 0.04) {
+      for (let fy = 0.2; fy <= 0.8 && !hover; fy += 0.04) {
+        await page.mouse.move(brainBox.x + brainBox.width * fx, brainBox.y + brainBox.height * fy);
+        const text = await page.evaluate(() => document.querySelector("#brainsel")?.textContent || "");
+        if (text && !/HOVER OR TAP/.test(text)) hover = text;
+      }
+    }
+  }
+  metrics.hover = hover;
   metrics.animated = before !== "" && before !== after;
   console.log(file, JSON.stringify(metrics), "errors", errors.length, errors.slice(0, 2));
   await page.close();

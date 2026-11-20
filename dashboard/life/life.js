@@ -289,7 +289,7 @@
 
     const today = todayKey();
     const tomorrow = dayKey(1);
-    const rows = events.slice(0, 4).map((event) => {
+    const rows = events.slice(0, 3).map((event) => {
       const allDay = event.time === "all-day";
       const sortDate = String(event.sort || "").slice(0, 10);
       const dueLater = allDay && sortDate > today;
@@ -306,8 +306,8 @@
           </div>
         </div>`;
     }).join("");
-    const more = events.length > 4
-      ? `<div class="more">+ ${events.length - 4} MORE</div>`
+    const more = events.length > 3
+      ? `<div class="more">+ ${events.length - 3} MORE</div>`
       : "";
     $("events").innerHTML = rows + more;
     renderWeek(data.calendar?.week, false);
@@ -348,7 +348,7 @@
       if (!groups.has(date)) groups.set(date, []);
       groups.get(date).push(event);
     }
-    const days = [...groups.entries()].slice(0, 5);
+    const days = [...groups.entries()].slice(0, 3);
     const max = Math.max(1, ...days.map(([, events]) => events.length));
     block.hidden = days.length === 0;
     meta.textContent = items.length ? `${items.length} ITEMS` : "";
@@ -471,65 +471,612 @@
     $("val-iss").textContent = issues || "0";
   }
 
-  const BRAIN_NODES = [
-    { id: "HERMES", label: "HERMES", x: 0.14, y: 0.36, r: 5.5, amp: 4, group: "ops", key: "HERMES" },
-    { id: "HOMELAB", label: "HOMELAB", x: 0.22, y: 0.58, r: 4.8, amp: 3, group: "ops", key: "HOMELAB" },
-    { id: "P520", label: "", x: 0.07, y: 0.18, r: 3.5, amp: 3, group: "ops" },
-    { id: "DOCKER", label: "", x: 0.28, y: 0.16, r: 3.5, amp: 2.5, group: "ops" },
-    { id: "NAS", label: "", x: 0.08, y: 0.7, r: 3, amp: 2.5, group: "ops" },
-    { id: "NETWORK", label: "", x: 0.2, y: 0.84, r: 2.8, amp: 2, group: "ops" },
-    { id: "MEDIA", label: "", x: 0.34, y: 0.5, r: 3.2, amp: 3, group: "ops" },
-    { id: "OPS", label: "", x: 0.36, y: 0.3, r: 2.8, amp: 2, group: "ops" },
-    { id: "VAULT", label: "VAULT", x: 0.5, y: 0.5, r: 7, amp: 2, group: "core", key: "VAULT" },
-    { id: "PROJECTS", label: "PROJECTS", x: 0.43, y: 0.2, r: 5, amp: 3, group: "knowledge", key: "PROJECTS" },
-    { id: "WEBSITE", label: "", x: 0.58, y: 0.12, r: 3.5, amp: 2.5, group: "knowledge" },
-    { id: "RAG", label: "", x: 0.62, y: 0.3, r: 3.5, amp: 2.5, group: "knowledge" },
-    { id: "AI", label: "", x: 0.7, y: 0.48, r: 4, amp: 3, group: "knowledge" },
-    { id: "VOICE", label: "", x: 0.58, y: 0.68, r: 3, amp: 2.5, group: "knowledge" },
-    { id: "SKETCH", label: "", x: 0.44, y: 0.78, r: 3, amp: 2.5, group: "knowledge" },
-    { id: "CALENDAR", label: "CALENDAR", x: 0.84, y: 0.26, r: 5, amp: 2.5, group: "life", key: "CALENDAR" },
-    { id: "TASKS", label: "TASKS", x: 0.9, y: 0.48, r: 5, amp: 2.5, group: "life", key: "TASKS" },
-    { id: "SCHOOL", label: "SCHOOL", x: 0.77, y: 0.14, r: 4, amp: 2.5, group: "life", key: "SCHOOL" },
-    { id: "ACM", label: "", x: 0.93, y: 0.72, r: 3, amp: 2, group: "life" },
-    { id: "JOURNAL", label: "", x: 0.78, y: 0.82, r: 3, amp: 2.5, group: "life" },
-    { id: "GEAR", label: "", x: 0.64, y: 0.88, r: 3, amp: 2, group: "life" },
-    { id: "AUDIO", label: "", x: 0.5, y: 0.92, r: 2.5, amp: 2, group: "life" },
-    { id: "GAMING", label: "", x: 0.85, y: 0.92, r: 2.5, amp: 2, group: "life" },
-  ];
+  const BRAIN_COLORS = {
+    projects: "#777fc4",
+    areas: "#48efd0",
+    ops: "#48efd0",
+    ai: "#8f92e8",
+    system: "#dbe9e5",
+    journal: "#e0b070",
+    root: "#e5f4f2",
+  };
 
-  const BRAIN_LINKS = [
-    ["HERMES", "P520"], ["HERMES", "DOCKER"], ["HERMES", "OPS"], ["HERMES", "HOMELAB"], ["HERMES", "PROJECTS"], ["HERMES", "VAULT"],
-    ["HOMELAB", "P520"], ["HOMELAB", "DOCKER"], ["HOMELAB", "NAS"], ["HOMELAB", "MEDIA"], ["HOMELAB", "NETWORK"],
-    ["P520", "DOCKER"], ["P520", "NETWORK"], ["DOCKER", "MEDIA"], ["NAS", "MEDIA"], ["MEDIA", "OPS"],
-    ["VAULT", "PROJECTS"], ["VAULT", "CALENDAR"], ["VAULT", "TASKS"], ["VAULT", "SCHOOL"], ["VAULT", "JOURNAL"],
-    ["PROJECTS", "WEBSITE"], ["PROJECTS", "RAG"], ["PROJECTS", "AI"], ["PROJECTS", "VOICE"], ["PROJECTS", "SKETCH"],
-    ["WEBSITE", "RAG"], ["RAG", "AI"], ["AI", "VOICE"],
-    ["CALENDAR", "TASKS"], ["CALENDAR", "SCHOOL"], ["CALENDAR", "ACM"], ["CALENDAR", "JOURNAL"],
-    ["TASKS", "SCHOOL"], ["SCHOOL", "ACM"], ["JOURNAL", "GEAR"], ["GEAR", "AUDIO"], ["GEAR", "GAMING"], ["TASKS", "GEAR"],
-  ];
+  function seededRandom(seed) {
+    let value = seed >>> 0;
+    return () => {
+      value = (value * 1664525 + 1013904223) >>> 0;
+      return value / 4294967296;
+    };
+  }
+
+  function layoutBrain(nodes, links) {
+    const count = nodes.length;
+    const rand = seededRandom(0x9e3779b9);
+    const pos = nodes.map((_, index) => {
+      const u = (index + 0.5) / Math.max(1, count);
+      const theta = Math.acos(1 - 2 * u);
+      const phi = Math.PI * (1 + Math.sqrt(5)) * index;
+      return {
+        x: Math.sin(theta) * Math.cos(phi),
+        y: Math.sin(theta) * Math.sin(phi) * 0.78,
+        z: Math.cos(theta),
+      };
+    });
+
+    const indexById = new Map(nodes.map((node, index) => [node.id, index]));
+    const edges = [];
+    for (const link of links || []) {
+      const a = indexById.get(link?.[0]);
+      const b = indexById.get(link?.[1]);
+      if (a == null || b == null || a === b) continue;
+      edges.push([a, b]);
+    }
+
+    for (let iteration = 0; iteration < 150; iteration += 1) {
+      const disp = pos.map(() => ({ x: 0, y: 0, z: 0 }));
+      for (let i = 0; i < count; i += 1) {
+        for (let j = i + 1; j < count; j += 1) {
+          let dx = pos[i].x - pos[j].x;
+          let dy = pos[i].y - pos[j].y;
+          let dz = pos[i].z - pos[j].z;
+          let d2 = dx * dx + dy * dy + dz * dz;
+          if (d2 < 0.0004) {
+            dx = rand() * 0.02 - 0.01;
+            dy = rand() * 0.02 - 0.01;
+            dz = rand() * 0.02 - 0.01;
+            d2 = dx * dx + dy * dy + dz * dz + 0.0004;
+          }
+          const d = Math.sqrt(d2);
+          const force = 0.018 / (d2 + 0.006);
+          const ux = dx / d;
+          const uy = dy / d;
+          const uz = dz / d;
+          disp[i].x += ux * force;
+          disp[i].y += uy * force;
+          disp[i].z += uz * force;
+          disp[j].x -= ux * force;
+          disp[j].y -= uy * force;
+          disp[j].z -= uz * force;
+        }
+      }
+      for (const [a, b] of edges) {
+        let dx = pos[b].x - pos[a].x;
+        let dy = pos[b].y - pos[a].y;
+        let dz = pos[b].z - pos[a].z;
+        let d = Math.hypot(dx, dy, dz);
+        if (d < 0.001) {
+          dx = 0.01;
+          dy = 0;
+          dz = 0;
+          d = 0.01;
+        }
+        const force = (d - 0.34) * 0.055;
+        const ux = dx / d;
+        const uy = dy / d;
+        const uz = dz / d;
+        disp[a].x += ux * force;
+        disp[a].y += uy * force;
+        disp[a].z += uz * force;
+        disp[b].x -= ux * force;
+        disp[b].y -= uy * force;
+        disp[b].z -= uz * force;
+      }
+      for (let i = 0; i < count; i += 1) {
+        disp[i].x -= pos[i].x * 0.025;
+        disp[i].y -= pos[i].y * 0.025;
+        disp[i].z -= pos[i].z * 0.025;
+        pos[i].x += Math.max(-0.09, Math.min(0.09, disp[i].x));
+        pos[i].y += Math.max(-0.09, Math.min(0.09, disp[i].y));
+        pos[i].z += Math.max(-0.09, Math.min(0.09, disp[i].z));
+        pos[i].x *= 0.996;
+        pos[i].y *= 0.996;
+        pos[i].z *= 0.996;
+      }
+    }
+
+    let maxX = 0.001;
+    let maxY = 0.001;
+    let maxZ = 0.001;
+    const maxDegree = Math.max(1, ...nodes.map((node) => Number(node.degree) || 0));
+    for (let index = 0; index < pos.length; index += 1) {
+      const importance = (Number(nodes[index].degree) || 0) / maxDegree;
+      pos[index].z += (0.5 - importance) * 0.7;
+      maxX = Math.max(maxX, Math.abs(pos[index].x));
+      maxY = Math.max(maxY, Math.abs(pos[index].y));
+      maxZ = Math.max(maxZ, Math.abs(pos[index].z));
+    }
+    for (const point of pos) {
+      point.x /= maxX;
+      point.y /= maxY;
+      point.z /= maxZ;
+    }
+    return { pos, edges };
+  }
 
   const BRAIN = (() => {
     const canvas = $("brain");
-    if (!canvas) return { setActivity() {} };
+    if (!canvas) return { setData() {}, setActivity() {} };
     const ctx = canvas.getContext("2d");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const groups = { ops: "#48efd0", knowledge: "#777fc4", life: "#e0b070", core: "#e5f4f2" };
-    const nodes = BRAIN_NODES.map((node) => ({
-      ...node,
-      phase: Math.random() * Math.PI * 2,
-      speed: 0.12 + Math.random() * 0.18,
-    }));
-    const byId = new Map(nodes.map((node) => [node.id, node]));
-    const links = BRAIN_LINKS.map(([a, b]) => ({ a: byId.get(a), b: byId.get(b) })).filter((link) => link.a && link.b);
-    const meta = $("brainmeta");
-    if (meta) meta.textContent = `${nodes.length} NODES`;
-    const activity = Object.create(null);
+    const state = {
+      nodes: [],
+      edges: [],
+      links: 0,
+      topHub: null,
+      signature: "",
+      activity: Object.create(null),
+      hover: null,
+      selected: null,
+      lookX: 0,
+      lookY: 0,
+      targetX: 0,
+      targetY: 0,
+    };
     const pulses = [];
-    let w = 0;
-    let h = 0;
+    let width = 0;
+    let height = 0;
     let dpr = 1;
+    let lastDraw = 0;
     let nextPulse = 0;
-    let hover = null;
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      width = rect.width;
+      height = rect.height;
+    }
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    resize();
+
+    function camera(time) {
+      const yaw = 0.55 + state.lookX + (reduce ? 0 : time * 0.000045);
+      const pitch = -0.32 + state.lookY + (reduce ? 0 : Math.sin(time * 0.00007) * 0.05);
+      return {
+        cosY: Math.cos(yaw),
+        sinY: Math.sin(yaw),
+        cosP: Math.cos(pitch),
+        sinP: Math.sin(pitch),
+      };
+    }
+
+    function project(point, time, cam) {
+      const drift = reduce ? 0 : 1;
+      const x0 = point.x + Math.sin(time * 0.00019 + point.y * 3.1) * 0.018 * drift;
+      const y0 = point.y + Math.cos(time * 0.00023 + point.z * 3.7) * 0.014 * drift;
+      const z0 = point.z + Math.sin(time * 0.00017 + point.x * 2.3) * 0.016 * drift;
+      const x1 = x0 * cam.cosY - z0 * cam.sinY;
+      const z1 = x0 * cam.sinY + z0 * cam.cosY;
+      const y1 = y0 * cam.cosP - z1 * cam.sinP;
+      const z2 = y0 * cam.sinP + z1 * cam.cosP;
+      const scale = 1 / (1.55 + z2 * 0.65);
+      return {
+        x: width / 2 + x1 * scale * width * 0.46,
+        y: height / 2 + y1 * scale * height * 0.44,
+        z: z2,
+        scale,
+        depth: (z2 + 1) / 2,
+      };
+    }
+
+    function level(node) {
+      return state.activity[node.activity] ?? 0;
+    }
+
+    function colorFor(group) {
+      return BRAIN_COLORS[group] || BRAIN_COLORS.areas;
+    }
+
+    function edgeLevel(edge) {
+      const a = state.nodes[edge[0]];
+      const b = state.nodes[edge[1]];
+      return Math.max(a ? level(a) : 0, b ? level(b) : 0);
+    }
+
+    function drawSpace(time, cam) {
+      const box = 1.18;
+      ctx.strokeStyle = "rgba(72, 239, 208, 0.11)";
+      ctx.lineWidth = 0.65;
+      for (let line = -3; line <= 3; line += 1) {
+        const x = (line / 3) * box;
+        const a = project({ x, y: box, z: -box }, time, cam);
+        const b = project({ x, y: box, z: box }, time, cam);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        const c = project({ x: -box, y: box, z: x }, time, cam);
+        const d = project({ x: box, y: box, z: x }, time, cam);
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        ctx.lineTo(d.x, d.y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(72, 239, 208, 0.09)";
+      ctx.lineWidth = 0.55;
+      const corners = [];
+      for (const x of [-box, box]) {
+        for (const y of [-box, box]) {
+          for (const z of [-box, box]) corners.push(project({ x, y, z }, time, cam));
+        }
+      }
+      const edges = [
+        [0, 1], [0, 2], [1, 3], [2, 3],
+        [4, 5], [4, 6], [5, 7], [6, 7],
+        [0, 4], [1, 5], [2, 6], [3, 7],
+      ];
+      for (const [a, b] of edges) {
+        ctx.beginPath();
+        ctx.moveTo(corners[a].x, corners[a].y);
+        ctx.lineTo(corners[b].x, corners[b].y);
+        ctx.stroke();
+      }
+    }
+
+    function labelNodes() {
+      const priority = [
+        "loadout hub",
+        "journal calendar",
+        "todo master",
+        "homelab",
+        "personal website",
+        "home",
+        "obsidian rag assistant",
+        "ai engineering curriculum",
+      ];
+      const picked = [];
+      const used = new Set();
+      const add = (node) => {
+        if (!node || used.has(node)) return;
+        used.add(node);
+        picked.push(node);
+      };
+      for (const key of priority) {
+        const exact = state.nodes.find((node) => String(node.label || "").toLowerCase() === key && !used.has(node));
+        add(exact || state.nodes.find((node) => String(node.label || "").toLowerCase().includes(key) && !used.has(node)));
+        if (picked.length >= 6) break;
+      }
+      if (picked.length < 6) {
+        for (const node of state.nodes.slice().sort((a, b) => (b.degree || 0) - (a.degree || 0))) {
+          if (picked.length >= 6) break;
+          add(node);
+        }
+      }
+      return picked;
+    }
+
+    function drawLabels(projected) {
+      const picks = labelNodes();
+      if (!picks.length) return;
+
+      const boxes = [];
+      for (const node of picks) {
+        const index = state.nodes.indexOf(node);
+        if (index < 0) continue;
+        const point = projected[index];
+        if (point.depth < 0.16) continue;
+        const hub = (node.degree || 0) >= 60;
+        ctx.font = `${hub ? 11.5 : 10.5}px "SFMono-Regular", Consolas, monospace`;
+        const text = String(node.label).toUpperCase().slice(0, 22);
+        const textWidth = ctx.measureText(text).width;
+        const core = Math.max(2, point.scale * (2 + (node.size || 3) * 0.5));
+        const outward = point.x < width / 2 ? -1 : 1;
+        let placed = null;
+        for (const dir of [outward, -outward]) {
+          for (const dy of [-10, 10, -24, 24]) {
+            const anchorX = point.x + dir * (core + 12);
+            const anchorY = point.y + dy;
+            const box = {
+              x: dir > 0 ? anchorX : anchorX - textWidth - 6,
+              y: anchorY - 7,
+              w: textWidth + 6,
+              h: 14,
+            };
+            if (box.x < 2 || box.x + box.w > width - 2 || box.y < 2 || box.y + box.h > height - 2) continue;
+            if (boxes.some((other) => box.x < other.x + other.w && box.x + box.w > other.x && box.y < other.y + other.h && box.y + box.h > other.y)) continue;
+            placed = { dir, anchorX, anchorY, box };
+            break;
+          }
+          if (placed) break;
+        }
+        if (!placed) continue;
+        boxes.push(placed.box);
+        const lineX = placed.dir > 0 ? placed.anchorX : placed.anchorX;
+        const nodeEdgeX = point.x + placed.dir * core;
+        ctx.globalAlpha = 0.32;
+        ctx.strokeStyle = hub ? "#e0b070" : "#48efd0";
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(nodeEdgeX, point.y);
+        ctx.lineTo(lineX, placed.anchorY);
+        ctx.stroke();
+        ctx.globalAlpha = 0.92;
+        ctx.fillStyle = "rgba(4, 7, 7, 0.9)";
+        ctx.fillRect(placed.box.x, placed.box.y, placed.box.w, placed.box.h);
+        ctx.textAlign = placed.dir > 0 ? "left" : "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = hub ? "#e5f4f2" : "#cfe9e4";
+        ctx.fillText(text, placed.dir > 0 ? placed.anchorX + 3 : placed.anchorX - 3, placed.anchorY);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function draw(time) {
+      if (!width || !height) return;
+      ctx.clearRect(0, 0, width, height);
+      if (!state.nodes.length) return;
+
+      const cam = camera(time);
+      const projected = state.nodes.map((node) => project(node, time, cam));
+      drawSpace(time, cam);
+
+      const edgeRows = state.edges.map(([a, b]) => ({
+        a,
+        b,
+        z: (projected[a].z + projected[b].z) / 2,
+        level: edgeLevel([a, b]),
+      }));
+      edgeRows.sort((first, second) => first.z - second.z);
+      for (const edge of edgeRows) {
+        const a = projected[edge.a];
+        const b = projected[edge.b];
+        const depth = (a.depth + b.depth) / 2;
+        const active = edge.level > 0.55;
+        const alpha = 0.035 + depth * 0.085 + edge.level * 0.095;
+        ctx.strokeStyle = active ? `rgba(224, 176, 112, ${alpha})` : `rgba(72, 239, 208, ${alpha})`;
+        ctx.lineWidth = 0.4 + depth * 0.55 + edge.level * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+
+      if (!reduce && time > nextPulse && state.edges.length) {
+        const edge = state.edges[Math.floor(Math.random() * state.edges.length)];
+        const active = edgeLevel(edge) > 0.55;
+        pulses.push({
+          edge,
+          start: time,
+          duration: 850 + Math.random() * 900,
+          color: active ? "#e0b070" : "#48efd0",
+        });
+        nextPulse = time + 260 + Math.random() * 700;
+      }
+      for (let index = pulses.length - 1; index >= 0; index -= 1) {
+        const pulse = pulses[index];
+        const progress = (time - pulse.start) / pulse.duration;
+        if (progress >= 1) {
+          pulses.splice(index, 1);
+          continue;
+        }
+        const a = project(state.nodes[pulse.edge[0]], time, cam);
+        const b = project(state.nodes[pulse.edge[1]], time, cam);
+        const x = a.x + (b.x - a.x) * progress;
+        const y = a.y + (b.y - a.y) * progress;
+        ctx.globalAlpha = Math.sin(progress * Math.PI) * 0.9;
+        ctx.fillStyle = pulse.color;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.6 + a.depth * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      const order = state.nodes.map((_, index) => index).sort((a, b) => projected[a].z - projected[b].z);
+      ctx.globalCompositeOperation = "lighter";
+      for (const index of order) {
+        const node = state.nodes[index];
+        const point = projected[index];
+        const core = Math.max(1.1, (1.25 + (node.size || 3) * 0.46) * point.scale);
+        const color = colorFor(node.group);
+        const active = level(node);
+        ctx.globalAlpha = 0.045 + point.depth * 0.075;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, core * 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 0.56 + point.depth * 0.4;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, core, 0, Math.PI * 2);
+        ctx.fill();
+        if (active > 0.5) {
+          const phase = ((time / 1000 + index * 0.23) % 2.5) / 2.5;
+          ctx.globalAlpha = (1 - phase) * 0.34 * active;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 0.9;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, core + 2.5 + phase * 11, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+
+      if (state.hover || state.selected) {
+        const node = state.selected || state.hover;
+        const index = state.nodes.indexOf(node);
+        if (index >= 0) {
+          const point = projected[index];
+          const core = Math.max(1.1, (1.25 + (node.size || 3) * 0.46) * point.scale);
+          ctx.strokeStyle = "#e5f4f2";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(point.x, point.y, core + 4, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      drawLabels(projected);
+    }
+
+    function loop(time) {
+      if (!document.hidden && time - lastDraw > 32) {
+        lastDraw = time;
+        state.lookX += (state.targetX - state.lookX) * 0.08;
+        state.lookY += (state.targetY - state.lookY) * 0.08;
+        draw(time);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function selectionText(node) {
+      const selected = $("brainsel");
+      if (!selected) return;
+      if (!node) {
+        selected.textContent = "HOVER OR TAP A NODE";
+        return;
+      }
+      if (node.label) {
+        selected.textContent = `${String(node.label).toUpperCase()} · ${String(node.folder || "").toUpperCase()} · ${node.degree || 0} LINKS`;
+      } else {
+        selected.textContent = `${String(node.group || "note").toUpperCase()} CLUSTER · ${node.degree || 0} LINKS`;
+      }
+    }
+
+    function nodeAt(x, y, projected) {
+      let nearest = null;
+      let distance = 15;
+      for (let index = 0; index < state.nodes.length; index += 1) {
+        const point = projected[index];
+        const core = Math.max(1.1, (1.25 + (state.nodes[index].size || 3) * 0.46) * point.scale);
+        const d = Math.hypot(point.x - x, point.y - y);
+        if (d < Math.max(distance, core + 4)) {
+          distance = d;
+          nearest = state.nodes[index];
+        }
+      }
+      return nearest;
+    }
+
+    canvas.addEventListener("pointermove", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      state.targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 0.42;
+      state.targetY = ((event.clientY - rect.top) / rect.height - 0.5) * 0.22;
+      const time = performance.now();
+      const cam = camera(time);
+      const projected = state.nodes.map((node) => project(node, time, cam));
+      const nearest = nodeAt(event.clientX - rect.left, event.clientY - rect.top, projected);
+      if (nearest !== state.hover) {
+        state.hover = nearest;
+        canvas.style.cursor = nearest ? "pointer" : "crosshair";
+        if (!state.selected) selectionText(nearest);
+        draw(time);
+      }
+    });
+
+    canvas.addEventListener("pointerleave", () => {
+      state.hover = null;
+      state.targetX = 0;
+      state.targetY = 0;
+      if (!state.selected) selectionText(null);
+      draw(performance.now());
+    });
+
+    canvas.addEventListener("click", (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const time = performance.now();
+      const cam = camera(time);
+      const projected = state.nodes.map((node) => project(node, time, cam));
+      const nearest = nodeAt(event.clientX - rect.left, event.clientY - rect.top, projected);
+      state.selected = nearest === state.selected ? null : nearest;
+      selectionText(state.selected);
+      draw(time);
+    });
+
+    if (reduce) draw(0);
+    else requestAnimationFrame(loop);
+
+    return {
+      setData(brain) {
+        const nodes = Array.isArray(brain?.nodes) ? brain.nodes : [];
+        const signature = nodes.map((node) => node.id).join("|");
+        if (!nodes.length) {
+          state.nodes = [];
+          state.edges = [];
+          state.signature = "";
+          state.links = 0;
+          state.topHub = null;
+          const meta = $("brainmeta");
+          if (meta) meta.textContent = "—";
+          const hub = $("brainhub");
+          if (hub) hub.textContent = "NO GRAPH DATA";
+          draw(performance.now());
+          return;
+        }
+        if (signature !== state.signature) {
+          const laid = layoutBrain(nodes, brain.links || []);
+          state.nodes = nodes.map((node, index) => ({
+            ...node,
+            x: laid.pos[index].x,
+            y: laid.pos[index].y,
+            z: laid.pos[index].z,
+          }));
+          state.edges = laid.edges;
+          state.signature = signature;
+        } else {
+          state.nodes = state.nodes.map((node, index) => ({ ...node, ...nodes[index], x: node.x, y: node.y, z: node.z }));
+        }
+        state.links = (brain.links || []).length;
+        state.topHub = brain.top_hub || null;
+        state.selected = null;
+        const total = brain.notes ?? brain.vault_notes;
+        const meta = $("brainmeta");
+        if (meta) meta.textContent = `${nodes.length}/${total || "?"} NODES · ${state.links} LINKS`;
+        const hub = $("brainhub");
+        if (hub) {
+          hub.textContent = state.topHub?.label
+            ? `HUB ${String(state.topHub.label).toUpperCase()} · ${state.topHub.degree} LINKS`
+            : total
+              ? `VAULT ${total} NOTES · PUBLIC VIEW`
+              : `${nodes.length} NODES · ${state.links} LINKS`;
+        }
+        selectionText(null);
+        if (reduce) draw(performance.now());
+      },
+      setActivity(next) {
+        Object.assign(state.activity, next);
+        if (reduce) draw(performance.now());
+      },
+    };
+  })();
+
+  const AMBIENT = (() => {
+    const canvas = $("ambient");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rand = seededRandom(0xc0ffee);
+    const nodes = Array.from({ length: 72 }, () => ({
+      x: rand() * 2 - 1,
+      y: rand() * 2 - 1,
+      z: rand() * 2 - 1,
+      size: 0.6 + rand() * 1.6,
+      tone: rand() > 0.7 ? "#777fc4" : "#48efd0",
+    }));
+    const edges = [];
+    for (let i = 0; i < nodes.length; i += 1) {
+      const distances = [];
+      for (let j = 0; j < nodes.length; j += 1) {
+        if (i === j) continue;
+        distances.push({
+          j,
+          d: Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y, nodes[i].z - nodes[j].z),
+        });
+      }
+      distances.sort((a, b) => a.d - b.d);
+      for (const nearest of distances.slice(0, 2)) {
+        const key = i < nearest.j ? `${i}:${nearest.j}` : `${nearest.j}:${i}`;
+        if (!edges.some((edge) => edge.key === key)) edges.push({ a: i, b: nearest.j, key });
+      }
+    }
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
     let lastDraw = 0;
 
     function resize() {
@@ -539,132 +1086,70 @@
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      w = rect.width;
-      h = rect.height;
+      width = rect.width;
+      height = rect.height;
     }
 
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     resize();
 
-    function point(node, time) {
-      const drift = reduce ? 0 : 1;
+    function project(point, time) {
+      const yaw = 0.2 + (reduce ? 0 : time * 0.000012);
+      const pitch = -0.32;
+      const cosY = Math.cos(yaw);
+      const sinY = Math.sin(yaw);
+      const cosP = Math.cos(pitch);
+      const sinP = Math.sin(pitch);
+      const x1 = point.x * cosY - point.z * sinY;
+      const z1 = point.x * sinY + point.z * cosY;
+      const y1 = point.y * cosP - z1 * sinP;
+      const z2 = point.y * sinP + z1 * cosP;
+      const scale = 1 / (1.7 + z2 * 0.5);
       return {
-        x: node.x * w + Math.sin(time * node.speed + node.phase) * node.amp * drift,
-        y: node.y * h + Math.cos(time * node.speed * 1.4 + node.phase) * node.amp * 0.65 * drift,
+        x: width / 2 + x1 * scale * width * 0.49,
+        y: height / 2 + y1 * scale * height * 0.52,
+        scale,
+        depth: (z2 + 1) / 2,
       };
     }
 
-    function level(node) {
-      return activity[node.key] ?? 0;
-    }
-
     function draw(time) {
-      if (!w || !h) return;
-      ctx.clearRect(0, 0, w, h);
-      for (const link of links) {
-        const a = point(link.a, time);
-        const b = point(link.b, time);
-        const act = Math.max(level(link.a), level(link.b));
-        ctx.strokeStyle = act > 0.55 ? "rgba(72,239,208,0.28)" : "rgba(72,239,208,0.10)";
-        ctx.lineWidth = act > 0.55 ? 1.1 : 0.8;
+      if (!width || !height) return;
+      ctx.clearRect(0, 0, width, height);
+      const projected = nodes.map((node) => project(node, time));
+      ctx.strokeStyle = "rgba(72, 239, 208, 0.06)";
+      ctx.lineWidth = 0.55;
+      for (const edge of edges) {
+        const a = projected[edge.a];
+        const b = projected[edge.b];
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
         ctx.stroke();
       }
-      for (let i = pulses.length - 1; i >= 0; i -= 1) {
-        const pulse = pulses[i];
-        const progress = (time - pulse.start) / pulse.dur;
-        if (progress >= 1) {
-          pulses.splice(i, 1);
-          continue;
-        }
-        const a = point(pulse.link.a, time);
-        const b = point(pulse.link.b, time);
-        const x = a.x + (b.x - a.x) * progress;
-        const y = a.y + (b.y - a.y) * progress;
-        ctx.globalAlpha = Math.sin(progress * Math.PI) * 0.9;
-        ctx.fillStyle = "#48efd0";
+      for (let i = 0; i < nodes.length; i += 1) {
+        const point = projected[i];
+        const node = nodes[i];
+        ctx.globalAlpha = 0.16 + point.depth * 0.28;
+        ctx.fillStyle = node.tone;
         ctx.beginPath();
-        ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+        ctx.arc(point.x, point.y, Math.max(0.7, node.size * point.scale), 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 1;
       }
-      for (const node of nodes) {
-        const p = point(node, time);
-        const act = level(node);
-        if (act > 0.5) {
-          const phase = ((time / 1000 + node.phase) % 2.4) / 2.4;
-          ctx.globalAlpha = (1 - phase) * 0.28 * act;
-          ctx.strokeStyle = groups[node.group] || groups.ops;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, node.r + 3 + phase * 10, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-        ctx.fillStyle = groups[node.group] || groups.ops;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, node.r, 0, Math.PI * 2);
-        ctx.fill();
-        if (node.label || hover === node) {
-          ctx.fillStyle = node.group === "core" ? "#e5f4f2" : "#9bb7b3";
-          ctx.font = `${node.group === "core" ? 10 : 9}px "SFMono-Regular", Consolas, monospace`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "top";
-          ctx.fillText(node.label || node.id, p.x, p.y + node.r + 4);
-        }
-      }
+      ctx.globalAlpha = 1;
     }
 
     function loop(time) {
-      if (!document.hidden && time - lastDraw > 32) {
+      if (!document.hidden && time - lastDraw > 42) {
         lastDraw = time;
-        if (!reduce && time > nextPulse) {
-          const link = links[Math.floor(Math.random() * links.length)];
-          if (link) pulses.push({ link, start: time, dur: 900 + Math.random() * 700 });
-          nextPulse = time + 700 + Math.random() * 1200;
-        }
         draw(time);
       }
       requestAnimationFrame(loop);
     }
 
-    canvas.addEventListener("pointermove", (event) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      let nearest = null;
-      let distance = 18;
-      for (const node of nodes) {
-        const p = point(node, performance.now());
-        const d = Math.hypot(p.x - x, p.y - y);
-        if (d < distance) {
-          distance = d;
-          nearest = node;
-        }
-      }
-      if (nearest !== hover) {
-        hover = nearest;
-        canvas.style.cursor = nearest ? "pointer" : "crosshair";
-        draw(performance.now());
-      }
-    });
-    canvas.addEventListener("pointerleave", () => {
-      hover = null;
-      draw(performance.now());
-    });
-
     if (reduce) draw(0);
     else requestAnimationFrame(loop);
-
-    return {
-      setActivity(next) {
-        Object.assign(activity, next);
-        if (reduce) draw(0);
-      },
-    };
   })();
 
   function brainActivityFrom(data) {
@@ -674,25 +1159,34 @@
     const failing = Number(now.jobs_failing) || 0;
     const issues = (Number(now.homelab_issues_bad) || 0) + (Number(now.homelab_issues_warn) || 0);
     const overdue = Number(tasks.overdue) || 0;
+    const open = Number(tasks.open) || Number(now.open_tasks) || 0;
     const upcoming = Number(school.upcoming) || 0;
+    const active = Number(now.active_projects) || 0;
+    const journal = Array.isArray(data.journal) ? data.journal.length : 0;
     const nowMin = nowMinutesLA();
-    let calendar = 0.35;
+    let calendar = 0.18;
+    let timed = 0;
     for (const event of data.calendar?.events || []) {
       const hours = parseHours(event.time);
       if (hours === null) continue;
+      timed += 1;
       const minutes = hours * 60;
-      if (minutes >= nowMin - 10 && minutes <= nowMin + 45) calendar = 1;
+      if (minutes >= nowMin - 15 && minutes <= nowMin + 60) calendar = 1;
     }
+    if (calendar < 0.5 && timed > 0) calendar = 0.35;
     return {
-      HERMES: failing > 0 ? 1 : 0.3,
-      HOMELAB: issues > 0 ? 1 : 0.25,
-      CALENDAR: calendar,
-      TASKS: overdue > 0 ? 1 : 0.35,
-      SCHOOL: Math.min(0.9, 0.25 + upcoming / 10),
-      VAULT: 0.55,
-      PROJECTS: 0.3,
+      hermes: failing > 0 ? 1 : 0.22,
+      homelab: issues > 0 ? 1 : 0.25,
+      calendar,
+      tasks: overdue > 0 ? 1 : open > 0 ? 0.55 : 0.2,
+      school: upcoming > 0 ? Math.min(1, 0.35 + upcoming * 0.08) : 0.2,
+      journal: journal > 0 ? 0.55 : 0.2,
+      projects: active > 0 ? 0.55 : 0.2,
+      gear: 0.18,
+      vault: 0.45,
     };
   }
+
 
   function apply(data, source) {
     const isPublic = !!data.public;
@@ -704,6 +1198,7 @@
     renderTasks(data, isPublic);
     renderSchool(data, isPublic);
     renderPulse(data);
+    BRAIN.setData(data.brain || { nodes: [], links: [] });
     BRAIN.setActivity(brainActivityFrom(data));
     generatedAt = data.generated_at || null;
     updateAge();

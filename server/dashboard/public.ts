@@ -25,6 +25,26 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
   const calendar = v1.calendar ?? {};
   const calendarEvents = Array.isArray(calendar.events) ? calendar.events : [];
   const weekEvents = Array.isArray(calendar.week) ? calendar.week : [];
+  const brain = v1.brain ?? {};
+  const brainNodes = Array.isArray(brain.nodes) ? brain.nodes : [];
+  const brainIndex = new Map<string, string>();
+  brainNodes.forEach((node: any, i: number) => {
+    if (node?.id) brainIndex.set(String(node.id), `n${i}`);
+  });
+  const publicBrain = {
+    notes: n(brain.vault_notes),
+    count: brainNodes.length,
+    nodes: brainNodes.map((node: any, i: number) => ({
+      id: `n${i}`,
+      group: node.group ?? null,
+      activity: node.activity ?? null,
+      degree: n(node.degree),
+      size: n(node.size),
+    })),
+    links: (Array.isArray(brain.links) ? brain.links : [])
+      .map((link: any) => [brainIndex.get(String(link?.[0])), brainIndex.get(String(link?.[1]))])
+      .filter((link: any[]) => link[0] && link[1]),
+  };
   const weekCounts = new Map<string, number>();
   for (const event of weekEvents) {
     const date = String(event?.sort ?? "").slice(0, 10);
@@ -143,6 +163,7 @@ export async function readPublicSnapshot(env: NodeJS.ProcessEnv = process.env) {
         all_day: e.time === "all-day",
       })),
     },
+    brain: publicBrain,
     fleet: [],
     journal: [],
     now: {

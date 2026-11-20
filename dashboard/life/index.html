@@ -13,6 +13,7 @@
     </style>
   </head>
   <body>
+    <canvas id="ambient" aria-hidden="true"></canvas>
     <div class="life">
       <header class="lh">
         <div class="lh-l">
@@ -81,9 +82,13 @@
           <div class="brainpanel" id="brainpanel">
             <div class="shead">
               <span class="slabel">SECOND BRAIN</span>
-              <span class="smeta" id="brainmeta">23 NODES</span>
+              <span class="smeta" id="brainmeta">—</span>
             </div>
-            <canvas id="brain" aria-label="Animated map of Ayush's second brain"></canvas>
+            <canvas id="brain" aria-label="A real 3D map of Ayush's Obsidian notes and wikilinks"></canvas>
+            <div class="brainhud">
+              <span id="brainhub">HUB —</span>
+              <span id="brainsel">HOVER OR TAP A NODE</span>
+            </div>
           </div>
           <div class="week" id="week" hidden>
             <div class="shead">

@@ -50,6 +50,14 @@ vi.mock("./snapshot", () => {
       { time: "10:30 AM", summary: "secret class", cal: "secret-cal", sort: "2026-11-18T10:30:00-08:00" },
     ] },
     fleet: [{ name: "secret-peer", os: "macOS", online: true }],
+    brain: {
+      vault_notes: 662,
+      top_hub: { label: "secret hub", folder: "secret folder", degree: 178 },
+      nodes: [
+        { id: "secret folder/secret note.md", label: "secret note", folder: "secret folder", group: "projects", activity: "projects", degree: 4, size: 3.1 },
+      ],
+      links: [],
+    },
     now: {
       active_projects: 21,
       planned_projects: 7,
@@ -91,8 +99,12 @@ describe("public dashboard projection", () => {
     expect(out.calendar.count).toBe(2);
     expect(out.calendar.events[1]).toEqual({ time: "10:30 AM", all_day: false });
     expect(out.calendar.week_days).toEqual([{ date: "2026-11-19", count: 1 }]);
+    expect(out.brain.count).toBe(1);
+    expect(out.brain.notes).toBe(662);
+    expect(out.brain.nodes[0]).toEqual({ id: "n0", group: "projects", activity: "projects", degree: 4, size: 3.1 });
+    expect(out.brain.top_hub).toBeUndefined();
     expect(out.fleet).toEqual([]);
-    for (const secret of ["secret-host", "secret-vm", "secret-nas", "secret-container", "secret task", "secret quiz", "secret-peer", "secret birthday", "secret class", "secret week", "secret-cal", "10.0.0.9", "secret-model"]) {
+    for (const secret of ["secret-host", "secret-vm", "secret-nas", "secret-container", "secret task", "secret quiz", "secret-peer", "secret birthday", "secret class", "secret week", "secret-cal", "10.0.0.9", "secret-model", "secret hub", "secret folder", "secret note"]) {
       expect(text).not.toContain(secret);
     }
   });
