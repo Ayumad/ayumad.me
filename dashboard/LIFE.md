@@ -69,8 +69,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Focus recompute: every 15 seconds.
 - Weather: every 15 minutes (Open-Meteo, Fremont, no key).
 - Spotify: every 5 seconds while visible, with an immediate refresh when the tab becomes visible. The wall kiosk uses the public endpoint at `ayumad.me`.
-- Page data: every 5 minutes (`/dashboard.json` on wall, `/dashboard/data` on web).
-- Service trend: samples from the existing 5-minute poll.
+- Page data: every 10 seconds on the wall (`/dashboard.json`) and every 30 seconds on the web (`/dashboard/data`), with a refresh when the tab becomes visible. Readings and their age reflect the latest sample from the feed.
+- Service trend: samples from the page data poll.
 
 ## Data contract
 

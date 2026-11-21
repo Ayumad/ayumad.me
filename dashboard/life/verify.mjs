@@ -344,14 +344,17 @@ try {
   const originalMac = await live.page.locator("#mac-cpu").innerText();
   payload = {
     ...full,
-    generated_at: `${fixtureDay}T15:14:00-08:00`,
+    generated_at: `${fixtureDay}T15:10:29-08:00`,
     hermes: { ...full.hermes, host: { ...(full.hermes?.host ?? {}), cpu_pct: 42 } },
+    homelab: { ...full.homelab, host: { ...full.homelab?.host, load: [1.5] }, gpu: { owner_name: "kiosk-vm" } },
   };
-  await live.page.clock.fastForward(300000);
+  await live.page.clock.fastForward(30000);
   await live.page.waitForFunction(() => document.getElementById("mac-cpu").innerText === "42%");
   assert.notEqual(await live.page.locator("#mac-cpu").innerText(), originalMac);
+  assert.equal(await live.page.locator("#p520-load").innerText(), "1.5");
+  assert.equal(await live.page.locator("#p520-gpu").innerText(), "DASHBOARD");
   payload = null;
-  await live.page.clock.fastForward(300000);
+  await live.page.clock.fastForward(30000);
   await live.page.waitForFunction(() => document.getElementById("source").innerText === "STALE");
   assert.equal((await inspect(live.page)).healthState, "stale");
   assert.deepEqual(live.errors, []);

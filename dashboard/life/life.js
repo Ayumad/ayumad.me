@@ -3,6 +3,7 @@
 
   const LA = "America/Los_Angeles";
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
+  const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
   const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
   const SPOTIFY_POLL_MS = 5000;
   const DASH = "—";
@@ -25,7 +26,7 @@
   const dateTag = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", month: "short", day: "numeric" });
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
-  const state = { data: null, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
+  const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
   const listening = { playback: null, pending: false, failed: false };
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
@@ -286,9 +287,10 @@
     const p520Load = Number.isFinite(p520LoadRaw) ? p520LoadRaw : undefined;
     const p520Mem = Number.isFinite(p520.mem_used_gb) && Number.isFinite(p520.mem_total_gb) && p520.mem_total_gb > 0
       ? Math.round(p520.mem_used_gb / p520.mem_total_gb * 100) : undefined;
-    const gpuOwner = clean(homelab?.gpu?.owner_name);
+    const gpuOwner = clean(homelab?.gpu?.owner_name).replace(/-vm$/i, "").toUpperCase();
     const gpuMode = clean(homelab?.gpu?.mode).toLowerCase();
-    const gpu = gpuOwner ? gpuOwner.replace(/-vm$/i, "").toUpperCase()
+    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\bkiosk\b/.test(gpuMode));
+    const gpu = dashboardGpu ? "DASHBOARD" : gpuOwner ? gpuOwner
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);
     return { events, open, upcoming, projects, failing, up, total, macCpu, macMem, p520Load, p520Mem, gpu, activeRuns };
@@ -673,8 +675,9 @@
   function renderHealth(values) {
     const pct = (value) => value === undefined ? DASH : `${Math.round(value)}%`;
     const load = (value) => value === undefined ? DASH : value.toFixed(1);
-    $("health").dataset.state = panelState("health",
-      values.macCpu !== undefined || values.p520Mem !== undefined ? 1 : undefined);
+    const hasReadings = [values.macCpu, values.macMem, values.p520Load, values.p520Mem]
+      .some(Number.isFinite) || values.gpu !== DASH;
+    $("health").dataset.state = panelState("health", hasReadings ? 1 : undefined);
     setText($("mac-cpu"), pct(values.macCpu));
     setText($("mac-mem"), pct(values.macMem));
     setText($("p520-load"), load(values.p520Load));
@@ -735,7 +738,8 @@
 
   function refreshSource(now) {
     const stamp = Date.parse(state.data?.generated_at);
-    const minutes = Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 60000)) : null;
+    const seconds = Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 1000)) : null;
+    const minutes = seconds === null ? null : Math.floor(seconds / 60);
     const stale = !!state.data && (state.failed || (minutes !== null && minutes >= (state.source === "Live" ? 15 : 480)));
     const status = state.failed && !state.data ? "Offline" : stale ? "Stale" : state.data?.public ? "Public" : state.source || DASH;
     if (state.stale !== stale) {
@@ -744,7 +748,9 @@
     }
     setText($("source"), status);
     $("source").dataset.tone = status === "Offline" ? "bad" : stale ? "warn" : status === "Live" ? "cyan" : "soft";
-    setText($("updated"), minutes === null ? DASH : minutes < 1 ? "Updated now" : minutes < 60 ? `Updated ${minutes}m ago` : `Updated ${Math.floor(minutes / 60)}h ago`);
+    setText($("updated"), seconds === null ? DASH : seconds === 0 ? "Updated now"
+      : minutes < 1 ? `Updated ${seconds}s ago` : minutes < 60 ? `Updated ${minutes}m ago`
+      : `Updated ${Math.floor(minutes / 60)}h ago`);
   }
 
   function clock() {
@@ -891,6 +897,8 @@
   }
 
   async function load() {
+    if (document.hidden || state.pending) return;
+    state.pending = true;
     try {
       const data = await getJSON(IS_WALL ? "./dashboard.json" : "/dashboard/data");
       if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("invalid dashboard payload");
@@ -899,6 +907,8 @@
       state.failed = false;
     } catch {
       state.failed = true;
+    } finally {
+      state.pending = false;
     }
     refreshSource(Date.now());
     if (state.data) recordServices(Date.parse(state.data.generated_at), model(state.data));
@@ -946,7 +956,8 @@
   watchWallPage();
   setInterval(clock, 1000);
   setInterval(render, 15000);
-  setInterval(load, 300000);
+  setInterval(load, DATA_POLL_MS);
+  document.addEventListener("visibilitychange", load);
   setInterval(loadSpotify, SPOTIFY_POLL_MS);
   document.addEventListener("visibilitychange", loadSpotify);
   setInterval(weather, 900000);
