@@ -176,7 +176,7 @@
     const publicView = !!data.public;
     const weekend = isWeekend(today);
     const candidates = [{
-      kicker: "Likely", title: phase, detail: publicView ? "Public view · sign in for details" : "No immediate commitments",
+      kicker: "Likely", title: phase, detail: publicView ? "" : "No immediate commitments",
       tone: "soft", score: 10,
     }];
     if (publicView) return candidates[0];
@@ -376,7 +376,12 @@
     const hasCurrentFocus = focus.hub === "calendar" && agenda.some(({ item, past }) => item === focus.item && !past);
     const hasUpcoming = agenda.some(({ item, start, past }) => item !== focus.item && item.time !== "all-day" && start !== null && !past);
     const nextMode = !hasCurrentFocus && !hasUpcoming;
-    const status = setPanel("today", "calendar", values.events || (nextMode && (list(data.calendar?.week).length || list(data.calendar?.week_days).length) ? 1 : 0), "calmeta", metric(values.events, "events"));
+    const weekCount = count(data.calendar?.week_count);
+    const calendarValue = isPublic && nextMode ? weekCount
+      : values.events || (nextMode && (list(data.calendar?.week).length || list(data.calendar?.week_days).length) ? 1 : 0);
+    const calendarLabel = isPublic && nextMode ? metric(weekCount, "this week")
+      : metric(values.events, values.events === 1 ? "event" : "events");
+    const status = setPanel("today", "calendar", calendarValue, "calmeta", calendarLabel);
 
     function eventRow(target, { item, start, past }) {
       const lead = start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH;
@@ -390,7 +395,12 @@
       setText(todayLabel, "NEXT UP");
       track.hidden = true;
       hours.hidden = true;
-      const nextEntries = isPublic ? [] : list(data.calendar?.week)
+      if (isPublic) {
+        disclosure.hidden = true;
+        disclosure.open = false;
+        return;
+      }
+      const nextEntries = list(data.calendar?.week)
         .filter((item) => !weekend || !isSchoolEvent(item))
         .filter((item) => {
           const day = dateKey(item.sort);
@@ -426,8 +436,8 @@
       disclosure.hidden = !overflow.length;
       if (disclosure.hidden) disclosure.open = false;
       else setText(moreLabel, `+${overflow.length} more`);
-      setText($("calmeta"), isPublic ? "Sign in" : nextEntries.length ? `${nextEntries.length} upcoming` : "Clear");
-      if (!rows.length) finishRail(events, 0, 0, isPublic ? "Sign in for details" : "No upcoming events", status);
+      if (status !== "error") setText($("calmeta"), nextEntries.length ? `${nextEntries.length} upcoming` : "Clear");
+      if (!rows.length) finishRail(events, 0, 0, "No upcoming events", status);
       ticks.replaceChildren();
     } else {
       setText(todayLabel, "TODAY");
@@ -458,8 +468,8 @@
         tick.style.left = `${start / 1440 * 100}%`;
         ticks.append(tick);
       }
-      const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
-      if (!rows.length && !overflow.length) {
+      const empty = values.events === 0 ? "Clear day" : DASH;
+      if (!isPublic && !rows.length && !overflow.length) {
         finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
       }
     }
@@ -468,17 +478,28 @@
   function renderActions(data, values, focus, today, taskState) {
     const tasks = $("tasks");
     const school = $("school");
+    const schoolPanel = $("school-panel");
     const weekend = isWeekend(today);
     tasks.replaceChildren();
     school.replaceChildren();
-    const nearTasks = taskState.tasks.filter(({ day }) => !day || relativeDays(day, today) <= 7);
-    const taskStatus = setPanel("task-panel", "tasks", nearTasks.length, "taskmeta", metric(nearTasks.length, "near"));
+    schoolPanel.hidden = Boolean(data.public && weekend);
+    schoolPanel.dataset.mode = weekend ? "projects" : "school";
+    setText($("schoollabel"), weekend ? "PROJECTS" : "SCHOOL DEADLINES");
     const schoolStatus = setPanel("school-panel", "school", weekend ? values.projects : values.upcoming,
       "schoolmeta", weekend ? metric(values.projects, "active") : metric(values.upcoming, "due"));
 
-    if (data.public || taskStatus === "error") {
-      const label = taskState.overdue > 0 ? metric(taskState.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
-      finishRail(tasks, 0, 0, label, taskStatus);
+    if (data.public) {
+      const status = setPanel("task-panel", "tasks", values.open, "taskmeta", metric(values.open, "open"));
+      if (status !== "error" && taskState.overdue > 0) {
+        appendRow(tasks, metric(taskState.overdue, "overdue"), { tone: "bad" });
+      }
+      return;
+    }
+
+    const nearTasks = taskState.tasks.filter(({ day }) => !day || relativeDays(day, today) <= 7);
+    const taskStatus = setPanel("task-panel", "tasks", nearTasks.length, "taskmeta", metric(nearTasks.length, "near"));
+    if (taskStatus === "error") {
+      finishRail(tasks, 0, 0, DASH, taskStatus);
     } else {
       const represented = focus.hub === "tasks" && !withoutAside(focus.item.title).includes(": ") ? 1 : 0;
       const ranked = nearTasks.filter(({ item }) => !represented || item !== focus.item)
@@ -498,38 +519,29 @@
     }
 
     if (weekend) {
-      $("school-panel").dataset.mode = "projects";
-      setText($("schoollabel"), "PROJECTS");
-      if (data.public) {
-        setText($("schoolmeta"), metric(values.projects, "active"));
-        finishRail(school, 0, 0, "Sign in for details", schoolStatus);
-      } else {
-        const seen = new Set();
-        const projectRows = [];
-        for (const note of list(data.recent)) {
-          if (!/project/i.test(note.folder) || !clean(note.label)) continue;
-          const key = clean(note.label).toLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          projectRows.push({ label: clean(note.label), meta: note.age_min < 60 ? `${note.age_min}m ago` : "Recent" });
-        }
-        for (const node of list(data.brain?.nodes)) {
-          if (node.group !== "projects" || !clean(node.label)) continue;
-          const key = clean(node.label).toLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          projectRows.push({ label: clean(node.label), meta: "Active" });
-        }
-        const rows = projectRows.slice(0, 2);
-        for (const item of rows) {
-          appendRow(school, shorten(item.label, 48), { tail: item.meta, title: item.label, tone: "violet" });
-        }
-        finishRail(school, rows.length, projectRows.length, values.projects === 0 ? "No active projects" : "Pick a project", schoolStatus);
+      const seen = new Set();
+      const projectRows = [];
+      for (const note of list(data.recent)) {
+        if (!/project/i.test(note.folder) || !clean(note.label)) continue;
+        const key = clean(note.label).toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        projectRows.push({ label: clean(note.label), meta: note.age_min < 60 ? `${note.age_min}m ago` : "Recent" });
       }
+      for (const node of list(data.brain?.nodes)) {
+        if (node.group !== "projects" || !clean(node.label)) continue;
+        const key = clean(node.label).toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        projectRows.push({ label: clean(node.label), meta: "Active" });
+      }
+      const rows = projectRows.slice(0, 2);
+      for (const item of rows) {
+        appendRow(school, shorten(item.label, 48), { tail: item.meta, title: item.label, tone: "violet" });
+      }
+      finishRail(school, rows.length, projectRows.length, values.projects === 0 ? "No active projects" : "Pick a project", schoolStatus);
     } else {
-      $("school-panel").dataset.mode = "school";
-      setText($("schoollabel"), "SCHOOL DEADLINES");
-      const upcoming = data.public || schoolStatus === "error" ? [] : list(data.school?.next)
+      const upcoming = schoolStatus === "error" ? [] : list(data.school?.next)
         .filter((item) => item !== focus.item)
         .sort(datedFirst);
       const rows = upcoming.slice(0, 2);
@@ -540,7 +552,7 @@
         });
       }
       const representedByFocus = focus.hub === "school" ? 1 : 0;
-      const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
+      const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : DASH;
       finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
     }
   }
@@ -559,14 +571,15 @@
   function renderProjectPulse(data, values, today) {
     const panel = $("project-pulse");
     const project = projectPulse(data);
-    const status = panelState("projects", project ? 1 : undefined);
+    const status = panelState("projects", data.public ? values.projects : project ? 1 : undefined);
     panel.dataset.state = status;
-    setText($("projectmeta"), status === "stale" ? "Stale" : metric(values.projects, "active"));
+    setText($("projectlabel"), data.public ? "Projects" : "Project pulse");
+    setText($("projectmeta"), data.public && status === "error" ? "Unavailable"
+      : !data.public && status === "stale" ? "Stale" : metric(values.projects, "active"));
     $("project-card").hidden = !project;
     const message = $("project-message");
-    message.hidden = !!project;
-    setText(message, data.public ? "Sign in for details" : status === "error" ? "Unavailable"
-      : state.data ? "No active project details" : DASH);
+    message.hidden = Boolean(data.public || project);
+    setText(message, status === "error" ? "Unavailable" : state.data ? "No active project details" : DASH);
     if (!project) return;
     const age = relativeDays(project.updated, today);
     const ageDays = Number.isFinite(age) ? Math.max(0, -age) : null;
@@ -688,13 +701,14 @@
 
   function renderVmActivity(data) {
     const panel = $("vm-activity");
+    panel.hidden = Boolean(data.public);
     const detail = $("vm-activity-detail");
     const show = (status, text) => {
       panel.dataset.state = status;
       setText(detail, text);
       detail.title = text;
     };
-    if (data.public) return show("empty", "Sign in for VM activity");
+    if (panel.hidden) return show("empty", DASH);
     if (state.failed && !state.data) return show("error", "VM activity unavailable");
     if (data.errors?.homelab || data.homelab?.reachable === false) return show("error", "P520 offline");
 
@@ -737,10 +751,18 @@
       stale: state.stale,
       unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
     });
-    setText($("hermes-status"), signal.headline);
+    const lastSeen = state.source === "Snapshot" && (signal.state === "idle" || signal.state === "working");
+    setText($("hermes-status"), lastSeen ? `Last seen ${signal.headline.toLowerCase()}` : signal.headline);
     const counts = $("hermes-counts");
     counts.hidden = !signal.counts;
     setText(counts, signal.counts);
+    const sample = $("hermes-sample-time");
+    $("hermes-sample").hidden = !signal.counts;
+    sample.hidden = signal.sampledAt === null;
+    setText($("hermes-sample-label"), sample.hidden ? "Sample time unavailable" : "Sampled ");
+    if (sample.hidden) sample.removeAttribute("datetime");
+    else sample.dateTime = new Date(signal.sampledAt).toISOString();
+    refreshHermesSample(Date.now());
     const job = $("hermes-job");
     job.hidden = !signal.detail;
     setText(job, signal.detail);
@@ -771,7 +793,9 @@
     setText($("focuskicker"), focus.kicker);
     setText($("focustitle"), focus.title);
     setText($("focusdetail"), focus.detail);
+    $("focusdetail").hidden = Boolean(data.public);
     $("signin").hidden = !data.public;
+    document.body.dataset.view = data.public ? "public" : "full";
 
     renderSchedule(data, values, focus, today, agenda);
     renderActions(data, values, focus, today, taskState);
@@ -782,9 +806,26 @@
     renderHermes(data, values);
   }
 
+  function ageInSeconds(stamp, now) {
+    return Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 1000)) : null;
+  }
+
+  function ageText(seconds) {
+    if (seconds === 0) return "now";
+    if (seconds < 60) return `${seconds}s ago`;
+    const minutes = Math.floor(seconds / 60);
+    return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ago`;
+  }
+
+  function refreshHermesSample(now) {
+    const sample = $("hermes-sample-time");
+    const seconds = ageInSeconds(Date.parse(sample.dateTime), now);
+    setText(sample, seconds === null ? "" : ageText(seconds));
+  }
+
   function refreshSource(now) {
     const stamp = Date.parse(state.data?.generated_at);
-    const seconds = Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 1000)) : null;
+    const seconds = ageInSeconds(stamp, now);
     const minutes = seconds === null ? null : Math.floor(seconds / 60);
     const stale = !!state.data && (state.failed || (minutes !== null && minutes >= (state.source === "Live" ? 15 : 480)));
     const status = state.failed && !state.data ? "Offline" : stale ? "Stale" : state.data?.public ? "Public" : state.source || DASH;
@@ -794,9 +835,7 @@
     }
     setText($("source"), status);
     $("source").dataset.tone = status === "Offline" ? "bad" : stale ? "warn" : status === "Live" ? "cyan" : "soft";
-    setText($("updated"), seconds === null ? DASH : seconds === 0 ? "Updated now"
-      : minutes < 1 ? `Updated ${seconds}s ago` : minutes < 60 ? `Updated ${minutes}m ago`
-      : `Updated ${Math.floor(minutes / 60)}h ago`);
+    setText($("updated"), seconds === null ? DASH : `Updated ${ageText(seconds)}`);
   }
 
   function clock() {
@@ -812,6 +851,7 @@
     $("dayfill").style.width = dayProgress;
     $("daynow").style.left = dayProgress;
     refreshSource(+now);
+    refreshHermesSample(+now);
     renderSpotifyProgress(+now);
     if (state.weather && !state.weatherFailed && +now - state.weather.receivedAt >= 1800000 && $("weather").dataset.state !== "stale") {
       renderWeather();

@@ -269,25 +269,27 @@ main {
   padding: clamp(15px, 2.3vw, 33px) clamp(11px, 1.35vw, 22px) clamp(11px, 1.15vw, 18px);
   background: linear-gradient(transparent, color-mix(in srgb, var(--bg) 96%, transparent) 38%, var(--bg));
 }
-.hermes-signal {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+.hermes-signal h2 { font-size: clamp(10px, .73vw, 14px); margin-bottom: 4px; }
+.hermes-summary {
+  display: flex;
   align-items: baseline;
-  gap: 3px 8px;
+  flex-wrap: wrap;
+  gap: 3px clamp(8px, 1vw, 16px);
 }
-.hermes-signal h2 { grid-column: 1 / -1; font-size: clamp(10px, .73vw, 14px); }
 #hermes-status {
-  font-size: clamp(17px, 1.55vw, 30px);
+  font-size: clamp(21px, 2vw, 36px);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -.035em;
 }
 #hermes-counts {
-  color: var(--soft);
-  font: 500 clamp(10px, .82vw, 16px)/1.35 var(--mono);
+  color: var(--text);
+  font: 500 clamp(12px, 1vw, 19px)/1.35 var(--mono);
   font-variant-numeric: tabular-nums;
 }
+.hermes-sample { margin-top: 5px; color: var(--soft); font: 500 clamp(10px, .76vw, 14px)/1.35 var(--mono); }
 .hermes-field:has(canvas[data-state="attention"]) #hermes-status { color: var(--warn); }
+.hermes-field:has(canvas:is([data-state="stale"], [data-state="unavailable"])) #hermes-sample { color: var(--warn); }
 .hermes-note { margin-top: 5px; color: var(--soft); font-size: clamp(11px, .85vw, 16px); overflow-wrap: anywhere; }
 .hermes-receipt { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 9px; }
 .hermes-receipt .meta,
@@ -415,9 +417,10 @@ main {
   .schedule, .actions { display: grid; gap: 7px; }
   .schedule { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+  .actions:has(#school-panel[hidden]) #task-panel { grid-column: 1 / -1; }
   #spotify { grid-column: 1 / -1; }
   .project-top { flex-wrap: wrap; row-gap: 3px; }
-  #project-pulse .section-head .meta, #school-panel .section-head .meta { display: none; }
+  body:not([data-view="public"]) :is(#project-pulse, #school-panel) .section-head .meta { display: none; }
   .hoststat { gap: 3px; }
   .hoststat > span { display: none; }
   .hoststat small { font-size: 8px; letter-spacing: .03em; }

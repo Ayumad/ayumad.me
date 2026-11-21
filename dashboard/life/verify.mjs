@@ -183,7 +183,7 @@ try {
     const isPublic = options.payload?.public;
     const weekend = name.startsWith("weekend");
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
-    assert(result.focus.every(Boolean));
+    assert(result.focus.slice(0, isPublic ? 2 : 3).every(Boolean));
     assert(["WORKING ON", "DUE SOON", "CODEX", "LIKELY", "NOW", "NEXT"].includes(result.focus[0]));
     assert.equal(result.todayLabel, "NEXT UP");
     assert.equal(result.trackHidden, true);
@@ -193,7 +193,8 @@ try {
     assert.match(result.health[0], /^(—|\d+%)$/);
     assert.match(result.health[2], /^(—|\d+\.\d)$/);
     assert.equal(result.healthState, "ready");
-    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3] : [3, 3, 2, 3]);
+    const overdueSummary = Number(!publicData.errors?.tasks && publicData.tasks.overdue > 0);
+    assert.deepEqual(result.rows, isPublic ? [0, overdueSummary, 0, 3] : [3, 3, 2, 3]);
     assert.equal(await page.locator("#weatherlabel").innerText(), "FREMONT WEATHER");
     assert.deepEqual(await page.locator(".forecast-day b").allTextContents(), ["55° / 43°", "58° / 41°", "55° / 48°"]);
     assert.equal(await page.locator("#spotify").isVisible(), true);
@@ -201,7 +202,10 @@ try {
     assert((await page.locator("#hermes-status").innerText()).length > 0);
     assert.equal(await page.locator("#project-pulse").isVisible(), true);
     if (isPublic) {
-      assert.equal(await page.locator("#project-message").innerText(), "Sign in for details");
+      assert.equal(await page.getByText(/sign in/i).count(), 1);
+      assert.equal(await page.locator("#signin").isVisible(), true);
+      assert.equal(await page.locator("#project-message").isVisible(), false);
+      assert.equal(await page.locator("#vm-activity").isVisible(), false);
     } else {
       assert((await page.locator("#projectname").innerText()).length > 0);
       assert((await page.locator("#projectnext").innerText()).length > 0);
@@ -237,6 +241,23 @@ try {
     }));
     await close();
   }
+
+  const publicWeekend = await open(390, 844, {
+    now: weekendTime,
+    payload: {
+      ...publicData,
+      generated_at: new Date(+weekendTime - 5 * 3600000).toISOString(),
+      hermes: { active_runs: 0, cron_failing_count: 0 },
+      now: { ...publicData.now, active_projects: 21 },
+    },
+  });
+  assert.equal(await publicWeekend.page.locator("#school-panel").isVisible(), false);
+  assert.equal(await publicWeekend.page.locator("#projectmeta").innerText(), "21 ACTIVE");
+  assert.equal(await publicWeekend.page.locator("#hermes-status").innerText(), "Last seen idle");
+  assert.equal(await publicWeekend.page.locator("#hermes-counts").innerText(), "0 active · 0 flagged");
+  assert.equal(await publicWeekend.page.locator("#hermes-sample-time").innerText(), "5h ago");
+  assert.deepEqual(publicWeekend.errors, []);
+  await close();
 
   const mixed = await open(390, 844, { payload: { ...full, public: true } });
   verifyPrivacy(await mixed.page.content());

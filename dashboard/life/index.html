@@ -59,9 +59,14 @@
             <div class="hermes-context">
               <div class="hermes-signal" role="status" aria-atomic="true">
                 <h2 class="label" id="hermes-label">Hermes</h2>
-                <strong id="hermes-status">Awaiting telemetry</strong>
-                <span id="hermes-counts" hidden></span>
+                <div class="hermes-summary">
+                  <strong id="hermes-status">Awaiting telemetry</strong>
+                  <span id="hermes-counts" hidden></span>
+                </div>
               </div>
+              <p class="hermes-sample" id="hermes-sample" hidden>
+                <span id="hermes-sample-label">Sampled </span><time id="hermes-sample-time" hidden></time>
+              </p>
               <p class="hermes-note" id="hermes-job" hidden></p>
               <p class="hermes-note hermes-receipt" id="hermes-receipt" hidden>
                 <span class="meta">Last result</span>

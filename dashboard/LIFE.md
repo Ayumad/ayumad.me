@@ -46,14 +46,14 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 - The original Confluence weave drifts at idle. Active Hermes runs pull strands into separate currents, and a flagged job gathers a sustained amber pocket.
 - The web dashboard follows the saved homepage renderer. ASCII uses glyphs, Dither uses ordered stippling, Glitch offsets narrow bands, Particles uses fading trails, and CRT+ adds scan lines. The field defaults to Particles on a fresh browser or wall display.
-- The edge readout shows Hermes status and known run counts. It adds a flagged job and the latest confirmed result when the signed-in feed provides them.
+- The edge readout groups Hermes status, known run counts, and the age of the last accepted sample. Web snapshots label idle and working states as last seen. The readout adds a flagged job and the latest confirmed result when the signed-in feed provides them.
 
 ## Active layer
 
 - **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → active Codex Cloud task or a recent Codex session (local or ChatGPT-account) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
 - **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
 - Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
-- **Project pulse:** the most recently updated active project, with last-touched age, next action and open-action count. The panel stays visible and prompts for sign-in when details are private.
+- **Project pulse:** signed-in views show the most recently updated active project, with last-touched age, next action and open-action count. Public views show a single Projects count throughout the week.
 - **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
 - **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
@@ -99,7 +99,7 @@ For VM activity, the collector can attach `activity` to a running QEMU guest in 
 }
 ```
 
-- **Public projection:** `calendar.events` keeps `time` only; `tasks.items` and `school.next` are empty; `week_count` is a number. The page renders a count + `SIGN IN FOR DETAILS` instead of titles.
+- **Public projection:** `calendar.events` keeps `time` and `all_day`; `tasks.items` and `school.next` are empty; `week_count` is a number. The page shows aggregate schedule, task, school, and project counts with one sign-in link in the header.
 - **Full snapshot (signed in):** all titles present.
 - Confluence uses the Hermes active-run and failing-job counts and the dashboard's snapshot freshness rules.
 - Signed-in snapshots can give active runs stable identifiers to keep them on consistent currents. A new explicit success or delivery receipt releases particles.
@@ -118,7 +118,7 @@ For VM activity, the collector can attach `activity` to a running QEMU guest in 
 ## Acceptance
 
 - 1920×1080 and 390×844: `document.documentElement.scrollHeight === innerHeight`, 0 console errors.
-- Public: count + `SIGN IN` visible; no event/task/school titles or calendar emails in the HTML or JSON.
+- Public: one project summary and one `SIGN IN` link visible; no event/task/school titles or calendar emails in the HTML or JSON.
 - Signed in / wall: titles visible, `THIS WEEK` grouped by day, no clipping; after the last event the left panel reads `NEXT UP` instead of `TODAY`.
-- Fri–Sun: no `SCHOOL DEADLINES` panel, no school deadline rows in `NEXT UP` / `THIS WEEK`; `PROJECTS` occupies the school slot.
+- Fri–Sun: school deadlines and their rows are omitted. Signed-in and wall views use the school slot for recent projects.
 - Footer pulse links to `/status` and reads `ALL CLEAR` / `N WARNINGS` / `N ISSUES`.
