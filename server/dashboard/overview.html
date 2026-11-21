@@ -1243,8 +1243,9 @@ function createHermesFlow(canvas) {
       });
     }
 
-    const stamp = Date.parse(data.generated_at);
-    const elapsed = Number.isFinite(stamp) ? Math.max(0, Math.floor((Date.now() - stamp) / 60000)) : 0;
+    const now = Date.now();
+    const snapshotAge = ageInSeconds(Date.parse(data.generated_at), now);
+    const elapsed = Math.floor((snapshotAge ?? 0) / 60);
     for (const note of list(errors?.recent ? null : data.recent)) {
       if (!Number.isFinite(note.age_min) || note.age_min < 0) continue;
       const age = note.age_min + elapsed;
@@ -1258,30 +1259,29 @@ function createHermesFlow(canvas) {
     }
 
     const codex = data.codex ?? {};
-    const cloudTask = list(codex.tasks)
-      .filter((task) => /running|in.?progress|queued|pending/i.test(String(task.status ?? "")))
-      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
-    const remoteCodex = list(codex.remote)[0];
-    const localCodex = list(codex.recent)[0];
-    const recentCodex = [remoteCodex, localCodex]
-      .filter(Boolean)
-      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
-    const codexItem = cloudTask || recentCodex;
-    const codexTitle = codexItem?.label || codexItem?.title;
-    if (codexItem && clean(codexTitle)) {
-      const age = Number.isFinite(codexItem.age_min) ? codexItem.age_min : null;
-      if (cloudTask || age === null || age <= 720) {
-        const source = cloudTask ? "Codex Cloud" : codexItem === remoteCodex ? "Codex account" : "Codex session";
-        const ageLabel = age === null ? "active" : age >= 60 ? `${Math.floor(age / 60)}h ago` : `${age}m ago`;
-        candidates.push({
-          hub: "projects", item: codexItem, kicker: "Codex",
-          title: shorten(codexTitle, 44),
-          detail: [source, ageLabel, cloudTask ? cloudTask.status : null]
-            .filter(Boolean).join(" · "),
-          tone: "cyan",
-          score: cloudTask ? 105 : age !== null && age <= 60 ? 94 : age !== null && age <= 180 ? 88 : 78,
-        });
-      }
+    const cloudTasks = list(codex.tasks).filter((task) =>
+      /running|in.?progress|queued|pending/i.test(String(task?.status ?? "")));
+    const latestCodex = [
+      { items: cloudTasks, source: "Codex Cloud", cloud: true },
+      { items: list(codex.recent), source: "Codex session" },
+      { items: list(codex.remote), source: "Codex account" },
+    ].flatMap(({ items, source, cloud = false }) => items.map((item) => {
+      const title = clean(item?.label) || clean(item?.title);
+      const reportedAge = count(item?.age_min);
+      const age = ageInSeconds(Date.parse(item?.updated_at), now)
+        ?? (reportedAge === undefined || snapshotAge === null ? null : reportedAge * 60 + snapshotAge);
+      return { item, title, source, cloud, age };
+    })).filter(({ title, age, cloud }) => title && (cloud || (age !== null && age <= 12 * 3600)))
+      .sort((a, b) => Number(b.cloud) - Number(a.cloud) || (a.age ?? Infinity) - (b.age ?? Infinity))[0];
+    if (latestCodex) {
+      const { item, title, source, cloud, age } = latestCodex;
+      candidates.push({
+        hub: "projects", item, kicker: "Codex",
+        title: shorten(title, 44),
+        detail: [source, age === null ? "active" : ageText(age), cloud ? item.status : null].filter(Boolean).join(" · "),
+        tone: "cyan",
+        score: cloud ? 105 : age <= 3600 ? 94 : age <= 3 * 3600 ? 88 : 78,
+      });
     }
 
     const next = weekend ? null : list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);

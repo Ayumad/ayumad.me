@@ -304,21 +304,37 @@ try {
   assert.deepEqual(dates.errors, []);
   await close();
 
-  const remoteFocus = await open(390, 844, {
-    payload: { ...full,
-      tasks: { open: 0, overdue: 0, items: [] },
-      school: { ...full.school, upcoming: 0, next: [] },
-      calendar: { ...full.calendar, events: [], week: [] },
-      codex: { tasks: [], recent: [], remote: [
-        { title: "Cloud Codex task", status: "account", age_min: 5, source: "chatgpt", updated_at: new Date().toISOString() },
+  const codexTime = new Date(`${fixtureDay}T15:10:00-08:00`);
+  const codexPayload = { ...full,
+    generated_at: codexTime.toISOString(),
+    recent: [],
+    tasks: { open: 0, overdue: 0, items: [] },
+    school: { ...full.school, upcoming: 0, next: [] },
+    calendar: { ...full.calendar, events: [], week: [] },
+    codex: { tasks: [], recent: [], remote: [
+      { title: "Older account thread", updated_at: new Date(+codexTime - 3600000).toISOString() },
+      { title: "Recent account thread", age_min: 25, updated_at: new Date(+codexTime - 300000).toISOString() },
+    ] },
+  };
+  const remoteFocus = await open(390, 844, { payload: codexPayload, now: codexTime });
+  const remoteMetrics = await inspect(remoteFocus.page);
+  assert.deepEqual(remoteMetrics.focus, ["CODEX", "Recent account thread", "Codex account · 5m ago"]);
+  assert.deepEqual(remoteFocus.errors, []);
+  await close();
+
+  const localFocus = await open(390, 844, {
+    payload: { ...codexPayload,
+      codex: { ...codexPayload.codex, recent: [
+        { title: "Older local session", age_min: 30 },
+        { title: "Current local session", age_min: 1 },
       ] },
     },
-    now: new Date(`${fixtureDay}T15:10:00-08:00`),
+    now: new Date(+codexTime + 120000),
   });
-  const remoteMetrics = await inspect(remoteFocus.page);
-  assert.equal(remoteMetrics.focus[0], "CODEX");
-  assert.match(remoteMetrics.focus[2], /^Codex account · 5m ago/);
-  assert.deepEqual(remoteFocus.errors, []);
+  assert.deepEqual((await inspect(localFocus.page)).focus, ["CODEX", "Current local session", "Codex session · 3m ago"]);
+  await localFocus.page.clock.fastForward(12 * 3600000);
+  await localFocus.page.waitForFunction(() => document.getElementById("focuskicker").innerText === "LIKELY");
+  assert.deepEqual(localFocus.errors, []);
   await close();
 
   const reduced = await open(390, 844, { reducedMotion: "reduce" });
