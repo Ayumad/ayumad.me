@@ -51,7 +51,7 @@ const PUBLIC_FEED_CHECKS: { name: string; pattern: RegExp }[] = [
   // infrastructure (2026-11-21 audit): the feeds had published service ports, a
   // MagicDNS host, a password length and the config line holding an API key.
   { name: "school LMS", pattern: /\bCanvas\b(?!\s+(?:renderer|element|2D))/ },
-  { name: "service port", pattern: /:\d{3,5}\b(?![:\d])|\bports?\s+\d{2,5}\b/i },
+  { name: "service port", pattern: /:\d{3,5}\b(?![:\d])|\bports?\s+\d{2,5}\b|(?<![\d.,])\b(?:8787|5057|9119|9100|8642|8791)\b(?![\d.,])/i },
   { name: "tailnet topology", pattern: /\btailnet\b|\.ts\.net\b|\bMagicDNS\b/i },
   { name: "secret name", pattern: /\b[A-Z][A-Z0-9_]*_(?:KEY|TOKEN|SECRET|PASSWORD)\b/ },
   { name: "password length", pattern: /\b\d{1,3}[- ]?char(?:acter)?s?\b[^.]{0,20}\bpass(?:word|phrase)/i },

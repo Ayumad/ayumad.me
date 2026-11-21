@@ -109,7 +109,7 @@
   "highlights": [
    "Maintenance day, not a build day: the AI-Engineering wiki gained its missing maintenance loop (index + log + lint + monthly cron), and the first trial run caught two defects in the generator itself.",
    "Storage and secrets both got healthier — Drive reorganized with real weekly backups, and the qBittorrent auth problem was solved by subnet whitelisting instead of rotating a password in use.",
-   "Two \"broken things\" were misdiagnoses worth remembering: the Radarr file was fine (name parser, no year) and the 8787 \"404\" was a Host-header miss, not a dead WebUI.",
+   "Two \"broken things\" were misdiagnoses worth remembering: the Radarr file was fine (name parser, no year) and the [redacted] \"404\" was a Host-header miss, not a dead WebUI.",
    "Codex ran a full Hermes system audit at 02:53 (memory discovery repaired, zero Python/JS advisories, encrypted P520 backups).",
    "Vault validator back to zero on every counter it flagged: `Google Drive Layout.md` had `status: live` (not a controlled value) and no `visibility` / `summary` / `aliases`; `Manga Library.md` had no `aliases`; and the one unresolved link was a wikilink to the `ayush-google-dual-accounts` skill name, which is not a note — now inline code. Both notes were created today by the Drive and manga sessions, so this is drift from today's own writes, not old debt.",
    "Coursework — details stay in the vault.",
