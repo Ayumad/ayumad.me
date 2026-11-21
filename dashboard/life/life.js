@@ -4,6 +4,7 @@
   const LA = "America/Los_Angeles";
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
+  const VM_SAMPLE_MAX_AGE_MS = 120000;
   const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
   const SPOTIFY_POLL_MS = 5000;
   const DASH = "—";
@@ -685,6 +686,50 @@
     setText($("p520-gpu"), values.gpu);
   }
 
+  function renderVmActivity(data) {
+    const panel = $("vm-activity");
+    const detail = $("vm-activity-detail");
+    const show = (status, text) => {
+      panel.dataset.state = status;
+      setText(detail, text);
+      detail.title = text;
+    };
+    if (data.public) return show("empty", "Sign in for VM activity");
+    if (state.failed && !state.data) return show("error", "VM activity unavailable");
+    if (data.errors?.homelab || data.homelab?.reachable === false) return show("error", "P520 offline");
+
+    const samples = list(data.homelab?.guests).filter((guest) =>
+      guest.type === "qemu" && guest.status === "running" && guest.activity
+      && Object.hasOwn(guest.activity, "job")
+      && [guest.activity.cpu_pct, guest.activity.gpu_pct, guest.activity.mem_pct]
+        .some((value) => Number.isFinite(value) && value >= 0 && value <= 100));
+    const now = Date.now();
+    const fresh = samples.filter(({ activity }) => {
+      const age = now - Date.parse(activity.checked_at);
+      return age >= 0 && age < VM_SAMPLE_MAX_AGE_MS;
+    });
+    if (state.stale || (samples.length && !fresh.length)) return show("stale", "VM readings stale");
+    if (!fresh.length) return show("empty", state.data ? "VM job data unavailable" : DASH);
+
+    let busiest = null;
+    for (const guest of fresh) {
+      const { activity } = guest;
+      const job = clean(activity.job?.label);
+      if (activity.job?.status !== "running" || !job) continue;
+      const metrics = [["CPU", activity.cpu_pct, 70], ["GPU", activity.gpu_pct, 70], ["RAM", activity.mem_pct, 85]]
+        .filter(([, value, threshold]) => Number.isFinite(value) && value >= threshold && value <= 100)
+        .sort((a, b) => b[1] - a[1]);
+      if (!metrics.length) continue;
+      const [resource, value] = metrics[0];
+      if (!busiest || value > busiest.value) busiest = { guest, job, resource, value };
+    }
+    if (!busiest) return show("empty", "No high-load VM jobs reported");
+
+    const { guest, job, resource, value } = busiest;
+    const name = clean(guest.name).replace(/^kiosk(?:-vm)?$/i, "Dashboard") || `VM ${guest.id ?? DASH}`;
+    show("ready", `${name} · ${resource} ${Math.round(value)}% · ${job}`);
+  }
+
   function renderHermes(data, values) {
     const signal = confluence.update(data, {
       active: values.activeRuns,
@@ -733,6 +778,7 @@
     renderProjectPulse(data, values, today);
     renderSpotify();
     renderHealth(values);
+    renderVmActivity(data);
     renderHermes(data, values);
   }
 

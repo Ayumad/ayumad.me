@@ -300,6 +300,11 @@ main {
 .hoststat small { font-size: clamp(11px, 0.74vw, 14px); text-transform: uppercase; letter-spacing: 0.07em; }
 .hoststat b { color: var(--text); font-size: clamp(13px, 0.93vw, 18px); font-weight: 500; }
 .hoststat > span { color: var(--soft); font-size: clamp(9px, 0.64vw, 12px); letter-spacing: 0.06em; text-transform: uppercase; }
+.vm-activity { min-width: 0; margin-left: auto; }
+.vm-activity .label { font-size: clamp(10px, .65vw, 13px); }
+.vm-activity .meta { margin-top: 3px; overflow: hidden; text-overflow: ellipsis; text-transform: none; letter-spacing: 0; }
+.vm-activity[data-state="ready"] .meta { color: var(--text); }
+.vm-activity:is([data-state="stale"], [data-state="error"]) .meta { color: var(--warn); }
 #pulse { font-size: clamp(13px, 1.1vw, 21px); font-weight: 700; white-space: nowrap; text-transform: uppercase; }
 .pulse-domain { display: flex; align-items: baseline; gap: 9px; white-space: nowrap; color: var(--soft); }
 .pulse-domain small { font-size: clamp(11px, 0.74vw, 14px); text-transform: uppercase; letter-spacing: 0.07em; }
@@ -437,6 +442,10 @@ main {
   .week-day { flex: 1; }
   .week-count { min-width: 0; }
   .health { padding-inline: 9px; gap: 6px; }
+  .health { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; row-gap: 4px; }
+  .vm-activity { grid-row: 2; grid-column: 1 / -1; display: flex; align-items: baseline; gap: 6px; margin: 0; }
+  .vm-activity .label { flex: none; font-size: 9px; }
+  .vm-activity .meta { margin: 0; }
   .pulse { gap: 10px; }
   #pulse { font-size: 10px; gap: 3px; white-space: normal; }
   #pulse::before { width: 4px; height: 4px; }

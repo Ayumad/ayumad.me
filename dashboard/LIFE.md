@@ -22,7 +22,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
 | Workspace center | Hermes particle weave with a single status readout |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
-| Footer | Mac mini/Hermes and P520 resource status + freshness |
+| Footer | Mac mini/Hermes and P520 resource status, VM activity, and freshness |
 
 The hero is a three-column band above the schedule, particle field, and actions. The footer takes one row. On phones, focus and the particle field go full-width, the schedule and actions use two columns, and the footer compresses to host stats. The page fits 1920×1080 and 390×844 without scrolling.
 
@@ -57,6 +57,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
 - **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
+- **VM activity:** shows the busiest P520 VM with a confirmed running job and a fresh reading of at least 70% CPU or GPU, or 85% RAM. The footer shows the VM, its highest qualifying reading, and the job. Samples expire after two minutes.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
 - The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
@@ -77,6 +78,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 `/dashboard/data` returns the v1 dashboard snapshot.
 
 `recent` is populated only in the full/signed-in snapshot (recently edited project/area notes, max 6h); the public projection returns `recent: []`. `calendar.events[].end_time` is used by the focus engine and is stripped from public events along with titles.
+
+For VM activity, the collector can attach `activity` to a running QEMU guest in `homelab.guests`. It carries `checked_at` (ISO timestamp), measured `cpu_pct`, `gpu_pct` or `mem_pct` (0–100), and `job: { status: "running", label: "…" }` when the collector confirms a job. Use `job: null` when the VM has been checked and no job is running. Keep the telemetry and job labels in the signed-in and wall feeds.
 
 ```jsonc
 {
