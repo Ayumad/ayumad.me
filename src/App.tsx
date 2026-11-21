@@ -557,11 +557,50 @@ function AboutPage() {
 
 function SpotifyHomeSignal() {
   const { playback, requestFailed } = useSpotifyPlayback();
-  const progress = playback ? playbackProgress(playback) : null;
+  const [now, setNow] = useState(Date.now);
+  const playing = !requestFailed && playback?.isPlaying === true;
+  useEffect(() => {
+    if (!playing) return;
+    const tick = window.setInterval(() => {
+      if (document.visibilityState === "visible") setNow(Date.now());
+    }, 1_000);
+    return () => window.clearInterval(tick);
+  }, [playing]);
+
+  const progress = playback && !requestFailed ? playbackProgress(playback, now) : null;
   const hasTrack = Boolean(playback?.configured && playback.title);
   const status = requestFailed ? "offline" : playback?.state === "playing" ? "live" : playback?.state === "recent" ? "recent" : "standby";
+  const label = playing ? "Now listening" : requestFailed && hasTrack ? "Last known track"
+    : playback?.state === "recent" ? "Last listened" : "Audio signal";
   const fallback = requestFailed ? "Listening activity is temporarily unavailable." : playback === null ? "Checking Spotify…" : !playback.configured ? "Spotify is not connected." : playback.state === "idle" ? "Nothing has played recently." : "Listening activity is temporarily unavailable.";
-  const content = <><span className="spotify-home-fallback" aria-hidden="true">{playback?.artwork ? <SpotifyArtwork artwork={playback.artwork} album={playback.album} compact /> : "♪"}</span><span className="spotify-home-copy"><span className="spotify-home-meta"><span>{playback?.isPlaying ? "Now listening" : playback?.state === "recent" ? "Last listened" : "Audio signal"}</span><i>{status}</i></span>{hasTrack ? <><strong>{playback?.title}</strong><small>{playback?.artists?.join(", ") || playback?.album || "Spotify"}</small></> : <><strong>Spotify</strong><small>{fallback}</small></>}</span>{progress !== null ? <span className="spotify-home-progress" role="progressbar" aria-label="Track progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}><i style={{ width: `${progress}%` }} /></span> : null}<span className="spotify-home-arrow" aria-hidden="true">↗</span></>;
+  const content = (
+    <>
+      <span className="spotify-home-fallback" aria-hidden="true">
+        {playback?.artwork ? <SpotifyArtwork artwork={playback.artwork} album={playback.album} compact /> : "♪"}
+      </span>
+      <span className="spotify-home-copy">
+        <span className="spotify-home-meta"><span>{label}</span><i>{status}</i></span>
+        {hasTrack ? <>
+          <strong>{playback?.title}</strong>
+          <small>{playback?.artists?.join(", ") || playback?.album || "Spotify"}</small>
+        </> : <><strong>Spotify</strong><small>{fallback}</small></>}
+      </span>
+      {progress !== null && (
+        <span
+          className="spotify-home-progress"
+          role="progressbar"
+          aria-label="Track progress"
+          aria-live="off"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+        >
+          <i style={{ width: `${progress}%` }} />
+        </span>
+      )}
+      <span className="spotify-home-arrow" aria-hidden="true">↗</span>
+    </>
+  );
   return playback?.url ? <a className="spotify-home-signal is-linked" href={playback.url} target="_blank" rel="noreferrer" aria-live="polite">{content}</a> : <div className="spotify-home-signal" aria-live="polite">{content}</div>;
 }
 

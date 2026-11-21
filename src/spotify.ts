@@ -36,7 +36,7 @@ export function formatPlaybackTime(playedAt?: string | null) {
   }).format(timestamp);
 }
 
-export function playbackProgress(playback: SpotifyPlayback) {
+export function playbackProgress(playback: SpotifyPlayback, now = Date.now()) {
   if (
     typeof playback.progressMs !== "number" ||
     typeof playback.durationMs !== "number" ||
@@ -44,8 +44,12 @@ export function playbackProgress(playback: SpotifyPlayback) {
   ) {
     return null;
   }
+  const sampleTime = Date.parse(playback.updatedAt ?? "");
+  const elapsed = playback.isPlaying && Number.isFinite(sampleTime)
+    ? Math.max(0, now - sampleTime)
+    : 0;
   return Math.min(
     100,
-    Math.max(0, (playback.progressMs / playback.durationMs) * 100),
+    Math.max(0, ((playback.progressMs + elapsed) / playback.durationMs) * 100),
   );
 }

@@ -82,8 +82,8 @@ function trackEnergy(
 export default function RendererPage() {
   const { renderMode: mode, setRenderMode } = useRendererPreference();
   const [playing, setPlaying] = useState(true);
-  const { playback } = useSpotifyPlayback();
-  const energy = trackEnergy(playback);
+  const { playback, requestFailed } = useSpotifyPlayback();
+  const energy = trackEnergy(requestFailed ? null : playback);
   const { state, dispatch, hostRef, preRef, canvasRef } = useScope(
     { settings: defaultSettings, units: 140 }, mode, playing, energy,
   );
