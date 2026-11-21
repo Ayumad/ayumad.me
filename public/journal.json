@@ -1,12 +1,26 @@
 [
  {
+  "date": "2026-11-20",
+  "summary": "Journal 2026-11-20: nightly AI window on the 3060 (wall by day), Obsidian RAG live on :8791 with project pulse fixed to 3 open, CLAUDE.md rewritten, constellation wall un-stuck, iCloud→~/Vault migration planned but blocked on approval.",
+  "highlights": [
+   "The P520 is now time-sliced: wall in the day, `ai-vm` with Ollama + Whisper + Kokoro at night, and the handover survives a failed boot by returning the wall.",
+   "Obsidian RAG is genuinely live for the first time — service, hourly reindex, MCP server and CLI — and the \"29 open actions\" that had been on the wall since August was a stale roadmap, not 29 tasks.",
+   "The vault still lives in iCloud and 555 of 777 files are dataless; the `~/Vault` migration is fully planned and entirely blocked on his approval (the prompt timed out, nothing ran).",
+   "Disk recovered from 13 GiB to 37 GiB free during the day — good news, but nothing in the cron logs explains it."
+  ]
+ },
+ {
   "date": "2026-11-19",
   "summary": "Journal 2026-11-19: quiet day — Retroid Nova still offline so GTA SA install stalled, IKEA LACK shelf fits the 2013 CR-V with the 60/40 fold; cron 790 runs 0 failed, disk 14 GiB free.",
   "highlights": [
    "A genuinely quiet day: two interactive asks, both answered from measurements and live device state, and no vault restructuring needed.",
    "The GTA SA task is blocked on hardware, not tooling — the Nova has been off the tailnet for 14 days; powering it on is the whole unblock.",
    "The CR-V answer is the tape-measure kind: 75 in clears 70–72 in of floor only by using the split-fold diagonal, so mixed seating (one front, one back) is a hard requirement.",
-   "Disk is the one soft spot at 94% / 14 GiB free — under the 15 GiB warn line, so the 03:30 self-heal is doing real work rather than housekeeping."
+   "Disk is the one soft spot at 94% / 14 GiB free — under the 15 GiB warn line, so the 03:30 self-heal is doing real work rather than housekeeping.",
+   "**Closed a stale task twin:** `Tech` \"Grant macOS Automation permission for Notes (agent cannot write to Notes)\" had been open since September while the grant worked — `apple_note.py --list` returned the full note list; completed on Google 23:04, sync logged `completed->Apple`, dry-run `0 action(s) planned`.",
+   "**Session sweep:** one ask filed — Retroid Nova power-on/connection so GTA: San Andreas can be installed (`Tech` + Apple `created->Apple`, vault line under 🔧 Hardware / Computers). The IKEA LACK/CR-V question and the dashboard redesign session ended fully answered/shipped (`main` at `93d74d1`); nothing else left open.",
+   "**Not fixed:** disk is now 94% / 14.6 GB free (17.1 GB last night) — the 03:30 self-heal carries it; the two human switches + FDA grant stay in todo-cleanup. Vault validator clean (642 notes, 0 invalid); the 6-hourly Maintenance Report is the one uncommitted path the 15-min sync will take.",
+   "Coursework — details stay in the vault."
   ]
  },
  {
