@@ -1,12 +1,18 @@
 [
  {
   "date": "2026-11-20",
-  "summary": "Journal 2026-11-20: nightly AI window on the 3060 (wall by day), Obsidian RAG live on :8791 with project pulse fixed to 3 open, CLAUDE.md rewritten, constellation wall un-stuck, iCloud→~/Vault migration planned but blocked on approval.",
+  "summary": "Journal 2026-11-20: nightly AI window on the 3060 (wall by day), Obsidian RAG live on [redacted] with project pulse fixed to 3 open, CLAUDE.md rewritten, constellation wall un-stuck, iCloud→~/Vault migration planned but blocked on approval.",
   "highlights": [
    "The P520 is now time-sliced: wall in the day, `ai-vm` with Ollama + Whisper + Kokoro at night, and the handover survives a failed boot by returning the wall.",
    "Obsidian RAG is genuinely live for the first time — service, hourly reindex, MCP server and CLI — and the \"29 open actions\" that had been on the wall since August was a stale roadmap, not 29 tasks.",
    "The vault still lives in iCloud and 555 of 777 files are dataless; the `~/Vault` migration is fully planned and entirely blocked on his approval (the prompt timed out, nothing ran).",
-   "Disk recovered from 13 GiB to 37 GiB free during the day — good news, but nothing in the cron logs explains it."
+   "Disk recovered from 13 GiB to 37 GiB free during the day — good news, but nothing in the cron logs explains it.",
+   "**Closed:** vault validator back to clean (`invalid=0`, `unresolved=0`) — added the missing `aliases: []` to `02 Projects/Personal Website — Dashboard Components Brainstorm.md` and pointed the Cyberpunk note's G80SD link at the real note (`Samsung Odyssey OLED G8 (G80SD)`).",
+   "Coursework — details stay in the vault.",
+   "**Verified:** disk recovered to **82% / 37 GiB free** (`df`, 23:04), up from 94% / 14.6 GiB last night; nothing in the logs explains the swing. Logs 50 MB, no degraded dashboard sections, no cron incidents, `reviews_due=1` remains (iPhone 17 note — content review, not a break).",
+   "**Updated:** the todo-cleanup vault item now names the ready-made `~/Vault` migration as the preferred fix (plan written 05:39, approval prompt timed out so nothing ran) alongside the two iCloud/FDA switches; its Google→Apple twin retitled in place (`updated->Apple`, sync dry-run `0 action(s) planned`).",
+   "**Session sweep:** 13 sessions scanned (00:39→05:59 plus the two night crons) — no new tasks filed; every ask from the day was either done or already tracked. One parked decision stays open: the PVE AI-window times (00:30–07:30) are placeholders until Ayush states his real sleep window.",
+   "**Still open:** the vault migration itself (555 of 777 files were dataless again at 05:16) and ten todo-cleanup items — all human-blocked."
   ]
  },
  {
@@ -14,7 +20,7 @@
   "summary": "Journal 2026-11-19: quiet day — Retroid Nova still offline so GTA SA install stalled, IKEA LACK shelf fits the 2013 CR-V with the 60/40 fold; cron 790 runs 0 failed, disk 14 GiB free.",
   "highlights": [
    "A genuinely quiet day: two interactive asks, both answered from measurements and live device state, and no vault restructuring needed.",
-   "The GTA SA task is blocked on hardware, not tooling — the Nova has been off the tailnet for 14 days; powering it on is the whole unblock.",
+   "The GTA SA task is blocked on hardware, not tooling — the Nova has been off the private network for 14 days; powering it on is the whole unblock.",
    "The CR-V answer is the tape-measure kind: 75 in clears 70–72 in of floor only by using the split-fold diagonal, so mixed seating (one front, one back) is a hard requirement.",
    "Disk is the one soft spot at 94% / 14 GiB free — under the 15 GiB warn line, so the 03:30 self-heal is doing real work rather than housekeeping.",
    "**Closed a stale task twin:** `Tech` \"Grant macOS Automation permission for Notes (agent cannot write to Notes)\" had been open since September while the grant worked — `apple_note.py --list` returned the full note list; completed on Google 23:04, sync logged `completed->Apple`, dry-run `0 action(s) planned`.",
@@ -69,7 +75,7 @@
    "The storage \"emergency\" was a bug, not a capacity wall: 19 completed remux swaps had been freeing zero bytes because the old seed torrent never matched by inode. Fixed at the driver, not by deleting more.",
    "`tank` went 98% → 84% in one afternoon (33 GiB → 2.10 TiB) and the queue is now ordered largest-first, so each swap returns 40–60 GiB.",
    "Job application pipeline work — details stay in the vault.",
-   "Mobile app rule worth remembering: `ayumacmini:8787` and the 32-char WebUI password. The raw Tailscale IP 404s and the dashboard creds belong to :9119.",
+   "Mobile app rule worth remembering: `ayumacmini` and the WebUI password. The raw private IP 404s and the dashboard creds belong to [redacted].",
    "Coursework — details stay in the vault.",
    "**Closed — RS50 sim rig.** The pickup task was completed on Hardware at 22:18 → Apple. Full $400 paid; the product note already reflected the purchase and the in-hand details, so no note edit was needed beyond checking it.",
    "**Closed — Intro to Agentic AI article (reconciliation, not delivery).** The Tech task was ticked 2026-11-14 but no draft exists in `02 Projects/Articles/` or in the `ayumad.me` repo, and the site's journal index has nothing. Rather than report the same question a third night, the Articles Hub line is checked off with the evidence noted — reopen if a draft is still owed.",
@@ -152,7 +158,7 @@
    "**Public journal feed** — 138 daily entries and 9 weekly reviews had been publishing verbatim; `journal_redact.py` now sits in the export path with a build-failing test.",
    "**Headphone ranking** — collection ordered by sonic identity, and the \"Isvarna has more sub-bass texture\" call was retired as an unmatched-level artifact (LCD-X is 7.1 dB more sensitive at 1 Vrms).",
    "Job application pipeline work — details stay in the vault.",
-   "**Replit mission app** — re-detached under launchd, `200` on local/LAN/tailnet at `:5057`; Handshake submission still needs a public link.",
+   "**Replit mission app** — re-detached under launchd, `200` on local/LAN/private network at `[redacted]`; Handshake submission still needs a public link.",
    "Job application pipeline work — details stay in the vault."
   ]
  },
@@ -168,7 +174,7 @@
    "**4080 desktop** — buyer-ready spec sheet produced (machine still lent out).",
    "**Schiit Modius + Magnius ($230)** — scored **SKIP**: fair price, role already covered by the FiiO K13 R2R + Fosi GR70.",
    "**LCD-4 comparison** — answered against the owned collection (LCD-X is the nearest, one rung down, 600 g, discontinued).",
-   "**Replit mission app** — certifi/port/Flask bugs fixed, then re-detached under launchd; verified `200` on `localhost:5057` at 23:05, survives gateway shutdown.",
+   "**Replit mission app** — certifi/port/Flask bugs fixed, then re-detached under launchd; verified `200` on `localhost` at 23:05, survives gateway shutdown.",
    "**Crons** — 798 runs across 24 jobs, no failure incidents detected. The scout Craigslist sweep's delivery error is the stale record of a job paused since Oct 9 (Muse replaced it); left paused."
   ]
  },
@@ -245,7 +251,7 @@
   "summary": "Session journal for 2026-11-05: RetroPie emulation audit + Nova ROM import, save-sync reconciliation across Pi/Nova, Wii/PS2/PS3 CRT paths, WEGA RGB mod decision, Isvarna headphone compare.",
   "highlights": [
    "The Pi's problems were mostly files, not hardware: eight fake 170-byte ROMs, GB/GBC misfiled into `gba/`, and PSX CD audio/XA disabled in core options. Systems went 11 → 20 without reflashing anything.",
-   "Save sync was never real — a phone app setting (Nova Autostart off since 10/9) plus tailnet-only peer addresses. Now three peers, LAN-direct, round-trip proven, and `save-sync-audit` reports 0 issues.",
+   "Save sync was never real — a phone app setting (Nova Autostart off since 10/9) plus private network-only peer addresses. Now three peers, LAN-direct, round-trip proven, and `save-sync-audit` reports 0 issues.",
    "Hardware verdict: nothing 20\" fits the 512 mm shelf, so the $65 Sunthar 1.4C RGB mod (due 12/31) is the real upgrade — PS2/PS1 get native RGB, the Wii needs an $80 transcoder and stays marginal, the PS3 is stuck at soft 480i.",
    "The constraint has moved to storage: card at 94 %, so bin/cue → CHD is what unblocks both breathing room and the Dreamcast library."
   ]
@@ -353,7 +359,7 @@
    "The book library stopped being a plan. 47 works catalogued with SHA-256 provenance, five real EPUBs built from web-only sources by a packager written on the spot because the box has no Calibre — and the four PDFs kept as PDFs on purpose, which is the more careful call than a pretty but broken conversion.",
    "The most useful finding of the day was an absence: **there is no RAG artifact behind the resume line that says there is one.** That's a cheap fix and a live credibility risk, in that order.",
    "The hardware plan got honest — no HDL, no EDA tools, no board — and still ends at silicon evidence by February, using free EDA Playground runs for the UVM box that Verilator can't tick.",
-   "Nine books are sitting in a queue because the Kindle went to sleep mid-transfer, and a 24-character code-server password is currently beating a purpose-built web IDE. Both are five-minute fixes with outsized annoyance value."
+   "Nine books are sitting in a queue because the Kindle went to sleep mid-transfer, and a code-server password is currently beating a purpose-built web IDE. Both are five-minute fixes with outsized annoyance value."
   ]
  },
  {
@@ -404,7 +410,7 @@
    "Fleet is boring in the good way: 513 runs, zero failures, and the cheap-model routing pin has now survived three days across every scheduled job.",
    "Still parked, both human-shaped: WebUI session persistence (routing change + restart) and the Notion Desk token (one manual mint).",
    "Fleet: 10 active jobs in the default store, no open incidents (`hermes cron incidents list` — every row resolved/closed). Five jobs paused by choice (marketplace ×3, Album Elo, oil change fallback) and left paused.",
-   "Disk re-measured: 90% used / 22 GB free. state.db 1.21 GB. config.yaml still has exactly one stale `API_SERVER_KEY:` line, now line 832.",
+   "Disk re-measured: 90% used / 22 GB free. state.db 1.21 GB. config.yaml still has exactly one stale `[redacted]:` line, now .",
    "Vault: validator clean — 583 notes, invalid/duplicate/unresolved/ambiguous/gov all 0. The one uncommitted file is the validator's own report, left for the 15-min sync.",
    "SER8 reachable (2/2 packets), `jellyfin.ayumad.me` still NXDOMAIN, Hermes Desktop still the Oct 18 15:39 process, Notion Desk engine untouched since Oct 23 (still no token).",
    "The long-held simulator-runtime item was unfollowable as written — it said \"the session from 2:56 AM\" but that session is titled **\"im at my mac mini, whats broken and needs to be…\"** (started Oct 1 21:26, last active Oct 7 02:56). The cleanup entry now names it. `xcrun simctl` is not reachable from the agent shell (no developer dir selected), so the ~47 GB figure remains an estimate rather than a re-measurement.",
@@ -424,7 +430,7 @@
    "**Verified before believing the brief.** All 11 cron stores tick (heartbeats fresh at 23:00) and **zero open incidents** in default, scout and vaultkeeper — the three vaultkeeper incidents (Oct-17 401, two Oct-4 sync timeouts) are already `resolved`. Vaultkeeper's `Weekly Review` `delivery_failed` and the journal's `delivery_queued` are stale status strings over `settled` artifacts, not live retries.",
    "**Closed: Notes is no longer wedged.** Bounded AppleScript probes answered immediately — 31 notes, 1 folder, 1 account, each well under the 25 s alarm that had failed on every pass from 2026-09-18 through 10-22. The vault cleanup entry is retired; the Google/Apple twin `Notes app hung — quit & reopen` still needs closing by hand (this pass may not write to task surfaces).",
    "**Closed: Weekly Review model pin.** It already runs `deepseek-v4.1-flash` (the `mimo-v2.5` in its queued artifact is the Oct-18 snapshot), so the `400 Unsupported model` class that killed the Daily Brief cannot hit Sunday's 16:00 run. Real test is Oct 25.",
-   "**Re-measured for accuracy:** data volume 90% / **22.0 GB** free; `state.db` **1.21 GB** (1,295,347,712 bytes); the duplicate `API_SERVER_KEY` line is now **line 832 of 884** in `config.yaml` (file keeps growing, so the number drifts); SER8 alive over tailnet (2/2 packets, 8.5 ms avg).",
+   "**Re-measured for accuracy:** data volume 90% / **22.0 GB** free; `state.db` **1.21 GB** (1,295,347,712 bytes); the duplicate `[redacted]` line is now **** in `config.yaml` (file keeps growing, so the number drifts); SER8 alive over private network (2/2 packets, 8.5 ms avg).",
    "**New finding, logged to the ops queue (agent-side, untouched tonight):** 804 `session write refused … Gateway runtime already owns profile /Users/ayumad/.hermes` warnings from `hermes_cli.web_server` today, first at 02:21. Isolated WebUI/desktop backends cannot persist sessions while the gateway holds the profile exclusively. Fixing it needs a routing/config change plus a backend restart this pass is forbidden from doing.",
    "**Deliberately not touched:** scout `Marketplace Sweep` (paused by Ayush; its Oct-9 pending artifact is `settled`, so the recurring DELIVERY-ERR is display noise), and the Jellyfin remux verification (agent-side, last snapshot 3 rows / 43.3 GB — the `remux_downgrade_tick` job announces when it clears).",
    "**todo-cleanup reconciled to 9 items:** dropped Notes (verified) and the remux verify (not a human step); added the Notion Desk token mint, now the cheapest unblocker in the vault."
@@ -441,7 +447,7 @@
    "**Daily Brief 9:30 — root-caused and already routed around.** Oct 21 and Oct 22 both died ~3 s in with upstream `400 Unsupported model mimo-v2.5` on `opencode.ai/zen/go/v1`, while the same model ran green at 6 PM and 11 PM both days — the rejection only ever hit the 9:30 scheduled fire. The job's model pin now reads `deepseek-v4.1-flash` (changed between today's 9:30 failure and the 10:06 PM direct re-run; no session record of the edit — WebUI/CLI), and that re-run went green on the new pin and delivered tonight's brief. The scheduler re-reads the pin from jobs.json every tick, so tomorrow's 9:30 fires deepseek — the model that ran 100+ calls green in chat today. Watch tomorrow morning.",
    "Job application pipeline work — details stay in the vault.",
    "**Weekly Review (Oct 18) delivery_failed — artifact is fine.** The review note sits in the vault (9.4 KB, Oct 18 4:26 PM); only the bot-chat push hit the 600 s timeout, and vaultkeeper's delivery worked again today — treated as a one-off, no config change. Sunday's 4 PM fire re-tests it.",
-   "**Re-probed, still human-blocked (all 10 todo-cleanup items kept, dates refreshed):** Vercel still 403 (Sun Oct 18 prune no-op'd; next Sun no-ops too without `vercel login`), Notes still wedged (25 s timeout), config.yaml `API_SERVER_KEY` still line 729, jellyfin.ayumad.me still no DNS, state.db 1.30 GB, disk 90% / 23.8 GB free, SER8 alive (ping 10 ms + SSH). Radarr remux queue down to **3 rows / 43.3 GB** (was 7 / 80 GB yesterday) — clears within a day.",
+   "**Re-probed, still human-blocked (all 10 todo-cleanup items kept, dates refreshed):** Vercel still 403 (Sun Oct 18 prune no-op'd; next Sun no-ops too without `vercel login`), Notes still wedged (25 s timeout), config.yaml `[redacted]` still , jellyfin.ayumad.me still no DNS, state.db 1.30 GB, disk 90% / 23.8 GB free, SER8 alive (ping 10 ms + SSH). Radarr remux queue down to **3 rows / 43.3 GB** (was 7 / 80 GB yesterday) — clears within a day.",
    "**Not touched:** paused jobs left paused, no gateway/backend restarts, no task-surface writes. Vault validator after edits: **580 notes, all counters 0.**"
   ]
  },
@@ -453,7 +459,7 @@
    "Job application pipeline work — details stay in the vault.",
    "**Quiet vault day**: exactly one file touched (website roadmap last-checked stamp); no notes edited, no decisions logged, no Codex threads.",
    "Job application pipeline work — details stay in the vault.",
-   "**Fresh probes (23:05–23:07):** Vercel still 403 (Sunday's 7 AM prune no-op'd — `vercel login` remains the fix); Notes still wedged (25 s timeout on note count); config.yaml `API_SERVER_KEY` still exactly 1 match @ line 729; jellyfin.ayumad.me still no DNS; SER8 alive (ping 18 ms avg + SSH ok); disk 25.7 GB free / 89%; state.db 1.30 GB.",
+   "**Fresh probes (23:05–23:07):** Vercel still 403 (Sunday's 7 AM prune no-op'd — `vercel login` remains the fix); Notes still wedged (25 s timeout on note count); config.yaml `[redacted]` still exactly 1 match @ ; jellyfin.ayumad.me still no DNS; SER8 alive (ping 18 ms avg + SSH ok); disk 25.7 GB free / 89%; state.db 1.30 GB.",
    "**Radarr remux queue draining fast:** 34 → 7 rows, 148 → 80 GB in one day — should clear within a day or two, after which the remux-verification item becomes checkable.",
    "**Stale-but-explained standing items:** Update Check 401 (pre-key-swap Oct 18 fire; hermes-ops profile key re-verified byte-identical to the live default tonight — expected to self-clear Sunday) and Weekly Review delivery_failed (review file exists, only the bot-chat line timed out).",
    "**todo-cleanup:** 10 items, none cleared — all still need Ayush, re-probed in place where a probe exists."
@@ -507,7 +513,7 @@
    "Fleet fully green: 421 cron runs, 0 failures — including a clean Photon delivery for the Daily Brief after last week's cooldown streak.",
    "Nothing in the Decision Log today (last entry 2026-08-07); no vault notes were modified outside this journal.",
    "Coursework — details stay in the vault.",
-   "**This pass:** verification only — nothing needed closing. Yesterday's dashboard school-tile fix held (today's payload: no degraded sections). All 10 open 🧹 todo-cleanup items re-probed and still open; dates refreshed in TODO Master — Vercel still 403, Notes still wedged (25 s alarm, rc 142), jellyfin.ayumad.me still unresolvable, API_SERVER_KEY still line 728, SER8 still answering SSH, state.db still 1.2 GB. Disk 93% / 16.3 GB free.",
+   "**This pass:** verification only — nothing needed closing. Yesterday's dashboard school-tile fix held (today's payload: no degraded sections). All 10 open 🧹 todo-cleanup items re-probed and still open; dates refreshed in TODO Master — Vercel still 403, Notes still wedged (25 s alarm, rc 142), jellyfin.ayumad.me still unresolvable, [redacted] still , SER8 still answering SSH, state.db still 1.2 GB. Disk 93% / 16.3 GB free.",
    "**Media:** remux queue re-measured via Radarr — 33 rows, ~663 GB left, 29 remux rows. 153 GB drained since yesterday, well above the earlier 40–55 GB/day, so the queue may clear within the week rather than three.",
    "**Flagged for Ayush:** scout Marketplace Sweep has been paused since Oct 9 (11 min after its bot-chat delivery timed out, no recorded reason) — no Craigslist-wishlist sweeps since. Unpausing is his call.",
    "**Still needs Ayush — 10 items in 🧹 todo-cleanup.** Most important: `vercel login` on the mini before Sunday 7 AM (the weekly prune silently no-ops without it), then the parked simulator-runtime answer (47 GB — cheapest big win as disk keeps tightening) and the Notes quit-and-reopen."
@@ -522,7 +528,7 @@
    "Social Bookmark Sync moved from parked to active — X saves is the first live source; Gemini→Hermes port queued pending Ayush's automation list.",
    "Second straight day of a flawless cron fleet (421/421 runs green); vault validation clean at 566 notes, git in sync.",
    "**Fixed:** the dashboard's school section kept degrading on its 25 s guard budget — a real timed `school_snapshot.py --json` run took 19.6 s (slow Gmail day, not a fault), so the section budget was raised to 60 s in `dashboard_build.py` (py_compile clean; uses `guard()`'s documented budget-override path). Fleet otherwise green: 423 runs / 24 h, 0 incidents — third straight clean day.",
-   "**Re-probed every open item (all still open):** Vercel token still HTTP 403 (weekly prune fires Sun Oct 18, 7 AM); Apple Notes still wedged (plain note-count hit the 30 s alarm, rc 142); `jellyfin.ayumad.me` still does not resolve; the stale `API_SERVER_KEY:` line drifted to config.yaml line 728; SER8 alive over the tailnet; state.db 1.2 GB.",
+   "**Re-probed every open item (all still open):** Vercel token still HTTP 403 (weekly prune fires Sun Oct 18, 7 AM); Apple Notes still wedged (plain note-count hit the 30 s alarm, rc 142); `jellyfin.ayumad.me` still does not resolve; the stale `[redacted]:` line drifted to config.yaml ; SER8 alive over the private network; state.db 1.2 GB.",
    "**Media:** remux queue re-measured via Radarr — 33 rows, ~816 GB remaining, 29 of them remux rows (~43 GB drained since yesterday; on the recent pace the queue clears in roughly three weeks).",
    "**Still needs Ayush — 10 items in 🧹 todo-cleanup.** Most important: run `vercel login` on the mini before Sunday 7 AM, or the deployment prune silently no-ops and free-tier storage resumes bleeding. Runner-up: answer the parked simulator-runtime removal (disk now 93% / 17 GB free — the ~47 GB reclaim is the cheapest big win), then the Notes quit-and-reopen."
   ]
@@ -541,7 +547,7 @@
    "Notes scripting still wedged — bounded probe hit the 25 s alarm again (exit 142); quit & reopen Notes to clear.",
    "Simulator-runtime removal still held — disk now 92% / 18 GB free; the parked desktop session awaits \"go\" / \"keep iOS\" / \"hold\".",
    "state.db grew to 1.30 GB — still needs a gateway-stopped maintenance window.",
-   "`jellyfin.ayumad.me` still unresolvable (Namecheap A record), API_SERVER_KEY still at config.yaml line 727, SER8 still alive but node-exporter blocked on sudo, Xfinity forwards + Hue pairing unchanged."
+   "`jellyfin.ayumad.me` still unresolvable (Namecheap A record), [redacted] still at config.yaml , SER8 still alive but node-exporter blocked on sudo, Xfinity forwards + Hue pairing unchanged."
   ]
  },
  {
@@ -558,7 +564,7 @@
    "Notes scripting: re-probed with a bounded folder-count AppleScript — still wedged (25 s alarm, exit 142). Item kept.",
    "Remux upgrade re-measured: queue down to **36 rows / ~913 GB left** (was 54 / ~1.46 TB on Oct 9); 32 of them remux rows. Draining steadily; 2 TB disk-floor guard in place.",
    "Disk re-measured: **92% used / 18.9 GB free** — still sliding ~1.5 GB/day; simulator-runtime removal stays the top item.",
-   "SER8:9100 still refuses connections (node exporter not installed — sudo item kept); `jellyfin.ayumad.me` still does not resolve (Namecheap item kept); API_SERVER_KEY line still at line 727 of config.yaml (human-only delete kept).",
+   "SER8 still refuses connections (node exporter not installed — sudo item kept); `jellyfin.ayumad.me` still does not resolve (Namecheap item kept); [redacted] line still of config.yaml (human-only delete kept).",
    "Cron: no incidents to ack, no broken job scripts, paused jobs left paused; Scout sweep's delivery timeout is stale (job paused by decision).",
    "todo-cleanup reconciled to 10 items: added Vercel token re-auth; every other item re-verified still open with today's measurements.",
    "The held simulator-runtime removal (~47 GB) on the parked desktop session — disk keeps sliding; cheapest big win sitting around.",
@@ -575,7 +581,7 @@
    "Job application pipeline work — details stay in the vault.",
    "**Vercel prune staged** (2:20 PM) — first run next Sunday; deployment storage at 75% keeps bleeding until the Confirm tap.",
    "Job application pipeline work — details stay in the vault.",
-   "API_SERVER_KEY cleanup item: duplication **re-verified programmatically** — the config.yaml value is byte-identical to the `.env` copy (compared via script, values never printed), and port 8642 is confirmed live, so deleting the one config line is safe and still needs a human (config.yaml writes are policy-blocked).",
+   "[redacted] cleanup item: duplication **re-verified programmatically** — the config.yaml value is byte-identical to the `.env` copy (compared via script, values never printed), and a port is confirmed live, so deleting the one config line is safe and still needs a human (config.yaml writes are policy-blocked).",
    "Notes scripting wedge: **re-probed today — still wedged** (bounded `Notes count notes` AppleScript probe hit the 25 s alarm, exit 142). Item kept.",
    "Disk re-measured: **91% used / 19 GB free** (sliding ~1.5 GB since the 23:00 brief snapshot).",
    "Cron health: no incidents to ack; the two `delivery_failed` entries (Daily Brief, Daily Cleanup) are the known cooldown class, not new breakage; paused jobs left paused; no job-script repairs needed.",
@@ -605,7 +611,7 @@
    "**Fleet green with one soft spot**: 422 runs, 0 failures, but Homelab Health Monitor's latest delivery failed — delivery, not execution; flag if it recurs.",
    "**Quiet on the memory/Codex front**: no Codex threads and no new Mnemosyne memories today — the day's output was all in the vault and Google Docs.",
    "**Root-caused + fixed the repeating Homelab Health Monitor delivery_failed** (7 runs today, 18:21→23:01 — last night's journal flagged it as \"watch if it repeats\"; it repeated). Two real bugs, both in `~/.hermes/scripts/homelab-monitor.sh`: (1) `ping -c1 -W3` — on macOS `-W` is **milliseconds**, so the Omarchy probe had a 3 ms budget against a 13–430 ms cross-subnet path and flapped a false \"not responding to ping\" roughly every other run; (2) the signature dedup hashed raw numbers, so the slow tank drift (80→81%, filled by the remux queue) re-hashed as a brand-new issue set on every tick. Each re-alert burned one of Photon's free-tier 3-sends-until-you-reply; once spent, the sidecar 500s (\"Recipient has not replied; cooling period limits sends to 3/day\") and everything else — journal relay, briefs — starved. Fixed: `-W 3000`, and digits normalized to `#` before hashing (⚠️→❌ escalation still re-alerts). Verified with three real runs: Omarchy now ✓ reachable, and an unchanged re-run produces empty stdout (silent). Genuine warning that remains: tank at 81% — expected, Radarr's 2 TB floor stops the remux pull on its own.",
-   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out (40 s bound), unchanged since 09-18; still needs a quit/reopen on the mini. SER8: alive over tailnet (ping + SSH), **LAN IP confirmed [redacted] straight from the host** (`ip -4 -br addr`) — closes the long-standing \"confirm its current DHCP address\" question; :9100 still closed and `sudo -n` confirms the password is still required, so the node-exporter install is one sudo command away. `jellyfin.ayumad.me` still doesn't resolve (Namecheap item stays open). config.yaml duplicate `API_SERVER_KEY` still present, now line 727. state.db re-measured: 1.21 GB.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out (40 s bound), unchanged since 09-18; still needs a quit/reopen on the mini. SER8: alive over private network (ping + SSH), **LAN IP confirmed [redacted] straight from the host** (`ip -4 -br addr`) — closes the long-standing \"confirm its current DHCP address\" question; [redacted] still closed and `sudo -n` confirms the password is still required, so the node-exporter install is one sudo command away. `jellyfin.ayumad.me` still doesn't resolve (Namecheap item stays open). config.yaml duplicate `[redacted]` still present, now . state.db re-measured: 1.21 GB.",
    "**Scout Marketplace Sweep**: paused by Ayush at 03:17 after its Craigslist fetch failures; the delivery_failed the brief showed is the stale 03:06 run — its degraded-notice pending file is settled, nothing stuck, not re-enabled.",
    "**Next task-surface pass**: the Google Tasks Tech item \"Photon/iMessage sidecar 500 — non-retryable sidecar_internal\" is mis-premised — the root cause is the Photon free-tier cooldown, not the sidecar; close it. (This job is barred from task surfaces.)",
    "**Verified healthy:** fleet 422 runs / 14 jobs, 0 incidents; vault 559 notes all validator counters 0; git clean, 0 unpushed; disk 91% / 22.5 GB free (up from 20.2 GB yesterday).",
@@ -614,14 +620,14 @@
  },
  {
   "date": "2026-10-08",
-  "summary": "Session journal for 2026-10-08: coursework + submitted (Canvas verify task added; snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex.",
+  "summary": "Session journal for 2026-10-08: coursework, snapshot still shows it overdue); Retroid Nova full audit + Syncthing plan; fleet 426 runs 0 failed; no Codex.",
   "highlights": [
    "Coursework — details stay in the vault.",
    "The Retroid Pocket Nova is properly sorted now: the PS2 \"emulator not found\" mystery was a broken find-rules typo in the community ES-DE build — root-caused, overridden, FFX verified booting; 195 games metadata-enriched; archives offloaded to NAS. Syncthing saves sync Nova ↔ CRT Pi is the next step.",
    "Fleet stayed fully green (426 runs, 0 failed) and the vault validated clean for the second consecutive check (552 notes, zero defects).",
    "Job application pipeline work — details stay in the vault.",
    "Coursework — details stay in the vault.",
-   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out at 30 s, unchanged since 09-18, still needs a quit/reopen on the mini. SER8 :9100 closed on the tailnet IP (node exporter still not installed); the LAN IP [redacted] didn't answer a TCP probe at all from the mini — confirm SER8's current DHCP address before pointing Prometheus at it. config.yaml API_SERVER_KEY duplicate still present, still line 725 — hand-edit only.",
+   "**Probes (bounded, read-only):** Notes wedge re-probed — plain note-count still times out at 30 s, unchanged since 09-18, still needs a quit/reopen on the mini. SER8 [redacted] closed on the private network IP (node exporter still not installed); the LAN IP [redacted] didn't answer a TCP probe at all from the mini — confirm SER8's current DHCP address before pointing Prometheus at it. config.yaml [redacted] duplicate still present, still — hand-edit only.",
    "**Verified healthy:** last night's daily_cleanup_brief.py fix (its own in-flight row counted as a failure) held — no FAILING flag, 0 cron incidents, 425 runs/24 h across 15 jobs. Vault 553 notes, all validator counters 0, git clean, 0 unpushed.",
    "**Still needs Ayush:** 9 todo-cleanup items — top is the held simulator-runtime removal (~47 GB; the data volume is back to 92% / 20.2 GB free after Xcode 27.0 landed overnight, so it's the cheapest big win). Also untouched: state.db compaction (needs a gateway-stopped window), the Notes wedge (GUI restart), Xfinity + Namecheap logins.",
    "Gap noted: the simulator-runtime cleanup item still has no Google Tasks Tech twin — this job is barred from writing task surfaces, so a pass with write access should add it."
@@ -657,7 +663,7 @@
    "**Writing thread quietly alive:** the \"Layers of Working with AI\" brainstorm doc got a full review pass in the WebUI tonight; still a working doc, no draft yet.",
    "No Codex threads; no Decision Log entries; reminders sync quiet (no changes since Sep 27 log entry).",
    "The \"FAILING Daily Cleanup\" row in the brief was confirmed a false alarm — this run's own in-flight execution. Incidents list shows only closed Sep 10 items; zero detected incidents, zero real failures in 26h.",
-   "Verified the stale `API_SERVER_KEY` line is still at config.yaml line 729 (unchanged since Oct 4).",
+   "Verified the stale `[redacted]` line is still at config.yaml (unchanged since Oct 4).",
    "todo-cleanup reconciled: 9 items, none dropped, all genuinely still waiting on Ayush. Disk stat refreshed — volume now **95% / 10.8 GB free** (worse than 12.6 GB last night and 13.7 GB Oct 4 morning). state.db measured at **1.30 GB**.",
    "Vault validator clean post-edits: 550 notes, all counters 0. Git 0 uncommitted, 0 unpushed.",
    "SER8 node-exporter install stays blocked on Ayush's sudo password (cron scanner also blocks the raw-IP probe — item kept as-is).",
@@ -684,7 +690,7 @@
    "**Still open for Ayush**: the 9 todo-cleanup items (top: the sudo disk pass). Not queued here — agent-side, tracked elsewhere: Oct 1–3 journal backfill (vaultkeeper job's own open item), publisher merge push, WebUI wrapper hardening (the infra recovery thread's work — not touched by this pass).",
    "The infra recovery thread wrapped at ~06:20 AM, closing its opens: publisher merged behind safety tag `backup-premerge-20261004` and **pushed** (ayumad.me + blog serving 200s); WebUI permanently on the self-healing managed wrapper; the \"stray SSH\" identified as Ayush's MacBook ([redacted]); Full Disk Access live for every Hermes process (all three grants working — no clicks left).",
    "**\"FAILING Daily Cleanup\" flag = false alarm.** The brief's `1/1 — running: (no message)` row was this run's own in-flight execution (claimed 23:00:22, `finished_at: NULL` because the agent hadn't replied yet). Verified across all 11 cron stores: zero stuck-running rows >90 min, zero non-ok runs in the last 26 h except the already-resolved overnight vaultkeeper `vault_git_sync.sh` timeouts (6× 3600 s + 1 scheduler-restart `unknown`, all incidents closed 03:21). Nothing to ack.",
-   "**todo-cleanup reconciled**: 9 items kept, none dropped — every one is still genuinely human-blocked (verified the `API_SERVER_KEY` line is still in config.yaml at line 729, was ~722; SER8 node-exporter port probe blocked by the cron security scanner's raw-IP-HTTP rule, so that entry stays as \"blocked on sudo password\"). Disk stat refreshed to **94.8% / 12.6 GB free** (measured 23:07; 13.7 GB this morning, 19 GB Sep 29 — still shrinking).",
+   "**todo-cleanup reconciled**: 9 items kept, none dropped — every one is still genuinely human-blocked (verified the `[redacted]` line is still in config.yaml , was ~722; SER8 node-exporter port probe blocked by the cron security scanner's raw-IP-HTTP rule, so that entry stays as \"blocked on sudo password\"). Disk stat refreshed to **94.8% / 12.6 GB free** (measured 23:07; 13.7 GB this morning, 19 GB Sep 29 — still shrinking).",
    "**Vault validation after edits**: run after this append — counters reported in the job's final message.",
    "**Still open for Ayush**: the same 9 todo-cleanup items (top: the sudo disk pass — biggest win at ~53 GB, and the volume is at its tightest yet)."
   ]
@@ -770,7 +776,7 @@
    "**SER8 ([redacted]) offline** — Tailscale shows last seen 6 days ago, 100% packet loss. Prometheus node exporter install blocked until it comes back. Omarchy Health Monitor restoration also blocked (decision in ops-queue).",
    "**Daily Brief delivery failed** (9:31 AM) — Photon sidecar returned 500; sidecar is configured and likely recovered, but the morning brief never reached iMessage. Transient — monitor for recurrence.",
    "**Disk 92% / 16 GB free** — stable but tight. The sudo disk pass (53 GB reclaim) is still the single biggest win.",
-   "**API_SERVER_KEY on config.yaml line 728** — duplicate, needs manual delete."
+   "**[redacted] on config.yaml ** — duplicate, needs manual delete."
   ]
  },
  {
@@ -808,7 +814,7 @@
    "453 runs across 17 jobs in last 24h. Two paused jobs (Album Elo Detection, Media swarm fallback) — both intentionally paused, not broken.",
    "Reminders ↔ Google Tasks Sync: 1/68 failures — likely a stale TCC hit, not a new break. The job is otherwise healthy.",
    "Daily Cleanup + Loose Ends: this run (1/1, first fire of the day). Logged.",
-   "7 todo-cleanup items unchanged — Xfinity gateway DHCP, Mac mini sudo disk pass, state.db compaction, config.yaml API_SERVER_KEY deletion, Hue bridge pairing, SER8 node exporter, Notes app hung check.",
+   "7 todo-cleanup items unchanged — Xfinity gateway DHCP, Mac mini sudo disk pass, state.db compaction, config.yaml [redacted] deletion, Hue bridge pairing, SER8 node exporter, Notes app hung check.",
    "Tirith was a Linux binary on macOS — fixed 2026-09-10, but gateway restart still pending to clear the ops-queue item."
   ]
  },
@@ -1017,7 +1023,7 @@
  },
  {
   "date": "2026-08-30",
-  "summary": "Session journal for 2026-08-30: school snapshot tool, Canvas calendar discovery, task rescheduling, cron sync failures.",
+  "summary": "Session journal for 2026-08-30: school snapshot tool, coursework, task rescheduling, cron sync failures.",
   "highlights": [
    "Coursework — details stay in the vault.",
    "**Google Tasks housekeeping.** 6 tasks pushed to Sep 3; clean slate for the weekend.",
@@ -1047,7 +1053,7 @@
   "summary": "AI-Engineering sub-vault deepened and published, SJSU school email connected, EchoSphere project kicked off, coursework, task system reorg.",
   "highlights": [
    "**Massive AI-Engineering push** — sub-vault went from 48 stubs to 475+ deep notes in one day: sourced write waves, plain-English gists, prev/next navigation, vector search note, mirror repo publish. Curriculum is now a complete course-first learning path.",
-   "**SJSU school email connected** — OAuth working for `[redacted]`, all 9 scopes. Canvas integration pending. ⚠️ Token expires ~Sep 3 (testing mode).",
+   "Coursework — details stay in the vault.",
    "**EchoSphere launched** — 12-week ACM Robotics project (Physical AI Robot, Min Lee collab). Build starts Sep 7.",
    "Coursework — details stay in the vault."
   ]
@@ -1164,7 +1170,7 @@
  },
  {
   "date": "2026-08-14",
-  "summary": "Session journal for 2026-08-14: Uline desk fitting research, cron health degradation (Omarchy monitor down all day), routine automation runs.",
+  "summary": "Session journal for 2026-08-14: desk fitting research, cron health degradation (Omarchy monitor down all day), routine automation runs.",
   "highlights": [
    "**Omarchy health monitor is fully broken** — every execution failed today. Should be investigated; this is a watch-list item.",
    "**Reminders ↔ Google Tasks sync degraded** — most runs failed. Combined with Omarchy issues, suggests a connectivity or config problem on the sync path.",
@@ -1174,9 +1180,9 @@
  },
  {
   "date": "2026-08-13",
-  "summary": "Session journal for 2026-08-13: Craigslist desk hunt → Uline electric desk secured, Homelab NAS planning (ZFS raidz expansion confirmed), cron infrastructure steady, Omarchy still down.",
+  "summary": "Session journal for 2026-08-13: Craigslist desk hunt → electric desk secured, Homelab NAS planning (ZFS raidz expansion confirmed), cron infrastructure steady, Omarchy still down.",
   "highlights": [
-   "**Desk secured** — Uline H-7599GR electric 72×30 at $150 is the best value found in a 330-listing sweep. Beats every Craigslist option on spec and price for a commercial electric sit-stand desk in the Bay Area.",
+   "**Desk secured** — H-7599GR electric 72×30 at $150 is the best value found in a 330-listing sweep. Beats every Craigslist option on spec and price for a commercial electric sit-stand desk in the Bay Area.",
    "**NAS path clarified** — The \"which OS/filesystem\" question is settled: stay on Proxmox ZFS, use raidz expansion, no Unraid pivot. Tomorrow's NAS setup is concrete (datasets → Samba LXC → SMB).",
    "**Omarchy (SER8) still unreachable** — 87 consecutive failures, two days running. Needs physical investigation or Tailscale check when Ayush is near the machine.",
    "**Reminders sync 3-task reopen loop persists** — Same 3 tasks keep reverting to \"open\" on every sync. Needs a state-file fix to stop the churn; logged in yesterday's journal as needing investigation.",
