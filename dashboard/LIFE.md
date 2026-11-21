@@ -18,7 +18,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 |---|---|
 | Hero left | date, oversized clock, seconds, seconds bar |
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
-| Hero right | San Jose weather, current conditions, tomorrow only |
+| Hero right | Fremont weather, current conditions, and the next three days |
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
 | Workspace center | Hermes particle weave with a single status readout |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
@@ -30,7 +30,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 - The clock is the largest element; `CURRENT FOCUS` is the largest *meaningful* element after it.
 - The central canvas fills its panel with particles.
-- Rails are capped: 3 agenda rows, 3 near-term task rows, 2 school rows, 1 forecast day. `+N more` carries the rest; tasks due more than 7 days out are not rendered.
+- Rails are capped: 3 agenda rows, 3 near-term task rows, 2 school rows, 3 forecast days. `+N more` carries the rest; tasks due more than 7 days out are not rendered.
 - Long titles are reduced to course/project + action; no two-line paragraphs in the action rails.
 - Use one accent per state: cyan live/info, violet secondary, amber warning/due-soon, red overdue/bad. Color is never the only encoding.
 
@@ -53,8 +53,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → active Codex Cloud task or a recent Codex session (local or ChatGPT-account) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
 - **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
 - Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
-- **Project pulse:** one active project, chosen oldest-first with an open checkbox action and excluding the current focus project; shows last-touched age, next open action, and open-action count. If no project qualifies, the panel is removed.
-- **Now listening:** public `/api/spotify` data reused in the payload; album art, track/artist, playing/recent state, and progress. Degrades to an offline signal without breaking the layout.
+- **Project pulse:** the most recently updated active project, with last-touched age, next action and open-action count. The panel stays visible and prompts for sign-in when details are private.
+- **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
 - **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
@@ -67,7 +67,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 - Clock: every second.
 - Focus recompute: every 15 seconds.
-- Weather: every 15 minutes (Open-Meteo, San Jose, no key).
+- Weather: every 15 minutes (Open-Meteo, Fremont, no key).
+- Spotify: every 5 seconds while visible, with an immediate refresh when the tab becomes visible. The wall kiosk uses the public endpoint at `ayumad.me`.
 - Page data: every 5 minutes (`/dashboard.json` on wall, `/dashboard/data` on web).
 - Service trend: samples from the existing 5-minute poll.
 
@@ -101,7 +102,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Signed-in snapshots can give active runs stable identifiers to keep them on consistent currents. A new explicit success or delivery receipt releases particles.
 - **Wall:** `http://10.0.0.54:8795/dashboard.json` is the live v1 payload, served beside `dashboard.html`; the page detects `.html` and fetches `./dashboard.json` first. It shows the full view.
 - Calendar labels: map `Canvas` → `CANVAS`, raw emails → `PERSONAL` / `SCHOOL`, `Class` → `CLASS`.
-- Weather: Open-Meteo, San Jose (`37.3382, -121.8863`), °F, `America/Los_Angeles`, client-side. No key.
+- Weather: Open-Meteo, Fremont (`37.5483, -121.9886`), °F, `America/Los_Angeles`, client-side. No key.
 
 ## Build and routes
 

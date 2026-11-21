@@ -6,6 +6,8 @@ import {
 const jsonHeaders = {
   "Content-Type": "application/json; charset=utf-8",
   "X-Content-Type-Options": "nosniff",
+  "Access-Control-Allow-Origin": "*",
+  "Cache-Control": "no-store",
 };
 
 export function GET() {
@@ -20,7 +22,7 @@ export function GET() {
       {
         headers: {
           ...jsonHeaders,
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+          "Vercel-CDN-Cache-Control": "public, s-maxage=60",
         },
       },
     );
@@ -30,7 +32,9 @@ export function GET() {
     Response.json({ ...playback, playedAt: playback.playedAt?.slice(0, 10) ?? null }, {
       headers: {
         ...jsonHeaders,
-        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=300",
+        "Vercel-CDN-Cache-Control": playback.state === "unavailable"
+          ? "public, s-maxage=15"
+          : "public, s-maxage=3",
       },
     }),
   );

@@ -3,6 +3,8 @@
 
   const LA = "America/Los_Angeles";
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
+  const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
+  const SPOTIFY_POLL_MS = 5000;
   const DASH = "—";
   const $ = (id) => document.getElementById(id);
   const list = (value) => Array.isArray(value) ? value.filter(Boolean) : [];
@@ -24,6 +26,7 @@
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
   const state = { data: null, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
+  const listening = { playback: null, pending: false, failed: false };
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
@@ -539,85 +542,107 @@
     }
   }
 
-  function projectPulse(data, focus, today) {
+  function projectPulse(data) {
     if (data.public) return null;
-    const focusText = clean(focus.item?.name ?? focus.item?.title ?? "").toLowerCase();
     const candidates = list(data.projects).filter((project) => {
       if (!project?.name || !["active", "in-progress"].includes(project.status)) return false;
-      if (/^\d\d\s|^workshop\s|^intro to\s/i.test(project.name)) return false;
-      return !focusText || !focusText.includes(clean(project.name).toLowerCase());
+      return !/^\d\d\s|^workshop\s|^intro to\s/i.test(project.name);
     });
-    const withAction = candidates.filter((project) => clean(project.next_action));
-    const pool = withAction.length ? withAction : candidates;
-    return pool.sort((a, b) => (a.updated || "9999").localeCompare(b.updated || "9999")
+    const updated = (project) => Date.parse(project.updated) || -Infinity;
+    return candidates.sort((a, b) => updated(b) - updated(a)
       || a.name.localeCompare(b.name))[0] ?? null;
   }
 
-  function renderProjectPulse(data, values, focus, today) {
+  function renderProjectPulse(data, values, today) {
     const panel = $("project-pulse");
-    const project = projectPulse(data, focus, today);
-    panel.hidden = !project;
+    const project = projectPulse(data);
+    const status = panelState("projects", project ? 1 : undefined);
+    panel.dataset.state = status;
+    setText($("projectmeta"), status === "stale" ? "Stale" : metric(values.projects, "active"));
+    $("project-card").hidden = !project;
+    const message = $("project-message");
+    message.hidden = !!project;
+    setText(message, data.public ? "Sign in for details" : status === "error" ? "Unavailable"
+      : state.data ? "No active project details" : DASH);
     if (!project) return;
     const age = relativeDays(project.updated, today);
     const ageDays = Number.isFinite(age) ? Math.max(0, -age) : null;
-    setText($("projectmeta"), metric(values.projects, "active"));
     setText($("projectstatus"), String(project.status ?? "active").toUpperCase());
     setText($("projectage"), ageDays === null ? DASH : ageDays === 0 ? "TOUCHED TODAY" : `TOUCHED ${ageDays}D AGO`);
     setText($("projectname"), shorten(project.name, 42));
     const next = clean(project.next_action) || clean(project.summary) || "No open action";
     setText($("projectnext"), shorten(next, 92));
     $("projectnext").title = next;
-    setText($("projectactions"), project.open_actions ? metric(project.open_actions, "open") : "NEXT ACTION");
-    panel.dataset.state = values.projects === 0 ? "empty" : "ready";
+    setText($("projectactions"), metric(count(project.open_actions), "open"));
   }
 
-  function renderSpotify(data) {
+  function renderSpotify() {
     const panel = $("spotify");
-    const spotify = data.spotify;
+    const spotify = listening.playback ?? state.data?.spotify;
     const card = $("spotifycard");
     const art = $("spotifyart");
     const note = $("spotifynote");
     art.onerror = () => { art.hidden = true; note.hidden = false; };
-    if (!spotify) {
-      setText($("spotifystate"), "SPOTIFY");
-      setText($("spotifytitle"), "Not connected");
-      setText($("spotifyartist"), "Audio signal unavailable");
-      setText($("spotifymeta"), DASH);
-      return;
-    }
-    const configured = spotify.configured !== false;
-    const title = clean(spotify.title) || "Spotify";
-    const artist = list(spotify.artists).join(", ") || clean(spotify.album) || (configured ? "No recent playback" : "Not connected");
-    const playing = spotify.isPlaying === true;
-    const state = !configured ? "SPOTIFY OFFLINE" : playing ? "NOW LISTENING" : spotify.state === "recent" ? "LAST LISTENED" : "AUDIO SIGNAL";
-    setText($("spotifystate"), state);
-    setText($("spotifytitle"), title);
-    setText($("spotifyartist"), artist);
-    setText($("spotifymeta"), !configured ? "OFFLINE" : playing ? "LIVE" : spotify.state === "recent" ? "RECENT" : DASH);
-    card.dataset.state = playing ? "playing" : configured ? "recent" : "offline";
-    if (spotify.url) {
+    const stale = !listening.playback || listening.failed;
+    const playing = !stale && spotify?.isPlaying === true;
+    const recent = !stale && spotify?.state === "recent";
+    const hasTrack = !!spotify?.title;
+    const offline = spotify?.configured === false || listening.failed;
+    setText($("spotifystate"), playing ? "NOW LISTENING" : recent ? "LAST LISTENED"
+      : stale && hasTrack ? "PLAYBACK STALE" : offline ? "SPOTIFY OFFLINE" : "SPOTIFY");
+    setText($("spotifytitle"), spotify?.title || "Spotify");
+    setText($("spotifyartist"), list(spotify?.artists).join(", ") || spotify?.album
+      || (spotify?.configured === false ? "Not connected" : listening.failed ? "Audio signal unavailable"
+        : listening.playback ? "No recent playback" : "Checking playback…"));
+    setText($("spotifymeta"), playing ? "LIVE" : recent ? "RECENT" : stale && hasTrack ? "STALE" : offline ? "OFFLINE" : DASH);
+    panel.dataset.state = stale && hasTrack ? "stale" : listening.failed ? "error" : hasTrack ? "ready" : "empty";
+    if (spotify?.url) {
       card.href = spotify.url;
       card.target = "_blank";
       card.rel = "noreferrer";
     } else {
       card.removeAttribute("href");
     }
-    if (spotify.artwork) {
-      if (art.getAttribute("src") !== spotify.artwork) art.src = spotify.artwork;
-      art.hidden = false;
-      note.hidden = true;
+    if (spotify?.artwork) {
+      if (art.getAttribute("src") !== spotify.artwork) {
+        art.src = spotify.artwork;
+        art.hidden = false;
+        note.hidden = true;
+      }
     } else {
       art.hidden = true;
       art.removeAttribute("src");
       note.hidden = false;
     }
+    renderSpotifyProgress();
+  }
+
+  function renderSpotifyProgress(now = Date.now()) {
+    const spotify = listening.playback;
     let progress = 0;
-    if (Number.isFinite(spotify.progressMs) && Number.isFinite(spotify.durationMs) && spotify.durationMs > 0) {
-      const elapsed = playing && spotify.updatedAt ? Math.max(0, Date.now() - Date.parse(spotify.updatedAt)) : 0;
+    if (!listening.failed && Number.isFinite(spotify?.progressMs) && Number.isFinite(spotify.durationMs) && spotify.durationMs > 0) {
+      const stamp = Date.parse(spotify.updatedAt);
+      const elapsed = spotify.isPlaying && Number.isFinite(stamp) ? Math.max(0, now - stamp) : 0;
       progress = clamp((spotify.progressMs + elapsed) / spotify.durationMs);
     }
     $("spotifyfill").style.width = `${progress * 100}%`;
-    panel.dataset.state = configured ? "ready" : "empty";
+  }
+
+  async function loadSpotify() {
+    if (document.hidden || listening.pending) return;
+    listening.pending = true;
+    try {
+      const playback = await getJSON(SPOTIFY_URL, "default");
+      if (typeof playback?.configured !== "boolean" || !["playing", "recent", "idle", "unavailable"].includes(playback.state)
+        || (playback.configured && playback.state === "unavailable")) throw new Error("invalid playback");
+      listening.playback = playback;
+      listening.failed = false;
+    } catch {
+      listening.failed = true;
+    } finally {
+      listening.pending = false;
+    }
+    renderSpotify();
   }
 
   function renderActivity(data) {
@@ -702,8 +727,8 @@
 
     renderSchedule(data, values, focus, today, agenda);
     renderActions(data, values, focus, today, taskState);
-    renderProjectPulse(data, values, focus, today);
-    renderSpotify(data);
+    renderProjectPulse(data, values, today);
+    renderSpotify();
     renderHealth(values);
     renderHermes(data, values);
   }
@@ -735,6 +760,7 @@
     $("dayfill").style.width = dayProgress;
     $("daynow").style.left = dayProgress;
     refreshSource(+now);
+    renderSpotifyProgress(+now);
     if (state.weather && !state.weatherFailed && +now - state.weather.receivedAt >= 1800000 && $("weather").dataset.state !== "stale") {
       renderWeather();
     }
@@ -781,12 +807,12 @@
     return ICONS.cloud;
   }
 
-  async function getJSON(url) {
+  async function getJSON(url, cache = "no-store") {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 7000);
     try {
       const response = await fetch(url, {
-        cache: "no-store",
+        cache,
         signal: controller.signal,
         headers: { Accept: "application/json" },
       });
@@ -815,29 +841,46 @@
     $("weather").dataset.state = status;
     setText($("wtemp"), temp);
     setText($("wcond"), status === "stale" ? "Weather stale" : status === "error" ? "Unavailable" : condition ?? DASH);
-    const high = temperature(daily?.temperature_2m_max?.[0]);
-    const low = temperature(daily?.temperature_2m_min?.[0]);
+    const today = clockDate();
+    const dates = Array.isArray(daily?.time) ? daily.time : [];
+    const todayIndex = dates.indexOf(today);
+    const high = temperature(daily?.temperature_2m_max?.[todayIndex]);
+    const low = temperature(daily?.temperature_2m_min?.[todayIndex]);
     setText($("wrange"), high === DASH && low === DASH ? DASH : `${high} / ${low}`);
     $("wicon").innerHTML = condition ? iconFor(current.weather_code, current.is_day) : "";
 
     const forecast = $("forecast");
     forecast.replaceChildren();
-    const days = list(daily?.time).slice(1, 2);
-    forecast.dataset.state = days.length ? status : status === "ready" ? "empty" : status;
-    for (const [index, date] of days.entries()) {
+    for (const [index, date] of dates.entries()) {
+      const offset = relativeDays(date, today);
+      if (!(offset >= 1 && offset <= 3)) continue;
       const day = el("span", "forecast-day");
-      day.append(el("span", "", "TOMORROW"),
-        el("b", "", `${temperature(daily?.temperature_2m_max?.[index + 1])} / ${temperature(daily?.temperature_2m_min?.[index + 1])}`));
+      const heading = el("span", "forecast-heading");
+      const label = el("time", "", formatWeekday(date));
+      label.dateTime = date;
+      heading.append(label);
+      const code = daily?.weather_code?.[index];
+      if (Number.isInteger(code) && WMO[code]) {
+        const icon = el("span", "weather-icon");
+        icon.innerHTML = iconFor(code);
+        icon.setAttribute("role", "img");
+        icon.setAttribute("aria-label", WMO[code]);
+        icon.title = WMO[code];
+        heading.append(icon);
+      }
+      day.append(heading,
+        el("b", "", `${temperature(daily?.temperature_2m_max?.[index])} / ${temperature(daily?.temperature_2m_min?.[index])}`));
       forecast.append(day);
     }
-    if (!days.length) setText(forecast, DASH);
+    forecast.dataset.state = forecast.childElementCount || status !== "ready" ? status : "empty";
+    if (!forecast.childElementCount) setText(forecast, DASH);
   }
 
   async function weather() {
-    const url = "https://api.open-meteo.com/v1/forecast?latitude=37.3382&longitude=-121.8863"
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=37.5483&longitude=-121.9886"
       + "&current=temperature_2m,is_day,weather_code"
-      + "&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset"
-      + "&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=2";
+      + "&daily=temperature_2m_max,temperature_2m_min,weather_code"
+      + "&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=4";
     try {
       state.weather = { ...await getJSON(url), receivedAt: Date.now() };
       state.weatherFailed = false;
@@ -898,10 +941,13 @@
   clock();
   render();
   load();
+  loadSpotify();
   weather();
   watchWallPage();
   setInterval(clock, 1000);
   setInterval(render, 15000);
   setInterval(load, 300000);
+  setInterval(loadSpotify, SPOTIFY_POLL_MS);
+  document.addEventListener("visibilitychange", loadSpotify);
   setInterval(weather, 900000);
 })();

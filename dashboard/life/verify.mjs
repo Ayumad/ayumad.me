@@ -15,14 +15,17 @@ const output = await fs.mkdtemp(path.join(os.tmpdir(), "life-verify-"));
 const fixtureDay = full.generated_at.slice(0, 10);
 const fixtureTime = new Date(Date.parse(`${fixtureDay}T22:30:00-08:00`) - 86400000);
 const weekendTime = new Date(Date.parse(`${fixtureDay}T18:00:00-08:00`) + 86400000);
-const weather = {
+const pacificDate = new Intl.DateTimeFormat("sv-SE", { timeZone: "America/Los_Angeles" });
+const weatherAt = (now) => ({
   current: { temperature_2m: 51, is_day: 0, weather_code: 3 },
   daily: {
-    time: ["2026-11-19", "2026-11-20", "2026-11-21", "2026-11-22"],
+    time: Array.from({ length: 4 }, (_, i) =>
+      new Date(Date.parse(pacificDate.format(now)) + i * 86400000).toISOString().slice(0, 10)),
     temperature_2m_max: [55, 55, 58, 55],
     temperature_2m_min: [50, 43, 41, 48],
+    weather_code: [3, 0, 2, 61],
   },
-};
+});
 
 async function publicProjection() {
   const scratch = await fs.mkdtemp(path.join(output, "projection-"));
@@ -49,6 +52,7 @@ const privateStrings = [
   ...full.school.next.map(({ title }) => title),
   ...[...full.calendar.events, ...full.calendar.week].map(({ summary }) => summary),
   ...full.recent.map(({ label }) => label),
+  ...(full.projects ?? []).map(({ name }) => name),
   ...(full.codex?.recent ?? []).map(({ title }) => title),
   ...(full.codex?.remote ?? []).map(({ title }) => title),
   full.brain.top_hub.label,
@@ -87,7 +91,8 @@ async function close() {
 }
 
 async function open(width, height, options = {}) {
-  const { payload = full, forecast = weather, wall = false, reducedMotion = "no-preference", now = fixtureTime } = options;
+  const { payload = full, wall = false, reducedMotion = "no-preference", now = fixtureTime,
+    forecast = weatherAt(now), spotify = { configured: true, state: "idle" } } = options;
   browser = await launch();
   const page = await browser.newPage({ viewport: { width, height }, reducedMotion });
   const errors = [];
@@ -103,7 +108,14 @@ async function open(width, height, options = {}) {
   }));
   await page.route("**/dashboard/data", (route) => answer(route, typeof payload === "function" ? payload() : payload));
   await page.route("**/dashboard.json", (route) => answer(route, typeof payload === "function" ? payload() : payload));
-  await page.route("https://api.open-meteo.com/**", (route) => answer(route, forecast));
+  await page.route("**/api/spotify", (route) => answer(route, typeof spotify === "function" ? spotify() : spotify));
+  await page.route("https://api.open-meteo.com/**", (route) => {
+    const { searchParams } = new URL(route.request().url());
+    assert.equal(searchParams.get("latitude"), "37.5483");
+    assert.equal(searchParams.get("longitude"), "-121.9886");
+    assert.equal(searchParams.get("forecast_days"), "4");
+    return answer(route, forecast);
+  });
   await page.clock.install({ time: now });
   await page.goto(`${origin}/${wall ? "wall/dashboard.html" : "dashboard"}`, { waitUntil: "networkidle" });
   return { page, errors };
@@ -129,7 +141,6 @@ async function inspect(page) {
       health: ["mac-cpu", "mac-mem", "p520-load", "p520-mem", "p520-gpu"].map((id) => find(id).innerText),
       healthState: find("health").dataset.state ?? null,
       spotifyState: find("spotify").dataset.state ?? null,
-      projectPulseHidden: find("project-pulse").hidden,
       field: box(document.querySelector("#hermes-field canvas")),
       readout: box(document.querySelector(".hermes-context")),
       rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
@@ -150,7 +161,7 @@ function verifyBounds(metrics) {
   assert(Math.abs(metrics.field.width - (panel.width - 2)) < 1);
   assert(Math.abs(metrics.field.height - (panel.height - 2)) < 1);
   assert(metrics.readout.y >= panel.y && metrics.readout.y + metrics.readout.height <= panel.y + panel.height);
-  assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 1][idx]));
+  assert(metrics.rows.every((rows, idx) => rows <= [3, 3, 2, 3][idx]));
 }
 
 const image = (page) => page.locator("#hermes-field canvas").evaluate((canvas) => canvas.toDataURL());
@@ -182,12 +193,16 @@ try {
     assert.match(result.health[0], /^(—|\d+%)$/);
     assert.match(result.health[2], /^(—|\d+\.\d)$/);
     assert.equal(result.healthState, "ready");
-    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 1] : [3, 3, 2, 1]);
+    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3] : [3, 3, 2, 3]);
+    assert.equal(await page.locator("#weatherlabel").innerText(), "FREMONT WEATHER");
+    assert.deepEqual(await page.locator(".forecast-day b").allTextContents(), ["55° / 43°", "58° / 41°", "55° / 48°"]);
     assert.equal(await page.locator("#spotify").isVisible(), true);
     assert.notEqual(result.spotifyState, null);
     assert((await page.locator("#hermes-status").innerText()).length > 0);
-    assert.equal(await page.locator("#project-pulse").isVisible(), !isPublic && !result.projectPulseHidden);
-    if (!isPublic) {
+    assert.equal(await page.locator("#project-pulse").isVisible(), true);
+    if (isPublic) {
+      assert.equal(await page.locator("#project-message").innerText(), "Sign in for details");
+    } else {
       assert((await page.locator("#projectname").innerText()).length > 0);
       assert((await page.locator("#projectnext").innerText()).length > 0);
       const eventTimes = await page.locator("#events .row-time").allTextContents();
@@ -340,6 +355,33 @@ try {
   await live.page.waitForFunction(() => document.getElementById("source").innerText === "STALE");
   assert.equal((await inspect(live.page)).healthState, "stale");
   assert.deepEqual(live.errors, []);
+  await close();
+
+  let playback = { configured: true, state: "playing", isPlaying: true, title: "Track One",
+    durationMs: 120000, progressMs: 30000, updatedAt: fixtureTime.toISOString() };
+  const playbackView = await open(390, 844, {
+    payload: { ...full, projects: [
+      { name: "Older project", status: "active", updated: "2026-11-17", next_action: "Finish draft" },
+      { name: "Latest project", status: "in-progress", updated: "2026-11-19", summary: "Testing the latest build", open_actions: 0 },
+    ] },
+    spotify: () => playback,
+  });
+  const { page: playbackPage } = playbackView;
+  assert.equal(await playbackPage.locator("#projectname").innerText(), "Latest project");
+  assert.equal(await playbackPage.locator("#spotifytitle").innerText(), "Track One");
+  assert.equal(await playbackPage.locator("#spotifymeta").innerText(), "LIVE");
+  const progress = async () => parseFloat(await playbackPage.locator("#spotifyfill").evaluate((node) => node.style.width));
+  const initial = await progress();
+  await playbackPage.clock.runFor(1100);
+  assert(await progress() > initial);
+  playback = { ...playback, title: "Track Two", progressMs: 1000 };
+  await playbackPage.clock.fastForward(5000);
+  await playbackPage.waitForFunction(() => document.getElementById("spotifytitle").textContent === "Track Two");
+  playback = { configured: true, state: "unavailable" };
+  await playbackPage.clock.fastForward(5000);
+  await playbackPage.waitForFunction(() => document.getElementById("spotifymeta").textContent === "STALE");
+  assert.equal(await playbackPage.locator("#spotifytitle").innerText(), "Track Two");
+  assert.deepEqual(playbackView.errors, []);
   await close();
 
   for (const [payload, expected] of [[{}, "empty"], [null, "error"]]) {
