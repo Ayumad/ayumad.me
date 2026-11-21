@@ -343,7 +343,7 @@ main {
   align-items: baseline;
   justify-content: space-between;
   gap: 3px 9px;
-  padding-block: 7px;
+  padding-block: 5px;
 }
 #machine-name { font-size: clamp(16px, 1.38vw, 25px); font-weight: 600; letter-spacing: -.025em; }
 #machine-status { text-transform: none; letter-spacing: 0; }
@@ -354,7 +354,7 @@ main {
 .machine-metric > div { display: grid; gap: 2px; }
 .machine-metric .meta { font-size: clamp(9px, .66vw, 13px); }
 .machine-metric b { font: 500 clamp(14px, 1.1vw, 22px)/1.12 var(--mono); font-variant-numeric: tabular-nums; }
-.machine-metric svg { display: block; width: 100%; height: clamp(21px, 3.2vh, 35px); color: var(--cyan); }
+.machine-metric svg { display: block; width: 100%; height: clamp(21px, 2.6vh, 30px); color: var(--cyan); }
 .machine-metric[data-metric="gpu_pct"] svg { color: var(--violet); }
 .machine-metric[data-metric="memory_pct"] svg { color: var(--soft); }
 .machine-grid, .machine-trace { fill: none; vector-effect: non-scaling-stroke; }
@@ -363,9 +363,9 @@ main {
 .machine-axis { margin-top: 4px; margin-left: 59px; display: flex; justify-content: space-between; font-size: 10px; text-transform: none; letter-spacing: 0; }
 @media (min-width: 761px) {
   .actions:has(#machine-panel:not([hidden])) {
-    gap: clamp(8px, 1.45vh, 15px);
+    gap: clamp(8px, 1.1vh, 12px);
   }
-  .actions:has(#machine-panel:not([hidden])) .section-head { padding-block: 4px 7px; }
+  .actions:has(#machine-panel:not([hidden])) .section-head { padding-block: 3px 6px; }
   .actions:has(#machine-panel:not([hidden])) .rail-row { padding-block: clamp(4px, .55vh, 7px); }
   .actions:has(#machine-panel:not([hidden])) :is(.placeholder, .row-more) { padding-top: 5px; }
   .actions:has(#machine-panel:not([hidden])) .spotify-card {

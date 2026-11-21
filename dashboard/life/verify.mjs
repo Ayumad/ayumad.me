@@ -288,9 +288,11 @@ try {
   verifyBounds(await inspect(machineView.page));
   atMac = true;
   machineStamp += 10000;
+  const handoffSample = machineView.page.waitForResponse("**/machine-resources.json");
   await machineView.page.clock.runFor(11000);
+  await handoffSample;
   assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
-  await machineView.page.clock.runFor(31000);
+  await machineView.page.clock.runFor(40000);
   assert.equal(await machineView.page.locator("#machine-name").innerText(), "Mac mini");
   assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "—");
   await machineView.page.clock.fastForward(120000);
