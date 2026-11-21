@@ -29,6 +29,7 @@
 
   const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
   const listening = { playback: null, pending: false, failed: false };
+  const machines = createActiveMachine($("machine-panel"), { wall: IS_WALL, getJSON, setText, ageText });
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
@@ -801,6 +802,7 @@
     renderActions(data, values, focus, today, taskState);
     renderProjectPulse(data, values, today);
     renderSpotify();
+    machines.update(state.data);
     renderHealth(values);
     renderVmActivity(data);
     renderHermes(data, values);
@@ -1038,6 +1040,7 @@
   render();
   load();
   loadSpotify();
+  machines.poll();
   weather();
   watchWallPage();
   setInterval(clock, 1000);
@@ -1046,5 +1049,7 @@
   document.addEventListener("visibilitychange", load);
   setInterval(loadSpotify, SPOTIFY_POLL_MS);
   document.addEventListener("visibilitychange", loadSpotify);
+  setInterval(machines.poll, 10000);
+  document.addEventListener("visibilitychange", machines.poll);
   setInterval(weather, 900000);
 })();

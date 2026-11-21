@@ -21,7 +21,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero right | Fremont weather, current conditions, and the next three days |
 | Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
 | Workspace center | Hermes particle weave with a single status readout |
-| Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
+| Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING`, private `ACTIVE MACHINE` |
 | Footer | Mac mini/Hermes and P520 resource status, VM activity, and freshness |
 
 The hero is a three-column band above the schedule, particle field, and actions. The footer takes one row. On phones, focus and the particle field go full-width, the schedule and actions use two columns, and the footer compresses to host stats. The page fits 1920×1080 and 390×844 without scrolling.
@@ -55,6 +55,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
 - **Project pulse:** signed-in views show the most recently updated active project, with last-touched age, next action and open-action count. Public views show a single Projects count throughout the week.
 - **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
+- **Active machine:** shows the most recently used, unlocked workstation and its CPU, GPU, and RAM over 15 minutes. Recent input qualifies for five minutes. A new machine must lead for 30 seconds before the panel switches. Inactive machines are labeled last used when the feed is fresh. A sample over 95 seconds old shows its age. Missing samples and unsupported metrics stay blank in the plots. The compact phone view shows the latest percentages.
 - **Codex focus:** active `codex cloud list` tasks win. Otherwise the page picks the most recent collected local Codex thread or ChatGPT account thread within 12h by its update time. If the collector provides only `age_min`, the page adds the time since the snapshot. The local collector reads `~/.codex/state_5.sqlite`; activity from another computer must reach the collector to appear. Public payloads set `codex: null` so no chat titles are exposed.
 - **Windows Codex sync:** the Windows scheduled task `Ayumad Dashboard - Codex Desktop Sync` runs `dashboard/telemetry/export-codex.mjs` every minute under the desktop user. It reads Codex databases in read-only mode and sends the latest named thread's title and update time over SSH to `~/.hermes/scripts/dashboard_codex_feed.py` on the Mac mini. The receiver writes `~/.hermes/state/dashboard_codex_desktop.json` with owner-only permissions. Hermes merges that title into the existing private `codex.recent` list during its usual refresh.
 - A successful Hermes live refresh calls `dashboard_codex_feed.py --publish-if-changed`. A change in the desktop focus title triggers the existing encrypted snapshot publisher. Timestamps within the same thread update through the regular feed, with up to 24 additional snapshot publishes in a rolling day.
@@ -73,6 +74,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Weather: every 15 minutes (Open-Meteo, Fremont, no key).
 - Spotify: every 5 seconds while visible, with an immediate refresh when the tab becomes visible. The wall kiosk uses the public endpoint at `ayumad.me`.
 - Page data: every 10 seconds on the wall (`/dashboard.json`) and every 30 seconds on the web (`/dashboard/data`), with a refresh when the tab becomes visible. Readings and their age reflect the latest sample from the feed.
+- Workstation data: samplers read CPU, GPU, RAM, lock state, and last input time every 30 seconds. Creekwood runs `sample-machine-windows.ps1` under the interactive scheduled task `Ayumad Dashboard - Active Machine Sampler`. On macOS, run `sample_machine_mac.py` from a user LaunchAgent every 30 seconds. The Mac mini submits locally. On Ayumacpro, use `sample_machine_mac.py ayumacpro --hub ayumad@ayumacmini` with authenticated tailnet SSH. Missing GPU counters are allowed on either platform.
+- `machine_resource_feed.py` stores the rolling history in the Mac mini's private Hermes state and mirrors `machine-resources.json` to the wall server. The kiosk polls that file every 10 seconds. The signed-in website shows the same history as of its protected snapshot, including the sample age. The public projection omits workstation telemetry.
 - Service trend: samples from the page data poll.
 
 ## Data contract

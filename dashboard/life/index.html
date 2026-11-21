@@ -131,6 +131,38 @@
               </a>
               <div class="spotify-track" aria-hidden="true"><i id="spotifyfill"></i></div>
             </section>
+            <section id="machine-panel" aria-labelledby="machine-label" hidden>
+              <div class="section-head">
+                <h2 id="machine-label" class="label">Active machine</h2><span class="meta machine-range">15 min</span>
+              </div>
+              <div class="machine-reading" role="status">
+                <b id="machine-name"></b><span id="machine-status" class="meta"></span>
+              </div>
+              <div class="machine-metrics" hidden>
+                <div class="machine-metric" data-metric="cpu_pct">
+                  <div><span class="meta">CPU</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="CPU usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+                <div class="machine-metric" data-metric="gpu_pct">
+                  <div><span class="meta">GPU</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="GPU usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+                <div class="machine-metric" data-metric="memory_pct">
+                  <div><span class="meta">RAM</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="Memory usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="machine-axis meta" aria-hidden="true" hidden><span>−15m</span><span>−10m</span><span>−5m</span><span>Latest</span></div>
+            </section>
           </div>
         </div>
       </main>
@@ -150,6 +182,7 @@
 
     <script>
 <!--INLINE:hermes-flow.js-->
+<!--INLINE:active-machine.js-->
 <!--INLINE:life.js-->
     </script>
   </body>

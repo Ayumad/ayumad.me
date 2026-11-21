@@ -394,6 +394,44 @@ main {
 .spotify-arrow { color: var(--cyan); font: 600 11px/1 var(--mono); }
 .spotify-track { height: 1px; margin-top: 6px; overflow: hidden; background: var(--line); }
 .spotify-track i { display: block; width: 0; height: 100%; background: var(--cyan); }
+.machine-reading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 3px 9px;
+  padding-block: 7px;
+}
+#machine-name { font-size: clamp(16px, 1.38vw, 25px); font-weight: 600; letter-spacing: -.025em; }
+#machine-status { text-transform: none; letter-spacing: 0; }
+#machine-panel[data-state="stale"] #machine-status,
+#machine-panel[data-state="error"] #machine-status { color: var(--warn); }
+.machine-metrics { display: grid; gap: 5px; }
+.machine-metric { display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: center; gap: 7px; }
+.machine-metric > div { display: grid; gap: 2px; }
+.machine-metric .meta { font-size: clamp(9px, .66vw, 13px); }
+.machine-metric b { font: 500 clamp(14px, 1.1vw, 22px)/1.12 var(--mono); font-variant-numeric: tabular-nums; }
+.machine-metric svg { display: block; width: 100%; height: clamp(21px, 3.2vh, 35px); color: var(--cyan); }
+.machine-metric[data-metric="gpu_pct"] svg { color: var(--violet); }
+.machine-metric[data-metric="memory_pct"] svg { color: var(--soft); }
+.machine-grid, .machine-trace { fill: none; vector-effect: non-scaling-stroke; }
+.machine-grid { stroke: var(--fine); }
+.machine-trace { stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.machine-axis { margin-top: 4px; margin-left: 59px; display: flex; justify-content: space-between; font-size: 10px; text-transform: none; letter-spacing: 0; }
+@media (min-width: 761px) {
+  .actions:has(#machine-panel:not([hidden])) {
+    gap: clamp(8px, 1.45vh, 15px);
+  }
+  .actions:has(#machine-panel:not([hidden])) .section-head { padding-block: 4px 7px; }
+  .actions:has(#machine-panel:not([hidden])) .rail-row { padding-block: clamp(4px, .55vh, 7px); }
+  .actions:has(#machine-panel:not([hidden])) :is(.placeholder, .row-more) { padding-top: 5px; }
+  .actions:has(#machine-panel:not([hidden])) .spotify-card {
+    grid-template-columns: 34px minmax(0, 1fr) 14px;
+    margin-top: 5px;
+    padding-block: 4px;
+  }
+  .actions:has(#machine-panel:not([hidden])) .spotify-art { width: 34px; height: 34px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .project-trace::after { animation: none; transform: none; }
 }
@@ -411,6 +449,20 @@ main {
   .section-head { padding-block: 4px 8px; }
   .rail-row { padding-block: 9px; }
   .schedule, .actions { gap: 18px; }
+  .actions:has(#machine-panel:not([hidden])) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 8px 12px;
+  }
+  .actions:has(#machine-panel:not([hidden])) :is(#spotify, #machine-panel) { grid-column: 1 / -1; }
+  .actions:has(#school-panel[hidden]) #task-panel { grid-column: 1 / -1; }
+  .actions:has(#machine-panel:not([hidden])) .section-head .label { font-size: clamp(10px, .94vw, 14px); }
+  .actions:has(#machine-panel:not([hidden])) :is(#task-panel, #school-panel) .section-head .meta { font-size: 10px; }
+  #machine-panel .section-head { padding-block: 3px 5px; }
+  .machine-reading { padding-block: 5px; }
+  .machine-metric > div { gap: 0; }
+  .machine-metric svg { height: clamp(16px, 2.55vh, 26px); }
   #activity { display: none; }
 }
 
@@ -476,6 +528,29 @@ main {
   .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   .actions:has(#school-panel[hidden]) #task-panel { grid-column: 1 / -1; }
   #spotify { grid-column: 1 / -1; }
+  .actions:has(#machine-panel:not([hidden])) .spotify-card {
+    grid-template-columns: 30px minmax(0, 1fr) 14px;
+    margin-top: 3px;
+    padding-block: 1px 3px;
+  }
+  .actions:has(#machine-panel:not([hidden])) .spotify-art { width: 30px; height: 30px; }
+  .actions:has(#machine-panel:not([hidden])) .spotify-track { margin-top: 3px; }
+  #machine-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(90px, .42fr) minmax(0, 1fr);
+    align-items: baseline;
+    gap: 3px 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+  }
+  #machine-panel .section-head { padding: 0; border: 0; }
+  #machine-panel .machine-axis, #machine-panel .machine-range, .machine-metric svg { display: none; }
+  #machine-panel .machine-reading { padding: 0; }
+  #machine-name { font-size: 14px; }
+  .machine-metrics { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .machine-metric { display: block; }
+  .machine-metric > div { display: flex; align-items: baseline; gap: 6px; }
   .project-top { flex-wrap: wrap; row-gap: 3px; }
   body:not([data-view="public"]) :is(#project-pulse, #school-panel) .section-head .meta { display: none; }
   .hoststat { gap: 3px; }
@@ -650,6 +725,38 @@ main {
                 <span class="spotify-arrow" aria-hidden="true">↗</span>
               </a>
               <div class="spotify-track" aria-hidden="true"><i id="spotifyfill"></i></div>
+            </section>
+            <section id="machine-panel" aria-labelledby="machine-label" hidden>
+              <div class="section-head">
+                <h2 id="machine-label" class="label">Active machine</h2><span class="meta machine-range">15 min</span>
+              </div>
+              <div class="machine-reading" role="status">
+                <b id="machine-name"></b><span id="machine-status" class="meta"></span>
+              </div>
+              <div class="machine-metrics" hidden>
+                <div class="machine-metric" data-metric="cpu_pct">
+                  <div><span class="meta">CPU</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="CPU usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+                <div class="machine-metric" data-metric="gpu_pct">
+                  <div><span class="meta">GPU</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="GPU usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+                <div class="machine-metric" data-metric="memory_pct">
+                  <div><span class="meta">RAM</span><b>—</b></div>
+                  <svg viewBox="0 0 270 36" preserveAspectRatio="none" role="img" aria-label="Memory usage over 15 minutes">
+                    <path class="machine-grid" d="M2 1 V35 M90 1 V35 M178 1 V35 M266 1 V35 M2 1 H266 M2 18 H266 M2 35 H266"/>
+                    <path class="machine-trace"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="machine-axis meta" aria-hidden="true" hidden><span>−15m</span><span>−10m</span><span>−5m</span><span>Latest</span></div>
             </section>
           </div>
         </div>
@@ -1025,6 +1132,145 @@ function createHermesFlow(canvas) {
   return { update };
 }
 
+"use strict";
+
+function createActiveMachine(panel, { wall, getJSON, setText, ageText }) {
+  const HISTORY_MS = 15 * 60000;
+  const FRESH_MS = 95000;
+  const RECENT_INPUT_MS = 5 * 60000;
+  const HANDOFF_MS = 30000;
+  const GAP_MS = 75000;
+  const name = panel.querySelector("#machine-name");
+  const status = panel.querySelector("#machine-status");
+  const metrics = panel.querySelector(".machine-metrics");
+  const range = panel.querySelector(".machine-range");
+  const axis = panel.querySelector(".machine-axis");
+  const plots = [...panel.querySelectorAll("[data-metric]")].map((row) => ({
+    key: row.dataset.metric,
+    value: row.querySelector("b"),
+    trace: row.querySelector(".machine-trace"),
+  }));
+  let snapshot = null;
+  let feed = null;
+  let enabled = wall;
+  let pending = false;
+  let failed = false;
+  let selected = null;
+  let handoff = null;
+
+  function records(now) {
+    const list = (feed ?? snapshot)?.machines;
+    if (!Array.isArray(list)) return [];
+    return list.filter((machine) => typeof machine?.name === "string" && Array.isArray(machine.samples))
+      .map((machine) => {
+        const samples = machine.samples.filter((sample) => Number.isFinite(sample?.sampled_at)
+          && sample.sampled_at <= now + 10000);
+        return { id: machine.id, name: machine.name, samples, latest: samples.at(-1) };
+      })
+      .filter((machine) => machine.latest);
+  }
+
+  function choose(devices, now) {
+    const input = (machine) => machine.latest.last_input_at ?? -Infinity;
+    const inUse = devices.filter(({ latest }) => now - latest.sampled_at <= FRESH_MS
+      && latest.unlocked === true && Number.isFinite(latest.last_input_at)
+      && now - latest.last_input_at <= RECENT_INPUT_MS);
+    const candidate = inUse.sort((a, b) => input(b) - input(a))[0];
+    const current = devices.find((machine) => machine.id === selected);
+    if (candidate && current && candidate.id !== current.id) {
+      if (handoff?.id !== candidate.id) handoff = { id: candidate.id, since: now };
+      if (now - handoff.since < HANDOFF_MS) return current;
+    }
+    handoff = null;
+    const lastUsed = devices.sort((a, b) => input(b) - input(a) || b.latest.sampled_at - a.latest.sampled_at)[0];
+    return candidate ?? lastUsed;
+  }
+
+  function graph(samples, key, end) {
+    let path = "";
+    let previous = null;
+    for (const sample of samples) {
+      const time = sample.sampled_at;
+      if (time < end - HISTORY_MS || time > end) continue;
+      const value = sample[key];
+      if (!Number.isFinite(value) || value < 0 || value > 100) {
+        previous = null;
+        continue;
+      }
+      const point = `${(266 - (end - time) / HISTORY_MS * 264).toFixed(1)} ${(34 - value * .32).toFixed(1)}`;
+      path += previous !== null && time - previous <= GAP_MS ? `L${point}` : `M${point}l.01 0`;
+      previous = time;
+    }
+    return path;
+  }
+
+  function render() {
+    panel.hidden = !enabled;
+    if (!enabled) {
+      setText(name, "");
+      setText(status, "");
+      for (const plot of plots) {
+        setText(plot.value, "—");
+        plot.trace.removeAttribute("d");
+      }
+      return;
+    }
+    const now = Date.now();
+    const machine = choose(records(now), now);
+    selected = machine?.id ?? null;
+    metrics.hidden = axis.hidden = range.hidden = !machine;
+    if (!machine) {
+      panel.dataset.state = failed ? "error" : "empty";
+      setText(name, "");
+      setText(status, failed ? "Feed unavailable" : "Waiting for readings");
+      return;
+    }
+    const { latest } = machine;
+    const age = Math.max(0, now - latest.sampled_at);
+    const stale = age > FRESH_MS;
+    const inUse = latest.unlocked === true && Number.isFinite(latest.last_input_at)
+      && now - latest.last_input_at <= RECENT_INPUT_MS;
+    panel.dataset.state = stale ? "stale" : "ready";
+    setText(name, machine.name);
+    setText(status, stale ? `Sampled ${ageText(Math.floor(age / 1000))}`
+      : inUse ? "In use" : latest.last_input_at ? "Last used" : "Idle");
+    for (const plot of plots) {
+      const value = latest[plot.key];
+      setText(plot.value, Number.isFinite(value) ? `${Math.round(value)}%` : "—");
+      plot.trace.setAttribute("d", graph(machine.samples, plot.key, latest.sampled_at));
+    }
+  }
+
+  async function poll() {
+    if (!wall || !enabled || document.hidden || pending) return;
+    pending = true;
+    try {
+      const data = await getJSON("./machine-resources.json");
+      if (!Array.isArray(data?.machines)) throw new Error("invalid workstation feed");
+      if (enabled) feed = data;
+      failed = false;
+    } catch {
+      failed = true;
+    } finally {
+      pending = false;
+      render();
+    }
+  }
+
+  return {
+    poll,
+    update(data) {
+      enabled = wall ? data?.public !== true : Boolean(data && !data.public && data.machine_resources);
+      snapshot = enabled ? data?.machine_resources : null;
+      if (!enabled) {
+        feed = null;
+        selected = handoff = null;
+      }
+      render();
+    },
+  };
+}
+
 (() => {
   "use strict";
 
@@ -1056,6 +1302,7 @@ function createHermesFlow(canvas) {
 
   const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
   const listening = { playback: null, pending: false, failed: false };
+  const machines = createActiveMachine($("machine-panel"), { wall: IS_WALL, getJSON, setText, ageText });
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
@@ -1828,6 +2075,7 @@ function createHermesFlow(canvas) {
     renderActions(data, values, focus, today, taskState);
     renderProjectPulse(data, values, today);
     renderSpotify();
+    machines.update(state.data);
     renderHealth(values);
     renderVmActivity(data);
     renderHermes(data, values);
@@ -2065,6 +2313,7 @@ function createHermesFlow(canvas) {
   render();
   load();
   loadSpotify();
+  machines.poll();
   weather();
   watchWallPage();
   setInterval(clock, 1000);
@@ -2073,6 +2322,8 @@ function createHermesFlow(canvas) {
   document.addEventListener("visibilitychange", load);
   setInterval(loadSpotify, SPOTIFY_POLL_MS);
   document.addEventListener("visibilitychange", loadSpotify);
+  setInterval(machines.poll, 10000);
+  document.addEventListener("visibilitychange", machines.poll);
   setInterval(weather, 900000);
 })();
 

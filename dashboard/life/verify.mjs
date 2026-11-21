@@ -92,7 +92,7 @@ async function close() {
 
 async function open(width, height, options = {}) {
   const { payload = full, wall = false, reducedMotion = "no-preference", now = fixtureTime,
-    forecast = weatherAt(now), spotify = { configured: true, state: "idle" } } = options;
+    forecast = weatherAt(now), spotify = { configured: true, state: "idle" }, machines = { machines: [] } } = options;
   browser = await launch();
   const page = await browser.newPage({ viewport: { width, height }, reducedMotion });
   const errors = [];
@@ -108,6 +108,7 @@ async function open(width, height, options = {}) {
   }));
   await page.route("**/dashboard/data", (route) => answer(route, typeof payload === "function" ? payload() : payload));
   await page.route("**/dashboard.json", (route) => answer(route, typeof payload === "function" ? payload() : payload));
+  await page.route("**/machine-resources.json", (route) => answer(route, typeof machines === "function" ? machines() : machines));
   await page.route("**/api/spotify", (route) => answer(route, typeof spotify === "function" ? spotify() : spotify));
   await page.route("https://api.open-meteo.com/**", (route) => {
     const { searchParams } = new URL(route.request().url());
@@ -144,7 +145,7 @@ async function inspect(page) {
       field: box(document.querySelector("#hermes-field canvas")),
       readout: box(document.querySelector(".hermes-context")),
       rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
-      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "hermes-field", "health", "weather"]
+      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "machine-panel", "hermes-field", "health", "weather"]
         .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
     };
   });
@@ -256,12 +257,45 @@ try {
   assert.equal(await publicWeekend.page.locator("#hermes-status").innerText(), "Last seen idle");
   assert.equal(await publicWeekend.page.locator("#hermes-counts").innerText(), "0 active · 0 flagged");
   assert.equal(await publicWeekend.page.locator("#hermes-sample-time").innerText(), "5h ago");
+  assert.equal(await publicWeekend.page.locator("#machine-panel").isVisible(), false);
   assert.deepEqual(publicWeekend.errors, []);
   await close();
 
   const mixed = await open(390, 844, { payload: { ...full, public: true } });
   verifyPrivacy(await mixed.page.content());
   assert.deepEqual(mixed.errors, []);
+  await close();
+
+  let machineStamp = +weekendTime;
+  let atMac = false;
+  const machineView = await open(1920, 1080, {
+    wall: true,
+    now: weekendTime,
+    payload: { ...full, generated_at: weekendTime.toISOString() },
+    machines: () => ({ machines: [
+      { id: "creekwood", name: "Creekwood", samples: [{
+        sampled_at: +weekendTime, last_input_at: +weekendTime - 10000,
+        unlocked: true, cpu_pct: 30, gpu_pct: 65, memory_pct: 55,
+      }] },
+      { id: "mac-mini", name: "Mac mini", samples: [{
+        sampled_at: machineStamp, last_input_at: machineStamp - 1000,
+        unlocked: atMac, cpu_pct: 42, gpu_pct: null, memory_pct: 60,
+      }] },
+    ] }),
+  });
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
+  assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "65%");
+  verifyBounds(await inspect(machineView.page));
+  atMac = true;
+  machineStamp += 10000;
+  await machineView.page.clock.runFor(11000);
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
+  await machineView.page.clock.runFor(31000);
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Mac mini");
+  assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "—");
+  await machineView.page.clock.fastForward(120000);
+  assert.equal(await machineView.page.locator("#machine-panel").getAttribute("data-state"), "stale");
+  assert.deepEqual(machineView.errors, []);
   await close();
 
   const reversed = [...full.calendar.events].reverse();
