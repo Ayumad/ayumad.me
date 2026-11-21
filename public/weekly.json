@@ -264,7 +264,7 @@
      "Fleet: 998 of the last 1,000 runs completed (executions window Oct 20 19:28 → today 16:00). Both failures are the Oct 21–22 Daily Brief 400s, resolved 2026-10-22 22:08. No open cron incidents.",
      "Two long-standing blockers retired this week: Vercel CLI auth (fixed and verified Oct 23) and Notes enumeration (no longer wedged after failing every pass since Sep 18).",
      "Codex logged one thread — the Notion Desk handoff on `gpt-6.1-sol` (512 k tokens) — then hit the Plus usage wall.",
-     "Disk 90% / 22 GB free; `state.db` 1.2 GB; SER8 healthy over tailnet at 9–18 ms.",
+     "Disk 90% / 22 GB free; `state.db` 1.2 GB; SER8 healthy over private network at 9–18 ms.",
      "Today is quiet so far: no interactive sessions, one vault commit (the site monitor's last-checked stamp)."
     ]
    }
@@ -302,7 +302,7 @@
     "items": [
      "Job application pipeline work — details stay in the vault.",
      "**Vercel token still dead** — the prune's first fire errored HTTP 403 this morning; deployment storage keeps bleeding until `vercel login` runs on the mini.",
-     "**10 human-blocked items unchanged** — Notes scripting wedge (re-probed Oct 16, still tripping the 25 s alarm), `jellyfin.ayumad.me` NXDOMAIN (Namecheap A record), the stale `API_SERVER_KEY:` line (~config.yaml:728), SER8 node-exporter sudo, Xfinity xFi forwards, Hue pairing, state.db 1.2 GB compaction window, the parked simulator-runtime removal (~47 GB).",
+     "**10 human-blocked items unchanged** — Notes scripting wedge (re-probed Oct 16, still tripping the 25 s alarm), `jellyfin.ayumad.me` NXDOMAIN (Namecheap A record), the stale `[redacted]:` line (~config.yaml), SER8 node-exporter sudo, Xfinity xFi forwards, Hue pairing, state.db 1.2 GB compaction window, the parked simulator-runtime removal (~47 GB).",
      "**Journal cron delivery** — Oct 16's bot-chat notification was refused (`permission_denied`), first in 11+ nights; the job itself completed and deployed. Watch for recurrence (fallback: flip to `deliver: local`).",
      "**Scout Marketplace Sweep** still paused since Oct 9 — no Craigslist-wishlist sweeps since; unpausing is Ayush's call.",
      "Job application pipeline work — details stay in the vault.",
@@ -369,7 +369,7 @@
     "items": [
      "**Vercel confirm — new today.** The prune job is staged, but the actual cleanup needs one tap: the device-code link in the iMessage thread (Ayush confirms, then old deployments get deleted and auto-deploys throttled).",
      "**Photon free-tier cooldown.** Root cause is an *engagement* limit — 3 sends/day until the recipient replies. The cheap remedy: reply once to the iMessage thread. Morning briefs lost delivery Oct 9–10 until it reset by evening; if it keeps recurring, the old decision (trim relays / Photon Pro $25/mo) is still waiting.",
-     "**9 human-blocked items unchanged** — top: the held simulator-runtime removal (~47 GB; the data volume is at 92% / 20.7 GB free after Xcode 27.0 landed, so it's the cheapest big win). Also: Xfinity xFi steps, Namecheap `jellyfin` A record, state.db compaction window, Notes.app scripting wedge (since Sep 18, re-probed Oct 9 — still wedged), Hue↔HA link button, SER8 node-exporter sudo, the stale `API_SERVER_KEY` line (config.yaml line 727), and the remux queue re-check when it settles.",
+     "**9 human-blocked items unchanged** — top: the held simulator-runtime removal (~47 GB; the data volume is at 92% / 20.7 GB free after Xcode 27.0 landed, so it's the cheapest big win). Also: Xfinity xFi steps, Namecheap `jellyfin` A record, state.db compaction window, Notes.app scripting wedge (since Sep 18, re-probed Oct 9 — still wedged), Hue↔HA link button, SER8 node-exporter sudo, the stale `[redacted]` line (config.yaml), and the remux queue re-check when it settles.",
      "**Foreman's three roster fixes** (8 dead SOUL skill refs, coder profile trim, foreman's stray photon platform) proposed Oct 5, still awaiting approval.",
      "Job application pipeline work — details stay in the vault.",
      "Job application pipeline work — details stay in the vault.",
@@ -421,7 +421,7 @@
      "**2. Vault Access Chain Restored + Journals Backfilled** — The journal pipeline had been dead since Sep 29 (Session Journal + Deploy and Daily Cleanup paused) — both resumed Oct 4, and the missing Oct 1–3 session summaries were backfilled from session records, cron DBs, and git history. Vault git is back in sync with origin; validation clean at 548 notes, 0 invalid.",
      "**3. SER8 Back Online After ~14 Days** — Ping + BatchMode SSH verified on [redacted]. The Prometheus node-exporter install is now blocked only on Ayush's sudo password.",
      "**4. Publisher Repo Divergence Resolved** — `agent/public-knowledge-site` had drifted 519 sync commits vs 3 upstream; origin/main merged behind safety tag `backup-premerge-20261004` and pushed. ayumad.me and the blog both serving 200s.",
-     "**5. NAS Name-Resolution Failure Root-Caused** — The Mac mini's \"connect to server 'nas'\" dialog could never succeed — the short name `nas` doesn't resolve from the mini's subnet (the share answers on :445 by IP everywhere). Pattern recorded: hand clients `smb://<ip>` / tailnet IP / MagicDNS `ayumacmini`, not `.local`."
+     "**5. NAS Name-Resolution Failure Root-Caused** — The Mac mini's \"connect to server 'nas'\" dialog could never succeed — the short name `nas` doesn't resolve from the mini's subnet (the share answers on [redacted] by IP everywhere). Pattern recorded: hand clients `smb://<ip>` / private network IP / [redacted], not `.local`."
     ]
    },
    {
@@ -440,7 +440,7 @@
    {
     "heading": "🚧 Blockers & Issues",
     "items": [
-     "**9 human-blocked items unchanged** — top of list: the Mac mini sudo disk pass (disk now 94% / 13.7 GB free, worse than Sep 29 — ~53 GB reclaimable). Also: Xfinity gateway config, Namecheap jellyfin A record, state.db compaction (1.2 GB, needs a maintenance window), Notes scripting hung (since Sep 18), stale `API_SERVER_KEY` line in config.yaml, Hue↔HA pairing (physical button), SER8 node-exporter (now just sudo password), Jellyfin remux verification (waiting on the queue).",
+     "**9 human-blocked items unchanged** — top of list: the Mac mini sudo disk pass (disk now 94% / 13.7 GB free, worse than Sep 29 — ~53 GB reclaimable). Also: Xfinity gateway config, Namecheap jellyfin A record, state.db compaction (1.2 GB, needs a maintenance window), Notes scripting hung (since Sep 18), stale `[redacted]` line in config.yaml, Hue↔HA pairing (physical button), SER8 node-exporter (now just sudo password), Jellyfin remux verification (waiting on the queue).",
      "**P520 unclean reboot cluster** — cause unresolved (power-side suspected); recurrence watch active; the health monitor can't currently see short outages.",
      "**`tank` never scrubbed** — no scrub/trim in pool history; zfsutils cron guard not firing.",
      "**PVE postfix mail queue stuck** — since Sep 24; ntfy reroute proposed.",
@@ -488,7 +488,7 @@
      "**2. Jellyfin Library Quality Upgrade** — Radarr now tracks all 209 movies (was 7). Custom quality profiles with upscale/junk rejection filters installed. Remux queue live: 25 × Remux-2160p queued (1.46 TB, ~2.95 MB/s peer-limited — full set will take weeks). Library curation: 4 duplicates deleted (20.99 GB reclaimed), 63 films given tagged English subtitles via subliminal, 193 foreign films verified for native audio via local Whisper (4 Ghibli dubs flagged for re-acquisition).",
      "**3. Phone Purchases — Android Lane Closed** — Google Pixel 10 Pro ($300, hairline crack) activated on the free line. Samsung Galaxy S25 ($200, blacklisted IMEI) set up as Wi-Fi-only games/DeX device. ≤$350 Phone Hunt cron built and parked. iPhone Duo funding strategy: ~$1,300 banked from research-study gift cards, ~$900 to go vs Oct 16 preorder.",
      "**4. NAS Tank/PC Reorganization** — 168,060 files / 2.66 TiB copied from Creekwood to tank. Flattened nested dirs, consolidated emulators under `Emulation/`, separated repacks from playable games. Found real Steam saves in `SteamLibrary` (would have been deleted). Ebooks imported into Calibre-Web (21 unique titles from 43 epubs).",
-     "**5. Remote KVM + Hermes Fleet Researched** — Remote KVM wishlisted (JetKVM ~$103 lead; JetKVM Mini $39 on Oct 26 sale). Hermes Fleet gateway wired for iPhone TestFlight — serve `:9119` tailnet-bound, auth verified end-to-end from a tailnet peer."
+     "**5. Remote KVM + Hermes Fleet Researched** — Remote KVM wishlisted (JetKVM ~$103 lead; JetKVM Mini $39 on Oct 26 sale). Hermes Fleet gateway wired for iPhone TestFlight — serve `[redacted]` private network-bound, auth verified end-to-end from a private network peer."
     ]
    },
    {
@@ -621,7 +621,7 @@
     "heading": "📁 Project Progress",
     "items": [
      "**Homelab** — Roadmap expanded to 52 unique tasks across 9 phases. P520 storage plan documented (5-bay RAIDZ1). 2.5GbE NIC purchased. P520 still unreachable/off — blocks every phase. Phase 8 (Class & GUI VMs) is the semester-critical one.",
-     "**Ayumad.me** — Dashboard auto-refreshing every 6h (36 commits this week). Journal backfilled Sep 10-11 via GitHub API (vault TCC-blocked for cron). Tailnet-served live view parked.",
+     "**Ayumad.me** — Dashboard auto-refreshing every 6h (36 commits this week). Journal backfilled Sep 10-11 via GitHub API (vault TCC-blocked for cron). private network-served live view parked.",
      "**Vault Refactor** — Phase 0–1 done, 2–4 pending. No new progress this week (TCC blocks vault writes from cron). Local clone drifting behind remote.",
      "**Omarchy** — 4 config fixes done hands-on (gaps, natural scroll, school WiFi, Hermes desktop support). G14 GPU and install size remain open.",
      "**EchoSphere** — ACM Robotics 12-week build started Sep 7. Active project, leading 6-person team.",
