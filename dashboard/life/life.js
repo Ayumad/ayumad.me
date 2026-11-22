@@ -6,6 +6,7 @@
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
   const VM_SAMPLE_MAX_AGE_MS = 120000;
   const PVE_VM_SAMPLE_MAX_AGE_MS = 480000;
+  const PVE_JOB_MAX_AGE_MS = 360000;
   const SPOTIFY_URL = IS_WALL ? "./spotify-playback.json" : "/api/spotify";
   const SPOTIFY_POLL_MS = 60000;
   const SPOTIFY_WALL_MAX_AGE_MS = 150000;
@@ -295,7 +296,7 @@
       ? Math.round(p520.mem_used_gb / p520.mem_total_gb * 100) : undefined;
     const gpuOwner = clean(homelab?.gpu?.owner_name).replace(/-vm$/i, "").toUpperCase();
     const gpuMode = clean(homelab?.gpu?.mode).toLowerCase();
-    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\bkiosk\b/.test(gpuMode));
+    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\b(?:dashboard|kiosk)\b/.test(gpuMode));
     const gpu = dashboardGpu ? "DASHBOARD" : gpuOwner ? gpuOwner
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);
@@ -752,6 +753,7 @@
     for (const guest of stale ? [] : fresh) {
       const { activity } = guest;
       const job = clean(activity.job?.label);
+      if (activity.source === "proxmox" && now - Date.parse(activity.checked_at) >= PVE_JOB_MAX_AGE_MS) continue;
       if (activity.job?.status !== "running" || !job) continue;
       const metrics = [["CPU", activity.cpu_pct, 70], ["GPU", activity.gpu_pct, 70], ["RAM", activity.mem_pct, 85]]
         .filter(([, value, threshold]) => Number.isFinite(value) && value >= threshold && value <= 100)
@@ -762,7 +764,9 @@
     }
     if (busiest) {
       const { guest, job, resource, value } = busiest;
-      return show("ready", `${guestName(guest)} · ${resource} ${Math.round(value)}% · ${job}`);
+      const age = ageInSeconds(Date.parse(guest.activity.checked_at), now);
+      const sample = age >= 60 ? ` · ${ageText(age)}` : "";
+      return show("ready", `${guestName(guest)} · ${resource} ${Math.round(value)}% · ${job}${sample}`);
     }
     const load = ({ activity }) => Math.max(...[activity.cpu_pct, activity.gpu_pct].filter(percentage), -1);
     const leading = (stale ? samples : fresh).sort((a, b) => load(b) - load(a))[0];

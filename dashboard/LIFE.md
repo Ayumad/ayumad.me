@@ -60,7 +60,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Windows Codex sync:** the Windows scheduled task `Ayumad Dashboard - Codex Desktop Sync` runs `dashboard/telemetry/export-codex.mjs` every minute under the desktop user. It reads Codex databases in read-only mode and sends the latest named thread's title and update time over SSH to `~/.hermes/scripts/dashboard_codex_feed.py` on the Mac mini. The receiver writes `~/.hermes/state/dashboard_codex_desktop.json` with owner-only permissions. Hermes merges that title into the existing private `codex.recent` list during its usual refresh.
 - A successful Hermes live refresh calls `dashboard_codex_feed.py --publish-if-changed`. A change in the desktop focus title triggers the existing encrypted snapshot publisher. Timestamps within the same thread update through the regular feed, with up to 24 additional snapshot publishes in a rolling day.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
-- **VM activity:** shows a confirmed high-load job when available. The regular Proxmox collector reports the running VM count and measured CPU and RAM for the most active guest. Job samples expire after two minutes. Proxmox resource samples expire after eight minutes to cover the rolling refresh interval. The signed-in website can show older resource readings with their sample age.
+- **VM activity:** shows a confirmed high-load job when available. The regular Proxmox collector reports the running VM count and measured usage for the most active guest. Resource samples expire after eight minutes and job labels from the five-minute collector expire after six minutes. The signed-in website can show older resource readings with their sample age.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
 - The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
@@ -84,7 +84,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 `recent` is populated only in the full/signed-in snapshot (recently edited project/area notes, max 6h); the public projection returns `recent: []`. `calendar.events[].end_time` is used by the focus engine and is stripped from public events along with titles.
 
-For VM activity, `p520_vm_activity.py` converts the Proxmox cluster resource readings to `activity` on running QEMU entries in `homelab.guests` with `source: "proxmox"`, `checked_at`, and CPU and RAM percentages. A job-aware collector can also report GPU and `job: { status: "running", label: "…" }` when verified. Keep the telemetry and job labels in the signed-in and wall feeds.
+For VM activity, `p520_vm_activity.py` reports CPU and RAM for running QEMU guests and labels active Proxmox tasks with an explicit VM ID. It also reports observed torrent downloads on the media VM and GPU utilization if that VM owns the GPU and its NVIDIA probe succeeds. Keep the telemetry and job labels in the signed-in and wall feeds.
 
 ```jsonc
 {
