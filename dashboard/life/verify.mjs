@@ -92,7 +92,7 @@ async function close() {
 
 async function open(width, height, options = {}) {
   const { payload = full, wall = false, reducedMotion = "no-preference", now = fixtureTime,
-    forecast = weatherAt(now), spotify = { configured: true, state: "idle" } } = options;
+    forecast = weatherAt(now), spotify = { configured: true, state: "idle" }, machines = { machines: [] } } = options;
   browser = await launch();
   const page = await browser.newPage({ viewport: { width, height }, reducedMotion });
   const errors = [];
@@ -108,7 +108,11 @@ async function open(width, height, options = {}) {
   }));
   await page.route("**/dashboard/data", (route) => answer(route, typeof payload === "function" ? payload() : payload));
   await page.route("**/dashboard.json", (route) => answer(route, typeof payload === "function" ? payload() : payload));
+  await page.route("**/machine-resources.json", (route) => answer(route, typeof machines === "function" ? machines() : machines));
   await page.route("**/api/spotify", (route) => answer(route, typeof spotify === "function" ? spotify() : spotify));
+  await page.route("**/spotify-playback.json", (route) => answer(route, {
+    updatedAt: now.toISOString(), ...(typeof spotify === "function" ? spotify() : spotify),
+  }));
   await page.route("https://api.open-meteo.com/**", (route) => {
     const { searchParams } = new URL(route.request().url());
     assert.equal(searchParams.get("latitude"), "37.5483");
@@ -144,7 +148,7 @@ async function inspect(page) {
       field: box(document.querySelector("#hermes-field canvas")),
       readout: box(document.querySelector(".hermes-context")),
       rows: [entries("events"), entries("tasks"), entries("school"), document.querySelectorAll(".forecast-day").length],
-      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "hermes-field", "health", "weather"]
+      panels: ["today", "project-pulse", "task-panel", "school-panel", "spotify", "machine-panel", "hermes-field", "health", "weather"]
         .map((id) => ({ ...box(find(id)), state: find(id).dataset.state, id })),
     };
   });
@@ -183,7 +187,7 @@ try {
     const isPublic = options.payload?.public;
     const weekend = name.startsWith("weekend");
     assert.equal(result.source, isPublic ? "PUBLIC" : options.wall ? "LIVE" : "SNAPSHOT");
-    assert(result.focus.every(Boolean));
+    assert(result.focus.slice(0, isPublic ? 2 : 3).every(Boolean));
     assert(["WORKING ON", "DUE SOON", "CODEX", "LIKELY", "NOW", "NEXT"].includes(result.focus[0]));
     assert.equal(result.todayLabel, "NEXT UP");
     assert.equal(result.trackHidden, true);
@@ -193,7 +197,8 @@ try {
     assert.match(result.health[0], /^(—|\d+%)$/);
     assert.match(result.health[2], /^(—|\d+\.\d)$/);
     assert.equal(result.healthState, "ready");
-    assert.deepEqual(result.rows, isPublic ? [0, 0, 0, 3] : [3, 3, 2, 3]);
+    const overdueSummary = Number(!publicData.errors?.tasks && publicData.tasks.overdue > 0);
+    assert.deepEqual(result.rows, isPublic ? [0, overdueSummary, 0, 3] : [3, 3, 2, 3]);
     assert.equal(await page.locator("#weatherlabel").innerText(), "FREMONT WEATHER");
     assert.deepEqual(await page.locator(".forecast-day b").allTextContents(), ["55° / 43°", "58° / 41°", "55° / 48°"]);
     assert.equal(await page.locator("#spotify").isVisible(), true);
@@ -201,7 +206,10 @@ try {
     assert((await page.locator("#hermes-status").innerText()).length > 0);
     assert.equal(await page.locator("#project-pulse").isVisible(), true);
     if (isPublic) {
-      assert.equal(await page.locator("#project-message").innerText(), "Sign in for details");
+      assert.equal(await page.getByText(/sign in/i).count(), 1);
+      assert.equal(await page.locator("#signin").isVisible(), true);
+      assert.equal(await page.locator("#project-message").isVisible(), false);
+      assert.equal(await page.locator("#vm-activity").isVisible(), false);
     } else {
       assert((await page.locator("#projectname").innerText()).length > 0);
       assert((await page.locator("#projectnext").innerText()).length > 0);
@@ -238,9 +246,88 @@ try {
     await close();
   }
 
+  const publicWeekend = await open(390, 844, {
+    now: weekendTime,
+    payload: {
+      ...publicData,
+      generated_at: new Date(+weekendTime - 5 * 3600000).toISOString(),
+      hermes: { active_runs: 0, cron_failing_count: 0 },
+      now: { ...publicData.now, active_projects: 21 },
+    },
+  });
+  assert.equal(await publicWeekend.page.locator("#school-panel").isVisible(), false);
+  assert.equal(await publicWeekend.page.locator("#projectmeta").innerText(), "21 ACTIVE");
+  assert.equal(await publicWeekend.page.locator("#hermes-status").innerText(), "Last seen idle");
+  assert.equal(await publicWeekend.page.locator("#hermes-counts").innerText(), "0 active · 0 flagged");
+  assert.equal(await publicWeekend.page.locator("#hermes-sample-time").innerText(), "5h ago");
+  assert.equal(await publicWeekend.page.locator("#machine-panel").isVisible(), false);
+  assert.deepEqual(publicWeekend.errors, []);
+  await close();
+
   const mixed = await open(390, 844, { payload: { ...full, public: true } });
   verifyPrivacy(await mixed.page.content());
   assert.deepEqual(mixed.errors, []);
+  await close();
+
+  let machineStamp = +weekendTime;
+  let atMac = false;
+  const machineView = await open(1920, 1080, {
+    wall: true,
+    now: weekendTime,
+    payload: { ...full, generated_at: weekendTime.toISOString() },
+    machines: () => ({ machines: [
+      { id: "creekwood", name: "Creekwood", samples: [{
+        sampled_at: +weekendTime, last_input_at: +weekendTime - 10000,
+        unlocked: true, cpu_pct: 30, gpu_pct: 65, memory_pct: 55,
+      }] },
+      { id: "mac-mini", name: "Mac mini", samples: [{
+        sampled_at: machineStamp, last_input_at: machineStamp - 1000,
+        unlocked: atMac, cpu_pct: 42, gpu_pct: null, memory_pct: 60,
+      }] },
+    ] }),
+  });
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
+  assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "65%");
+  assert.equal(await machineView.page.locator("#machine-panel").evaluate((panel) => panel.previousElementSibling.id), "project-pulse");
+  verifyBounds(await inspect(machineView.page));
+  atMac = true;
+  machineStamp += 10000;
+  const handoffSample = machineView.page.waitForResponse("**/machine-resources.json");
+  await machineView.page.clock.runFor(11000);
+  await handoffSample;
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
+  await machineView.page.clock.runFor(40000);
+  assert.equal(await machineView.page.locator("#machine-name").innerText(), "Mac mini");
+  assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "—");
+  await machineView.page.clock.fastForward(120000);
+  assert.equal(await machineView.page.locator("#machine-panel").getAttribute("data-state"), "stale");
+  assert.deepEqual(machineView.errors, []);
+  await close();
+
+  const vmAndPlayback = await open(1920, 1080, {
+    wall: true,
+    now: weekendTime,
+    payload: { ...full, generated_at: weekendTime.toISOString(), homelab: {
+      reachable: true,
+      guests: [
+        { id: 202, type: "qemu", status: "running", name: "Docker", activity: {
+          source: "proxmox", checked_at: new Date(+weekendTime - 240000).toISOString(), cpu_pct: 8, mem_pct: 70,
+        } },
+        { id: 203, type: "qemu", status: "running", name: "kiosk-vm", activity: {
+          source: "proxmox", checked_at: new Date(+weekendTime - 240000).toISOString(), cpu_pct: 15, mem_pct: 36,
+        } },
+      ],
+    } },
+    spotify: { configured: true, state: "unavailable" },
+    machines: { machines: [], desktop_spotify: {
+      source: "desktop", configured: true, state: "recent", isPlaying: false,
+      title: "Desktop playback example", updatedAt: weekendTime.toISOString(),
+    } },
+  });
+  assert.equal(await vmAndPlayback.page.locator("#vm-activity-detail").textContent(), "2 VMs running · Dashboard · CPU 15% · RAM 36%");
+  assert.equal(await vmAndPlayback.page.locator("#spotifytitle").textContent(), "Desktop playback example");
+  assert.equal(await vmAndPlayback.page.locator("#spotifystate").textContent(), "PAUSED ON CREEKWOOD");
+  assert.deepEqual(vmAndPlayback.errors, []);
   await close();
 
   const reversed = [...full.calendar.events].reverse();
@@ -283,21 +370,37 @@ try {
   assert.deepEqual(dates.errors, []);
   await close();
 
-  const remoteFocus = await open(390, 844, {
-    payload: { ...full,
-      tasks: { open: 0, overdue: 0, items: [] },
-      school: { ...full.school, upcoming: 0, next: [] },
-      calendar: { ...full.calendar, events: [], week: [] },
-      codex: { tasks: [], recent: [], remote: [
-        { title: "Cloud Codex task", status: "account", age_min: 5, source: "chatgpt", updated_at: new Date().toISOString() },
+  const codexTime = new Date(`${fixtureDay}T15:10:00-08:00`);
+  const codexPayload = { ...full,
+    generated_at: codexTime.toISOString(),
+    recent: [],
+    tasks: { open: 0, overdue: 0, items: [] },
+    school: { ...full.school, upcoming: 0, next: [] },
+    calendar: { ...full.calendar, events: [], week: [] },
+    codex: { tasks: [], recent: [], remote: [
+      { title: "Older account thread", updated_at: new Date(+codexTime - 3600000).toISOString() },
+      { title: "Recent account thread", age_min: 25, updated_at: new Date(+codexTime - 300000).toISOString() },
+    ] },
+  };
+  const remoteFocus = await open(390, 844, { payload: codexPayload, now: codexTime });
+  const remoteMetrics = await inspect(remoteFocus.page);
+  assert.deepEqual(remoteMetrics.focus, ["CODEX", "Recent account thread", "Codex account · 5m ago"]);
+  assert.deepEqual(remoteFocus.errors, []);
+  await close();
+
+  const localFocus = await open(390, 844, {
+    payload: { ...codexPayload,
+      codex: { ...codexPayload.codex, recent: [
+        { title: "Older local session", age_min: 30 },
+        { title: "Current local session", age_min: 1 },
       ] },
     },
-    now: new Date(`${fixtureDay}T15:10:00-08:00`),
+    now: new Date(+codexTime + 120000),
   });
-  const remoteMetrics = await inspect(remoteFocus.page);
-  assert.equal(remoteMetrics.focus[0], "CODEX");
-  assert.match(remoteMetrics.focus[2], /^Codex account · 5m ago/);
-  assert.deepEqual(remoteFocus.errors, []);
+  assert.deepEqual((await inspect(localFocus.page)).focus, ["CODEX", "Current local session", "Codex session · 3m ago"]);
+  await localFocus.page.clock.fastForward(12 * 3600000);
+  await localFocus.page.waitForFunction(() => document.getElementById("focuskicker").innerText === "LIKELY");
+  assert.deepEqual(localFocus.errors, []);
   await close();
 
   const reduced = await open(390, 844, { reducedMotion: "reduce" });
@@ -378,10 +481,10 @@ try {
   await playbackPage.clock.runFor(1100);
   assert(await progress() > initial);
   playback = { ...playback, title: "Track Two", progressMs: 1000 };
-  await playbackPage.clock.fastForward(5000);
+  await playbackPage.clock.fastForward(60000);
   await playbackPage.waitForFunction(() => document.getElementById("spotifytitle").textContent === "Track Two");
   playback = { configured: true, state: "unavailable" };
-  await playbackPage.clock.fastForward(5000);
+  await playbackPage.clock.fastForward(60000);
   await playbackPage.waitForFunction(() => document.getElementById("spotifymeta").textContent === "STALE");
   assert.equal(await playbackPage.locator("#spotifytitle").innerText(), "Track Two");
   assert.deepEqual(playbackView.errors, []);

@@ -4,9 +4,11 @@
   const LA = "America/Los_Angeles";
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
-  const VM_SAMPLE_MAX_AGE_MS = 360000;
-  const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
-  const SPOTIFY_POLL_MS = 5000;
+  const VM_SAMPLE_MAX_AGE_MS = 120000;
+  const PVE_VM_SAMPLE_MAX_AGE_MS = 480000;
+  const SPOTIFY_URL = IS_WALL ? "./spotify-playback.json" : "/api/spotify";
+  const SPOTIFY_POLL_MS = 60000;
+  const SPOTIFY_WALL_MAX_AGE_MS = 150000;
   const DASH = "—";
   const $ = (id) => document.getElementById(id);
   const list = (value) => Array.isArray(value) ? value.filter(Boolean) : [];
@@ -28,7 +30,10 @@
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
   const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
-  const listening = { playback: null, pending: false, failed: false };
+  const listening = { playback: null, pending: false, failed: false, nextPollAt: 0 };
+  const machines = createActiveMachine($("machine-panel"), {
+    wall: IS_WALL, getJSON, setText, ageText, onFeed: renderSpotify,
+  });
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
@@ -176,7 +181,7 @@
     const publicView = !!data.public;
     const weekend = isWeekend(today);
     const candidates = [{
-      kicker: "Likely", title: phase, detail: publicView ? "Public view · sign in for details" : "No immediate commitments",
+      kicker: "Likely", title: phase, detail: publicView ? "" : "No immediate commitments",
       tone: "soft", score: 10,
     }];
     if (publicView) return candidates[0];
@@ -216,8 +221,9 @@
       });
     }
 
-    const stamp = Date.parse(data.generated_at);
-    const elapsed = Number.isFinite(stamp) ? Math.max(0, Math.floor((Date.now() - stamp) / 60000)) : 0;
+    const now = Date.now();
+    const snapshotAge = ageInSeconds(Date.parse(data.generated_at), now);
+    const elapsed = Math.floor((snapshotAge ?? 0) / 60);
     for (const note of list(errors?.recent ? null : data.recent)) {
       if (!Number.isFinite(note.age_min) || note.age_min < 0) continue;
       const age = note.age_min + elapsed;
@@ -231,30 +237,29 @@
     }
 
     const codex = data.codex ?? {};
-    const cloudTask = list(codex.tasks)
-      .filter((task) => /running|in.?progress|queued|pending/i.test(String(task.status ?? "")))
-      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
-    const remoteCodex = list(codex.remote)[0];
-    const localCodex = list(codex.recent)[0];
-    const recentCodex = [remoteCodex, localCodex]
-      .filter(Boolean)
-      .sort((a, b) => (a.age_min ?? 9999) - (b.age_min ?? 9999))[0];
-    const codexItem = cloudTask || recentCodex;
-    const codexTitle = codexItem?.label || codexItem?.title;
-    if (codexItem && clean(codexTitle)) {
-      const age = Number.isFinite(codexItem.age_min) ? codexItem.age_min : null;
-      if (cloudTask || age === null || age <= 720) {
-        const source = cloudTask ? "Codex Cloud" : codexItem === remoteCodex ? "Codex account" : "Codex session";
-        const ageLabel = age === null ? "active" : age >= 60 ? `${Math.floor(age / 60)}h ago` : `${age}m ago`;
-        candidates.push({
-          hub: "projects", item: codexItem, kicker: "Codex",
-          title: shorten(codexTitle, 44),
-          detail: [source, ageLabel, cloudTask ? cloudTask.status : null]
-            .filter(Boolean).join(" · "),
-          tone: "cyan",
-          score: cloudTask ? 105 : age !== null && age <= 60 ? 94 : age !== null && age <= 180 ? 88 : 78,
-        });
-      }
+    const cloudTasks = list(codex.tasks).filter((task) =>
+      /running|in.?progress|queued|pending/i.test(String(task?.status ?? "")));
+    const latestCodex = [
+      { items: cloudTasks, source: "Codex Cloud", cloud: true },
+      { items: list(codex.recent), source: "Codex session" },
+      { items: list(codex.remote), source: "Codex account" },
+    ].flatMap(({ items, source, cloud = false }) => items.map((item) => {
+      const title = clean(item?.label) || clean(item?.title);
+      const reportedAge = count(item?.age_min);
+      const age = ageInSeconds(Date.parse(item?.updated_at), now)
+        ?? (reportedAge === undefined || snapshotAge === null ? null : reportedAge * 60 + snapshotAge);
+      return { item, title, source, cloud, age };
+    })).filter(({ title, age, cloud }) => title && (cloud || (age !== null && age <= 12 * 3600)))
+      .sort((a, b) => Number(b.cloud) - Number(a.cloud) || (a.age ?? Infinity) - (b.age ?? Infinity))[0];
+    if (latestCodex) {
+      const { item, title, source, cloud, age } = latestCodex;
+      candidates.push({
+        hub: "projects", item, kicker: "Codex",
+        title: shorten(title, 44),
+        detail: [source, age === null ? "active" : ageText(age), cloud ? item.status : null].filter(Boolean).join(" · "),
+        tone: "cyan",
+        score: cloud ? 105 : age <= 3600 ? 94 : age <= 3 * 3600 ? 88 : 78,
+      });
     }
 
     const next = weekend ? null : list(errors?.school ? null : data.school?.next).find((item) => relativeDays(item.due, today) >= 0);
@@ -290,7 +295,7 @@
       ? Math.round(p520.mem_used_gb / p520.mem_total_gb * 100) : undefined;
     const gpuOwner = clean(homelab?.gpu?.owner_name).replace(/-vm$/i, "").toUpperCase();
     const gpuMode = clean(homelab?.gpu?.mode).toLowerCase();
-    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\b(?:dashboard|kiosk)\b/.test(gpuMode));
+    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\bkiosk\b/.test(gpuMode));
     const gpu = dashboardGpu ? "DASHBOARD" : gpuOwner ? gpuOwner
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);
@@ -376,7 +381,12 @@
     const hasCurrentFocus = focus.hub === "calendar" && agenda.some(({ item, past }) => item === focus.item && !past);
     const hasUpcoming = agenda.some(({ item, start, past }) => item !== focus.item && item.time !== "all-day" && start !== null && !past);
     const nextMode = !hasCurrentFocus && !hasUpcoming;
-    const status = setPanel("today", "calendar", values.events || (nextMode && (list(data.calendar?.week).length || list(data.calendar?.week_days).length) ? 1 : 0), "calmeta", metric(values.events, "events"));
+    const weekCount = count(data.calendar?.week_count);
+    const calendarValue = isPublic && nextMode ? weekCount
+      : values.events || (nextMode && (list(data.calendar?.week).length || list(data.calendar?.week_days).length) ? 1 : 0);
+    const calendarLabel = isPublic && nextMode ? metric(weekCount, "this week")
+      : metric(values.events, values.events === 1 ? "event" : "events");
+    const status = setPanel("today", "calendar", calendarValue, "calmeta", calendarLabel);
 
     function eventRow(target, { item, start, past }) {
       const lead = start !== null ? formatTime(start) : item.time === "all-day" ? "All day" : DASH;
@@ -390,7 +400,12 @@
       setText(todayLabel, "NEXT UP");
       track.hidden = true;
       hours.hidden = true;
-      const nextEntries = isPublic ? [] : list(data.calendar?.week)
+      if (isPublic) {
+        disclosure.hidden = true;
+        disclosure.open = false;
+        return;
+      }
+      const nextEntries = list(data.calendar?.week)
         .filter((item) => !weekend || !isSchoolEvent(item))
         .filter((item) => {
           const day = dateKey(item.sort);
@@ -426,8 +441,8 @@
       disclosure.hidden = !overflow.length;
       if (disclosure.hidden) disclosure.open = false;
       else setText(moreLabel, `+${overflow.length} more`);
-      setText($("calmeta"), isPublic ? "Sign in" : nextEntries.length ? `${nextEntries.length} upcoming` : "Clear");
-      if (!rows.length) finishRail(events, 0, 0, isPublic ? "Sign in for details" : "No upcoming events", status);
+      if (status !== "error") setText($("calmeta"), nextEntries.length ? `${nextEntries.length} upcoming` : "Clear");
+      if (!rows.length) finishRail(events, 0, 0, "No upcoming events", status);
       ticks.replaceChildren();
     } else {
       setText(todayLabel, "TODAY");
@@ -458,8 +473,8 @@
         tick.style.left = `${start / 1440 * 100}%`;
         ticks.append(tick);
       }
-      const empty = values.events === 0 ? "Clear day" : isPublic ? "Sign in for details" : DASH;
-      if (!rows.length && !overflow.length) {
+      const empty = values.events === 0 ? "Clear day" : DASH;
+      if (!isPublic && !rows.length && !overflow.length) {
         finishRail(events, 0, 0, focus.hub === "calendar" ? "See current focus" : empty, status);
       }
     }
@@ -468,17 +483,28 @@
   function renderActions(data, values, focus, today, taskState) {
     const tasks = $("tasks");
     const school = $("school");
+    const schoolPanel = $("school-panel");
     const weekend = isWeekend(today);
     tasks.replaceChildren();
     school.replaceChildren();
-    const nearTasks = taskState.tasks.filter(({ day }) => !day || relativeDays(day, today) <= 7);
-    const taskStatus = setPanel("task-panel", "tasks", nearTasks.length, "taskmeta", metric(nearTasks.length, "near"));
+    schoolPanel.hidden = Boolean(data.public && weekend);
+    schoolPanel.dataset.mode = weekend ? "projects" : "school";
+    setText($("schoollabel"), weekend ? "PROJECTS" : "SCHOOL DEADLINES");
     const schoolStatus = setPanel("school-panel", "school", weekend ? values.projects : values.upcoming,
       "schoolmeta", weekend ? metric(values.projects, "active") : metric(values.upcoming, "due"));
 
-    if (data.public || taskStatus === "error") {
-      const label = taskState.overdue > 0 ? metric(taskState.overdue, "overdue") : values.open === 0 ? "Clear" : "Sign in for details";
-      finishRail(tasks, 0, 0, label, taskStatus);
+    if (data.public) {
+      const status = setPanel("task-panel", "tasks", values.open, "taskmeta", metric(values.open, "open"));
+      if (status !== "error" && taskState.overdue > 0) {
+        appendRow(tasks, metric(taskState.overdue, "overdue"), { tone: "bad" });
+      }
+      return;
+    }
+
+    const nearTasks = taskState.tasks.filter(({ day }) => !day || relativeDays(day, today) <= 7);
+    const taskStatus = setPanel("task-panel", "tasks", nearTasks.length, "taskmeta", metric(nearTasks.length, "near"));
+    if (taskStatus === "error") {
+      finishRail(tasks, 0, 0, DASH, taskStatus);
     } else {
       const represented = focus.hub === "tasks" && !withoutAside(focus.item.title).includes(": ") ? 1 : 0;
       const ranked = nearTasks.filter(({ item }) => !represented || item !== focus.item)
@@ -498,38 +524,29 @@
     }
 
     if (weekend) {
-      $("school-panel").dataset.mode = "projects";
-      setText($("schoollabel"), "PROJECTS");
-      if (data.public) {
-        setText($("schoolmeta"), metric(values.projects, "active"));
-        finishRail(school, 0, 0, "Sign in for details", schoolStatus);
-      } else {
-        const seen = new Set();
-        const projectRows = [];
-        for (const note of list(data.recent)) {
-          if (!/project/i.test(note.folder) || !clean(note.label)) continue;
-          const key = clean(note.label).toLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          projectRows.push({ label: clean(note.label), meta: note.age_min < 60 ? `${note.age_min}m ago` : "Recent" });
-        }
-        for (const node of list(data.brain?.nodes)) {
-          if (node.group !== "projects" || !clean(node.label)) continue;
-          const key = clean(node.label).toLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          projectRows.push({ label: clean(node.label), meta: "Active" });
-        }
-        const rows = projectRows.slice(0, 2);
-        for (const item of rows) {
-          appendRow(school, shorten(item.label, 48), { tail: item.meta, title: item.label, tone: "violet" });
-        }
-        finishRail(school, rows.length, projectRows.length, values.projects === 0 ? "No active projects" : "Pick a project", schoolStatus);
+      const seen = new Set();
+      const projectRows = [];
+      for (const note of list(data.recent)) {
+        if (!/project/i.test(note.folder) || !clean(note.label)) continue;
+        const key = clean(note.label).toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        projectRows.push({ label: clean(note.label), meta: note.age_min < 60 ? `${note.age_min}m ago` : "Recent" });
       }
+      for (const node of list(data.brain?.nodes)) {
+        if (node.group !== "projects" || !clean(node.label)) continue;
+        const key = clean(node.label).toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        projectRows.push({ label: clean(node.label), meta: "Active" });
+      }
+      const rows = projectRows.slice(0, 2);
+      for (const item of rows) {
+        appendRow(school, shorten(item.label, 48), { tail: item.meta, title: item.label, tone: "violet" });
+      }
+      finishRail(school, rows.length, projectRows.length, values.projects === 0 ? "No active projects" : "Pick a project", schoolStatus);
     } else {
-      $("school-panel").dataset.mode = "school";
-      setText($("schoollabel"), "SCHOOL DEADLINES");
-      const upcoming = data.public || schoolStatus === "error" ? [] : list(data.school?.next)
+      const upcoming = schoolStatus === "error" ? [] : list(data.school?.next)
         .filter((item) => item !== focus.item)
         .sort(datedFirst);
       const rows = upcoming.slice(0, 2);
@@ -540,7 +557,7 @@
         });
       }
       const representedByFocus = focus.hub === "school" ? 1 : 0;
-      const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : data.public ? "Sign in for details" : DASH;
+      const empty = representedByFocus ? "See current focus" : values.upcoming === 0 ? "Clear" : DASH;
       finishRail(school, rows.length, (values.upcoming ?? upcoming.length) - representedByFocus, empty, schoolStatus);
     }
   }
@@ -559,14 +576,15 @@
   function renderProjectPulse(data, values, today) {
     const panel = $("project-pulse");
     const project = projectPulse(data);
-    const status = panelState("projects", project ? 1 : undefined);
+    const status = panelState("projects", data.public ? values.projects : project ? 1 : undefined);
     panel.dataset.state = status;
-    setText($("projectmeta"), status === "stale" ? "Stale" : metric(values.projects, "active"));
+    setText($("projectlabel"), data.public ? "Projects" : "Project pulse");
+    setText($("projectmeta"), data.public && status === "error" ? "Unavailable"
+      : !data.public && status === "stale" ? "Stale" : metric(values.projects, "active"));
     $("project-card").hidden = !project;
     const message = $("project-message");
-    message.hidden = !!project;
-    setText(message, data.public ? "Sign in for details" : status === "error" ? "Unavailable"
-      : state.data ? "No active project details" : DASH);
+    message.hidden = Boolean(data.public || project);
+    setText(message, status === "error" ? "Unavailable" : state.data ? "No active project details" : DASH);
     if (!project) return;
     const age = relativeDays(project.updated, today);
     const ageDays = Number.isFinite(age) ? Math.max(0, -age) : null;
@@ -581,24 +599,32 @@
 
   function renderSpotify() {
     const panel = $("spotify");
-    const spotify = listening.playback ?? state.data?.spotify;
+    const desktop = state.data?.public ? null : machines.desktopSpotify();
+    const desktopAge = Date.now() - Date.parse(desktop?.updatedAt);
+    const desktopFresh = desktopAge < SPOTIFY_WALL_MAX_AGE_MS;
+    const desktopAvailable = desktop?.source === "desktop" && clean(desktop.title)
+      && desktopAge >= 0 && (desktopFresh || !IS_WALL);
+    const fromDesktop = desktopAvailable && (!listening.playback?.configured || listening.failed);
+    const spotify = fromDesktop ? desktop : listening.playback ?? state.data?.spotify;
     const card = $("spotifycard");
     const art = $("spotifyart");
     const note = $("spotifynote");
     art.onerror = () => { art.hidden = true; note.hidden = false; };
-    const stale = !listening.playback || listening.failed;
+    const stale = fromDesktop ? !desktopFresh : !listening.playback || listening.failed;
     const playing = !stale && spotify?.isPlaying === true;
     const recent = !stale && spotify?.state === "recent";
     const hasTrack = !!spotify?.title;
-    const offline = spotify?.configured === false || listening.failed;
-    setText($("spotifystate"), playing ? "NOW LISTENING" : recent ? "LAST LISTENED"
+    const offline = !fromDesktop && (spotify?.configured === false || listening.failed);
+    const desktopLabel = stale ? "LAST SEEN ON CREEKWOOD" : playing ? "PLAYING ON CREEKWOOD" : "PAUSED ON CREEKWOOD";
+    setText($("spotifystate"), fromDesktop ? desktopLabel : playing ? "NOW LISTENING" : recent ? "LAST LISTENED"
       : stale && hasTrack ? "PLAYBACK STALE" : offline ? "SPOTIFY OFFLINE" : "SPOTIFY");
     setText($("spotifytitle"), spotify?.title || "Spotify");
     setText($("spotifyartist"), list(spotify?.artists).join(", ") || spotify?.album
       || (spotify?.configured === false ? "Not connected" : listening.failed ? "Audio signal unavailable"
         : listening.playback ? "No recent playback" : "Checking playback…"));
-    setText($("spotifymeta"), playing ? "LIVE" : recent ? "RECENT" : stale && hasTrack ? "STALE" : offline ? "OFFLINE" : DASH);
-    panel.dataset.state = stale && hasTrack ? "stale" : listening.failed ? "error" : hasTrack ? "ready" : "empty";
+    setText($("spotifymeta"), fromDesktop ? (stale ? "STALE" : playing ? "LIVE" : "PAUSED")
+      : playing ? "LIVE" : recent ? "RECENT" : stale && hasTrack ? "STALE" : offline ? "OFFLINE" : DASH);
+    panel.dataset.state = stale && hasTrack ? "stale" : offline ? "error" : hasTrack ? "ready" : "empty";
     if (spotify?.url) {
       card.href = spotify.url;
       card.target = "_blank";
@@ -632,14 +658,18 @@
   }
 
   async function loadSpotify() {
-    if (document.hidden || listening.pending) return;
+    const now = Date.now();
+    if (document.hidden || listening.pending || now < listening.nextPollAt) return;
     listening.pending = true;
+    listening.nextPollAt = now + SPOTIFY_POLL_MS;
     try {
       const playback = await getJSON(SPOTIFY_URL, "default");
       if (typeof playback?.configured !== "boolean" || !["playing", "recent", "idle", "unavailable"].includes(playback.state)
         || (playback.configured && playback.state === "unavailable")) throw new Error("invalid playback");
       listening.playback = playback;
-      listening.failed = false;
+      const sample = Date.parse(playback.updatedAt);
+      listening.failed = IS_WALL && playback.configured
+        && (!Number.isFinite(sample) || now - sample > SPOTIFY_WALL_MAX_AGE_MS);
     } catch {
       listening.failed = true;
     } finally {
@@ -688,31 +718,38 @@
 
   function renderVmActivity(data) {
     const panel = $("vm-activity");
+    panel.hidden = Boolean(data.public);
     const detail = $("vm-activity-detail");
     const show = (status, text) => {
       panel.dataset.state = status;
       setText(detail, text);
       detail.title = text;
     };
-    if (data.public) return show("empty", "Sign in for VM activity");
+    if (panel.hidden) return show("empty", DASH);
     if (state.failed && !state.data) return show("error", "VM activity unavailable");
     if (data.errors?.homelab || data.homelab?.reachable === false) return show("error", "P520 offline");
 
-    const samples = list(data.homelab?.guests).filter((guest) =>
-      guest.type === "qemu" && guest.status === "running" && guest.activity
-      && Object.hasOwn(guest.activity, "job")
-      && [guest.activity.cpu_pct, guest.activity.gpu_pct, guest.activity.mem_pct]
-        .some((value) => Number.isFinite(value) && value >= 0 && value <= 100));
+    const running = list(data.homelab?.guests).filter((guest) => guest.type === "qemu" && guest.status === "running");
+    const percentage = (value) => Number.isFinite(value) && value >= 0 && value <= 100;
+    const samples = running.filter(({ activity }) => activity
+      && [activity.cpu_pct, activity.gpu_pct, activity.mem_pct].some(percentage));
     const now = Date.now();
     const fresh = samples.filter(({ activity }) => {
       const age = now - Date.parse(activity.checked_at);
-      return age >= 0 && age < VM_SAMPLE_MAX_AGE_MS;
+      const limit = activity.source === "proxmox" ? PVE_VM_SAMPLE_MAX_AGE_MS : VM_SAMPLE_MAX_AGE_MS;
+      return age >= 0 && age < limit;
     });
-    if (state.stale || (samples.length && !fresh.length)) return show("stale", "VM readings stale");
-    if (!fresh.length) return show("empty", state.data ? "VM job data unavailable" : DASH);
+    const stale = state.stale || (samples.length > 0 && !fresh.length);
+    if (stale && (IS_WALL || !samples.length)) return show("stale", "VM readings stale");
+    const count = `${running.length} VM${running.length === 1 ? "" : "s"} running`;
+    if (!samples.length) {
+      if (!Array.isArray(data.homelab?.guests)) return show("empty", state.data ? "VM inventory unavailable" : DASH);
+      return show("empty", running.length ? `${count} · Load unavailable` : "No VMs running");
+    }
 
+    const guestName = (guest) => clean(guest.name).replace(/^kiosk(?:-vm)?$/i, "Dashboard") || `VM ${guest.id ?? DASH}`;
     let busiest = null;
-    for (const guest of fresh) {
+    for (const guest of stale ? [] : fresh) {
       const { activity } = guest;
       const job = clean(activity.job?.label);
       if (activity.job?.status !== "running" || !job) continue;
@@ -723,11 +760,18 @@
       const [resource, value] = metrics[0];
       if (!busiest || value > busiest.value) busiest = { guest, job, resource, value };
     }
-    if (!busiest) return show("empty", "No high-load VM jobs reported");
-
-    const { guest, job, resource, value } = busiest;
-    const name = clean(guest.name).replace(/^kiosk(?:-vm)?$/i, "Dashboard") || `VM ${guest.id ?? DASH}`;
-    show("ready", `${name} · ${resource} ${Math.round(value)}% · ${job}`);
+    if (busiest) {
+      const { guest, job, resource, value } = busiest;
+      return show("ready", `${guestName(guest)} · ${resource} ${Math.round(value)}% · ${job}`);
+    }
+    const load = ({ activity }) => Math.max(...[activity.cpu_pct, activity.gpu_pct].filter(percentage), -1);
+    const leading = (stale ? samples : fresh).sort((a, b) => load(b) - load(a))[0];
+    const { cpu_pct: cpu, mem_pct: ram, gpu_pct: gpu } = leading.activity;
+    const resources = [["CPU", cpu], ["GPU", gpu], ["RAM", ram]]
+      .filter(([, value]) => percentage(value)).map(([label, value]) => `${label} ${Math.round(value)}%`);
+    const age = ageInSeconds(Date.parse(leading.activity.checked_at), now);
+    const sample = stale ? age === null ? "Last sample" : `Sampled ${ageText(age)}` : "";
+    return show(stale ? "stale" : "ready", [count, guestName(leading), ...resources, sample].filter(Boolean).join(" · "));
   }
 
   function renderHermes(data, values) {
@@ -737,10 +781,18 @@
       stale: state.stale,
       unavailable: Boolean((state.failed && !state.data) || data.errors?.hermes),
     });
-    setText($("hermes-status"), signal.headline);
+    const lastSeen = state.source === "Snapshot" && (signal.state === "idle" || signal.state === "working");
+    setText($("hermes-status"), lastSeen ? `Last seen ${signal.headline.toLowerCase()}` : signal.headline);
     const counts = $("hermes-counts");
     counts.hidden = !signal.counts;
     setText(counts, signal.counts);
+    const sample = $("hermes-sample-time");
+    $("hermes-sample").hidden = !signal.counts;
+    sample.hidden = signal.sampledAt === null;
+    setText($("hermes-sample-label"), sample.hidden ? "Sample time unavailable" : "Sampled ");
+    if (sample.hidden) sample.removeAttribute("datetime");
+    else sample.dateTime = new Date(signal.sampledAt).toISOString();
+    refreshHermesSample(Date.now());
     const job = $("hermes-job");
     job.hidden = !signal.detail;
     setText(job, signal.detail);
@@ -771,20 +823,40 @@
     setText($("focuskicker"), focus.kicker);
     setText($("focustitle"), focus.title);
     setText($("focusdetail"), focus.detail);
+    $("focusdetail").hidden = Boolean(data.public);
     $("signin").hidden = !data.public;
+    document.body.dataset.view = data.public ? "public" : "full";
 
     renderSchedule(data, values, focus, today, agenda);
     renderActions(data, values, focus, today, taskState);
     renderProjectPulse(data, values, today);
+    machines.update(state.data);
     renderSpotify();
     renderHealth(values);
     renderVmActivity(data);
     renderHermes(data, values);
   }
 
+  function ageInSeconds(stamp, now) {
+    return Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 1000)) : null;
+  }
+
+  function ageText(seconds) {
+    if (seconds === 0) return "now";
+    if (seconds < 60) return `${seconds}s ago`;
+    const minutes = Math.floor(seconds / 60);
+    return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ago`;
+  }
+
+  function refreshHermesSample(now) {
+    const sample = $("hermes-sample-time");
+    const seconds = ageInSeconds(Date.parse(sample.dateTime), now);
+    setText(sample, seconds === null ? "" : ageText(seconds));
+  }
+
   function refreshSource(now) {
     const stamp = Date.parse(state.data?.generated_at);
-    const seconds = Number.isFinite(stamp) ? Math.max(0, Math.floor((now - stamp) / 1000)) : null;
+    const seconds = ageInSeconds(stamp, now);
     const minutes = seconds === null ? null : Math.floor(seconds / 60);
     const stale = !!state.data && (state.failed || (minutes !== null && minutes >= (state.source === "Live" ? 15 : 480)));
     const status = state.failed && !state.data ? "Offline" : stale ? "Stale" : state.data?.public ? "Public" : state.source || DASH;
@@ -794,9 +866,7 @@
     }
     setText($("source"), status);
     $("source").dataset.tone = status === "Offline" ? "bad" : stale ? "warn" : status === "Live" ? "cyan" : "soft";
-    setText($("updated"), seconds === null ? DASH : seconds === 0 ? "Updated now"
-      : minutes < 1 ? `Updated ${seconds}s ago` : minutes < 60 ? `Updated ${minutes}m ago`
-      : `Updated ${Math.floor(minutes / 60)}h ago`);
+    setText($("updated"), seconds === null ? DASH : `Updated ${ageText(seconds)}`);
   }
 
   function clock() {
@@ -812,6 +882,7 @@
     $("dayfill").style.width = dayProgress;
     $("daynow").style.left = dayProgress;
     refreshSource(+now);
+    refreshHermesSample(+now);
     renderSpotifyProgress(+now);
     if (state.weather && !state.weatherFailed && +now - state.weather.receivedAt >= 1800000 && $("weather").dataset.state !== "stale") {
       renderWeather();
@@ -998,6 +1069,7 @@
   render();
   load();
   loadSpotify();
+  machines.poll();
   weather();
   watchWallPage();
   setInterval(clock, 1000);
@@ -1006,5 +1078,7 @@
   document.addEventListener("visibilitychange", load);
   setInterval(loadSpotify, SPOTIFY_POLL_MS);
   document.addEventListener("visibilitychange", loadSpotify);
+  setInterval(machines.poll, 10000);
+  document.addEventListener("visibilitychange", machines.poll);
   setInterval(weather, 900000);
 })();

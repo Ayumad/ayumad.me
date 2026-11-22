@@ -138,21 +138,22 @@ function createHermesFlow(canvas) {
       releases = [];
     }
     stale = delayed;
-    if ((!stale && !unavailable) || (stale && sourceTime === -Infinity)) {
+    if (!unavailable && (!stale || sourceTime === -Infinity)) {
       readSnapshot(data, active, failing, Date.parse(data.generated_at));
     }
-    faded = stale || unavailable || (reading.active === undefined && reading.failing === undefined);
-    if (faded || motion.matches || document.hidden) releases = [];
     const state = stale ? "stale" : unavailable ? "unavailable" : reading.failing > 0 ? "attention"
-      : reading.active > 0 ? "working" : faded ? "empty" : "idle";
+      : reading.active > 0 ? "working" : reading.active === 0 ? "idle" : "empty";
+    faded = state === "stale" || state === "unavailable" || state === "empty";
+    if (faded || motion.matches || document.hidden) releases = [];
     canvas.dataset.state = state;
     const counts = [];
     if (reading.active !== undefined) counts.push(reading.active + " active");
-    if (reading.failing > 0) counts.push(reading.failing + " flagged");
+    if (reading.failing !== undefined) counts.push(reading.failing + " flagged");
     const detail = state === "attention" && reading.flagged ? reading.flagged + " · elevated failure rate"
       : state === "working" && reading.active === 1 ? reading.runningJob : "";
     if (motion.matches) paint(true);
-    return { headline: headlines[state], counts: counts.join(" · "), detail, lastResult };
+    const sampledAt = counts.length && Number.isFinite(sourceTime) ? sourceTime : null;
+    return { state, headline: headlines[state], counts: counts.join(" · "), detail, lastResult, sampledAt };
   }
 
   function halo(x, y, radius, color, opacity) {

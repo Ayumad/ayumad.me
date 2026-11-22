@@ -19,7 +19,7 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero left | date, oversized clock, seconds, seconds bar |
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
 | Hero right | Fremont weather, current conditions, and the next three days |
-| Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
+| Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE`, private `ACTIVE MACHINE` |
 | Workspace center | Hermes particle weave with a single status readout |
 | Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
 | Footer | Mac mini/Hermes and P520 resource status, VM activity, and freshness |
@@ -46,18 +46,21 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 - The original Confluence weave drifts at idle. Active Hermes runs pull strands into separate currents, and a flagged job gathers a sustained amber pocket.
 - The web dashboard follows the saved homepage renderer. ASCII uses glyphs, Dither uses ordered stippling, Glitch offsets narrow bands, Particles uses fading trails, and CRT+ adds scan lines. The field defaults to Particles on a fresh browser or wall display.
-- The edge readout shows Hermes status and known run counts. It adds a flagged job and the latest confirmed result when the signed-in feed provides them.
+- The edge readout groups Hermes status, known run counts, and the age of the last accepted sample. Web snapshots label idle and working states as last seen. The readout adds a flagged job and the latest confirmed result when the signed-in feed provides them.
 
 ## Active layer
 
 - **Focus engine:** recalculates every 15 seconds. Priority: current calendar event (`NOW`, real `end_time`) → a task due today/tonight or overdue (semantic deadline, not just the upstream flag) → active Codex Cloud task or a recent Codex session (local or ChatGPT-account) → recent project/area note (6h) or imminent next event → school deadline → time-of-day fallback. School tasks and deadlines are ignored on Fri–Sun.
 - **Day-aware schedule:** if no timed calendar event remains today, the left panel becomes `NEXT UP` (next dated events, starting tomorrow) and hides the 24h timeline; there is no separate week list.
 - Fri–Sun replaces school deadlines with projects and removes school calendar and deadline items from the agenda. Classes and deadlines resume Monday.
-- **Project pulse:** the most recently updated active project, with last-touched age, next action and open-action count. The panel stays visible and prompts for sign-in when details are private.
+- **Project pulse:** signed-in views show the most recently updated active project, with last-touched age, next action and open-action count. Public views show a single Projects count throughout the week.
 - **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
-- **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
+- **Active machine:** shows the most recently used, unlocked workstation and its CPU, GPU, and RAM over 15 minutes. Recent input qualifies for five minutes. A new machine must lead for 30 seconds before the panel switches. Inactive machines are labeled last used when the feed is fresh. A sample over 95 seconds old shows its age. Missing samples and unsupported metrics stay blank in the plots. The compact phone view shows the latest percentages.
+- **Codex focus:** active `codex cloud list` tasks win. Otherwise the page picks the most recent collected local Codex thread or ChatGPT account thread within 12h by its update time. If the collector provides only `age_min`, the page adds the time since the snapshot. The local collector reads `~/.codex/state_5.sqlite`; activity from another computer must reach the collector to appear. Public payloads set `codex: null` so no chat titles are exposed.
+- **Windows Codex sync:** the Windows scheduled task `Ayumad Dashboard - Codex Desktop Sync` runs `dashboard/telemetry/export-codex.mjs` every minute under the desktop user. It reads Codex databases in read-only mode and sends the latest named thread's title and update time over SSH to `~/.hermes/scripts/dashboard_codex_feed.py` on the Mac mini. The receiver writes `~/.hermes/state/dashboard_codex_desktop.json` with owner-only permissions. Hermes merges that title into the existing private `codex.recent` list during its usual refresh.
+- A successful Hermes live refresh calls `dashboard_codex_feed.py --publish-if-changed`. A change in the desktop focus title triggers the existing encrypted snapshot publisher. Timestamps within the same thread update through the regular feed, with up to 24 additional snapshot publishes in a rolling day.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
-- **VM activity:** shows the busiest P520 VM with a confirmed running job and a fresh reading of at least 70% CPU or GPU, or 85% RAM. The footer shows the VM, its highest qualifying reading, and the job. Samples expire after six minutes to allow for the five-minute wall collector cycle.
+- **VM activity:** shows a confirmed high-load job when available. The regular Proxmox collector reports the running VM count and measured CPU and RAM for the most active guest. Job samples expire after two minutes. Proxmox resource samples expire after eight minutes to cover the rolling refresh interval. The signed-in website can show older resource readings with their sample age.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
 - The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
@@ -69,8 +72,10 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Clock: every second.
 - Focus recompute: every 15 seconds.
 - Weather: every 15 minutes (Open-Meteo, Fremont, no key).
-- Spotify: every 5 seconds while visible, with an immediate refresh when the tab becomes visible. The wall kiosk uses the public endpoint at `ayumad.me`.
+- Spotify: once a minute while visible, with an immediate refresh after becoming visible if a minute has passed. The wall reads `spotify-playback.json`. Hermes runs `dashboard/telemetry/wall-spotify.mjs` to query Spotify once a minute, reuse the access token and recent playback, and honor Spotify's retry interval. The website uses `/api/spotify`. During an outage, the private dashboard can show a Spotify media session from Creekwood with the device and play or pause state. The hidden `Ayumad Dashboard - Spotify Desktop Playback` task reads Creekwood's Spotify media session once a minute independently of the resource sampler.
 - Page data: every 10 seconds on the wall (`/dashboard.json`) and every 30 seconds on the web (`/dashboard/data`), with a refresh when the tab becomes visible. Readings and their age reflect the latest sample from the feed.
+- Workstation data: samplers read CPU, GPU, RAM, lock state, and last input time every 30 seconds. Creekwood runs `sample-machine-windows.ps1` under the interactive scheduled task `Ayumad Dashboard - Active Machine Sampler`. On macOS, run `sample_machine_mac.py` from a user LaunchAgent every 30 seconds. The Mac mini submits locally. On Ayumacpro, use `sample_machine_mac.py ayumacpro --hub ayumad@ayumacmini` with authenticated tailnet SSH. Missing GPU counters are allowed on either platform.
+- `machine_resource_feed.py` stores the rolling history in the Mac mini's private Hermes state and mirrors `machine-resources.json` to the wall server. The kiosk polls that file every 10 seconds. The signed-in website shows the same history as of its protected snapshot, including the sample age. The public projection omits workstation telemetry.
 - Service trend: samples from the page data poll.
 
 ## Data contract
@@ -79,9 +84,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 `recent` is populated only in the full/signed-in snapshot (recently edited project/area notes, max 6h); the public projection returns `recent: []`. `calendar.events[].end_time` is used by the focus engine and is stripped from public events along with titles.
 
-For VM activity, the collector can attach `activity` to a running QEMU guest in `homelab.guests`. It carries `checked_at` (ISO timestamp), measured `cpu_pct`, `gpu_pct` or `mem_pct` (0–100), and `job: { status: "running", label: "…" }` when the collector confirms a job. Use `job: null` when the VM has been checked and no job is running. Keep the telemetry and job labels in the signed-in and wall feeds.
-
-The Mac mini's dashboard collector uses `dashboard/collector/p520_activity.py` to combine Proxmox resource readings with active VM-specific Proxmox tasks and active downloads on the media VM. GPU utilization is available when the media VM owns the GPU and its NVIDIA probe succeeds.
+For VM activity, `p520_vm_activity.py` converts the Proxmox cluster resource readings to `activity` on running QEMU entries in `homelab.guests` with `source: "proxmox"`, `checked_at`, and CPU and RAM percentages. A job-aware collector can also report GPU and `job: { status: "running", label: "…" }` when verified. Keep the telemetry and job labels in the signed-in and wall feeds.
 
 ```jsonc
 {
@@ -101,7 +104,7 @@ The Mac mini's dashboard collector uses `dashboard/collector/p520_activity.py` t
 }
 ```
 
-- **Public projection:** `calendar.events` keeps `time` only; `tasks.items` and `school.next` are empty; `week_count` is a number. The page renders a count + `SIGN IN FOR DETAILS` instead of titles.
+- **Public projection:** `calendar.events` keeps `time` and `all_day`; `tasks.items` and `school.next` are empty; `week_count` is a number. The page shows aggregate schedule, task, school, and project counts with one sign-in link in the header.
 - **Full snapshot (signed in):** all titles present.
 - Confluence uses the Hermes active-run and failing-job counts and the dashboard's snapshot freshness rules.
 - Signed-in snapshots can give active runs stable identifiers to keep them on consistent currents. A new explicit success or delivery receipt releases particles.
@@ -120,7 +123,7 @@ The Mac mini's dashboard collector uses `dashboard/collector/p520_activity.py` t
 ## Acceptance
 
 - 1920×1080 and 390×844: `document.documentElement.scrollHeight === innerHeight`, 0 console errors.
-- Public: count + `SIGN IN` visible; no event/task/school titles or calendar emails in the HTML or JSON.
+- Public: one project summary and one `SIGN IN` link visible; no event/task/school titles or calendar emails in the HTML or JSON.
 - Signed in / wall: titles visible, `THIS WEEK` grouped by day, no clipping; after the last event the left panel reads `NEXT UP` instead of `TODAY`.
-- Fri–Sun: no `SCHOOL DEADLINES` panel, no school deadline rows in `NEXT UP` / `THIS WEEK`; `PROJECTS` occupies the school slot.
+- Fri–Sun: school deadlines and their rows are omitted. Signed-in and wall views use the school slot for recent projects.
 - Footer pulse links to `/status` and reads `ALL CLEAR` / `N WARNINGS` / `N ISSUES`.
