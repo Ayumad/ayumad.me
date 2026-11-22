@@ -5,6 +5,7 @@
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
   const VM_SAMPLE_MAX_AGE_MS = 120000;
+  const PVE_VM_SAMPLE_MAX_AGE_MS = 480000;
   const SPOTIFY_URL = IS_WALL ? "./spotify-playback.json" : "/api/spotify";
   const SPOTIFY_POLL_MS = 60000;
   const SPOTIFY_WALL_MAX_AGE_MS = 150000;
@@ -30,7 +31,9 @@
 
   const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
   const listening = { playback: null, pending: false, failed: false, nextPollAt: 0 };
-  const machines = createActiveMachine($("machine-panel"), { wall: IS_WALL, getJSON, setText, ageText });
+  const machines = createActiveMachine($("machine-panel"), {
+    wall: IS_WALL, getJSON, setText, ageText, onFeed: renderSpotify,
+  });
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
     return `${parts.year}-${parts.month}-${parts.day}`;
@@ -596,24 +599,32 @@
 
   function renderSpotify() {
     const panel = $("spotify");
-    const spotify = listening.playback ?? state.data?.spotify;
+    const desktop = state.data?.public ? null : machines.desktopSpotify();
+    const desktopAge = Date.now() - Date.parse(desktop?.updatedAt);
+    const desktopFresh = desktopAge < SPOTIFY_WALL_MAX_AGE_MS;
+    const desktopAvailable = desktop?.source === "desktop" && clean(desktop.title)
+      && desktopAge >= 0 && (desktopFresh || !IS_WALL);
+    const fromDesktop = desktopAvailable && (!listening.playback?.configured || listening.failed);
+    const spotify = fromDesktop ? desktop : listening.playback ?? state.data?.spotify;
     const card = $("spotifycard");
     const art = $("spotifyart");
     const note = $("spotifynote");
     art.onerror = () => { art.hidden = true; note.hidden = false; };
-    const stale = !listening.playback || listening.failed;
+    const stale = fromDesktop ? !desktopFresh : !listening.playback || listening.failed;
     const playing = !stale && spotify?.isPlaying === true;
     const recent = !stale && spotify?.state === "recent";
     const hasTrack = !!spotify?.title;
-    const offline = spotify?.configured === false || listening.failed;
-    setText($("spotifystate"), playing ? "NOW LISTENING" : recent ? "LAST LISTENED"
+    const offline = !fromDesktop && (spotify?.configured === false || listening.failed);
+    const desktopLabel = stale ? "LAST SEEN ON CREEKWOOD" : playing ? "PLAYING ON CREEKWOOD" : "PAUSED ON CREEKWOOD";
+    setText($("spotifystate"), fromDesktop ? desktopLabel : playing ? "NOW LISTENING" : recent ? "LAST LISTENED"
       : stale && hasTrack ? "PLAYBACK STALE" : offline ? "SPOTIFY OFFLINE" : "SPOTIFY");
     setText($("spotifytitle"), spotify?.title || "Spotify");
     setText($("spotifyartist"), list(spotify?.artists).join(", ") || spotify?.album
       || (spotify?.configured === false ? "Not connected" : listening.failed ? "Audio signal unavailable"
         : listening.playback ? "No recent playback" : "Checking playback…"));
-    setText($("spotifymeta"), playing ? "LIVE" : recent ? "RECENT" : stale && hasTrack ? "STALE" : offline ? "OFFLINE" : DASH);
-    panel.dataset.state = stale && hasTrack ? "stale" : listening.failed ? "error" : hasTrack ? "ready" : "empty";
+    setText($("spotifymeta"), fromDesktop ? (stale ? "STALE" : playing ? "LIVE" : "PAUSED")
+      : playing ? "LIVE" : recent ? "RECENT" : stale && hasTrack ? "STALE" : offline ? "OFFLINE" : DASH);
+    panel.dataset.state = stale && hasTrack ? "stale" : offline ? "error" : hasTrack ? "ready" : "empty";
     if (spotify?.url) {
       card.href = spotify.url;
       card.target = "_blank";
@@ -718,21 +729,27 @@
     if (state.failed && !state.data) return show("error", "VM activity unavailable");
     if (data.errors?.homelab || data.homelab?.reachable === false) return show("error", "P520 offline");
 
-    const samples = list(data.homelab?.guests).filter((guest) =>
-      guest.type === "qemu" && guest.status === "running" && guest.activity
-      && Object.hasOwn(guest.activity, "job")
-      && [guest.activity.cpu_pct, guest.activity.gpu_pct, guest.activity.mem_pct]
-        .some((value) => Number.isFinite(value) && value >= 0 && value <= 100));
+    const running = list(data.homelab?.guests).filter((guest) => guest.type === "qemu" && guest.status === "running");
+    const percentage = (value) => Number.isFinite(value) && value >= 0 && value <= 100;
+    const samples = running.filter(({ activity }) => activity
+      && [activity.cpu_pct, activity.gpu_pct, activity.mem_pct].some(percentage));
     const now = Date.now();
     const fresh = samples.filter(({ activity }) => {
       const age = now - Date.parse(activity.checked_at);
-      return age >= 0 && age < VM_SAMPLE_MAX_AGE_MS;
+      const limit = activity.source === "proxmox" ? PVE_VM_SAMPLE_MAX_AGE_MS : VM_SAMPLE_MAX_AGE_MS;
+      return age >= 0 && age < limit;
     });
-    if (state.stale || (samples.length && !fresh.length)) return show("stale", "VM readings stale");
-    if (!fresh.length) return show("empty", state.data ? "VM job data unavailable" : DASH);
+    const stale = state.stale || (samples.length > 0 && !fresh.length);
+    if (stale && (IS_WALL || !samples.length)) return show("stale", "VM readings stale");
+    const count = `${running.length} VM${running.length === 1 ? "" : "s"} running`;
+    if (!samples.length) {
+      if (!Array.isArray(data.homelab?.guests)) return show("empty", state.data ? "VM inventory unavailable" : DASH);
+      return show("empty", running.length ? `${count} · Load unavailable` : "No VMs running");
+    }
 
+    const guestName = (guest) => clean(guest.name).replace(/^kiosk(?:-vm)?$/i, "Dashboard") || `VM ${guest.id ?? DASH}`;
     let busiest = null;
-    for (const guest of fresh) {
+    for (const guest of stale ? [] : fresh) {
       const { activity } = guest;
       const job = clean(activity.job?.label);
       if (activity.job?.status !== "running" || !job) continue;
@@ -743,11 +760,18 @@
       const [resource, value] = metrics[0];
       if (!busiest || value > busiest.value) busiest = { guest, job, resource, value };
     }
-    if (!busiest) return show("empty", "No high-load VM jobs reported");
-
-    const { guest, job, resource, value } = busiest;
-    const name = clean(guest.name).replace(/^kiosk(?:-vm)?$/i, "Dashboard") || `VM ${guest.id ?? DASH}`;
-    show("ready", `${name} · ${resource} ${Math.round(value)}% · ${job}`);
+    if (busiest) {
+      const { guest, job, resource, value } = busiest;
+      return show("ready", `${guestName(guest)} · ${resource} ${Math.round(value)}% · ${job}`);
+    }
+    const load = ({ activity }) => Math.max(...[activity.cpu_pct, activity.gpu_pct].filter(percentage), -1);
+    const leading = (stale ? samples : fresh).sort((a, b) => load(b) - load(a))[0];
+    const { cpu_pct: cpu, mem_pct: ram, gpu_pct: gpu } = leading.activity;
+    const resources = [["CPU", cpu], ["GPU", gpu], ["RAM", ram]]
+      .filter(([, value]) => percentage(value)).map(([label, value]) => `${label} ${Math.round(value)}%`);
+    const age = ageInSeconds(Date.parse(leading.activity.checked_at), now);
+    const sample = stale ? age === null ? "Last sample" : `Sampled ${ageText(age)}` : "";
+    return show(stale ? "stale" : "ready", [count, guestName(leading), ...resources, sample].filter(Boolean).join(" · "));
   }
 
   function renderHermes(data, values) {
@@ -806,8 +830,8 @@
     renderSchedule(data, values, focus, today, agenda);
     renderActions(data, values, focus, today, taskState);
     renderProjectPulse(data, values, today);
-    renderSpotify();
     machines.update(state.data);
+    renderSpotify();
     renderHealth(values);
     renderVmActivity(data);
     renderHermes(data, values);

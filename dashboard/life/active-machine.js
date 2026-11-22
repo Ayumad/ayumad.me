@@ -1,6 +1,6 @@
 "use strict";
 
-function createActiveMachine(panel, { wall, getJSON, setText, ageText }) {
+function createActiveMachine(panel, { wall, getJSON, setText, ageText, onFeed }) {
   const HISTORY_MS = 15 * 60000;
   const FRESH_MS = 95000;
   const RECENT_INPUT_MS = 5 * 60000;
@@ -120,11 +120,15 @@ function createActiveMachine(panel, { wall, getJSON, setText, ageText }) {
     } finally {
       pending = false;
       render();
+      onFeed();
     }
   }
 
   return {
     poll,
+    desktopSpotify() {
+      return enabled ? (feed ?? snapshot)?.desktop_spotify : null;
+    },
     update(data) {
       enabled = wall ? data?.public !== true : Boolean(data && !data.public && data.machine_resources);
       snapshot = enabled ? data?.machine_resources : null;

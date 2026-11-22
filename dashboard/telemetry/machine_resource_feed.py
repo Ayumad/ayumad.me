@@ -1,6 +1,7 @@
 """Collect workstation resource histories on Hermes and mirror them to the wall."""
 
 import argparse
+import datetime as dt
 import fcntl
 import json
 import math
@@ -55,8 +56,28 @@ def read_feed():
     return None
 
 
+def clean_spotify(item, stamp):
+    if not isinstance(item, dict):
+        return None
+    def label(key):
+        value = item.get(key)
+        return " ".join(value.split())[:180] if isinstance(value, str) else ""
+    title = label("title")
+    if not title or not isinstance(item.get("playing"), bool):
+        return None
+    playing = item["playing"]
+    artist = label("artist")
+    return {
+        "configured": True, "state": "playing" if playing else "recent", "isPlaying": playing,
+        "title": title, "artists": [artist] if artist else [], "album": label("album"),
+        "source": "desktop", "updatedAt": dt.datetime.fromtimestamp(stamp / 1000, dt.timezone.utc).isoformat(),
+    }
+
+
 def record(machine_id, sample):
     now = time.time_ns() // 1000000
+    desktop_sent = machine_id == "creekwood" and isinstance(sample, dict) and "spotify" in sample
+    desktop = sample.get("spotify") if desktop_sent else None
     sample = clean_sample(sample, now)
     with (STATE / "machine-resources.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
@@ -65,6 +86,8 @@ def record(machine_id, sample):
         if current is None:
             current = {"id": machine_id, "name": MACHINES[machine_id], "samples": []}
             data["machines"].append(current)
+        if desktop_sent and (not current["samples"] or sample["sampled_at"] >= current["samples"][-1]["sampled_at"]):
+            data["desktop_spotify"] = clean_spotify(desktop, sample["sampled_at"])
         history = {entry["sampled_at"]: entry for entry in current["samples"]}
         history[sample["sampled_at"]] = sample
         current["samples"] = [history[stamp] for stamp in sorted(history) if stamp >= now - HISTORY_MS][-61:]

@@ -60,7 +60,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Windows Codex sync:** the Windows scheduled task `Ayumad Dashboard - Codex Desktop Sync` runs `dashboard/telemetry/export-codex.mjs` every minute under the desktop user. It reads Codex databases in read-only mode and sends the latest named thread's title and update time over SSH to `~/.hermes/scripts/dashboard_codex_feed.py` on the Mac mini. The receiver writes `~/.hermes/state/dashboard_codex_desktop.json` with owner-only permissions. Hermes merges that title into the existing private `codex.recent` list during its usual refresh.
 - A successful Hermes live refresh calls `dashboard_codex_feed.py --publish-if-changed`. A change in the desktop focus title triggers the existing encrypted snapshot publisher. Timestamps within the same thread update through the regular feed, with up to 24 additional snapshot publishes in a rolling day.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
-- **VM activity:** shows the busiest P520 VM with a confirmed running job and a fresh reading of at least 70% CPU or GPU, or 85% RAM. The footer shows the VM, its highest qualifying reading, and the job. Samples expire after two minutes.
+- **VM activity:** shows a confirmed high-load job when available. The regular Proxmox collector reports the running VM count and measured CPU and RAM for the most active guest. Job samples expire after two minutes. Proxmox resource samples expire after eight minutes to cover the rolling refresh interval. The signed-in website can show older resource readings with their sample age.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
 - The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
@@ -72,7 +72,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Clock: every second.
 - Focus recompute: every 15 seconds.
 - Weather: every 15 minutes (Open-Meteo, Fremont, no key).
-- Spotify: once a minute while visible, with an immediate refresh after becoming visible if a minute has passed. The wall reads `spotify-playback.json`. Hermes runs `dashboard/telemetry/wall-spotify.mjs` to query Spotify once a minute, reuse the access token and recent playback, and honor Spotify's retry interval. The website uses `/api/spotify`.
+- Spotify: once a minute while visible, with an immediate refresh after becoming visible if a minute has passed. The wall reads `spotify-playback.json`. Hermes runs `dashboard/telemetry/wall-spotify.mjs` to query Spotify once a minute, reuse the access token and recent playback, and honor Spotify's retry interval. The website uses `/api/spotify`. During an outage, the private dashboard can show a fresh Spotify media session from Creekwood with the device and play or pause state. Creekwood reads the Windows media session once a minute through its existing sampler.
 - Page data: every 10 seconds on the wall (`/dashboard.json`) and every 30 seconds on the web (`/dashboard/data`), with a refresh when the tab becomes visible. Readings and their age reflect the latest sample from the feed.
 - Workstation data: samplers read CPU, GPU, RAM, lock state, and last input time every 30 seconds. Creekwood runs `sample-machine-windows.ps1` under the interactive scheduled task `Ayumad Dashboard - Active Machine Sampler`. On macOS, run `sample_machine_mac.py` from a user LaunchAgent every 30 seconds. The Mac mini submits locally. On Ayumacpro, use `sample_machine_mac.py ayumacpro --hub ayumad@ayumacmini` with authenticated tailnet SSH. Missing GPU counters are allowed on either platform.
 - `machine_resource_feed.py` stores the rolling history in the Mac mini's private Hermes state and mirrors `machine-resources.json` to the wall server. The kiosk polls that file every 10 seconds. The signed-in website shows the same history as of its protected snapshot, including the sample age. The public projection omits workstation telemetry.
@@ -84,7 +84,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 
 `recent` is populated only in the full/signed-in snapshot (recently edited project/area notes, max 6h); the public projection returns `recent: []`. `calendar.events[].end_time` is used by the focus engine and is stripped from public events along with titles.
 
-For VM activity, the collector can attach `activity` to a running QEMU guest in `homelab.guests`. It carries `checked_at` (ISO timestamp), measured `cpu_pct`, `gpu_pct` or `mem_pct` (0–100), and `job: { status: "running", label: "…" }` when the collector confirms a job. Use `job: null` when the VM has been checked and no job is running. Keep the telemetry and job labels in the signed-in and wall feeds.
+For VM activity, `p520_vm_activity.py` converts the Proxmox cluster resource readings to `activity` on running QEMU entries in `homelab.guests` with `source: "proxmox"`, `checked_at`, and CPU and RAM percentages. A job-aware collector can also report GPU and `job: { status: "running", label: "…" }` when verified. Keep the telemetry and job labels in the signed-in and wall feeds.
 
 ```jsonc
 {

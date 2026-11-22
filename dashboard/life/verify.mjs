@@ -304,6 +304,32 @@ try {
   assert.deepEqual(machineView.errors, []);
   await close();
 
+  const vmAndPlayback = await open(1920, 1080, {
+    wall: true,
+    now: weekendTime,
+    payload: { ...full, generated_at: weekendTime.toISOString(), homelab: {
+      reachable: true,
+      guests: [
+        { id: 202, type: "qemu", status: "running", name: "Docker", activity: {
+          source: "proxmox", checked_at: new Date(+weekendTime - 240000).toISOString(), cpu_pct: 8, mem_pct: 70,
+        } },
+        { id: 203, type: "qemu", status: "running", name: "kiosk-vm", activity: {
+          source: "proxmox", checked_at: new Date(+weekendTime - 240000).toISOString(), cpu_pct: 15, mem_pct: 36,
+        } },
+      ],
+    } },
+    spotify: { configured: true, state: "unavailable" },
+    machines: { machines: [], desktop_spotify: {
+      source: "desktop", configured: true, state: "recent", isPlaying: false,
+      title: "Desktop playback example", updatedAt: weekendTime.toISOString(),
+    } },
+  });
+  assert.equal(await vmAndPlayback.page.locator("#vm-activity-detail").textContent(), "2 VMs running · Dashboard · CPU 15% · RAM 36%");
+  assert.equal(await vmAndPlayback.page.locator("#spotifytitle").textContent(), "Desktop playback example");
+  assert.equal(await vmAndPlayback.page.locator("#spotifystate").textContent(), "PAUSED ON CREEKWOOD");
+  assert.deepEqual(vmAndPlayback.errors, []);
+  await close();
+
   const reversed = [...full.calendar.events].reverse();
   const paper = {
     title: "CMPE-148 Project 4 paper: add the 3 teammates' full names to the title page, then submit (due Fri Nov 20, 11:59 PM)",
