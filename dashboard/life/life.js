@@ -5,8 +5,9 @@
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
   const VM_SAMPLE_MAX_AGE_MS = 120000;
-  const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
-  const SPOTIFY_POLL_MS = 5000;
+  const SPOTIFY_URL = IS_WALL ? "./spotify-playback.json" : "/api/spotify";
+  const SPOTIFY_POLL_MS = 60000;
+  const SPOTIFY_WALL_MAX_AGE_MS = 150000;
   const DASH = "—";
   const $ = (id) => document.getElementById(id);
   const list = (value) => Array.isArray(value) ? value.filter(Boolean) : [];
@@ -28,7 +29,7 @@
   const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short" });
 
   const state = { data: null, pending: false, source: "", failed: false, stale: false, weather: null, weatherFailed: false };
-  const listening = { playback: null, pending: false, failed: false };
+  const listening = { playback: null, pending: false, failed: false, nextPollAt: 0 };
   const machines = createActiveMachine($("machine-panel"), { wall: IS_WALL, getJSON, setText, ageText });
   const clockDate = (now = new Date()) => {
     const parts = Object.fromEntries(dateFormat.formatToParts(now).map(({ type, value }) => [type, value]));
@@ -646,14 +647,18 @@
   }
 
   async function loadSpotify() {
-    if (document.hidden || listening.pending) return;
+    const now = Date.now();
+    if (document.hidden || listening.pending || now < listening.nextPollAt) return;
     listening.pending = true;
+    listening.nextPollAt = now + SPOTIFY_POLL_MS;
     try {
       const playback = await getJSON(SPOTIFY_URL, "default");
       if (typeof playback?.configured !== "boolean" || !["playing", "recent", "idle", "unavailable"].includes(playback.state)
         || (playback.configured && playback.state === "unavailable")) throw new Error("invalid playback");
       listening.playback = playback;
-      listening.failed = false;
+      const sample = Date.parse(playback.updatedAt);
+      listening.failed = IS_WALL && playback.configured
+        && (!Number.isFinite(sample) || now - sample > SPOTIFY_WALL_MAX_AGE_MS);
     } catch {
       listening.failed = true;
     } finally {

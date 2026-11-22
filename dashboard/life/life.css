@@ -362,18 +362,14 @@ main {
 .machine-trace { stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
 .machine-axis { margin-top: 4px; margin-left: 59px; display: flex; justify-content: space-between; font-size: 10px; text-transform: none; letter-spacing: 0; }
 @media (min-width: 761px) {
-  .actions:has(#machine-panel:not([hidden])) {
+  .schedule:has(#machine-panel:not([hidden])) {
     gap: clamp(8px, 1.1vh, 12px);
   }
-  .actions:has(#machine-panel:not([hidden])) .section-head { padding-block: 3px 6px; }
-  .actions:has(#machine-panel:not([hidden])) .rail-row { padding-block: clamp(4px, .55vh, 7px); }
-  .actions:has(#machine-panel:not([hidden])) :is(.placeholder, .row-more) { padding-top: 5px; }
-  .actions:has(#machine-panel:not([hidden])) .spotify-card {
-    grid-template-columns: 34px minmax(0, 1fr) 14px;
-    margin-top: 5px;
-    padding-block: 4px;
-  }
-  .actions:has(#machine-panel:not([hidden])) .spotify-art { width: 34px; height: 34px; }
+  .schedule:has(#machine-panel:not([hidden])) .section-head { padding-block: 3px 6px; }
+  .schedule:has(#machine-panel:not([hidden])) .rail-row { padding-block: clamp(4px, .55vh, 7px); }
+  .schedule:has(#machine-panel:not([hidden])) :is(.placeholder, .row-more) { padding-top: 5px; }
+  .schedule:has(#machine-panel:not([hidden])) .daytrack { margin-top: 10px; }
+  .schedule:has(#machine-panel:not([hidden])) .dayhours { margin-top: 7px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .project-trace::after { animation: none; transform: none; }
@@ -392,16 +388,15 @@ main {
   .section-head { padding-block: 4px 8px; }
   .rail-row { padding-block: 9px; }
   .schedule, .actions { gap: 18px; }
-  .actions:has(#machine-panel:not([hidden])) {
+  .schedule:has(#machine-panel:not([hidden])) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-content: start;
     gap: 8px 12px;
   }
-  .actions:has(#machine-panel:not([hidden])) :is(#spotify, #machine-panel) { grid-column: 1 / -1; }
-  .actions:has(#school-panel[hidden]) #task-panel { grid-column: 1 / -1; }
-  .actions:has(#machine-panel:not([hidden])) .section-head .label { font-size: clamp(10px, .94vw, 14px); }
-  .actions:has(#machine-panel:not([hidden])) :is(#task-panel, #school-panel) .section-head .meta { font-size: 10px; }
+  .schedule:has(#machine-panel:not([hidden])) #machine-panel { grid-column: 1 / -1; }
+  .schedule:has(#machine-panel:not([hidden])) .section-head .label { font-size: clamp(10px, .94vw, 14px); }
+  .schedule:has(#machine-panel:not([hidden])) .section-head .meta { font-size: 10px; }
   #machine-panel .section-head { padding-block: 3px 5px; }
   .machine-reading { padding-block: 5px; }
   .machine-metric > div { gap: 0; }
@@ -471,13 +466,13 @@ main {
   .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   .actions:has(#school-panel[hidden]) #task-panel { grid-column: 1 / -1; }
   #spotify { grid-column: 1 / -1; }
-  .actions:has(#machine-panel:not([hidden])) .spotify-card {
+  .workspace:has(#machine-panel:not([hidden])) .spotify-card {
     grid-template-columns: 30px minmax(0, 1fr) 14px;
     margin-top: 3px;
     padding-block: 1px 3px;
   }
-  .actions:has(#machine-panel:not([hidden])) .spotify-art { width: 30px; height: 30px; }
-  .actions:has(#machine-panel:not([hidden])) .spotify-track { margin-top: 3px; }
+  .workspace:has(#machine-panel:not([hidden])) .spotify-art { width: 30px; height: 30px; }
+  .workspace:has(#machine-panel:not([hidden])) .spotify-track { margin-top: 3px; }
   #machine-panel {
     grid-column: 1 / -1;
     display: grid;

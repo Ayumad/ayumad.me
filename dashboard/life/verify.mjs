@@ -110,6 +110,9 @@ async function open(width, height, options = {}) {
   await page.route("**/dashboard.json", (route) => answer(route, typeof payload === "function" ? payload() : payload));
   await page.route("**/machine-resources.json", (route) => answer(route, typeof machines === "function" ? machines() : machines));
   await page.route("**/api/spotify", (route) => answer(route, typeof spotify === "function" ? spotify() : spotify));
+  await page.route("**/spotify-playback.json", (route) => answer(route, {
+    updatedAt: now.toISOString(), ...(typeof spotify === "function" ? spotify() : spotify),
+  }));
   await page.route("https://api.open-meteo.com/**", (route) => {
     const { searchParams } = new URL(route.request().url());
     assert.equal(searchParams.get("latitude"), "37.5483");
@@ -285,6 +288,7 @@ try {
   });
   assert.equal(await machineView.page.locator("#machine-name").innerText(), "Creekwood");
   assert.equal(await machineView.page.locator('[data-metric="gpu_pct"] b').innerText(), "65%");
+  assert.equal(await machineView.page.locator("#machine-panel").evaluate((panel) => panel.previousElementSibling.id), "project-pulse");
   verifyBounds(await inspect(machineView.page));
   atMac = true;
   machineStamp += 10000;
@@ -451,10 +455,10 @@ try {
   await playbackPage.clock.runFor(1100);
   assert(await progress() > initial);
   playback = { ...playback, title: "Track Two", progressMs: 1000 };
-  await playbackPage.clock.fastForward(5000);
+  await playbackPage.clock.fastForward(60000);
   await playbackPage.waitForFunction(() => document.getElementById("spotifytitle").textContent === "Track Two");
   playback = { configured: true, state: "unavailable" };
-  await playbackPage.clock.fastForward(5000);
+  await playbackPage.clock.fastForward(60000);
   await playbackPage.waitForFunction(() => document.getElementById("spotifymeta").textContent === "STALE");
   assert.equal(await playbackPage.locator("#spotifytitle").innerText(), "Track Two");
   assert.deepEqual(playbackView.errors, []);

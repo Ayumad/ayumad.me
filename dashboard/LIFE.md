@@ -19,9 +19,9 @@ The page is one ambient composition, not a grid of monitoring tables:
 | Hero left | date, oversized clock, seconds, seconds bar |
 | Hero center | `CURRENT FOCUS`: kicker (`NOW` / `DUE TONIGHT` / `OVERDUE` / etc.), one-line focus title, deadline/detail |
 | Hero right | Fremont weather, current conditions, and the next three days |
-| Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE` |
+| Workspace left | `TODAY`/`NEXT UP` schedule (up to 3 dated events; no separate week list), `PROJECT PULSE`, private `ACTIVE MACHINE` |
 | Workspace center | Hermes particle weave with a single status readout |
-| Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING`, private `ACTIVE MACHINE` |
+| Workspace right | up to 3 near-term tasks, school deadlines on weekdays or `PROJECTS` on Fri–Sun, `NOW LISTENING` |
 | Footer | Mac mini/Hermes and P520 resource status, VM activity, and freshness |
 
 The hero is a three-column band above the schedule, particle field, and actions. The footer takes one row. On phones, focus and the particle field go full-width, the schedule and actions use two columns, and the footer compresses to host stats. The page fits 1920×1080 and 390×844 without scrolling.
@@ -72,7 +72,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - Clock: every second.
 - Focus recompute: every 15 seconds.
 - Weather: every 15 minutes (Open-Meteo, Fremont, no key).
-- Spotify: every 5 seconds while visible, with an immediate refresh when the tab becomes visible. The wall kiosk uses the public endpoint at `ayumad.me`.
+- Spotify: once a minute while visible, with an immediate refresh after becoming visible if a minute has passed. The wall reads `spotify-playback.json`. Hermes runs `dashboard/telemetry/wall-spotify.mjs` to query Spotify once a minute, reuse the access token and recent playback, and honor Spotify's retry interval. The website uses `/api/spotify`.
 - Page data: every 10 seconds on the wall (`/dashboard.json`) and every 30 seconds on the web (`/dashboard/data`), with a refresh when the tab becomes visible. Readings and their age reflect the latest sample from the feed.
 - Workstation data: samplers read CPU, GPU, RAM, lock state, and last input time every 30 seconds. Creekwood runs `sample-machine-windows.ps1` under the interactive scheduled task `Ayumad Dashboard - Active Machine Sampler`. On macOS, run `sample_machine_mac.py` from a user LaunchAgent every 30 seconds. The Mac mini submits locally. On Ayumacpro, use `sample_machine_mac.py ayumacpro --hub ayumad@ayumacmini` with authenticated tailnet SSH. Missing GPU counters are allowed on either platform.
 - `machine_resource_feed.py` stores the rolling history in the Mac mini's private Hermes state and mirrors `machine-resources.json` to the wall server. The kiosk polls that file every 10 seconds. The signed-in website shows the same history as of its protected snapshot, including the sample age. The public projection omits workstation telemetry.
