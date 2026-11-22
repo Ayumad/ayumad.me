@@ -1,3 +1,11 @@
+param(
+    [Parameter(Mandatory)]
+    [ValidatePattern('^[\w.][\w.-]*@[\w.][\w.-]*$')]
+    [string]$Hub
+)
+
+$ErrorActionPreference = 'Stop'
+
 function Get-DesktopSpotifyPlayback {
     Add-Type -AssemblyName System.Runtime.WindowsRuntime
     $managerType = [Windows.Media.Control.GlobalSystemMediaTransportControlsSessionManager, Windows.Media.Control, ContentType=WindowsRuntime]
@@ -28,3 +36,11 @@ function Get-DesktopSpotifyPlayback {
         }
     }
 }
+
+$playback = Get-DesktopSpotifyPlayback
+$sample = @{
+    sampled_at = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+    spotify = $playback
+}
+$sample | ConvertTo-Json -Compress | & ssh.exe -T -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=6 -o ServerAliveInterval=4 -o ServerAliveCountMax=2 $Hub 'python3 "$HOME/.hermes/scripts/machine_resource_feed.py" creekwood --playback-only'
+exit $LASTEXITCODE

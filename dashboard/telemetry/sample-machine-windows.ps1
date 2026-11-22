@@ -7,7 +7,6 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot 'read-spotify-windows.ps1')
 
 Add-Type -TypeDefinition @'
 using System;
@@ -55,7 +54,7 @@ public static class DashboardDesktopActivity {
 }
 '@
 
-function Send-MachineSample([bool]$IncludePlayback) {
+function Send-MachineSample {
     $processors = @(Get-CimInstance Win32_Processor -OperationTimeoutSec 4)
     $load = ($processors | Measure-Object -Property LoadPercentage -Average).Average
     $memory = Get-CimInstance Win32_OperatingSystem -OperationTimeoutSec 4
@@ -78,11 +77,6 @@ function Send-MachineSample([bool]$IncludePlayback) {
             [Math]::Round(100 * (1 - $memory.FreePhysicalMemory / $memory.TotalVisibleMemorySize), 1)
         } else { $null }
     }
-    if ($IncludePlayback) {
-        try { $sample.spotify = Get-DesktopSpotifyPlayback } catch {
-            Write-Verbose 'Spotify desktop metadata could not be read.'
-        }
-    }
     $sample | ConvertTo-Json -Compress | & ssh.exe -T -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=6 -o ServerAliveInterval=4 -o ServerAliveCountMax=2 $Hub 'python3 "$HOME/.hermes/scripts/machine_resource_feed.py" creekwood'
     if ($LASTEXITCODE -ne 0) { throw "Hermes could not receive the workstation sample (SSH exit $LASTEXITCODE)." }
 }
@@ -92,7 +86,7 @@ $failed = $false
 for ($index = 0; $index -lt $Samples; $index++) {
     $wait = 30 * $index - $cycle.Elapsed.TotalSeconds
     if ($wait -gt 0) { Start-Sleep -Milliseconds ([int]($wait * 1000)) }
-    try { Send-MachineSample ($index -eq 0) } catch {
+    try { Send-MachineSample } catch {
         Write-Error -ErrorRecord $_ -ErrorAction Continue
         $failed = $true
     }

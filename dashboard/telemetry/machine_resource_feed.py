@@ -74,23 +74,25 @@ def clean_spotify(item, stamp):
     }
 
 
-def record(machine_id, sample):
+def record(machine_id, sample, playback_only=False):
     now = time.time_ns() // 1000000
-    desktop_sent = machine_id == "creekwood" and isinstance(sample, dict) and "spotify" in sample
-    desktop = sample.get("spotify") if desktop_sent else None
+    desktop = sample.get("spotify") if playback_only and isinstance(sample, dict) else None
     sample = clean_sample(sample, now)
     with (STATE / "machine-resources.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         data = read_feed() or {"machines": []}
-        current = next((entry for entry in data["machines"] if entry["id"] == machine_id), None)
-        if current is None:
-            current = {"id": machine_id, "name": MACHINES[machine_id], "samples": []}
-            data["machines"].append(current)
-        if desktop_sent and (not current["samples"] or sample["sampled_at"] >= current["samples"][-1]["sampled_at"]):
-            data["desktop_spotify"] = clean_spotify(desktop, sample["sampled_at"])
-        history = {entry["sampled_at"]: entry for entry in current["samples"]}
-        history[sample["sampled_at"]] = sample
-        current["samples"] = [history[stamp] for stamp in sorted(history) if stamp >= now - HISTORY_MS][-61:]
+        if playback_only:
+            if sample["sampled_at"] >= data.get("desktop_spotify_sampled_at", 0):
+                data["desktop_spotify"] = clean_spotify(desktop, sample["sampled_at"])
+                data["desktop_spotify_sampled_at"] = sample["sampled_at"]
+        else:
+            current = next((entry for entry in data["machines"] if entry["id"] == machine_id), None)
+            if current is None:
+                current = {"id": machine_id, "name": MACHINES[machine_id], "samples": []}
+                data["machines"].append(current)
+            history = {entry["sampled_at"]: entry for entry in current["samples"]}
+            history[sample["sampled_at"]] = sample
+            current["samples"] = [history[stamp] for stamp in sorted(history) if stamp >= now - HISTORY_MS][-61:]
         for entry in data["machines"]:
             if entry["id"] != machine_id:
                 kept = [point for point in entry["samples"] if point["sampled_at"] >= now - HISTORY_MS]
@@ -114,5 +116,8 @@ def record(machine_id, sample):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("machine", choices=MACHINES)
+    parser.add_argument("--playback-only", action="store_true")
     args = parser.parse_args()
-    record(args.machine, json.loads(sys.stdin.buffer.read(4097)))
+    if args.playback_only and args.machine != "creekwood":
+        parser.error("Desktop Spotify playback is collected on Creekwood.")
+    record(args.machine, json.loads(sys.stdin.buffer.read(4097)), args.playback_only)
