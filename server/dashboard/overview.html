@@ -1022,7 +1022,7 @@ function createHermesFlow(canvas) {
   const LA = "America/Los_Angeles";
   const IS_WALL = location.pathname.endsWith(".html") || location.protocol === "file:";
   const DATA_POLL_MS = IS_WALL ? 10000 : 30000;
-  const VM_SAMPLE_MAX_AGE_MS = 120000;
+  const VM_SAMPLE_MAX_AGE_MS = 360000;
   const SPOTIFY_URL = IS_WALL ? "https://ayumad.me/api/spotify" : "/api/spotify";
   const SPOTIFY_POLL_MS = 5000;
   const DASH = "—";
@@ -1308,7 +1308,7 @@ function createHermesFlow(canvas) {
       ? Math.round(p520.mem_used_gb / p520.mem_total_gb * 100) : undefined;
     const gpuOwner = clean(homelab?.gpu?.owner_name).replace(/-vm$/i, "").toUpperCase();
     const gpuMode = clean(homelab?.gpu?.mode).toLowerCase();
-    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\bkiosk\b/.test(gpuMode));
+    const dashboardGpu = gpuOwner === "KIOSK" || (!gpuOwner && /\b(?:dashboard|kiosk)\b/.test(gpuMode));
     const gpu = dashboardGpu ? "DASHBOARD" : gpuOwner ? gpuOwner
       : gpuMode.includes("ai") ? "AI" : gpuMode.includes("media") ? "MEDIA" : DASH;
     const activeRuns = count(hermes?.active_runs);

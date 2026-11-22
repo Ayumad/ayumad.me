@@ -57,7 +57,7 @@ The hero is a three-column band above the schedule, particle field, and actions.
 - **Now listening:** album art, track, artist, playing/recent state, and progress from `/api/spotify`. During an outage the last known track is marked stale.
 - **Codex focus:** active `codex cloud list` tasks win; otherwise the most recent local Codex thread (`~/.codex/state_5.sqlite`) or ChatGPT-account thread (`~/.codex/sqlite/codex.db` `local_thread_catalog`, host kind `chatgpt`) within 12h. Account threads are labeled `Codex account`; public payload sets `codex: null` so no titles leave the wall.
 - **Host footer:** Mac mini CPU/RAM, P520 load/RAM/GPU owner, and the live Hermes running-run count; links to `/status` for detail. No vague warning summary.
-- **VM activity:** shows the busiest P520 VM with a confirmed running job and a fresh reading of at least 70% CPU or GPU, or 85% RAM. The footer shows the VM, its highest qualifying reading, and the job. Samples expire after two minutes.
+- **VM activity:** shows the busiest P520 VM with a confirmed running job and a fresh reading of at least 70% CPU or GPU, or 85% RAM. The footer shows the VM, its highest qualifying reading, and the job. Samples expire after six minutes to allow for the five-minute wall collector cycle.
 - **Clock/day rail:** seconds tick every second; seconds bar and 24h now marker advance continuously.
 
 - The footer shows Mac mini and P520 resource readings and links to /status for the full breakdown.
@@ -80,6 +80,8 @@ The hero is a three-column band above the schedule, particle field, and actions.
 `recent` is populated only in the full/signed-in snapshot (recently edited project/area notes, max 6h); the public projection returns `recent: []`. `calendar.events[].end_time` is used by the focus engine and is stripped from public events along with titles.
 
 For VM activity, the collector can attach `activity` to a running QEMU guest in `homelab.guests`. It carries `checked_at` (ISO timestamp), measured `cpu_pct`, `gpu_pct` or `mem_pct` (0–100), and `job: { status: "running", label: "…" }` when the collector confirms a job. Use `job: null` when the VM has been checked and no job is running. Keep the telemetry and job labels in the signed-in and wall feeds.
+
+The Mac mini's dashboard collector uses `dashboard/collector/p520_activity.py` to combine Proxmox resource readings with active VM-specific Proxmox tasks and active downloads on the media VM. GPU utilization is available when the media VM owns the GPU and its NVIDIA probe succeeds.
 
 ```jsonc
 {
