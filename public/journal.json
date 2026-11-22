@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-21",
+  "summary": "Journal 2026-11-21: P520 load traced to CIFS/media-stack I/O ceiling (Immich stopped), ai-window.sh PATH bug fixed, Abdaal life-organiser prompt reverse-engineered, Spring 2027 registration done, NAS backup cron failing.",
+  "highlights": [
+   "The P520 \"high CPU\" was an I/O ceiling on `tank`, not a runaway process — stopping Immich proved it by *not* helping, and the fix is a config trade-off (staggered pollers or looser CIFS caching), still awaiting his pick.",
+   "Fixed a silent all-cron failure: `ai-window.sh` never set `PATH`, so the nightly AI-VM start/stop had been dying since it shipped while interactive runs looked fine.",
+   "Classes for Spring 2027 are registered — the last academic blocker for next semester is closed.",
+   "Two standing cron defects remain unfixed: the NAS recovery backup exits 1, and the 9:30 AM Daily Brief has produced nothing for 18 days."
+  ]
+ },
+ {
   "date": "2026-11-20",
   "summary": "Journal 2026-11-20: nightly AI window on the 3060 (wall by day), Obsidian RAG live on [redacted] with project pulse fixed to 3 open, CLAUDE.md rewritten, constellation wall un-stuck, iCloud→~/Vault migration planned but blocked on approval.",
   "highlights": [
