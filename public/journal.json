@@ -1,12 +1,27 @@
 [
  {
+  "date": "2026-11-22",
+  "summary": "Journal 2026-11-22: quiet Sunday — weekly review written, v0.23.3 available but update blocked (local commits + launcher patch), Daily Brief 19th 0-byte day, coursework",
+  "highlights": [
+   "**Quiet Sunday, and the vault says so out loud:** zero working sessions, one screenshot read. The weekly review landed the entire week in [[07 Reflections/Weekly/2026-11-22 Weekly Review|one note]] — that note, not this one, is the week's record.",
+   "**The update path has a real fork in it:** v0.23.3 has been on GitHub since Nov 19, the built-in checker will never nag (off by one release), and the launcher patch that keeps bare `hermes` working has silently reverted. Three small steps, all blocked on a go-ahead.",
+   "Coursework — details stay in the vault.",
+   "**The Daily Brief has now been empty for 19 days** — the longest-running silent defect in the fleet, and still unowned."
+  ]
+ },
+ {
   "date": "2026-11-21",
   "summary": "Journal 2026-11-21: P520 load traced to CIFS/media-stack I/O ceiling (Immich stopped), ai-window.sh PATH bug fixed, Abdaal life-organiser prompt reverse-engineered, Spring 2027 registration done, NAS backup cron failing.",
   "highlights": [
    "The P520 \"high CPU\" was an I/O ceiling on `tank`, not a runaway process — stopping Immich proved it by *not* helping, and the fix is a config trade-off (staggered pollers or looser CIFS caching), still awaiting his pick.",
    "Fixed a silent all-cron failure: `ai-window.sh` never set `PATH`, so the nightly AI-VM start/stop had been dying since it shipped while interactive runs looked fine.",
    "Classes for Spring 2027 are registered — the last academic blocker for next semester is closed.",
-   "Two standing cron defects remain unfixed: the NAS recovery backup exits 1, and the 9:30 AM Daily Brief has produced nothing for 18 days."
+   "Two standing cron defects remain unfixed: the NAS recovery backup exits 1, and the 9:30 AM Daily Brief has produced nothing for 18 days.",
+   "**Closed: NAS recovery backup.** The 04:41 weekly failure was intermittent, not a config break — `hermes backup` succeeded standalone, then the job script itself failed twice and succeeded on the third run. A fresh encrypted archive is verified on the NAS (`hermes-recovery-20261121-230449-41f729fa.zip.age`, 2,074,113,935 B, remote sha256 matched) and the receipt was rewritten at 23:05. `hermes_nas_backup.py` now keeps `backup.log` in the stage dir and prints its last 12 lines when the run fails; the old code wrote that log inside the temp dir, which is exactly why the 04:41 failure left no diagnostics.",
+   "**Filed (agent-side): Daily Brief has produced 0 bytes for 18 straight days.** Today's execution finished in 3 s with `delivery_outcome: suppressed` and a 0-message session — the agent turn never ran — while the job records `ok`. Filed in the Hermes Operations Queue rather than as a user task.",
+   "**Not fixed: disk slid 37 GB → 20.2 GB free in 24 h** (82% → 92% used, `df` 23:00) with no local snapshots to explain it. Same standing cause chain as the todo-cleanup vault/iCloud entry; no safe reclaim was attempted in a 20-minute pass.",
+   "**Session sweep:** five sessions today — P520 I/O diagnosis, the Ali Abdaal prompt teardown, the ayumad.me deploy monitor, the 22:00 journal deploy, and this pass. Filed 0 new tasks: the only open decision (P520: drain vs. stagger the media pollers vs. loosen CIFS `actimeo`/`closetimeo`) is already gated by the `Tech` \"P520: approve + apply IO fix\" task; everything else today was informational or completed.",
+   "**Surfaces:** no task-surface writes outside the sweep; vault validator re-run after these edits."
   ]
  },
  {

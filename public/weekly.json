@@ -1,5 +1,71 @@
 [
  {
+  "date": "2026-11-22",
+  "weekStart": "2026-11-15",
+  "summary": "Weekly review for Nov 16–22, 2026: nightly AI VM on the P520, Obsidian RAG live, dashboard v2 shipped, Spring 2027 registered, NAS storage bug fixed.",
+  "sections": [
+   {
+    "heading": "This Week's Highlights",
+    "items": [
+     "**The P520 became time-sliced: wall by day, AI at night.** `ai-window.sh` parks the kiosk VM, boots `ai-vm` at 00:30, waits for GPU + Whisper + Kokoro health, retries once, and restores the wall rather than leaving a blank panel at 07:30. Live on the 3060: Ollama `[redacted]` (`qwen35-9b` 64K ctx, `bge-m3` embeddings), Whisper `large-v3-turbo` `[redacted]`, Kokoro TTS `[redacted]` — full cycle proven (66 s up, 33 s back). Then the 21st found the catch: the script called `qm` bare and cron's PATH lacks `/usr/sbin`, so every scheduled start *and* stop had been dying silently since it shipped. Patched and verified under a minimal PATH.",
+     "**Obsidian RAG is live for the first time.** 672 notes / ~7.7k chunks, MiniLM + BM25 at α=0.5, launchd `me.ayumad.vaultrag` on `[redacted][redacted]` (`/health`, `/search`), hourly reindex, plus the `vault-rag` MCP server and a `vault-search` CLI. The same pass proved the wall's \"29 open actions\" wasn't a backlog at all — `dashboard_build.py` counts unchecked boxes and the RAG note still carried the June six-phase roadmap; rewritten, it holds 3 genuine open items.",
+     "**ayumad.me dashboard rewritten as v2** — the biggest code push of the week: an authenticated `/dashboard` behind login with a public read-only overview, a one-screen life view (ops moved to `/status`), the local constellation, a real 3D vault graph, a live focus engine that is Codex-aware, project pulse, now-playing and host telemetry, and a wall kiosk that reloads when the page changes. Deploy hash advanced `BlNclZlD` → `D1gabkoq`; ~113 commits in the repo this week.",
+     "**The NAS \"storage emergency\" was a bug, not a capacity wall.** The remux driver's `find_seed_copy()` only deleted old torrents when library file and torrent shared an inode, so 19 completed downgrades had freed nothing. A `cleanup_leftovers()` title-match fallback fixed it at the driver: `tank` went 98% → 84% (33 GiB → 2.10 TiB free, fragmentation 72% → 35%), and the queue now runs largest-first.",
+     "Coursework — details stay in the vault."
+    ]
+   },
+   {
+    "heading": "Project Progress",
+    "items": [
+     "**[[02 Projects/Homelab|Homelab]] / P520** — the \"high CPU\" mystery was I/O, not compute: load 44 → 31 → 23 with ~0% CPU pressure against 60–72% io pressure \"full\". Immich was the first suspect and got exonerated by stopping it (pressure went *up*), so the cause is `docker-vm` pulling ~28 MB/s over the CIFS mount against five 5400/5900 rpm drives in RAIDZ1 — at their physical ceiling, with no rogue process to kill. Decision still open (drain vs. stagger pollers' scan intervals vs. loosen the mount's `actimeo`/`closetimeo`). Also live: the kiosk VM (203) that owns the 3060 at rest. P520 carries 105 pending package upgrades that need a reboot window.",
+     "**[[02 Projects/Obsidian RAG Assistant|Obsidian RAG Assistant]]** — deployed end to end (service, hourly reindex, MCP server, CLI). One known compromise: the index reads the `~/workspace/vault-read` GitHub mirror because TCC blocks the Hermes process from `~/Documents/Main`, so search lags 15–30 min.",
+     "**[[02 Projects/Personal Website|Personal Website]]** — dashboard v2 above, plus public-feed redaction: two commits stripped bare service ports and infrastructure detail from the journal/weekly exports. Steady state is a nightly `journal:` commit and 5-minute protected-snapshot refreshes.",
+     "**Vault** — validator clean at 646 notes (0 invalid, 0 duplicate, 0 unresolved, 0 ambiguous). Still iCloud-resident: 555 of 777 files were dataless again on Nov 20, and the `~/Vault` migration is fully planned across 14 consumers but unapproved.",
+     "Coursework — details stay in the vault.",
+     "**Loadout / gear** ([[03 Areas/Technology/Loadout/Products/Logitech RS50 Sim Racing Rig|Logitech RS50 Sim Racing Rig]]) — the RS50 lot landed for **$400** (8 Nm DD base, load-cell pedals, two hubs, Playseat Challenge X; new-equivalent ≈$1,350). Canyon identified as the i7-9700K box with the **RX 6600 8 GB**, so 3840×1600 sim racing runs 60–90 fps on AC/DR2/FH5 with cuts and is not a VR host (Creekwood is). Flow Z13 verdict: CachyOS, keeping the Windows partition. RTX 4080 build repriced to $1,999 OBO / $1,700 floor.",
+     "Job application pipeline work — details stay in the vault.",
+     "**Articles** — *Intro to Agentic AI* was closed as a reconciliation, not a delivery: the task was ticked 11-14 but no draft exists in the vault or the repo. Three articles remain open (CRT journey, AI as a Computer, Sunshine writeup).",
+     "**Minecraft server** — friends-ready on the LAN (squaremap + Simple Voice Chat); WAN exposure still needs one decision (port-forward / playit.gg / Tailscale share)."
+    ]
+   },
+   {
+    "heading": "Blockers & Issues",
+    "items": [
+     "**Disk and iCloud are one problem and it is still unowned by a decision.** 20.1 GiB free / 90% used as of today; 20.2 GB free on the 21st, down from 37 GiB on the 20th with nothing in the logs explaining the swing. Optimize Mac Storage is still on, the Hermes python still has no Full Disk Access, and the ready-made `~/Vault` migration timed out on its approval prompt (Nov 20 05:39) — nothing ran.",
+     "**The 9:30 AM Daily Brief has produced 0 bytes for 18 consecutive days** (since Nov 4) while its job record reads `ok`. Today's shape: 3 s runtime, `delivery_outcome: suppressed`, a 0-message session — the agent turn never executes. Next step is checking whether a sentinel short-circuits it; filed in the operations queue, not as a user task.",
+     "**Encrypted NAS Recovery Backup failed once (Nov 21 04:41)** and passed on a manual re-run; a fresh 2,074,113,935 B archive is verified on the NAS with matching remote sha256. The script now keeps `backup.log` outside the temp dir so the next failure is diagnosable. One open cron incident remains.",
+     "**The P520 I/O ceiling is structural and needs his pick** — leave it to drain, stagger the media pollers, or loosen CIFS caching. The `Tech` task \"P520: approve + apply IO fix\" gates it.",
+     "Job application pipeline work — details stay in the vault.",
+     "**Six private network hosts offline >7 d** (Framework 36 d, Nova 17 d, plus four others), which keeps the maintenance report at 4 warnings. One vault review is overdue: the iPhone 17 note (`review_by` 2026-11-15) — content review, not a structural break.",
+     "**Fleet health otherwise clean:** the only gateway outage this week was Nov 17 11:30 → Nov 18 08:25 (~21 h unclean exit, no lost user work); the 5 `missed` job records are that window's catch-up, not per-job faults."
+    ]
+   },
+   {
+    "heading": "Next Week's Focus",
+    "items": [
+     "Job application pipeline work — details stay in the vault.",
+     "Coursework — details stay in the vault.",
+     "3. **Approve the vault migration** — quit Obsidian, then materialize + hash-verify `~/Documents/Main` → `~/Vault`. Ten minutes that ends the nightly eviction tax and the disk bleed at the same time.",
+     "4. **Take the P520 reboot window** — apply the IO fix (staggering the pollers is the cheapest of the three) and clear 105 pending package upgrades in the same pass.",
+     "Job application pipeline work — details stay in the vault.",
+     "6. **Keep the cadence:** ACM Officer Meeting Mon 7:30 PM, ACM Workshop Meeting Wed 1:00 PM, EchoSphere progress check-in Fri Nov 27 3:00 PM, Sprint W12 wrap Sun Nov 30."
+    ]
+   },
+   {
+    "heading": "Miscellaneous",
+    "items": [
+     "**Throughput:** 78 sessions / 5,059 messages across six active profiles — default 56 / 3,763 (18 cron), vaultkeeper 8 / 650, homelab 7 / 214, coder 5 / 264, hermes-ops and foreman 1 each. Nov 17 had no interactive sessions at all (the outage), and Sunday the 22nd was quiet by choice — zero interactive sessions.",
+     "**Cron fleet:** **3,740 runs in 7 days**, 3,733 completed, 1 failed (the NAS backup), 5 missed (all the outage window). Busiest: Dashboard Live Refresh (979), Reminders ↔ Google Tasks (553), Vault auto-sync (551).",
+     "**GitHub:** ~113 commits to `ayumad.me`, 274 auto-sync commits in `Ayumad/ayumad.vault`, and **no PRs or issues opened anywhere** — every owned repo still sits at zero open issues.",
+     "**Codex:** 14 sessions, concentrated on Nov 18 (full Hermes audit + website audit + the Rex terminal migration) and Nov 19 (the \"Sol\" dashboard pass that became the constellation redesign).",
+     "**Gear verdicts:** RS50 rig at $400 vs ≈$1,350 new · Canyon's RX 6600 is a 1080p card, so the ultrawide needs a 9070/5070-class swap before ACC or VR · Flow Z13 → CachyOS with Windows kept · LG 38WN95C-W beats the Quest 3 on pixels-per-degree (46–61 vs ~20–25 PPD) for sim racing.",
+     "**Reading/media:** Goodreads and MyAnimeList status notes regenerate daily; the vesting-date sweep labelled 90 research-incentive emails (`Unclaimed` 7 / `Claimed` 56 / `Expired` 27), of which the $200 Probe code is the only live one.",
+     "**Small wins worth recording:** the constellation wall un-stuck itself (kiosk had held a retired page since 03:42; `life.js` now polls its own ETag), `CLAUDE.md` rewritten from 125 to 350 lines sourced from the vault, and the SSH password loop turned out to be a typo'd username (`ayuma` vs `ayumad`)."
+    ]
+   }
+  ]
+ },
+ {
   "date": "2026-11-15",
   "weekStart": "2026-11-08",
   "summary": "Weekly review for Nov 9–15, 2026: coursework + MiniTCP uploaded, journal feed redacted, AI-Engineering wiki loop, P520 I/O root-caused; job application pipeline work",
