@@ -1,12 +1,28 @@
 [
  {
+  "date": "2026-11-23",
+  "summary": "Journal 2026-11-23: dscout $350 TV pre-screener submitted via CDP autofill, then locked (no edits) → correction email queued as Tech task; Daily Brief back after 19 empty days.",
+  "highlights": [
+   "Job application pipeline work — details stay in the vault.",
+   "**The Daily Brief is alive after 19 days of silence.** Root cause was a pre-run script that printed nothing on a quiet board; the fix landed Nov 22 and today's 6.9 KB brief is the first real proof. Longest-running silent defect in the fleet, now closed.",
+   "**Zero cron failures on 800 runs across 11 stores** — the fleet is in its cleanest shape in weeks, with NAS backup as the single known-red job until Nov 28.",
+   "**Three approvals are now the whole backlog of the \"what's next\" list:** the vault move off iCloud (re-eviction risk), the P520 RAM/snapshot cleanup, and Hermes v0.23.3 with its launcher patch."
+  ]
+ },
+ {
   "date": "2026-11-22",
   "summary": "Journal 2026-11-22: quiet Sunday — weekly review written, v0.23.3 available but update blocked (local commits + launcher patch), Daily Brief 19th 0-byte day, coursework",
   "highlights": [
    "**Quiet Sunday, and the vault says so out loud:** zero working sessions, one screenshot read. The weekly review landed the entire week in [[07 Reflections/Weekly/2026-11-22 Weekly Review|one note]] — that note, not this one, is the week's record.",
    "**The update path has a real fork in it:** v0.23.3 has been on GitHub since Nov 19, the built-in checker will never nag (off by one release), and the launcher patch that keeps bare `hermes` working has silently reverted. Three small steps, all blocked on a go-ahead.",
    "Coursework — details stay in the vault.",
-   "**The Daily Brief has now been empty for 19 days** — the longest-running silent defect in the fleet, and still unowned."
+   "**The Daily Brief has now been empty for 19 days** — the longest-running silent defect in the fleet, and still unowned.",
+   "**Daily Brief root cause found and fixed** (19 days of silence, `7fe2464640b9`). `cron/scheduler.py` returns `None` from `_build_job_prompt` when a pre-run script exits 0 with empty stdout — the scheduler then logs *\"script produced no output, skipping AI call\"* and runs no agent turn, recording `ok` with a 0-byte doc. The gate itself defaults to wake on empty (`_parse_wake_gate`), so the skip comes from the prompt builder, not the wake gate. The Brief's pre-run script, `crosswalk_digest.py`, was written to \"print nothing at all when the board is quiet\" — and the crosswalk board has been quiet since ~Nov 2 (its open tasks are all 20+ days old), which is exactly when the briefs stopped (last real brief 2026-11-03). Fix: the script now always emits at least one line (`Agent board (to/hermes, last 24h): quiet — no new posts.`), and a module-docstring note explains that the placeholder is load-bearing. Verified: script output is non-empty, so `_build_job_prompt` returns a prompt instead of `None`. Audited every store for the same landmine — only three agent jobs carry a pre-run script (this cleanup job, Daily Brief, and the monthly AI-Engineering wiki review); the other two always print. Next real proof is tomorrow's 09:30 fire.",
+   "**Stale NAS incident acknowledged** (`8025cd_dbcb03387c1e`, the 2026-11-21 04:41 backup failure). The archive was verified on the NAS by last night's manual re-run (2.07 GB, remote sha256 matched); the job's own `last_status` stays `error` until the next scheduled fire on 2026-11-28, which is expected.",
+   "Coursework — details stay in the vault.",
+   "**Disk headroom** — 91% used / 20 GiB free (`df`, 23:15). Flat versus last night's 92% / 20.2 GB; still no local snapshots explaining the Nov 20 slide. Blocked behind the same iCloud/optimize-storage decision as below.",
+   "**iCloud eviction** — the migration to `~/Vault` is staged but needs Ayush to approve it (the approval prompt timed out 2026-11-20 05:39). Nothing ran.",
+   "**Hermes v0.23.3** — update is available and the built-in checker is off by one release so it will never nag. Applying it means reconciling two local commits (`54049ce` SSH runtime markers, `f70012a` dependency security pins that fight 0.23.3's own bumps) and re-applying the launcher re-exec patch. Needs his go-ahead; logged in the Operations Queue."
   ]
  },
  {
