@@ -1,5 +1,16 @@
 [
  {
+  "date": "2026-11-25",
+  "summary": "Session journal for 2026-11-25: vault rebuild for AI parsing (current/history splits, frontmatter pass, 302 iCloud conflict copies), Claude Code ⇄ Hermes bridge live, disk + cron audit, trip mode half-armed ahead of the Nov 26 departure.",
+  "highlights": [
+   "**The vault is now machine-parseable rather than just human-readable.** An entry contract, a generated index, `rag_scope` on 242 notes, and current/history splits that passed a lossless line-and-task check — with `pre-rebuild-2026-11-25` as the way back.",
+   "**iCloud punished the rebuild immediately** — 302 conflict copies appeared after the first deploy and got auto-pushed with them. They were byte-identical, so the fix was deletion, but it is a live hazard: the vault's gitdir is outside iCloud while the working tree is inside it.",
+   "**Hermes and Claude Code can now hand work to each other**, proven end-to-end on a throwaway `git status` — and the handoff path keeps runs on the flat subscription instead of metered Anthropic.",
+   "**Trip mode is half-armed.** The noisy jobs are paused and the wall kill-switch is patched, but two steps died at the approval gate: the wall will still be lit at 7 AM and the P520 was never probed. Power loss is the real risk — FileVault plus no auto-login means a dark mini until someone is physically there.",
+   "**Disk finally has a root cause**: 19 orphaned Chrome code-sign clones eating 27.9 GB since 11-18; deleting them frees more than the current 20 GiB headroom, and only the `code_sign_clone.JmG61b` copy is held open."
+  ]
+ },
+ {
   "date": "2026-11-24",
   "summary": "Journal 2026-11-24: self-hosted Honcho deployed on docker-vm and wired into Hermes/Claude Code/Codex (shared memory proven), monitor MSRP specs backfilled into loadout notes, X-link triage.",
   "highlights": [
@@ -7,7 +18,12 @@
    "**The bug that ate an hour was configuration, not code.** Every Honcho settings class uses `extra=\"ignore\"`, so the template's legacy flat keys were silently discarded — no startup error, no runtime error. Everything worked the moment the keys were nested correctly.",
    "**Two loadout notes got their missing provenance** (G80SD launch date/MSRP, LG's real launch price), which also exposed a genuine open question: nobody knows whether that ultrawide is running 120, 144 or 170 Hz.",
    "**Vault and fleet both clean** — 791 cron runs, zero failures, vault at `main...origin/main`. The one seam is bookkeeping: Kanban and Completed Tasks still call Honcho \"superseded\", which is now wrong.",
-   "**Disk is the quiet regression** — 17.1 GiB free (92%) against 23.2 GB last night, the same trend that caused the iCloud eviction incidents."
+   "**Disk is the quiet regression** — 17.1 GiB free (92%) against 23.2 GB last night, the same trend that caused the iCloud eviction incidents.",
+   "**Honcho bookkeeping drift closed.** Today's desktop question (\"whats left to do for honcho\") was answered from `Kanban Board.md` + `Completed Tasks.md`, both of which still read \"Honcho → Superseded by Mnemosyne (Jul 2026)\" while a self-hosted Honcho had gone live the same afternoon. Both lines are now scoped to the July provider evaluation and point at [[90 Operations/Homelab/Honcho Cross-Harness Memory]]; the service note is the canonical entry, not the old decision.",
+   "**Encrypted NAS Recovery Backup** still shows `last_status=error` from the 2026-11-21 fire — expected, not a new fault; it only clears on the next scheduled run (2026-11-28 04:40). The Nov-21 manual re-run verified a 2.07 GB encrypted archive on the NAS with a matching remote sha256; the underlying fault is the known intermittent race in `hermes backup`'s large-tree scan.",
+   "**Disk kept sliding:** 93% used / 16.7 GB free at 23:00 (23.2 GB free last night, 17.1 GiB at 22:07). `~/.hermes` is steady at 19 GB and the vault only 23 MB materialized, so the drain is outside both; the standing levers are in the ops queue.",
+   "**Session sweep:** no new asks. Today's sessions were the photon Honcho build (deliverable done, three gaps documented and parked), the desktop Honcho question (stale answer, now fixed at its source), the morning brief, the noon site monitor ([SILENT]), and cron. Nothing filed for Ayush.",
+   "Account recovery — details stay in the vault."
   ]
  },
  {
