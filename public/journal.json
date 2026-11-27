@@ -1,5 +1,15 @@
 [
  {
+  "date": "2026-11-26",
+  "summary": "Session journal for 2026-11-26: Thanksgiving departure day — quiet vault, wall feed went dark at 7:00 AM as armed, one Photon exchange on Obsidian's agent skill pack, fleet 771 runs / 0 failed, Handshake SSO still dead.",
+  "highlights": [
+   "**The trip left cleanly from the automation's side** — wall dark at exactly 7:00 AM, cron steady at 771/0, vault committed, and the mini's own watchdog reports nothing worse than the standing warnings.",
+   "**Two open threads are still blind to him while he's away:** the P520 wall was never paused, and Handshake has produced no inbox data for three days.",
+   "**Disk is unchanged at 91% / 18.9 GiB** — the 27.9 GB of orphaned Chrome code-sign clones still wait on his ok, and that is the entire disk problem.",
+   "Thanksgiving and departure day: the only human input was one tweet check, which is the right shape for a travel day."
+  ]
+ },
+ {
   "date": "2026-11-25",
   "summary": "Session journal for 2026-11-25: vault rebuild for AI parsing (current/history splits, frontmatter pass, 302 iCloud conflict copies), Claude Code ⇄ Hermes bridge live, disk + cron audit, trip mode half-armed ahead of the Nov 26 departure.",
   "highlights": [
@@ -7,7 +17,15 @@
    "**iCloud punished the rebuild immediately** — 302 conflict copies appeared after the first deploy and got auto-pushed with them. They were byte-identical, so the fix was deletion, but it is a live hazard: the vault's gitdir is outside iCloud while the working tree is inside it.",
    "**Hermes and Claude Code can now hand work to each other**, proven end-to-end on a throwaway `git status` — and the handoff path keeps runs on the flat subscription instead of metered Anthropic.",
    "**Trip mode is half-armed.** The noisy jobs are paused and the wall kill-switch is patched, but two steps died at the approval gate: the wall will still be lit at 7 AM and the P520 was never probed. Power loss is the real risk — FileVault plus no auto-login means a dark mini until someone is physically there.",
-   "**Disk finally has a root cause**: 19 orphaned Chrome code-sign clones eating 27.9 GB since 11-18; deleting them frees more than the current 20 GiB headroom, and only the `code_sign_clone.JmG61b` copy is held open."
+   "**Disk finally has a root cause**: 19 orphaned Chrome code-sign clones eating 27.9 GB since 11-18; deleting them frees more than the current 20 GiB headroom, and only the `code_sign_clone.JmG61b` copy is held open.",
+   "**Wall feed kill-switch armed and proven.** Extracted the real guard (lines 12–18 of `dashboard_live_refresh.sh`) and ran it against throwaway `HOME`s: past timestamp → silent exit 0; future timestamp, garbage, empty file and missing file → all four fail open and run. 5/5 as designed. Then wrote `~/.hermes/state/wall_pause_after` = `2026-11-26T07:00:00-0800` (epoch 1795705200, parses to 7:00 AM PST). Confirmed with a real tick: `dashboard_live.json` rebuilt at 11:05 PM, three minutes after arming. `~/.hermes/state/trip_mode.json` updated from \"patched, not armed\" to armed with the test evidence.",
+   "**Handshake blindness found and filed.** The inbox digest logged `no rows parsed (session expired or SPA stuck)` on 23 consecutive hourly runs through 10:24 PM — the SSO session died on or before 11:01 PM Nov 24, so the hourly alerts and the morning digest have been reading nothing for a day. Filed as a Tech task due Nov 26.",
+   "**Trip pre-departure decisions filed** as a Tech task due Nov 26 (FileVault, SER8 BIOS power-restore, P520 wall approval, return date) so the four pre-7 AM calls sit on every surface, not only in the status report.",
+   "Job application pipeline work — details stay in the vault.",
+   "**P520 wall pause stays unapproved.** The read-only probe and the kiosk-vm `onboot=0`/shutdown plan were blocked at the approval gate twice in the 5 PM session, and the registry says not to retry or re-route until Ayush answers. The wall therefore stays lit for the whole trip.",
+   "**FileVault, SER8 BIOS and macOS auto-update are hardware/human calls** — reported with consequences, deliberately not changed.",
+   "**Encrypted NAS Recovery Backup still reads `last=error`** from its Nov 21 fire. That status is stale: a manual re-run on Nov 24 verified a 2.07 GB archive on the NAS with a matching sha256. It clears at the next scheduled fire Nov 28, which falls inside the trip.",
+   "Coursework — details stay in the vault."
   ]
  },
  {
