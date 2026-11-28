@@ -1,12 +1,28 @@
 [
  {
+  "date": "2026-11-27",
+  "summary": "Session journal for 2026-11-27: second quiet trip day — only two Photon test pings, wall feed still dark since Thu 7 AM, fleet 770 runs / 0 failed, Handshake SSO blind a fourth day.",
+  "highlights": [
+   "**Second quiet trip day: 770/770 green.** Nothing on the automation side needs his hands — the wall kill-switch, vault sync and every digest behaved exactly as armed.",
+   "**Photon is alive** — two test pings answered, which is the cheapest possible proof the gateway, model routing and delivery path survived six days without a real session.",
+   "**Two threads are waiting for him:** Handshake SSO (four days of blind inbox) and the disk at 91% / 18.9 GiB (27.9 GB of orphaned Chrome code-sign clones still need his ok).",
+   "**Third standing warning is bookkeeping:** the NAS backup job's red status is stale until its Nov 28 04:40 fire."
+  ]
+ },
+ {
   "date": "2026-11-26",
   "summary": "Session journal for 2026-11-26: Thanksgiving departure day — quiet vault, wall feed went dark at 7:00 AM as armed, one Photon exchange on Obsidian's agent skill pack, fleet 771 runs / 0 failed, Handshake SSO still dead.",
   "highlights": [
    "**The trip left cleanly from the automation's side** — wall dark at exactly 7:00 AM, cron steady at 771/0, vault committed, and the mini's own watchdog reports nothing worse than the standing warnings.",
    "**Two open threads are still blind to him while he's away:** the P520 wall was never paused, and Handshake has produced no inbox data for three days.",
    "**Disk is unchanged at 91% / 18.9 GiB** — the 27.9 GB of orphaned Chrome code-sign clones still wait on his ok, and that is the entire disk problem.",
-   "Thanksgiving and departure day: the only human input was one tweet check, which is the right shape for a travel day."
+   "Thanksgiving and departure day: the only human input was one tweet check, which is the right shape for a travel day.",
+   "**Nothing broke today.** Fleet: 773 runs across 24 jobs, 0 failed; the wall kill-switch held all day (`dashboard_live.json` last written 06:59, `wall_pause_after` = 07:00 still in place); Reminders ↔ Tasks dry-run `0 action(s) planned`; vault validator 659 notes / 0 invalid / 0 duplicate groups / 0 unresolved.",
+   "**Verified, not fixed — the red NAS job is stale.** `Encrypted NAS Recovery Backup` still reports its 2026-11-21 04:41 exit-1; the manual re-run that evening produced a verified 2.07 GB encrypted archive on the NAS, and `last_status` only clears at the next fire, 2026-11-28 04:40 (delivery `local`, failure path `photon`).",
+   "**Handshake blindness is now ~3 days:** 73 consecutive `no rows parsed (session expired or SPA stuck)` runs from 2026-11-24 00:39 through 22:48 tonight, covering both the hourly alerts and the 9:15 AM digest. Both deliver `local`, so it costs no Photon sends; it stays in todo-cleanup as a human sign-in.",
+   "**Closed a registry gap:** `Model Policy Apply` was paused 2026-11-25 18:50 with no reason recorded and was missing from `trip_mode.json` — added under `also_paused_unknown` so the resume pass asks instead of silently resuming it. Nothing was re-enabled.",
+   "**Session sweep:** four sessions today — the 9:12 AM Photon exchange on Obsidian's agent skill pack (answered: not useful, it needs the desktop app or paid Sync), the 9:30 Daily Brief, the noon Ayumad.me monitor (silent, hash unchanged) and the 22:00 journal. No unresolved asks; **filed 0 tasks**.",
+   "**Left alone:** disk 90% used / 20 GiB free — the 27.9 GB of orphaned Chrome code-sign clones still need his ok; the iPhone 17 note's `review_by` (2026-11-15) is the validator's one due review; one uncommitted file (this pass's validation report) belongs to the 15-min auto-sync."
   ]
  },
  {
